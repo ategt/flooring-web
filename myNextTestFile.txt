@@ -1,0 +1,12 @@
+Order ID#: 2184
+Customer Name: Bob and sons, perfection.
+State: IN
+Tax Rate: 3.25
+Product Name: Steel
+Area: 100.0
+Cost Per Square Foot: 5.15
+Labor Cost Per Square Foot: 4.75
+Material Cost: 515.0
+Labor Cost: 475.0
+Tax: 3061.88
+Total: 4051.88

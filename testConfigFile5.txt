@@ -1,0 +1,6 @@
+ProductFile:Data/ProductsGarbal.txt
+TaxesFile:Data/ExtraTestTaxes.txt
+TestDirectory:Test
+InTestMode:false
+DataDirectory:Data
+OrdersDirectory:Orders
