@@ -94,9 +94,7 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
             return null;
         } else if (productName.equals(product.getType())) {
 
-            String titleCaseName = com.mycompany.flooringmasteryweb.utilities.TextUtilities.toTitleCase(productName);
-
-            product.setProductName(titleCaseName);
+            convertProductNameToTitleCase(product);
 
             try {
                 Integer id = jdbcTemplate.queryForObject(SQL_INSERT_PRODUCT,

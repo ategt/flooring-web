@@ -18,6 +18,9 @@ public class TextUtilities {
      * @return 
      */
     public static String toTitleCase(String givenString) {
+        if (givenString == null)
+            return null;
+
         String[] arr = givenString.toLowerCase().split(" ");
         StringBuffer sb = new StringBuffer();
 

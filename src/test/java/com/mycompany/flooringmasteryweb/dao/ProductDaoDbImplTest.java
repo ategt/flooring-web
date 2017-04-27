@@ -32,6 +32,8 @@ public class ProductDaoDbImplTest {
     private static String[] fakeProducts = {"Better Flooring",
         "Worlds Best Floor",
         "floor1",
+        "Floor5",
+        "Floor9",
         "FLOOR5",
         "BEST Product ever",
         "best floor",
@@ -178,7 +180,7 @@ public class ProductDaoDbImplTest {
         instance.update(product);
 
         result = instance.get(product.getProductName());
-        assertEquals("A Unique Product", result.getType());
+        assertEquals(fakeProducts[4], result.getType());
 
         instance.delete(product);
     }
