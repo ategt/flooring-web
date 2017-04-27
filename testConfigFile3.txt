@@ -1,0 +1,6 @@
+ProductFile:Data\Products.txt
+TaxesFile:Data\Taxes.txt
+TestDirectory:Test
+DataDirectory:Data
+OrdersDirectory:Orders
+InTestMode:true

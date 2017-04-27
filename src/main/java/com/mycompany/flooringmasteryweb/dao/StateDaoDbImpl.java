@@ -44,6 +44,8 @@ public class StateDaoDbImpl implements StateDao {
     public StateDaoDbImpl(JdbcTemplate jdbcTemplate) {
 
         this.jdbcTemplate = jdbcTemplate;
+        
+        initDatabase(jdbcTemplate);
     }
 
     @Override
@@ -203,6 +205,12 @@ public class StateDaoDbImpl implements StateDao {
     public List<String> getList() {
         return jdbcTemplate.query(SQL_GET_STATE_NAMES, new StateNameMapper());
         //return getListOfStates();
+    }
+
+    private void initDatabase(JdbcTemplate jdbcTemplate) {
+    final String SQL_CREATE_STATES = "CREATE TABLE IF NOT EXISTS states(id serial PRIMARY KEY, state_name varchar(45), state_abbreviation varchar(2) NOT NULL, tax_rate decimal(6,4), UNIQUE(state_name, state_abbreviation, tax_rate));";
+
+        jdbcTemplate.execute(SQL_CREATE_STATES);
     }
 
 //    public void setNoteDao(NoteDao noteDao) {
