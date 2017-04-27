@@ -15,36 +15,22 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd"> 
 
     <!-- Bean definitions go here -->
+
+    <import resource="SQLBase-applicationContext.xml" />
+    <import resource="stateDao-context.xml" />
+    <import resource="productDb-applicationContext.xml" />
+    <import resource="OrdersDb-ApplicationContext.xml" />
     
-    <!--<bean id="applicationContextProvder" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider"/>-->
-    <!--    <bean id="viewUtilities" class="com.mycompany.flooringmasteryweb.utilities.ViewUtilities" />-->
     <bean id="configDao" class="com.mycompany.flooringmasteryweb.dao.ConfigDao" />
-    <!--    <bean id="consoleIo" class="com.mycompany.consoleio.ConsoleIO" />-->
-    <bean id="productDao" class="com.mycompany.flooringmasteryweb.dao.ProductDao">
-        <constructor-arg ref="configDao" />
-    </bean>
-    <bean id="stateDao" class="com.mycompany.flooringmasteryweb.dao.StateDao">
-        <constructor-arg ref="configDao" />
-    </bean>
-    <bean id="orderDao" class="com.mycompany.flooringmasteryweb.dao.OrderDaoImpl">
-        <constructor-arg ref="productDao" />
-        <constructor-arg ref="stateDao" />
-        <constructor-arg ref="configDao" />
-    </bean>
         
-    <!--<bean id="flooringMasteryController" class="com.mycompany.flooringmasteryweb.controller.FlooringMasteryController">-->
     <bean id="flooringMasteryWebController" class="com.mycompany.flooringmasteryweb.controller.FlooringMasteryWebController">
-        <!--        <constructor-arg ref="consoleIo" />-->
         <constructor-arg ref="productDao" />
         <constructor-arg ref="stateDao" />
         <constructor-arg ref="orderDao" />
         <constructor-arg ref="configDao" />
-        <!--        <constructor-arg ref="viewUtilities" />-->
     </bean>
     
-    <import resource="auditContext.xml" />
-    
-    
+    <!--<import resource="auditContext.xml" />-->
     
     <!-- Register the messages.properties -->
     <bean id="messageSource"
@@ -54,53 +40,6 @@
  
     </bean>
     
-    
-    
-<!--    <bean id="jacksonObjectMapper" class="com.mycompany.flooringmasteryweb.utilities.CustomObjectMapper" />
-
-    <bean id="jacksonSerializationConfig" class="org.codehaus.jackson.map.SerializationConfig"
-          factory-bean="jacksonObjectMapper" factory-method="getSerializationConfig" >
-    </bean>
-    
-    <bean id="sourceObjectMapper" class="com.mycompany.flooringmasteryweb.utilities.CustomObjectMapper" />
-    -->
-<!--     set JSON date format to ISO-8601 e.g. 1970-01-01T00:00:00.000+0000 
-<bean id="sourceObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
-<bean id="acmObjectMapper" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject" ref="sourceObjectMapper"/>
-    <property name="targetMethod" value="disable"/>
-    <property name="arguments" value="WRITE_DATES_AS_TIMESTAMPS"/>
-</bean>
-<bean id="acmJacksonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-    <property name="objectMapper" ref="acmObjectMapper"/>
-</bean>-->
-    
-    
-    
-<!--    <mvc:annotation-driven>
-    <mvc:message-converters>
-         We configure the Jackson mapper to output dates in ISO801 format. This requires adding our
-        customized Jackson mapper to the list of Spring MVC message converters. But, if we just add our bean here
-        all by itself, it will handle requests it should not handle, e.g. encoding strings.  So we need to add the
-        other standard message converters here too, and make sure to put the customized Jackson converter AFTER the
-        string converter. 
- 
-        <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
-        <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"/>
-        <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
-        <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
-        <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
-        <ref bean="acmJacksonConverter"/>
-        <bean class="org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter"/>
-         atom feed requires com.sun.syndication package ...   
-        <bean class="org.springframework.http.converter.feed.AtomFeedHttpMessageConverter"/>
-        <bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter"/>
-        <bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
-        <bean class="org.springframework.http.converter.xml.Jaxb2CollectionHttpMessageConverter"/>
-         marshalling converter requires spring oxm 
-        <bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter"/>
-    </mvc:message-converters>
-</mvc:annotation-driven>-->
-    
+       
     
 </beans>

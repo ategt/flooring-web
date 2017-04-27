@@ -20,10 +20,10 @@
     <tx:annotation-driven />
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://localhost:3306/flooring_master" />
-        <property name="username" value="root" />
-        <property name="password" value="apprentice" />
+        <property name="driverClassName" value="org.postgresql" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/flooring_master" />
+        <property name="username" value="myself" />
+        <property name="password" value="post" />
         <property name="initialSize" value="5" />
         <property name="maxActive" value="10" />
     </bean>

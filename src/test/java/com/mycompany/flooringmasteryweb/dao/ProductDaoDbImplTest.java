@@ -11,7 +11,6 @@ import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.exceptions.ConfigurationFileCorruptException;
 import com.mycompany.flooringmasteryweb.exceptions.FileCreationException;
 import com.mycompany.flooringmasteryweb.utilities.TestUtils;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;

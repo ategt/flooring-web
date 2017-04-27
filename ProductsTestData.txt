@@ -1,6 +1,0 @@
-ProductType,CostPerSquareFoot,LaborCostPerSquareFoot
-Wood,0.0,0.0
-Test Steel,5.0,3.0
-Grass,0.0,0.0
-Steel,0.0,0.0
-Teststeel,5.0,3.0
