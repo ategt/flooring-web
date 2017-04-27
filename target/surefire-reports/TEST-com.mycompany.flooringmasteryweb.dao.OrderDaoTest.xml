@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="36" failures="3" name="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" time="4.497" errors="0" skipped="0">
+<testsuite tests="36" failures="3" name="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" time="4.757" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_66\jre\bin"/>
@@ -61,7 +61,7 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testToStringExtreme" time="0.263">
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testToStringExtreme" time="0.168">
     <failure message="IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\ThirdResultTestFile.txt (The system cannot find the path specified)" type="java.lang.AssertionError">java.lang.AssertionError: IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\ThirdResultTestFile.txt (The system cannot find the path specified)
 	at org.junit.Assert.fail(Assert.java:88)
 	at com.mycompany.flooringmasteryweb.dao.OrderDaoTest.testToStringExtreme(OrderDaoTest.java:961)
@@ -100,15 +100,15 @@
     <system-out>orderFile
 </system-out>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverFBackandForth" time="0.251"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverEBackandForth" time="0.189"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverA" time="0.349"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverB" time="0.393"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverC" time="0.288"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverD" time="0.251"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverF" time="0.285"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullGetB" time="0.099"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testToString" time="0.065">
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverFBackandForth" time="0.244"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverEBackandForth" time="0.161"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverA" time="0.249"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverB" time="0.22"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverC" time="0.176"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverD" time="0.161"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverF" time="0.12"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullGetB" time="0.048"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testToString" time="0.158">
     <failure message="IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\FirstResultTestFile.txt (The system cannot find the path specified)" type="java.lang.AssertionError">java.lang.AssertionError: IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\FirstResultTestFile.txt (The system cannot find the path specified)
 	at org.junit.Assert.fail(Assert.java:88)
 	at com.mycompany.flooringmasteryweb.dao.OrderDaoTest.testToString(OrderDaoTest.java:853)
@@ -147,11 +147,11 @@
     <system-out>orderFile
 </system-out>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverPBackandForth" time="0.131"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverOBackandForth" time="0.116"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverNBackandForth" time="0.195"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testEncodeAndDecode" time="0.285"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testToStringEscapeAtEnd" time="0.052">
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverPBackandForth" time="0.2"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverOBackandForth" time="0.164"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverNBackandForth" time="0.187"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testEncodeAndDecode" time="0.31"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testToStringEscapeAtEnd" time="0.077">
     <failure message="IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\FifthResultTestFile.txt (The system cannot find the path specified)" type="java.lang.AssertionError">java.lang.AssertionError: IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\FifthResultTestFile.txt (The system cannot find the path specified)
 	at org.junit.Assert.fail(Assert.java:88)
 	at com.mycompany.flooringmasteryweb.dao.OrderDaoTest.testToStringEscapeAtEnd(OrderDaoTest.java:1057)
@@ -190,25 +190,25 @@
     <system-out>orderFile
 </system-out>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverMBackandForth" time="0.069"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverLBackandForth" time="0.057"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testEncodeAndDecodeWithDate" time="0.23"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreateB" time="0.038"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreateC" time="0.035"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreateD" time="0.031"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreateE" time="0.03"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverKBackandForth" time="0.052"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullCreate" time="0.038"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullUpdateB" time="0.034"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullDelete" time="0.044"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverJBackandForth" time="0.043"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreate" time="0.039"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullUpdate" time="0.05"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverIBackandForth" time="0.044"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverHBackandForth" time="0.047"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testGetAllOrderes" time="0.122"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullGet" time="0.05"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverGBackandForth" time="0.066"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullCreateB" time="0.043"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testEncodeAndDecodeWithCommas" time="0.111"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverMBackandForth" time="0.114"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverLBackandForth" time="0.113"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testEncodeAndDecodeWithDate" time="0.474"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreateB" time="0.072"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreateC" time="0.065"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreateD" time="0.064"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreateE" time="0.063"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverKBackandForth" time="0.095"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullCreate" time="0.059"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullUpdateB" time="0.064"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullDelete" time="0.084"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverJBackandForth" time="0.073"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testCreate" time="0.055"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullUpdate" time="0.086"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverIBackandForth" time="0.05"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverHBackandForth" time="0.041"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testGetAllOrderes" time="0.208"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullGet" time="0.047"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testResolverGBackandForth" time="0.046"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testNullCreateB" time="0.054"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.OrderDaoTest" name="testEncodeAndDecodeWithCommas" time="0.178"/>
 </testsuite>

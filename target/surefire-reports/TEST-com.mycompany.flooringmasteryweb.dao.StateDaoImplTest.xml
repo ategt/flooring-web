@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="18" failures="0" name="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" time="0.076" errors="0" skipped="0">
+<testsuite tests="18" failures="0" name="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" time="0.091" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_66\jre\bin"/>
@@ -61,22 +61,22 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGet" time="0.007"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGet2" time="0.005"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGet3" time="0.004"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGet" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGet2" time="0.003"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGet3" time="0.003"/>
   <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGetA" time="0.004"/>
   <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGetB" time="0.002"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGetC" time="0.004"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGetD" time="0.01"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testSize" time="0.006"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testEncodeAndDecode" time="0.007"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateB" time="0.002"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateC" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateD" time="0.002"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGetC" time="0.003"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testGetD" time="0.008"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testSize" time="0.004"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testEncodeAndDecode" time="0.006"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateB" time="0.003"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateC" time="0.004"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateD" time="0.003"/>
   <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateE" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateF" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateG" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateH" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreate" time="0.002"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateF" time="0.006"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateG" time="0.022"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreateH" time="0.005"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testCreate" time="0.004"/>
   <testcase classname="com.mycompany.flooringmasteryweb.dao.StateDaoImplTest" name="testDelete" time="0.004"/>
 </testsuite>

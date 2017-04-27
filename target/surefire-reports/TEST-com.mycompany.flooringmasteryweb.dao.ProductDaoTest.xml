@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="16" failures="0" name="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" time="0.063" errors="1" skipped="0">
+<testsuite tests="16" failures="0" name="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" time="0.056" errors="1" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_66\jre\bin"/>
@@ -61,19 +61,19 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGet" time="0.002"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGet2" time="0.004"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGet3" time="0.005"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGet4" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGetA" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testSize" time="0.01"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateByUpdateB" time="0.001"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testEncodeAndDecode" time="0.005"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateB" time="0.002"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGet" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGet2" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGet3" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGet4" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testGetA" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testSize" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateByUpdateB" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testEncodeAndDecode" time="0.001"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateB" time="0.006"/>
   <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateC" time="0.002"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateE" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateF" time="0.003"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateH" time="0.004">
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateE" time="0.036"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateF" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateH" time="0">
     <error type="java.lang.NullPointerException">java.lang.NullPointerException
 	at com.mycompany.flooringmasteryweb.dao.ProductDaoTest.testCreateH(ProductDaoTest.java:137)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
@@ -111,7 +111,7 @@
     <system-out>create
 </system-out>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateByUpdate" time="0.007"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreate" time="0.001"/>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testDelete" time="0.004"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreateByUpdate" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testCreate" time="0"/>
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoTest" name="testDelete" time="0"/>
 </testsuite>

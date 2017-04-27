@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mycompany.flooringmasteryweb.dao.ProductDaoTest
 -------------------------------------------------------------------------------
-Tests run: 16, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.063 sec <<< FAILURE!
-testCreateH(com.mycompany.flooringmasteryweb.dao.ProductDaoTest)  Time elapsed: 0.004 sec  <<< ERROR!
+Tests run: 16, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.052 sec <<< FAILURE!
+testCreateH(com.mycompany.flooringmasteryweb.dao.ProductDaoTest)  Time elapsed: 0 sec  <<< ERROR!
 java.lang.NullPointerException
 	at com.mycompany.flooringmasteryweb.dao.ProductDaoTest.testCreateH(ProductDaoTest.java:137)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)

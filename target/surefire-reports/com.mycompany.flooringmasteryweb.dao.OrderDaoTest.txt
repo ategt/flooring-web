@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.mycompany.flooringmasteryweb.dao.OrderDaoTest
 -------------------------------------------------------------------------------
-Tests run: 36, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 4.497 sec <<< FAILURE!
-testToStringExtreme(com.mycompany.flooringmasteryweb.dao.OrderDaoTest)  Time elapsed: 0.263 sec  <<< FAILURE!
+Tests run: 36, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 4.763 sec <<< FAILURE!
+testToStringExtreme(com.mycompany.flooringmasteryweb.dao.OrderDaoTest)  Time elapsed: 0.168 sec  <<< FAILURE!
 java.lang.AssertionError: IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\ThirdResultTestFile.txt (The system cannot find the path specified)
 	at org.junit.Assert.fail(Assert.java:88)
 	at com.mycompany.flooringmasteryweb.dao.OrderDaoTest.testToStringExtreme(OrderDaoTest.java:961)
@@ -37,7 +37,7 @@ java.lang.AssertionError: IOException - \home\apprentice\_repos\adam.tegtmeier.s
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testToString(com.mycompany.flooringmasteryweb.dao.OrderDaoTest)  Time elapsed: 0.065 sec  <<< FAILURE!
+testToString(com.mycompany.flooringmasteryweb.dao.OrderDaoTest)  Time elapsed: 0.158 sec  <<< FAILURE!
 java.lang.AssertionError: IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\FirstResultTestFile.txt (The system cannot find the path specified)
 	at org.junit.Assert.fail(Assert.java:88)
 	at com.mycompany.flooringmasteryweb.dao.OrderDaoTest.testToString(OrderDaoTest.java:853)
@@ -72,7 +72,7 @@ java.lang.AssertionError: IOException - \home\apprentice\_repos\adam.tegtmeier.s
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testToStringEscapeAtEnd(com.mycompany.flooringmasteryweb.dao.OrderDaoTest)  Time elapsed: 0.052 sec  <<< FAILURE!
+testToStringEscapeAtEnd(com.mycompany.flooringmasteryweb.dao.OrderDaoTest)  Time elapsed: 0.077 sec  <<< FAILURE!
 java.lang.AssertionError: IOException - \home\apprentice\_repos\adam.tegtmeier.self.work\Labs\FlooringMastery\FifthResultTestFile.txt (The system cannot find the path specified)
 	at org.junit.Assert.fail(Assert.java:88)
 	at com.mycompany.flooringmasteryweb.dao.OrderDaoTest.testToStringEscapeAtEnd(OrderDaoTest.java:1057)

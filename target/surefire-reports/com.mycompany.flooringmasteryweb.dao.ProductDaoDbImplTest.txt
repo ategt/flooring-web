@@ -1,11 +1,13 @@
 -------------------------------------------------------------------------------
 Test set: com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest
 -------------------------------------------------------------------------------
-Tests run: 16, Failures: 0, Errors: 16, Skipped: 0, Time elapsed: 0.793 sec <<< FAILURE!
-testGet(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.003 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Tests run: 16, Failures: 0, Errors: 16, Skipped: 0, Time elapsed: 2.811 sec <<< FAILURE!
+testGet(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.169 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -49,24 +51,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testGet2(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.001 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testGet2(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.133 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -110,24 +112,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testGet3(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.001 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testGet3(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.159 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -171,24 +173,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testGet4(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.002 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testGet4(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.169 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -232,24 +234,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testGetA(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.002 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testGetA(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.138 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -293,24 +295,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testSize(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.004 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testSize(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.142 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -354,24 +356,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testCreateByUpdateB(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.003 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testCreateByUpdateB(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.196 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -415,24 +417,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testEncodeAndDecode(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.002 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testEncodeAndDecode(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.158 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -476,24 +478,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testCreateB(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.002 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testCreateB(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.126 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -537,24 +539,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testCreateC(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.002 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testCreateC(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.129 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -598,24 +600,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testCreateE(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.002 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testCreateE(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.123 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -659,24 +661,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testCreateF(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.001 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testCreateF(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.129 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -720,24 +722,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testCreateH(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.001 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testCreateH(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.127 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -781,24 +783,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testCreateByUpdate(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.001 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testCreateByUpdate(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.129 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -842,24 +844,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testCreate(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.001 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testCreate(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.149 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -903,24 +905,24 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
-testDelete(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.002 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
+testDelete(com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest)  Time elapsed: 0.157 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -964,17 +966,15 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "products" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more

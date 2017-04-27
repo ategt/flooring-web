@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="16" failures="0" name="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" time="0.794" errors="16" skipped="0">
+<testsuite tests="16" failures="0" name="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" time="2.84" errors="16" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_66\jre\bin"/>
@@ -61,10 +61,13 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGet" time="0.003">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGet" time="0.169">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -108,35 +111,38 @@
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@8ac12e6: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:57 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@5a3cf824: startup date [Wed Apr 26 21:10:57 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:57 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGet2" time="0.001">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGet2" time="0.133">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -180,35 +186,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@fabef2e: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:57 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@3f357c9d: startup date [Wed Apr 26 21:10:57 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:57 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGet3" time="0.001">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGet3" time="0.159">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -252,35 +261,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@1322b575: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:57 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@11d2714a: startup date [Wed Apr 26 21:10:57 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:57 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGet4" time="0.002">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGet4" time="0.169">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -324,35 +336,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@d1c5cf2: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:57 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@22fb9a2c: startup date [Wed Apr 26 21:10:57 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:57 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:57 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGetA" time="0.002">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testGetA" time="0.138">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -396,35 +411,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@1231a1be: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:58 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@2ff498b0: startup date [Wed Apr 26 21:10:58 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:58 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testSize" time="0.004">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testSize" time="0.142">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -468,35 +486,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@2ad2b274: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:58 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@27afbf14: startup date [Wed Apr 26 21:10:58 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:58 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateByUpdateB" time="0.003">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateByUpdateB" time="0.196">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -540,35 +561,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@62108cd3: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:58 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@6d7b2319: startup date [Wed Apr 26 21:10:58 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:58 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testEncodeAndDecode" time="0.002">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testEncodeAndDecode" time="0.158">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -612,35 +636,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@4a9bce99: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:58 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@5bb7a59: startup date [Wed Apr 26 21:10:58 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:58 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateB" time="0.002">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateB" time="0.126">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -684,35 +711,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@60816371: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:58 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@16b64a03: startup date [Wed Apr 26 21:10:58 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:58 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateC" time="0.002">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateC" time="0.129">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -756,35 +786,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@131ba005: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:58 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@2d913116: startup date [Wed Apr 26 21:10:58 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:58 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:58 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateE" time="0.002">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateE" time="0.123">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -828,35 +861,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@2d4f67e: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:59 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@6b126187: startup date [Wed Apr 26 21:10:59 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:59 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateF" time="0.001">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateF" time="0.129">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -900,35 +936,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@2a5c6b76: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:59 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@1aac0a47: startup date [Wed Apr 26 21:10:59 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:59 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateH" time="0.001">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateH" time="0.127">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -972,35 +1011,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@5f6e2ad9: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:59 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@a1e912f: startup date [Wed Apr 26 21:10:59 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:59 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateByUpdate" time="0.001">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreateByUpdate" time="0.129">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -1044,35 +1086,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@b9b97ad: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:59 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@10b87ff6: startup date [Wed Apr 26 21:10:59 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:59 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreate" time="0.001">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testCreate" time="0.149">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -1116,35 +1161,38 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@4ffa7041: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:59 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@55638165: startup date [Wed Apr 26 21:10:59 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:59 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
-  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testDelete" time="0.002">
-    <error message="Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;" type="org.springframework.jdbc.CannotGetJdbcConnectionException">org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+  <testcase classname="com.mycompany.flooringmasteryweb.dao.ProductDaoDbImplTest" name="testDelete" time="0.157">
+    <error message="PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15" type="org.springframework.jdbc.BadSqlGrammarException">org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM products WHERE product_name = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
@@ -1188,29 +1236,29 @@ INFO: Loading XML bean definitions from class path resource [testProductDb-Appli
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class &apos;com.mysql.jdbc.Driver&apos;
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 44 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 48 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation &quot;products&quot; does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 43 more
 </error>
-    <system-err>Apr 26, 2017 8:56:51 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
-INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@43a59289: startup date [Wed Apr 26 20:56:51 EDT 2017]; root of context hierarchy
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+    <system-err>Apr 26, 2017 9:10:59 PM org.springframework.context.support.ClassPathXmlApplicationContext prepareRefresh
+INFO: Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@37a3ec27: startup date [Wed Apr 26 21:10:59 EDT 2017]; root of context hierarchy
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-DedicatedApplicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [test-SQLBase-applicationContext.xml]
-Apr 26, 2017 8:56:51 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
+Apr 26, 2017 9:10:59 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions
 INFO: Loading XML bean definitions from class path resource [testProductDb-ApplicationContext.xml]
+Apr 26, 2017 9:10:59 PM org.springframework.jdbc.datasource.DriverManagerDataSource setDriverClassName
+INFO: Loaded JDBC driver: org.postgresql.Driver
 </system-err>
   </testcase>
 </testsuite>

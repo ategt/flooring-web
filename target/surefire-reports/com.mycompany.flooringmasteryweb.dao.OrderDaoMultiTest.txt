@@ -1,17 +1,19 @@
 -------------------------------------------------------------------------------
 Test set: com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest
 -------------------------------------------------------------------------------
-Tests run: 36, Failures: 0, Errors: 36, Skipped: 0, Time elapsed: 2.867 sec <<< FAILURE!
-testToStringExtreme(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.045 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Tests run: 36, Failures: 0, Errors: 36, Skipped: 0, Time elapsed: 6.566 sec <<< FAILURE!
+testToStringExtreme(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.202 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -53,30 +55,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverFBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.005 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverFBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.166 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -118,30 +120,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverEBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.007 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverEBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.125 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -183,30 +185,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverA(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.008 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverA(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.18 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -248,30 +250,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.029 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.266 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -313,30 +315,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverC(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.008 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverC(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.171 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -378,30 +380,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverD(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.006 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverD(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.248 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -443,30 +445,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverF(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.009 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverF(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.137 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -508,30 +510,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testNullGetB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.008 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testNullGetB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.156 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -573,30 +575,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testToString(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.006 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testToString(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.139 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -638,30 +640,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverPBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.012 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverPBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.137 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -703,30 +705,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverOBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.007 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverOBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.13 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -768,30 +770,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverNBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.011 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverNBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.122 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -833,30 +835,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testEncodeAndDecode(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.006 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testEncodeAndDecode(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.156 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -898,30 +900,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testToStringEscapeAtEnd(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.006 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testToStringEscapeAtEnd(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.144 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -963,30 +965,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverMBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.015 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverMBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.127 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1028,30 +1030,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverLBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.112 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverLBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.138 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1093,30 +1095,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testEncodeAndDecodeWithDate(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.01 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testEncodeAndDecodeWithDate(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.152 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1158,30 +1160,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testCreateB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.007 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testCreateB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.125 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1223,30 +1225,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testCreateC(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.006 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testCreateC(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.172 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1288,30 +1290,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testCreateD(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.018 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testCreateD(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.186 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1353,30 +1355,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testCreateE(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.012 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testCreateE(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.125 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1418,30 +1420,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverKBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.025 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverKBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.137 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1483,30 +1485,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testNullCreate(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.018 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testNullCreate(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.123 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1548,30 +1550,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testNullUpdateB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.02 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testNullUpdateB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.123 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1613,30 +1615,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testNullDelete(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.012 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testNullDelete(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.129 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1678,30 +1680,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverJBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.006 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverJBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.158 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1743,30 +1745,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testCreate(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.008 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testCreate(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.154 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1808,30 +1810,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testNullUpdate(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.012 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testNullUpdate(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.147 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1873,30 +1875,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverIBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.01 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverIBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.129 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -1938,30 +1940,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverHBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.023 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverHBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.12 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -2003,30 +2005,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testGetAllOrderes(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.007 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testGetAllOrderes(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.124 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -2068,30 +2070,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testNullGet(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.009 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testNullGet(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.13 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -2133,30 +2135,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testResolverGBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.007 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testResolverGBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.136 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -2198,30 +2200,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testNullCreateB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.005 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testNullCreateB(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.121 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -2263,30 +2265,30 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
-testEncodeAndDecodeWithCommas(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.007 sec  <<< ERROR!
-org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:615)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
+testEncodeAndDecodeWithCommas(com.mycompany.flooringmasteryweb.dao.OrderDaoMultiTest)  Time elapsed: 0.125 sec  <<< ERROR!
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [SELECT * FROM states WHERE state_abbreviation = ?]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:231)
+	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:645)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:680)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:712)
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:722)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:796)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:158)
-	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor27.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
@@ -2328,17 +2330,15 @@ org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Co
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.apache.commons.dbcp.SQLNestedException: Cannot load JDBC driver class 'com.mysql.jdbc.Driver'
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1429)
-	at org.apache.commons.dbcp.BasicDataSource.createDataSource(BasicDataSource.java:1371)
-	at org.apache.commons.dbcp.BasicDataSource.getConnection(BasicDataSource.java:1044)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:111)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:77)
-	... 48 more
-Caused by: java.lang.ClassNotFoundException: com.mysql.jdbc.Driver
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
-	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
-	at org.apache.commons.dbcp.BasicDataSource.createConnectionFactory(BasicDataSource.java:1420)
-	... 52 more
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "states" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:169)
+	at org.postgresql.jdbc.PgPreparedStatement.executeQuery(PgPreparedStatement.java:117)
+	at org.springframework.jdbc.core.JdbcTemplate$1.doInPreparedStatement(JdbcTemplate.java:688)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:629)
+	... 47 more
