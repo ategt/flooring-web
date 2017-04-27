@@ -147,7 +147,7 @@ public class ProductDaoDbImplTest {
     }
 
     @Test
-    public void testCreateH() {
+    public void testCreateWithDifferentCase() {
         // This test tests the overloaded method.
         System.out.println("create");
         Product product = productFactory();
@@ -156,6 +156,24 @@ public class ProductDaoDbImplTest {
         //Product expResult = product;
         Product result = instance.create(product, product.getType());
         assertEquals("Best Product Ever", result.getType());
+    }
+
+    @Test
+    public void testCreateThenUpdateWithDifferentCase() {
+        // This test tests the overloaded method.
+        System.out.println("create");
+        Product product = productFactory();
+        product.setType("BEST Product ever");
+        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
+        //Product expResult = product;
+        Product result = instance.create(product, product.getType());
+        assertEquals("Best Product Ever", result.getType());
+        
+        product.setType("BEST Product ever");
+        instance.update(product);
+        
+        result = instance.get(product.getProductName());
+        assertEquals("Best Product Ever", result.getType());        
     }
 
     @Test

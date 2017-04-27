@@ -101,7 +101,7 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
             try {
                 Integer id = jdbcTemplate.queryForObject(SQL_INSERT_PRODUCT,
                         Integer.class,
-                        titleCaseName,
+                        product.getProductName(),
                         product.getLaborCost(),
                         product.getCost());
 
@@ -165,7 +165,7 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
             jdbcTemplate.update(SQL_UPDATE_PRODUCT,
                     product.getLaborCost(),
                     product.getCost(),
-                    TextUtilities.toTitleCase(product.getProductName()));
+                    product.getProductName());
             //}
         }
     }
