@@ -158,6 +158,8 @@ public class StateDaoPostgresDbImpl implements StateDao {
         if (name == null) {
             return null;
         }
+        
+        name = name.toUpperCase();
 
         try {
             return jdbcTemplate.queryForObject(SQL_GET_STATE, new StateMapper(), name);

@@ -10,6 +10,7 @@ package com.mycompany.flooringmasteryweb.dto;
  * @author apprentice
  */
 public class State {
+
     private String state;
     private double stateTax;
     private int id;
@@ -25,6 +26,9 @@ public class State {
      * @param state the state to set
      */
     public void setState(String state) {
+        if (state != null) {
+            state = state.toUpperCase();
+        }
         this.state = state;
     }
 
@@ -69,5 +73,5 @@ public class State {
     public void setId(int id) {
         this.id = id;
     }
-    
+
 }
