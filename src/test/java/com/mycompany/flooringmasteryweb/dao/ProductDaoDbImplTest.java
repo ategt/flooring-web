@@ -50,7 +50,9 @@ public class ProductDaoDbImplTest {
         "Steel",
         "Test Steel",
         "Wood",
-        "Fake Product That I Have Not Used Yet"};
+        "Fake Product That I Have Not Used Yet",
+        "Generic Floor",
+        "A Unique Product"};
 
     public ProductDaoDbImplTest() {
         ctx = new ClassPathXmlApplicationContext("testProductDb-DedicatedApplicationContext.xml");
@@ -59,9 +61,7 @@ public class ProductDaoDbImplTest {
     @Before
     public void setUp() {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-
         RemoveFakeProducts(instance);
-
     }
 
     @After
@@ -89,8 +89,10 @@ public class ProductDaoDbImplTest {
         //ProductDao instance = new ProductDaoImpl(configDao);
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = null;
+        product.setProductName(null);
         Product result = instance.create(product);
         //assertEquals(expResult, result);
+        assertNull(result);
         assertTrue(TestUtils.isProductEqual(expResult, result));
     }
 
