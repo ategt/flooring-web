@@ -795,7 +795,7 @@ public class OrderDaoDbImplTest {
         String thirdOrderString = orderDao.toString(order, System.lineSeparator());
         java.io.File firstTestFile = new java.io.File("FirstResultTestFile.txt");
         //java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FirstResultTestFile.txt");
-        //firstTestFile.deleteOnExit();
+        firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
 
@@ -808,7 +808,7 @@ public class OrderDaoDbImplTest {
 
         java.io.File secondTestFile = new java.io.File("SecondResultTestFile.txt");
         //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SecondResultTestFile.txt");
-        //secondTestFile.deleteOnExit();
+        secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
 
@@ -907,7 +907,7 @@ public class OrderDaoDbImplTest {
         
         //java.io.File firstTestFile1 = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/ThirdResultTestFile.txt");
         
-        //firstTestFile.deleteOnExit();
+        firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
 
@@ -920,7 +920,7 @@ public class OrderDaoDbImplTest {
 
         java.io.File secondTestFile = new java.io.File("FourthResultTestFile.txt");
         //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FourthResultTestFile.txt");
-        //secondTestFile.deleteOnExit();
+        secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
 
@@ -1000,7 +1000,7 @@ public class OrderDaoDbImplTest {
         String thirdOrderString = orderDao.toString(order, System.lineSeparator());
         java.io.File firstTestFile = new java.io.File("FifthResultTestFile.txt");
         //java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FifthResultTestFile.txt");
-         //firstTestFile.deleteOnExit();
+         firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
 
@@ -1013,7 +1013,7 @@ public class OrderDaoDbImplTest {
 
         //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SixthResultTestFile.txt");
         java.io.File secondTestFile = new java.io.File("SixthResultTestFile.txt");
-         //secondTestFile.deleteOnExit();
+         secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
 
