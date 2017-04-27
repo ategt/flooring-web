@@ -42,7 +42,7 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
     @Inject
     public ProductDaoPostgresDbImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        
+
         jdbcTemplate.execute(SQL_CREATE_PRODUCTS);
     }
 
@@ -157,6 +157,8 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
             return;
         }
 
+        convertProductNameToTitleCase(product);
+
         if (get(product.getProductName()) == null) {
             create(product);
         } else {
@@ -170,12 +172,19 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         }
     }
 
+    private void convertProductNameToTitleCase(Product product) {
+        String titleCaseName = com.mycompany.flooringmasteryweb.utilities.TextUtilities.toTitleCase(product.getProductName());
+        product.setProductName(titleCaseName);
+    }
+
     @Override
     public void delete(Product product) {
 
         if (product == null) {
             return;
         }
+
+        convertProductNameToTitleCase(product);
 
         //int id = product.getId();
         //int id = product.getId();

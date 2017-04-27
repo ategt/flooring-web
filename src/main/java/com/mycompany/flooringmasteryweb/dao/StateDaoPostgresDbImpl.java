@@ -35,7 +35,7 @@ public class StateDaoPostgresDbImpl implements StateDao {
     private static final String SQL_INSERT_STATE = "INSERT INTO states ( state_name, state_abbreviation, tax_rate ) VALUES ( ?, ?, ? ) RETURNING id";
     //private static final String SQL_UPDATE_STATE = "UPDATE states SET state_name=?, state_abbreviation=?, tax_rate=? WHERE state_abbreviation=?";
     private static final String SQL_UPDATE_STATE = "UPDATE states SET tax_rate=? WHERE state_abbreviation=?";
-    private static final String SQL_DELETE_STATE = "DELETE FROM states WHERE state_abbreviation =?";
+    private static final String SQL_DELETE_STATE = "DELETE FROM states WHERE state_abbreviation = ?";
     private static final String SQL_GET_STATE = "SELECT * FROM states WHERE state_abbreviation = ? LIMIT 1";
     private static final String SQL_GET_STATE_ID = "SELECT * FROM states WHERE id = ? LIMIT 1";
     private static final String SQL_GET_STATE_LIST = "SELECT * FROM states";

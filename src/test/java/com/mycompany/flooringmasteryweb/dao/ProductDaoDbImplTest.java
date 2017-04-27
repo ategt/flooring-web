@@ -29,6 +29,27 @@ public class ProductDaoDbImplTest {
 
     ApplicationContext ctx;
 
+    private static String[] fakeProducts = {"Better Flooring",
+        "Worlds Best Floor",
+        "floor1",
+        "FLOOR5",
+        "BEST Product ever",
+        "best floor",
+        "Good floor",
+        "BETTER FLOOR",
+        "German Bamboo",
+        "Product1",
+        "Product2",
+        "Product7",
+        "Fancy New Product",
+        "Fake Product That I Have Not Used Yet",
+        "Grass",
+        "Teststeel",
+        "Steel",
+        "Test Steel",
+        "Wood",
+        "Fake Product That I Have Not Used Yet"};
+
     public ProductDaoDbImplTest() {
         ctx = new ClassPathXmlApplicationContext("testProductDb-DedicatedApplicationContext.xml");
     }
@@ -37,43 +58,25 @@ public class ProductDaoDbImplTest {
     public void setUp() {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
 
-        String[] fakeProducts = {"Better Flooring",
-            "Worlds Best Floor",
-            "floor1",
-            "FLOOR5",
-            "BEST Product ever",
-            "best floor",
-            "Good floor",
-            "BETTER FLOOR",
-            "German Bamboo",
-            "Product1",
-            "Product2",
-            "Product7",
-            "Fancy New Product",
-            "Fake Product That I Have Not Used Yet",
-            "Grass",
-            "Teststeel",
-            "Steel",
-            "Test Steel",
-            "Wood",
-            "Fake Product That I Have Not Used Yet"};
+        RemoveFakeProducts(instance);
 
+    }
+
+    @After
+    public void tearDown() {
+        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
+        RemoveFakeProducts(instance);
+    }
+
+    private void RemoveFakeProducts(ProductDao instance) {
         for (String fakeProduct : fakeProducts) {
             if (instance.get(fakeProduct) != null) {
                 Product product = new Product();
                 product.setProductName(fakeProduct);
 
                 instance.delete(product);
-
             }
-
         }
-
-    }
-
-    @After
-    public void tearDown() {
-
     }
 
     @Test
@@ -151,11 +154,13 @@ public class ProductDaoDbImplTest {
         // This test tests the overloaded method.
         System.out.println("create");
         Product product = productFactory();
-        product.setType("BEST Product ever");
+        product.setType(fakeProducts[3].toUpperCase());
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         //Product expResult = product;
         Product result = instance.create(product, product.getType());
-        assertEquals("Best Product Ever", result.getType());
+        assertEquals(fakeProducts[3], result.getType());
+
+        instance.delete(product);
     }
 
     @Test
@@ -163,17 +168,19 @@ public class ProductDaoDbImplTest {
         // This test tests the overloaded method.
         System.out.println("create");
         Product product = productFactory();
-        product.setType("BEST Product ever");
+        product.setType(fakeProducts[4].toUpperCase());
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         //Product expResult = product;
         Product result = instance.create(product, product.getType());
-        assertEquals("Best Product Ever", result.getType());
-        
-        product.setType("BEST Product ever");
+        assertEquals(fakeProducts[4], result.getType());
+
+        product.setType(fakeProducts[4].toUpperCase());
         instance.update(product);
-        
+
         result = instance.get(product.getProductName());
-        assertEquals("Best Product Ever", result.getType());        
+        assertEquals("A Unique Product", result.getType());
+
+        instance.delete(product);
     }
 
     @Test
@@ -347,7 +354,7 @@ public class ProductDaoDbImplTest {
         Product secondProduct = productFactory();
 
         secondProduct.setType("Good floor");
-        
+
         Product thirdProduct = productFactory();
         thirdProduct.setType("BETTER FLOOR");
 
@@ -356,7 +363,6 @@ public class ProductDaoDbImplTest {
         instance.create(thirdProduct);
 
 //        int lookAndSee = instance.size();
-        
         assertTrue(2 < instance.size());
 //        assertTrue(7 < instance.size());
         // The tests do not always run in a certain order and 
