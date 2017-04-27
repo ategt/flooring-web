@@ -1,30 +1,20 @@
 -------------------------------------------------------------------------------
 Test set: com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest
 -------------------------------------------------------------------------------
-Tests run: 37, Failures: 0, Errors: 30, Skipped: 0, Time elapsed: 14.149 sec <<< FAILURE!
-testToStringExtreme(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.418 sec  <<< ERROR!
-org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
-  Hint: No function matches the given name and argument types. You might need to add explicit type casts.
-  Position: 8
-	at org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.doTranslate(SQLStateSQLExceptionTranslator.java:99)
-	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:73)
-	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:81)
-	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:81)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:415)
-	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:470)
-	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:480)
-	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:490)
-	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:496)
-	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.create(StateDaoDbImpl.java:93)
-	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.create(StateDaoDbImpl.java:56)
+Tests run: 37, Failures: 0, Errors: 30, Skipped: 0, Time elapsed: 13.885 sec <<< FAILURE!
+testToStringExtreme(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.112 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 13
+	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
+	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
+	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
 	at java.lang.reflect.Method.invoke(Method.java:497)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:302)
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:202)
-	at com.sun.proxy.$Proxy9.create(Unknown Source)
-	at com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest.orderFactory(OrderDaoDbImplTest.java:2594)
+	at com.sun.proxy.$Proxy9.get(Unknown Source)
+	at com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest.orderFactory(OrderDaoDbImplTest.java:2593)
 	at com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest.testToStringExtreme(OrderDaoDbImplTest.java:859)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
@@ -57,22 +47,7 @@ org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL gram
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
-  Hint: No function matches the given name and argument types. You might need to add explicit type casts.
-  Position: 8
-	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2412)
-	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2125)
-	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:297)
-	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:428)
-	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:354)
-	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:301)
-	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:287)
-	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:264)
-	at org.postgresql.jdbc.PgStatement.executeQuery(PgStatement.java:231)
-	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
-	... 46 more
-testResolverFBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.25 sec  <<< ERROR!
+testResolverFBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.452 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -141,7 +116,7 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testResolverEBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.342 sec  <<< ERROR!
+testResolverEBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.337 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -210,8 +185,8 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testResolverA(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.105 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 3
+testResolverA(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.185 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 15
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -255,8 +230,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverB(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.096 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 3
+testResolverB(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.097 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 15
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -300,8 +275,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverC(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.077 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 3
+testResolverC(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.108 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 15
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -345,8 +320,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverD(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.099 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 3
+testResolverD(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.098 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 15
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -390,8 +365,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverF(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.116 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 3
+testResolverF(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.147 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 15
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -435,8 +410,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverZ(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.205 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 3
+testResolverZ(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.126 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 15
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -480,8 +455,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testToString(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.115 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 3
+testToString(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.177 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 15
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -525,7 +500,7 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverPBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.404 sec  <<< ERROR!
+testResolverPBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.276 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -594,7 +569,7 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testResolverOBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.241 sec  <<< ERROR!
+testResolverOBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.223 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -663,7 +638,7 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testResolverNBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.293 sec  <<< ERROR!
+testResolverNBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.212 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -732,8 +707,8 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testEncodeAndDecode(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.323 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 6
+testEncodeAndDecode(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.106 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 18
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -777,8 +752,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testToStringEscapeAtEnd(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.111 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 6
+testToStringEscapeAtEnd(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.143 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 18
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -822,7 +797,7 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverMBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.29 sec  <<< ERROR!
+testResolverMBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.347 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -891,7 +866,7 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testResolverLBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.277 sec  <<< ERROR!
+testResolverLBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.377 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -960,8 +935,8 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testEncodeAndDecodeWithDate(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.087 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 8
+testEncodeAndDecodeWithDate(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.081 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 20
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -1005,7 +980,7 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverKBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.257 sec  <<< ERROR!
+testResolverKBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.273 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -1074,8 +1049,8 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testNullDelete(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.132 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 9
+testNullDelete(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.087 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 21
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -1119,7 +1094,7 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverJBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.35 sec  <<< ERROR!
+testResolverJBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.219 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -1188,8 +1163,8 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testCreate(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.126 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 10
+testCreate(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.087 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 22
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -1233,8 +1208,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testNullUpdate(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.106 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 10
+testNullUpdate(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.095 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 22
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -1278,7 +1253,7 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverIBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.185 sec  <<< ERROR!
+testResolverIBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.259 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -1347,7 +1322,7 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testResolverHBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.212 sec  <<< ERROR!
+testResolverHBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.19 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -1416,8 +1391,8 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testGetAllOrderes(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.063 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 12
+testGetAllOrderes(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.061 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 24
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -1461,8 +1436,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testNullGet(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.073 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 12
+testNullGet(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.063 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 24
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -1506,7 +1481,7 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testResolverGBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.199 sec  <<< ERROR!
+testResolverGBackandForth(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.229 sec  <<< ERROR!
 org.springframework.jdbc.BadSqlGrammarException: StatementCallback; bad SQL grammar [SELECT LAST_INSERT_ID()]; nested exception is org.postgresql.util.PSQLException: ERROR: function last_insert_id() does not exist
   Hint: No function matches the given name and argument types. You might need to add explicit type casts.
   Position: 8
@@ -1575,8 +1550,8 @@ Caused by: org.postgresql.util.PSQLException: ERROR: function last_insert_id() d
 	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
 	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:404)
 	... 45 more
-testNullCreateB(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.078 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 13
+testNullCreateB(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.104 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 25
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
@@ -1619,8 +1594,8 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result
 	at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
 	at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
-testEncodeAndDecodeWithCommas(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.079 sec  <<< ERROR!
-org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 13
+testEncodeAndDecodeWithCommas(com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest)  Time elapsed: 0.109 sec  <<< ERROR!
+org.springframework.dao.IncorrectResultSizeDataAccessException: Incorrect result size: expected 1, actual 25
 	at org.springframework.dao.support.DataAccessUtils.requiredSingleResult(DataAccessUtils.java:74)
 	at org.springframework.jdbc.core.JdbcTemplate.queryForObject(JdbcTemplate.java:797)
 	at com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl.get(StateDaoDbImpl.java:160)
