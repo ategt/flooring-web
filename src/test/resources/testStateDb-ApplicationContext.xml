@@ -21,7 +21,7 @@
     
     <tx:annotation-driven />
     
-    <bean id="stateDao" class="com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl" > 
+    <bean id="stateDao" class="com.mycompany.flooringmasteryweb.dao.StateDaoPostgresDbImpl" > 
         <constructor-arg ref="jdbcTemplate" />
     </bean>
     
