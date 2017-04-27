@@ -12,7 +12,7 @@ package com.mycompany.flooringmasteryweb.utilities;
 public class TextUtilities {
 
     
-    /** Many thanks to whoever came up with this on stackoverflow.com.
+    /** Many thanks to whomever came up with this on stackoverflow.com.
      * 
      * @param givenString
      * @return 

@@ -254,7 +254,7 @@ public class ProductDaoDbImplTest {
     }
 
     @Test
-    public void testGet2() {
+    public void testGetWithDifferentCase() {
         System.out.println("create");
         Product product = productFactory();
         product.setType("Worlds Best Floor");
