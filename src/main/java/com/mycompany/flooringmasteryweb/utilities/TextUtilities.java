@@ -21,6 +21,9 @@ public class TextUtilities {
         if (givenString == null)
             return null;
 
+        if (givenString.trim().length() < 1)
+            return givenString;
+        
         String[] arr = givenString.toLowerCase().split(" ");
         StringBuffer sb = new StringBuffer();
 

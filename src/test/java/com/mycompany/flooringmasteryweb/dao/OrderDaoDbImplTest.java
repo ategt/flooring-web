@@ -793,9 +793,9 @@ public class OrderDaoDbImplTest {
         order.setDate(orderDate);
 
         String thirdOrderString = orderDao.toString(order, System.lineSeparator());
-        //java.io.File firstTestFile = new java.io.File("FirstResultTestFile.txt");
-        java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FirstResultTestFile.txt");
-        firstTestFile.deleteOnExit();
+        java.io.File firstTestFile = new java.io.File("FirstResultTestFile.txt");
+        //java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FirstResultTestFile.txt");
+        //firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
 
@@ -806,9 +806,9 @@ public class OrderDaoDbImplTest {
             //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //java.io.File secondTestFile = new java.io.File("SecondResultTestFile.txt");
-        java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SecondResultTestFile.txt");
-        secondTestFile.deleteOnExit();
+        java.io.File secondTestFile = new java.io.File("SecondResultTestFile.txt");
+        //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SecondResultTestFile.txt");
+        //secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
 
@@ -822,10 +822,10 @@ public class OrderDaoDbImplTest {
             //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //java.io.File firstValidTestFile = new java.io.File("FirstExpectedTestFile.txt");
-        java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FirstExpectedTestFile.txt");
-        //java.io.File secondValidTestFile = new java.io.File("SecondExpectedTestFile.txt");
-        java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SecondExpectedTestFile.txt");
+        java.io.File firstValidTestFile = new java.io.File("FirstExpectedTestFile.txt");
+        //java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FirstExpectedTestFile.txt");
+        java.io.File secondValidTestFile = new java.io.File("SecondExpectedTestFile.txt");
+        //java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SecondExpectedTestFile.txt");
 
         assertEquals(readFile(firstValidTestFile), readFile(firstTestFile));
         assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
@@ -901,9 +901,13 @@ public class OrderDaoDbImplTest {
         order.setDate(orderDate);
 
         String thirdOrderString = orderDao.toString(order, System.lineSeparator());
-        //java.io.File firstTestFile = new java.io.File("ThirdResultTestFile.txt");
-        java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/ThirdResultTestFile.txt");
-        firstTestFile.deleteOnExit();
+        java.io.File firstTestFile = new java.io.File("ThirdResultTestFile.txt");
+        //String f3 = firstTestFile.getAbsolutePath();
+        //boolean exist = firstTestFile.exists();
+        
+        //java.io.File firstTestFile1 = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/ThirdResultTestFile.txt");
+        
+        //firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
 
@@ -914,9 +918,9 @@ public class OrderDaoDbImplTest {
             //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //java.io.File secondTestFile = new java.io.File("FourthResultTestFile.txt");
-        java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FourthResultTestFile.txt");
-        secondTestFile.deleteOnExit();
+        java.io.File secondTestFile = new java.io.File("FourthResultTestFile.txt");
+        //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FourthResultTestFile.txt");
+        //secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
 
@@ -930,10 +934,10 @@ public class OrderDaoDbImplTest {
             //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //java.io.File firstValidTestFile = new java.io.File("ThirdExpectedTestFile.txt");
-        java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/ThirdExpectedTestFile.txt");
-        //java.io.File secondValidTestFile = new java.io.File("FourthExpectedTestFile.txt");
-        java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FourthExpectedTestFile.txt");
+        java.io.File firstValidTestFile = new java.io.File("ThirdExpectedTestFile.txt");
+        //java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/ThirdExpectedTestFile.txt");
+        java.io.File secondValidTestFile = new java.io.File("FourthExpectedTestFile.txt");
+        //java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FourthExpectedTestFile.txt");
 
         assertEquals(readFile(firstValidTestFile), readFile(firstTestFile));
         assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
@@ -994,9 +998,9 @@ public class OrderDaoDbImplTest {
         order.setDate(orderDate);
 
         String thirdOrderString = orderDao.toString(order, System.lineSeparator());
-        //java.io.File firstTestFile = new java.io.File("FifthResultTestFile.txt");
-        java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FifthResultTestFile.txt");
-        // firstTestFile.deleteOnExit();
+        java.io.File firstTestFile = new java.io.File("FifthResultTestFile.txt");
+        //java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FifthResultTestFile.txt");
+         //firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
 
@@ -1007,9 +1011,9 @@ public class OrderDaoDbImplTest {
             //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SixthResultTestFile.txt");
-        //java.io.File secondTestFile = new java.io.File("SixthResultTestFile.txt");
-        // secondTestFile.deleteOnExit();
+        //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SixthResultTestFile.txt");
+        java.io.File secondTestFile = new java.io.File("SixthResultTestFile.txt");
+         //secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
 
@@ -1023,10 +1027,10 @@ public class OrderDaoDbImplTest {
             //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //java.io.File firstValidTestFile = new java.io.File("FifthExpectedTestFile.txt");
-        //java.io.File secondValidTestFile = new java.io.File("SixthExpectedTestFile.txt");
-        java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FifthExpectedTestFile.txt");
-        java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SixthExpectedTestFile.txt");
+        java.io.File firstValidTestFile = new java.io.File("FifthExpectedTestFile.txt");
+        java.io.File secondValidTestFile = new java.io.File("SixthExpectedTestFile.txt");
+        //java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FifthExpectedTestFile.txt");
+        //java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SixthExpectedTestFile.txt");
 
         assertEquals(readFile(firstValidTestFile), readFile(firstTestFile));
         assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
@@ -2408,7 +2412,7 @@ public class OrderDaoDbImplTest {
     }
 
     @Test
-    public void testResolverOBackandForth() {
+    public void testResolverBackandForth() {
 
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
