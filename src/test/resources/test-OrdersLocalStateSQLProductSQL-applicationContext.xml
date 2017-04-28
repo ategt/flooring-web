@@ -22,10 +22,6 @@
     <import resource="testStateDb-ApplicationContext.xml" />
     <import resource="testProductDb-ApplicationContext.xml" />
     
-    
-    
-    
-    
     <bean id="testConfigFile" class="java.io.File" >
         <constructor-arg type="java.lang.String" value="testConfigFile.txt" />
     </bean> 
@@ -38,9 +34,6 @@
         <constructor-arg ref="testAuditLog" />
     </bean>
     
-<!--    <bean id="configDaoWithAuditLog" -->
-    
-
      <bean id="configDaoWithNull" class="com.mycompany.flooringmasteryweb.dao.ConfigDao" >
          <constructor-arg value="null" />
      </bean>
@@ -51,19 +44,11 @@
    
     <bean id="viewUtilities" class="com.mycompany.flooringmasteryweb.utilities.ViewUtilities" />
     <bean id="configDao" class="com.mycompany.flooringmasteryweb.dao.ConfigDao" />
-    <!--<bean id="consoleIo" class="com.mycompany.consoleio.ConsoleIO" />-->
-<!--    <bean id="productDao" class="com.mycompany.flooringmasteryweb.dao.ProductDao">
-        <constructor-arg ref="configDao" />
-    </bean>
-    <bean id="stateDao" class="com.mycompany.flooringmasteryweb.dao.StateDao">
-        <constructor-arg ref="configDao" />
-    </bean>-->
+    
     <bean id="orderDao" class="com.mycompany.flooringmasteryweb.dao.OrderDaoImpl">
         <constructor-arg ref="productDao" />
         <constructor-arg ref="stateDao" />
         <constructor-arg ref="configDao" />
     </bean>
-    
-    
     
 </beans>

@@ -30,5 +30,4 @@
    
     <bean id="configDao" class="com.mycompany.flooringmasteryweb.dao.ConfigDao" />
     
-<!--     This is the test Context.-->
 </beans>

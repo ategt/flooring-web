@@ -16,12 +16,9 @@
 
     <!-- Bean definitions go here -->
     
-    
-    
-    
     <tx:annotation-driven />
     
-    <bean id="orderDao" class="com.mycompany.flooringmasteryweb.dao.OrderDaoDbImpl" > 
+    <bean id="orderDao" class="com.mycompany.flooringmasteryweb.dao.OrderDaoPostgresImpl" > 
         <constructor-arg ref="jdbcTemplate" />
         <constructor-arg ref="stateDao" />
         <constructor-arg ref="productDao" />

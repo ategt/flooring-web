@@ -16,12 +16,6 @@
 
     <!-- Bean definitions go here -->
     
-    
-    
-    
-
-    <import resource="test-SQLBase-applicationContext.xml" />
-    
-    <import resource="testProductDb-ApplicationContext.xml" />
-        
+    <import resource="test-SQLBase-applicationContext.xml" />    
+    <import resource="testProductDb-ApplicationContext.xml" />        
 </beans>

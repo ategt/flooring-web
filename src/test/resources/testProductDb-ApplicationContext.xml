@@ -16,11 +16,8 @@
 
     <!-- Bean definitions go here -->
     
-    
-    
-    
     <tx:annotation-driven />
-    <bean id="productDao" class="com.mycompany.flooringmasteryweb.dao.ProductDaoPostgresDbImpl" > 
+    <bean id="productDao" class="com.mycompany.flooringmasteryweb.dao.ProductDaoPostgresImpl" > 
         <constructor-arg ref="jdbcTemplate" />
     </bean>
     
