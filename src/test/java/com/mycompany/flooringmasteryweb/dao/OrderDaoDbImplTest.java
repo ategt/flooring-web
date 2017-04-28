@@ -59,7 +59,6 @@ public class OrderDaoDbImplTest {
 
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        //OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
         OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
 
         Order order = orderFactory();
@@ -155,7 +154,6 @@ public class OrderDaoDbImplTest {
 
         // Test get method.
         Order returnedOrder = instance.get(id);
-        //assertEquals(returnedOrder, result);
         assertTrue(verifyOrder(returnedOrder, result));
         instance.delete(null);
         instance.delete(order);
@@ -305,7 +303,6 @@ public class OrderDaoDbImplTest {
         OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
 
         List<Order> orders = new ArrayList();
-        //Order expResult = null;
         List<Order> result = instance.sortByOrderNumber(orders);
 
         assertTrue(result.isEmpty());
@@ -375,16 +372,6 @@ public class OrderDaoDbImplTest {
         instance.create(orderThree);
         instance.create(orderFour);
 
-//        int expSizeResult = 4;
-//        int sizeResult = instance.size();
-//        assertEquals(expSizeResult, sizeResult);
-        //assertTrue(instance.getList().contains(orderOne));
-        
-//        assertTrue(instance.getList().contains(orderOne));
-//        assertTrue(instance.getList().contains(orderTwo));
-//        assertTrue(instance.getList().contains(orderThree));
-//        assertTrue(instance.getList().contains(orderFour));
-
         List<Order> testList = instance.getList();
 
         assertTrue(isOrderInList(orderOne, instance.getList()));
@@ -395,7 +382,6 @@ public class OrderDaoDbImplTest {
         List<Order> result = instance.searchByDate(firstDate);
 
         assertEquals(false, result.isEmpty());
-        //assertEquals(2, result.size());
 
         assertEquals(true, isOrderInList(orderOne, result));
         assertEquals(true, isOrderInList(orderTwo, result));
@@ -413,10 +399,6 @@ public class OrderDaoDbImplTest {
         assertEquals(orderList.contains(orderTwo), false);
         assertEquals(orderList.contains(orderThree), false);
         assertEquals(orderList.contains(orderFour), false);
-        //assertEquals(0, instance.getList().size());
-        //assertTrue(instance.getList().isEmpty());
-
-        //tempFile.renameTo(testFile);
     }
 
     @Test
@@ -426,8 +408,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
@@ -489,7 +469,6 @@ public class OrderDaoDbImplTest {
         assertTrue(thirdOrder != null);
 
         // Check that the update method saved the new text.
-        //assertEquals("This Is a test order.", thirdOrder.getOrderString());
         assertEquals(name, thirdOrder.getName());
         assertEquals(ohio.getState(), thirdOrder.getState().getState());
         assertEquals(taxRate, thirdOrder.getTaxRate(), 1e-8);
@@ -586,7 +565,6 @@ public class OrderDaoDbImplTest {
         assertTrue(thirdOrder != null);
 
         // Check that the update method saved the new text.
-        //assertEquals("This Is a test order.", thirdOrder.getOrderString());
         assertEquals(name, thirdOrder.getName());
         assertEquals(ohio.getState(), thirdOrder.getState().getState());
         assertEquals(taxRate, thirdOrder.getTaxRate(), 1e-8);
@@ -608,7 +586,6 @@ public class OrderDaoDbImplTest {
         StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao thirdOrderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        //OrderDao thirdDao = new OrderDao(true);
         assertEquals(thirdOrderDao.get(id), null);
 
     }
@@ -620,8 +597,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
@@ -658,10 +633,8 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         // Set the above values to the appropriate attributes.
-        //order.setId(1);
         order.setName(name);
         order.setState(ohio);
         order.setTaxRate(taxRate);
@@ -694,7 +667,6 @@ public class OrderDaoDbImplTest {
             out.flush();
         } catch (IOException ex) {
             fail("IOException - " + ex.getMessage());
-            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         try (PrintWriter out = new PrintWriter(new FileWriter(new java.io.File("myNextTestFile.txt")))) {
@@ -706,13 +678,11 @@ public class OrderDaoDbImplTest {
             out.flush();
         } catch (IOException ex) {
             fail("IOException - " + ex.getMessage());
-            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         assertTrue(thirdOrder != null);
 
         // Check that the update method saved the new text.
-        //assertEquals("This Is a test order.", thirdOrder.getOrderString());
         assertEquals(name, thirdOrder.getName());
         assertEquals(ohio.getState(), thirdOrder.getState().getState());
         assertEquals(taxRate, thirdOrder.getTaxRate(), 1e-8);
@@ -734,7 +704,6 @@ public class OrderDaoDbImplTest {
         StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao thirdOrderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        //OrderDao thirdDao = new OrderDao(true);
         assertEquals(thirdOrderDao.get(id), null);
 
     }
@@ -747,11 +716,9 @@ public class OrderDaoDbImplTest {
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
         // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
-        //Order returnedOrder = orderDao.create(order);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("KC");
         stateDao.create(ohio);
@@ -794,7 +761,6 @@ public class OrderDaoDbImplTest {
 
         String thirdOrderString = orderDao.toString(order, System.lineSeparator());
         java.io.File firstTestFile = new java.io.File("FirstResultTestFile.txt");
-        //java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FirstResultTestFile.txt");
         firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
@@ -803,11 +769,9 @@ public class OrderDaoDbImplTest {
             out.flush();
         } catch (IOException ex) {
             fail("IOException - " + ex.getMessage());
-            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         java.io.File secondTestFile = new java.io.File("SecondResultTestFile.txt");
-        //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SecondResultTestFile.txt");
         secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
@@ -819,13 +783,10 @@ public class OrderDaoDbImplTest {
             out.flush();
         } catch (IOException ex) {
             fail("IOException - " + ex.getMessage());
-            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         java.io.File firstValidTestFile = new java.io.File("FirstExpectedTestFile.txt");
-        //java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FirstExpectedTestFile.txt");
         java.io.File secondValidTestFile = new java.io.File("SecondExpectedTestFile.txt");
-        //java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SecondExpectedTestFile.txt");
 
         assertEquals(readFile(firstValidTestFile), readFile(firstTestFile));
         assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
@@ -847,19 +808,13 @@ public class OrderDaoDbImplTest {
     @Test
     public void testToStringExtreme() {
 
-        //ProductDao productDao = new ProductDaoImpl(configDao);
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
 
-        //= ctx.getBean("stateDao", StateDao.class);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
-        // Create the file in the Dao.
-        //Order returnedOrder = orderDao.create(order);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("DG");
         stateDao.create(ohio);
@@ -869,7 +824,6 @@ public class OrderDaoDbImplTest {
         productDao.create(product);
 
         // Make some data for the dto.
-        // 1,Wise,OH,6.25,Wood,100.00,5.15,4.75,515.00,475.00,61.88,1051.88
         String name = ",,,,,,,,\\,,,,,,,/,,,,,,,";
         double taxRate = 20.25;
         double area = 150.00;
@@ -902,11 +856,7 @@ public class OrderDaoDbImplTest {
 
         String thirdOrderString = orderDao.toString(order, System.lineSeparator());
         java.io.File firstTestFile = new java.io.File("ThirdResultTestFile.txt");
-        //String f3 = firstTestFile.getAbsolutePath();
-        //boolean exist = firstTestFile.exists();
-        
-        //java.io.File firstTestFile1 = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/ThirdResultTestFile.txt");
-        
+
         firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
@@ -915,11 +865,9 @@ public class OrderDaoDbImplTest {
             out.flush();
         } catch (IOException ex) {
             fail("IOException - " + ex.getMessage());
-            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         java.io.File secondTestFile = new java.io.File("FourthResultTestFile.txt");
-        //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FourthResultTestFile.txt");
         secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
@@ -931,13 +879,10 @@ public class OrderDaoDbImplTest {
             out.flush();
         } catch (IOException ex) {
             fail("IOException - " + ex.getMessage());
-            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         java.io.File firstValidTestFile = new java.io.File("ThirdExpectedTestFile.txt");
-        //java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/ThirdExpectedTestFile.txt");
         java.io.File secondValidTestFile = new java.io.File("FourthExpectedTestFile.txt");
-        //java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FourthExpectedTestFile.txt");
 
         assertEquals(readFile(firstValidTestFile), readFile(firstTestFile));
         assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
@@ -951,12 +896,8 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
-        // Create the file in the Dao.
-        //Order returnedOrder = orderDao.create(order);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("DG");
         stateDao.create(ohio);
@@ -966,7 +907,6 @@ public class OrderDaoDbImplTest {
         productDao.create(product);
 
         // Make some data for the dto.
-        // 1,Wise,OH,6.25,Wood,100.00,5.15,4.75,515.00,475.00,61.88,1051.88
         String name = ",,,,,,,,\\,,,,,,,/,,,,\\";
         double taxRate = 20.25;
         double area = 150.00;
@@ -999,8 +939,7 @@ public class OrderDaoDbImplTest {
 
         String thirdOrderString = orderDao.toString(order, System.lineSeparator());
         java.io.File firstTestFile = new java.io.File("FifthResultTestFile.txt");
-        //java.io.File firstTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FifthResultTestFile.txt");
-         firstTestFile.deleteOnExit();
+        firstTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(firstTestFile))) {
 
@@ -1008,12 +947,10 @@ public class OrderDaoDbImplTest {
             out.flush();
         } catch (IOException ex) {
             fail("IOException - " + ex.getMessage());
-            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //java.io.File secondTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SixthResultTestFile.txt");
         java.io.File secondTestFile = new java.io.File("SixthResultTestFile.txt");
-         secondTestFile.deleteOnExit();
+        secondTestFile.deleteOnExit();
 
         try (PrintWriter out = new PrintWriter(new FileWriter(secondTestFile))) {
 
@@ -1024,167 +961,16 @@ public class OrderDaoDbImplTest {
             out.flush();
         } catch (IOException ex) {
             fail("IOException - " + ex.getMessage());
-            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         java.io.File firstValidTestFile = new java.io.File("FifthExpectedTestFile.txt");
         java.io.File secondValidTestFile = new java.io.File("SixthExpectedTestFile.txt");
-        //java.io.File firstValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/FifthExpectedTestFile.txt");
-        //java.io.File secondValidTestFile = new java.io.File("/home/apprentice/_repos/adam.tegtmeier.self.work/Labs/FlooringMastery/SixthExpectedTestFile.txt");
 
         assertEquals(readFile(firstValidTestFile), readFile(firstTestFile));
         assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
 
     }
 
-//    
-//    @Test
-//    public void testIfDateWillChangeWhichFileOrderIsIn() {
-//        //    This one is still a work in progress.
-//
-//        // Hopefully no one ever has to call this method several times from an outside source.
-//        // I guess it is public, though.
-//        // I know what my luck looks like; best of luck future me.
-//        
-//        
-//
-//        ConfigDao configDao = null;
-//
-//        try {
-//             configDao = new ConfigDao();
-//        } catch (ConfigurationFileCorruptException | FileCreationException ex) {
-//            Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
-//            fail("Throwing This Exception Should Not Be Possible.\n" + ex.getMessage());
-//        }
-//        
-//        
-//        
-//        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-//        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-//        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
-//
-//        // The true parameter in the Order Dao constructor signifies a test.
-//        //OrderDao orderDao = new OrderDao(true);
-//        Order order = orderFactory();
-//
-//        // Create the file in the Dao.
-//        Order returnedOrder = orderDao.create(order);
-//
-//        // Record the orders id number.
-//        int id = order.getId();
-//
-//        // Verify that the order object that the create method passed back
-//        // was the same one it was given.
-//        assertEquals(order, returnedOrder);
-//
-//        com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
-//        ohio.setState("IN");
-//        stateDao.create(ohio);
-//
-//        com.mycompany.flooringmasteryweb.dto.Product product = new com.mycompany.flooringmasteryweb.dto.Product();
-//        product.setType("Steel");
-//        productDao.create(product);
-//
-//        // Make some data for the dto.
-//        String name = "Guy Who Changes His Mind";
-//        double taxRate = 3.25;
-//        double area = 100.00;
-//        double costPerSquareFoot = 5.15;
-//        double laborCostPerSquareFoot = 4.75;
-//        double materialCost = 515.00;
-//        double laborCost = 475.00;
-//        double tax = 3061.88;
-//        double total = 4051.88;
-//
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(2000, Calendar.JANUARY, 1);
-//
-//        Date orderDate = calendar.getTime();
-//        //Date orderDate = new Date();
-//
-//        // Set the above values to the appropriate attributes.
-//        //order.setId(1);
-//        order.setName(name);
-//        order.setState(ohio);
-//        order.setTaxRate(taxRate);
-//        order.setProduct(product);
-//        order.setArea(area);
-//        order.setCostPerSquareFoot(costPerSquareFoot);
-//        order.setLaborCostPerSquareFoot(laborCostPerSquareFoot);
-//        order.setMaterialCost(materialCost);
-//        order.setLaborCost(laborCost);
-//        order.setTax(tax);
-//        order.setTotal(total);
-//        order.setDate(orderDate);
-//        // Use the update method to save this new text to file.
-//        orderDao.update(order);
-//
-//        
-//        // Load a new instance of the OrderDao.
-//        //OrderDao secondDao = new OrderDao(true);
-//        ProductDao secondProductDao = ctx.getBean("productDao", ProductDao.class);
-//        StateDao secondStateDao = ctx.getBean("stateDao", StateDao.class);
-//        OrderDao secondOrderDao = new OrderDao(secondProductDao, secondStateDao, configDao);
-//
-//        // Pull a order using the id number recorded earlier.
-//        Order thirdOrder = secondOrderDao.get(id);
-//
-//        
-//        
-//        
-//        
-//        String thirdOrderString = secondOrderDao.toString(thirdOrder, System.lineSeparator());
-//
-////        try (PrintWriter out = new PrintWriter(new FileWriter(new java.io.File("myTestFile.txt")))) {
-////
-////            out.println(thirdOrderString);
-////            out.flush();
-////        } catch (IOException ex) {
-////            fail("IOException - " + ex.getMessage());
-////            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
-////        }
-//
-//        try (PrintWriter out = new PrintWriter(new FileWriter(new java.io.File("myNextTestFile.txt")))) {
-//
-//            String token = System.lineSeparator();
-//            String thirdOrderStringWithLabels = secondOrderDao.addLabels(thirdOrderString, token);
-//
-//            out.println(thirdOrderStringWithLabels);
-//            out.flush();
-//        } catch (IOException ex) {
-//            fail("IOException - " + ex.getMessage());
-//            //Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        assertTrue(thirdOrder != null);
-//
-//        // Check that the update method saved the new text.
-//        //assertEquals("This Is a test order.", thirdOrder.getOrderString());
-//        assertEquals(name, thirdOrder.getName());
-//        assertEquals(ohio.getState(), thirdOrder.getState().getState());
-//        assertEquals(taxRate, thirdOrder.getTaxRate(), 1e-8);
-//        assertEquals(product.getType(), thirdOrder.getProduct().getType());
-//        assertEquals(area, thirdOrder.getArea(), 1e-8);
-//        assertEquals(costPerSquareFoot, thirdOrder.getCostPerSquareFoot(), 1e-8);
-//        assertEquals(laborCostPerSquareFoot, thirdOrder.getLaborCostPerSquareFoot(), 1e-8);
-//        assertEquals(materialCost, thirdOrder.getMaterialCost(), 1e-8);
-//        assertEquals(laborCost, thirdOrder.getLaborCost(), 1e-8);
-//        assertEquals(tax, thirdOrder.getTax(), 1e-8);
-//        assertEquals(total, thirdOrder.getTotal(), 1e-8);
-//
-//        // Delete the test order.
-//        secondOrderDao.delete(thirdOrder);
-//
-//        // Load a third instance of the Dao and verify that 
-//        // the order was deleted from the file.
-//        ProductDao thirdProductDao = ctx.getBean("productDao", ProductDao.class);
-//        StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
-//        OrderDao thirdOrderDao = new OrderDao(thirdProductDao, thirdStateDao, configDao);
-//
-//        //OrderDao thirdDao = new OrderDao(true);
-//        assertEquals(thirdOrderDao.get(id), null);
-//
-//    }
     @Test
     public void testResolverZ() {
 
@@ -1192,8 +978,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
@@ -1205,7 +989,6 @@ public class OrderDaoDbImplTest {
         // Verify that the order object that the create method passed back
         // was the same one it was given.
         assertEquals(order, returnedOrder);
-//khhgyujgkjh
     }
 
     @Test
@@ -1215,8 +998,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
@@ -1253,10 +1034,8 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         // Set the above values to the appropriate attributes.
-        //order.setId(1);
         order.setName(name);
         order.setState(ohio);
         order.setTaxRate(taxRate);
@@ -1284,8 +1063,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
@@ -1322,10 +1099,8 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         // Set the above values to the appropriate attributes.
-        //order.setId(1);
         order.setName(null);
         order.setState(ohio);
         order.setTaxRate(taxRate);
@@ -1353,8 +1128,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
@@ -1391,10 +1164,7 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
-        // Set the above values to the appropriate attributes.
-        //order.setId(1);
         order.setName(name);
         order.setState(ohio);
         order.setTaxRate(taxRate);
@@ -1422,8 +1192,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
@@ -1460,10 +1228,7 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
-        // Set the above values to the appropriate attributes.
-        //order.setId(1);
         order.setName(name);
         order.setState(null);
         order.setTaxRate(taxRate);
@@ -1491,8 +1256,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
         Order order = orderFactory();
 
         // Create the file in the Dao.
@@ -1529,10 +1292,7 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
-        // Set the above values to the appropriate attributes.
-        //order.setId(1);
         order.setName(name);
         order.setState(null);
         order.setTaxRate(taxRate);
@@ -1560,12 +1320,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -1586,7 +1340,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -1604,31 +1357,6 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-//        double taxRate = 3.25;
-//        double costPerSquareFoot = 5.15;
-//        double laborCostPerSquareFoot = 4.75;
-//        double materialCost = 515.00;
-//        double laborCost = 475.00;
-//        double tax = 3061.88;
-//        double total = 4051.88;
-        //product = productDao.get(product.getProductName());
-        //ohio = stateDao.get(ohio.getStateName());
-        // Set the above values to the appropriate attributes.
-        //order.setId(1);
-//        order.setName(name);
-//        order.setState(ohio);
-//        order.setTaxRate(taxRate);
-//        order.setProduct(product);
-//        order.setArea(area);
-//        order.setCostPerSquareFoot(costPerSquareFoot);
-//        order.setLaborCostPerSquareFoot(laborCostPerSquareFoot);
-//        order.setMaterialCost(materialCost);
-//        order.setLaborCost(laborCost);
-//        order.setTax(tax);
-//        order.setTotal(total);
-//        order.setDate(orderDate);
-        // Use the update method to save this new text to file.
-        //orderDao.update(order);
         BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
@@ -1637,9 +1365,6 @@ public class OrderDaoDbImplTest {
 
         assertNotNull(unresolvedOrder);
 
-        //assertEquals(builtOrder, unresolvedOrder);
-        //Assert.assertSame(builtOrder, unresolvedOrder);
-        //Assert.
         assertEquals(builtOrder.getArea(), unresolvedOrder.getArea(), 0.0005);
         assertEquals(builtOrder.getClass(), unresolvedOrder.getClass());
         assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.0005);
@@ -1649,9 +1374,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
 
-        //assertEquals(builtOrder.getState(), unresolvedOrder.getState());
+        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
         assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
 
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
@@ -1667,12 +1391,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -1693,7 +1411,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -1711,31 +1428,6 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-//        double taxRate = 3.25;
-//        double costPerSquareFoot = 5.15;
-//        double laborCostPerSquareFoot = 4.75;
-//        double materialCost = 515.00;
-//        double laborCost = 475.00;
-//        double tax = 3061.88;
-//        double total = 4051.88;
-        //product = productDao.get(product.getProductName());
-        //ohio = stateDao.get(ohio.getStateName());
-        // Set the above values to the appropriate attributes.
-        //order.setId(1);
-//        order.setName(name);
-//        order.setState(ohio);
-//        order.setTaxRate(taxRate);
-//        order.setProduct(product);
-//        order.setArea(area);
-//        order.setCostPerSquareFoot(costPerSquareFoot);
-//        order.setLaborCostPerSquareFoot(laborCostPerSquareFoot);
-//        order.setMaterialCost(materialCost);
-//        order.setLaborCost(laborCost);
-//        order.setTax(tax);
-//        order.setTotal(total);
-//        order.setDate(orderDate);
-        // Use the update method to save this new text to file.
-        //orderDao.update(order);
         BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
@@ -1744,9 +1436,6 @@ public class OrderDaoDbImplTest {
 
         assertNotNull(unresolvedOrder);
 
-        //assertEquals(builtOrder, unresolvedOrder);
-        //Assert.assertSame(builtOrder, unresolvedOrder);
-        //Assert.
         assertEquals(builtOrder.getArea(), unresolvedOrder.getArea(), 0.0005);
         assertEquals(builtOrder.getClass(), unresolvedOrder.getClass());
         assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.0005);
@@ -1757,7 +1446,6 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
 
-        //assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
         assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
 
         assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
@@ -1774,12 +1462,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -1800,7 +1482,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -1850,12 +1531,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -1876,7 +1551,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -1926,12 +1600,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -1951,9 +1619,6 @@ public class OrderDaoDbImplTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2000, Calendar.JANUARY, 10);
 
-        Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
-
         OrderCommand orderCommand = new OrderCommand();
 
         orderCommand.setName(name);
@@ -1966,9 +1631,6 @@ public class OrderDaoDbImplTest {
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(builtOrder);
-
-        // Record the orders id number.
-        int id = builtOrder.getId();
 
         BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
@@ -1998,7 +1660,6 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
-
     }
 
     @Test
@@ -2008,12 +1669,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -2034,7 +1689,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -2090,12 +1744,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -2116,7 +1764,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -2162,7 +1809,6 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
-
     }
 
     @Test
@@ -2172,12 +1818,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -2198,7 +1838,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -2254,12 +1893,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -2280,7 +1913,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -2336,12 +1968,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -2362,7 +1988,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -2418,12 +2043,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -2444,7 +2063,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -2500,12 +2118,6 @@ public class OrderDaoDbImplTest {
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -2526,7 +2138,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -2552,7 +2163,6 @@ public class OrderDaoDbImplTest {
         assertEquals(orderCommand.getArea(), basicOrder.getArea(), 0.0005);
         assertEquals(orderCommand.getDate(), basicOrder.getDate());
         assertEquals(orderCommand.getProduct(), basicOrder.getProduct());
-        //assertEquals(orderCommand.getState(), basicOrder.getState());
         assertEquals("", basicOrder.getState());
 
         Order unresolvedOrder = orderDao.orderBuilder(basicOrder);
@@ -2579,17 +2189,10 @@ public class OrderDaoDbImplTest {
     @Transactional(propagation = Propagation.REQUIRED)
     private Order orderFactory() {
 
-        //Order order = orderFactory();
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        // The true parameter in the Order Dao constructor signifies a test.
-        //OrderDao orderDao = new OrderDao(true);
-        //Order order = orderFactory();
-        // Verify that the order object that the create method passed back
-        // was the same one it was given.
-        //assertEquals(order, returnedOrder);
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
         ohio.setStateTax(6.25);
@@ -2597,13 +2200,7 @@ public class OrderDaoDbImplTest {
         if (stateDao.get(ohio.getStateName()) == null) {
             stateDao.create(ohio);
         } else {
-
             stateDao.update(ohio);
-
-//            stateDao.delete(ohio);
-//            if ( null == stateDao.create(ohio) ) {
-//                fail("Something is up in state creation.");
-//            } 
         }
 
         com.mycompany.flooringmasteryweb.dto.Product product = new com.mycompany.flooringmasteryweb.dto.Product();
@@ -2615,13 +2212,8 @@ public class OrderDaoDbImplTest {
             productDao.create(product);
         } else {
             productDao.update(product);
-//            productDao.delete(product);
-//            if ( null == productDao.create(product) ) {
-//                fail("Something is up in product creation.");
-//            } 
         }
 
-        //productDao.create(product);
         // Make some data for the dto.
         // 1,Wise,OH,6.25,Wood,100.00,5.15,4.75,515.00,475.00,61.88,1051.88
         String name = "SWC Guild, Test.";
@@ -2631,7 +2223,6 @@ public class OrderDaoDbImplTest {
         calendar.set(2000, Calendar.JANUARY, 10);
 
         Date orderDate = calendar.getTime();
-        //Date orderDate = new Date();
 
         OrderCommand orderCommand = new OrderCommand();
 
@@ -2651,17 +2242,18 @@ public class OrderDaoDbImplTest {
         Order testedOrder = getTheOrderFromTheList(order, orderList);
 
         return verifyOrder(testedOrder, order);
-
     }
 
     private Boolean verifyOrder(Order unresolvedOrder, Order builtOrder) {
-       
-        if (unresolvedOrder == null && builtOrder == null )
+
+        if (unresolvedOrder == null && builtOrder == null) {
             return true;
-        
-        if (unresolvedOrder == null || builtOrder == null )
+        }
+
+        if (unresolvedOrder == null || builtOrder == null) {
             return false;
-        
+        }
+
         assertEquals(unresolvedOrder.getId(), builtOrder.getId());
         assertNotNull(unresolvedOrder);
         assertNotNull(builtOrder);
@@ -2669,12 +2261,9 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getArea(), unresolvedOrder.getArea(), 0.0005);
         assertEquals(builtOrder.getClass(), unresolvedOrder.getClass());
         assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.0005);
-        
-        
-        //assertEquals(builtOrder.getDate(), unresolvedOrder.getDate());
+
         assertTrue(isSameDay(builtOrder.getDate(), unresolvedOrder.getDate()));
 
-        
         assertEquals(builtOrder.getId(), unresolvedOrder.getId());
         assertEquals(builtOrder.getLaborCost(), unresolvedOrder.getLaborCost(), 0.0005);
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
@@ -2687,10 +2276,9 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
 
         return (true);
-
     }
 
-        private static boolean isSameDay(java.util.Date date1, java.util.Date date2) {
+    private static boolean isSameDay(java.util.Date date1, java.util.Date date2) {
         if (date1 == null && date2 == null) {
             return true;
         }
@@ -2701,7 +2289,6 @@ public class OrderDaoDbImplTest {
         }
         return fmt.format(date1).equals(fmt.format(date2));
     }
-
 
     private Order getTheOrderFromTheList(Order order, List<Order> orderList) {
 
@@ -2723,5 +2310,4 @@ public class OrderDaoDbImplTest {
 
         return choosenOrder;
     }
-
 }

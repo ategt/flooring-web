@@ -60,30 +60,6 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         return create(productName, product);
     }
 
-//    @Override
-//    public Product create(String productName, Product product) {
-//
-//        if (product == null) {
-//            return null;
-//        } else if (product.getType() == null) {
-//            return null;
-//        } else if (productName.equals(product.getType())) {
-//
-//            String titleCaseName = com.mycompany.flooringmasteryweb.utilities.TextUtilities.toTitleCase(productName);
-//
-//            if (!productsMap.containsKey(titleCaseName)) {
-//                productsMap.put(titleCaseName, product);
-//                product.setType(titleCaseName);
-//                fileIo.encode(productDataFile, getList());
-//
-//                return product;
-//            } else {
-//                return null;
-//            }
-//        } else {
-//            return null;  // Look up how to throw exceptions and consider that instead.
-//        }
-//    }
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Product create(String productName, Product product) {
@@ -110,15 +86,6 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
                 return null;
             }
 
-//            if (!productsMap.containsKey(titleCaseName)) {
-//                productsMap.put(titleCaseName, product);
-//                product.setType(titleCaseName);
-//                fileIo.encode(productDataFile, getList());
-//
-//                return product;
-//            } else {
-//                return null;
-//            }
         } else {
             return null;  // Look up how to throw exceptions and consider that instead.
         }
@@ -138,14 +105,6 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
             return null;
         }
-
-//        for (String productTest : productsMap.keySet()) {
-//            if (name.equalsIgnoreCase(productTest)) {
-//                input = productTest;
-//                break;
-//            }
-//        }
-//        return productsMap.get(input);
     }
 
     @Override
@@ -161,12 +120,10 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
             create(product);
         } else {
 
-            //if (product.getId() > 0) {
             jdbcTemplate.update(SQL_UPDATE_PRODUCT,
                     product.getLaborCost(),
                     product.getCost(),
                     product.getProductName());
-            //}
         }
     }
 
@@ -184,24 +141,12 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
 
         convertProductNameToTitleCase(product);
 
-        //int id = product.getId();
-        //int id = product.getId();
         String name = product.getProductName();
         try {
             jdbcTemplate.update(SQL_DELETE_PRODUCT, name);
         } catch (org.springframework.dao.DataIntegrityViolationException ex) {
 
         }
-
-//        if (productsMap.containsKey(product.getType())) {
-//            productsMap.remove(product.getType());
-//            fileIo.encode(productDataFile, getList());
-//
-//        } else {
-//            System.out.println("Throwing a Product Not Found exception!!!!");
-//            // Look up exception throwing and consider putting one here, too!
-//
-//        }
     }
 
     private static final String SQL_GET_PRODUCT_NAMES = "SELECT product_name FROM products";
@@ -209,8 +154,6 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
     @Override
     public List<String> getList() {
         return jdbcTemplate.query(SQL_GET_PRODUCT_NAMES, new ProductNameMapper());
-
-        // return new ArrayList(productsMap.keySet());
     }
 
     private static final String SQL_GET_PRODUCT_NAMES_SIZE = "SELECT COUNT(product_name) FROM products";
@@ -225,28 +168,12 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         @Override
         public Product mapRow(ResultSet rs, int i) throws SQLException {
 
-            //product_name, product_name, tax_rate
             Product product = new Product();
 
             product.setLaborCost(rs.getDouble("labor_cost"));
             product.setProductName(rs.getString("product_name"));
             product.setCost(rs.getDouble("material_cost"));
-            //product.setReleaseDate(rs.getDate("product_name"));
 
-//            try {
-//                String costStr = rs.getString("material_cost");
-//
-//                double cost = Double.parseDouble(costStr);
-//                product..setProductTax(cost);
-//
-//            } catch (NullPointerException | NumberFormatException ex) {
-//                product.setProductTax(0.0d);
-//            }
-//            product.setDirectorsName(rs.getString("directors_name"));
-//            product.setStudio(rs.getString("studio"));
-//
-//            List<Note> notes = noteDao.getNotesForProduct(product);
-            //product.setNotes(notes);
             return product;
         }
 
@@ -257,27 +184,8 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         @Override
         public String mapRow(ResultSet rs, int i) throws SQLException {
 
-            //product_name, product_name, tax_rate
             String productName = rs.getString("product_name");
 
-//            product.setId(rs.getInt("id"));
-//            product.setProductName(rs.getString("product_name"));
-//            //product.setReleaseDate(rs.getDate("product_name"));
-//
-//            try {
-//                String taxString = rs.getString("tax_rate");
-//
-//                double tax = Double.parseDouble(taxString);
-//                product.setProductTax(tax);
-//
-//            } catch (NullPointerException | NumberFormatException ex) {
-//                product.setProductTax(0.0d);
-//            }
-//            product.setDirectorsName(rs.getString("directors_name"));
-//            product.setStudio(rs.getString("studio"));
-//
-//            List<Note> notes = noteDao.getNotesForProduct(product);
-            //product.setNotes(notes);
             return productName;
         }
 
