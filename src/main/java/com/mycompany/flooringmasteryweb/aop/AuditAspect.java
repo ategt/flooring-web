@@ -23,25 +23,8 @@ public class AuditAspect {
 
     @Inject
     public AuditAspect(ApplicationContextProvider applicationContext) {
-        //ctx = ApplicationContextProvider.getApplicationContext.getBean("BeanId", MyBean.class);
-        //ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
-        //ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
         ctx = applicationContext.getApplicationContext();
     }
-
-//    public String log(ProceedingJoinPoint jp) throws Throwable {
-////        System.out.println("Spring AOP: Around advice");
-//        Object[] args = jp.getArgs();
-////        if (args.length > 0) {
-//////            System.out.print("Arguments passed: ");
-//////            for (int i = 0; i < args.length; i++) {
-//////                System.out.print("Arg" + (i + 1) + ":" + args[i]);
-////////                args[i] = ":Spring AOP removed the argument";
-//////            }
-////        }
-//        Object result = jp.proceed(args);
-////        return result.toString() + " :Result is also modified";
-//    }
 
     private Order processJoinPoint(JoinPoint jp) {
 
@@ -64,12 +47,11 @@ public class AuditAspect {
     public void createAuditEntry(JoinPoint jp) throws Throwable {
 
         Order order = processJoinPoint(jp);
-//        System.out.println("Making an audit entry.");
+
         if (order != null) {
             String actionName = jp.getSignature().getName();
             Audit audit = buildAuditObject(order, actionName);
-            //AuditDao auditDao =  //new AuditDao(new java.io.File("auditLog.txt")); //ctx.getBean("auditDao", AuditDao.class);
-              AuditDao auditDao = ctx.getBean("auditDao", AuditDao.class);
+            AuditDao auditDao = ctx.getBean("auditDao", AuditDao.class);
             auditDao.create(audit);
         }
     }
@@ -80,6 +62,9 @@ public class AuditAspect {
 
         audit.setDate(order.getDate());
         audit.setOrderid(order.getId());
+        audit.setOrderTotal(order.getTotal());
+        audit.setOrderName(order.getName());
+        
         audit.setActionPerformed(actionName);
         audit.setLogDate(new java.util.Date());
         return audit;
@@ -92,5 +77,4 @@ public class AuditAspect {
     public void setCtx(ApplicationContext ctx) {
         this.ctx = ctx;
     }
-
 }

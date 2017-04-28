@@ -15,7 +15,6 @@
  http://www.springframework.org/schema/aop
  http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
  
- 
 
     <bean id="auditLogFile" class="java.io.File" >
         <constructor-arg type="java.lang.String" value="auditLog.txt" />
@@ -33,25 +32,25 @@
         <aop:aspect ref="auditAspect">
             
             <aop:after method="createAuditEntry"
-                               pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
-            />
-    
-            <aop:after method="createAuditEntry"
-                               pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.update(..))"
-            />
-    
-            <aop:after method="createAuditEntry"
-                               pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.delete(..))"
-            />
-    
-                        <aop:after method="createAuditEntry"
                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
+            />
+    
+            <aop:after method="createAuditEntry"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.update(..))"
+            />
+    
+            <aop:after method="createAuditEntry"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.delete(..))"
+            />
+    
+            <aop:after method="createAuditEntry"
+                                   pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
             />
             
         </aop:aspect>
         
     </aop:config>
     
-        <!--This is the main project context file.-->
+    <!--This is the main project context file.-->
             
 </beans>

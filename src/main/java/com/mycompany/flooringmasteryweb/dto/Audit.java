@@ -13,10 +13,13 @@ import java.util.Date;
  */
 public class Audit {
     
+    private int id;
     private Date date;
     private int orderid;
     private String actionPerformed;
     private Date logDate;
+    private String orderName;
+    private double orderTotal;
 
     public Date getLogDate() {
         return logDate;
@@ -67,6 +70,46 @@ public class Audit {
     public void setActionPerformed(String actionPerformed) {
         this.actionPerformed = actionPerformed;
     }
-    
-    
+
+    /**
+     * @return the orderName
+     */
+    public String getOrderName() {
+        return orderName;
+    }
+
+    /**
+     * @param orderName the orderName to set
+     */
+    public void setOrderName(String orderName) {
+        this.orderName = orderName;
+    }
+
+    /**
+     * @return the orderTotal
+     */
+    public double getOrderTotal() {
+        return orderTotal;
+    }
+
+    /**
+     * @param orderTotal the orderTotal to set
+     */
+    public void setOrderTotal(double orderTotal) {
+        this.orderTotal = orderTotal;
+    }
+
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
 }

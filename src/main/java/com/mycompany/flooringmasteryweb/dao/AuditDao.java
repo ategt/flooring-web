@@ -13,6 +13,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +24,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.inject.Inject;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 /**
  *
@@ -29,132 +34,66 @@ import java.util.logging.Logger;
  */
 public class AuditDao {
 
-    private List<Audit> auditsList;
-    private File auditLogFile;
+    private JdbcTemplate jdbcTemplate;
 
-    public AuditDao(ConfigDao configDao) {
-        this.auditLogFile = configDao.get().getAuditLogFile();
-        auditsList = decode();
-    }
-
-    public AuditDao(java.io.File auditLogFile) {
-        this.auditLogFile = auditLogFile;
-        auditsList = decode();
-    }
-
-    public AuditDao(String auditString) {
-        this.auditLogFile = new File("auditLog.txt");
+    private static final String SQL_CREATE_AUDIT_TABLE = "CREATE TABLE IF NOT EXISTS audit (id SERIAL PRIMARY KEY, date date, orderid integer, actionPerformed varchar(45), logDate date, orderName varchar(145), orderTotal decimal(12,2))";
+    private static final String SQL_INSERT_AUDIT = "INSERT INTO audit (date, orderid, actionPerformed, logDate, orderName, orderTotal) VALUES (?, ?, ?, ?, ?, ?) RETURNING id;";
+    private static final String SQL_QUERY_AUDIT_BY_ID = "SELECT * FROM audit WHERE id = ?;";
+    private static final String SQL_QUERY_AUDIT_ALL = "SELECT * FROM audit;";
+    
+    @Inject
+    public AuditDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        jdbcTemplate.execute(SQL_CREATE_AUDIT_TABLE);
     }
 
     public Audit create(Audit audit) {
-        auditsList.add(audit);
-        encode(audit);
+
+        Integer id = jdbcTemplate.queryForObject(SQL_INSERT_AUDIT,
+                Integer.class,
+                audit.getDate(),
+                audit.getOrderid(),
+                audit.getActionPerformed(),
+                audit.getLogDate(),
+                audit.getOrderName(),
+                audit.getOrderTotal());
+
+        audit.setId(id);
         return audit;
     }
 
-    public void update(Audit audit) {
-        encode(audit, auditLogFile);
-    }
-
-    private void encode(Audit audit) {
-        encode(audit, auditLogFile);
-    }
-
-    private void encode(Audit audit, File auditLogFile) {
-
-        final String TOKEN = "\t";
-        final String DATAHEADER = "Date\t Order Id\t Action Performed";
-
-        boolean newLog = false;
-
-        if (!auditLogFile.exists()) {
-            newLog = true;
-        }
-
-        try (PrintWriter out = new PrintWriter(new FileWriter(auditLogFile,true))) {
-
-            if (newLog) {
-                out.println(DATAHEADER);
-            }
-
-            out.println(convertAuditToString(audit, TOKEN));
-
-            out.flush();
-        } catch (IOException ex) {
-            Logger.getLogger(AuditDao.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private String convertAuditToString(Audit audit, String TOKEN) {
-        String auditString = audit.getLogDate()+ TOKEN + audit.getOrderid() + TOKEN + audit.getActionPerformed() + TOKEN + audit.getDate();
-        return auditString;
-    }
-
-    private Audit buildAuditFromString(String auditString, String TOKEN) {
-
-        String[] auditStringArray = auditString.split(TOKEN);
-        Audit audit = new Audit();
-
+    public Audit get(int id) {
         try {
-            
-            
-            
-            audit.setLogDate(getDateFromString(auditStringArray[0]));
-            if ( auditStringArray.length > 3 ) {
-            audit.setDate(getDateFromString(auditStringArray[3]));
-            }
-        } catch (ParseException ex) {
-            System.out.println("Audit Builder was unable to parse the date.");
+            return jdbcTemplate.queryForObject(SQL_QUERY_AUDIT_BY_ID, new AuditMapper(), id);
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
+            return null;
         }
+    }
 
+    public List<Audit> get() {
         try {
-            audit.setOrderid(Integer.parseInt(auditStringArray[1]));
-        } catch (NumberFormatException ex) {
-            System.out.println("Audit Builder was unable to parse the Order Id.");
+            return jdbcTemplate.query(SQL_QUERY_AUDIT_ALL, new AuditMapper());
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
+            return null;
         }
-
-        audit.setActionPerformed(auditStringArray[2]);
-
-        return audit;
     }
 
-    private Date getDateFromString(String stringToParse) throws ParseException {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-        cal.setTime(sdf.parse(stringToParse));
-        Date date = new Date();
-        date.setTime(cal.getTimeInMillis());
-        return date;
-    }
+    private final class AuditMapper implements RowMapper<Audit> {
 
-    private List<Audit> decode() {
-        return decode(auditLogFile);
-    }
+        @Override
+        public Audit mapRow(ResultSet rs, int i) throws SQLException {
 
-    private List<Audit> decode(File auditLogFile) {
+            Audit audit = new Audit();
 
-        final String TOKEN = "\t";
-        final String DATAHEADER = "Date\t Order Id\t Action Performed";
+            audit.setId(rs.getInt("id"));
+            audit.setDate(rs.getDate("date"));
+            audit.setOrderid(rs.getInt("orderid"));
+            audit.setActionPerformed(rs.getString("actionPerformed"));
+            audit.setLogDate(rs.getDate("logDate"));
+            audit.setOrderName(rs.getString("orderName"));
+            audit.setOrderTotal(rs.getDouble("orderTotal"));
 
-        List<Audit> tempAuditList = new ArrayList();
-
-        if (auditLogFile.exists()) {
-
-            try (Scanner sc = new Scanner(new BufferedReader(new FileReader(auditLogFile)))) {
-                while (sc.hasNextLine()) {
-                    String currentLine = sc.nextLine();
-                    if (currentLine.equalsIgnoreCase(DATAHEADER)) {
-
-                    } else if (!currentLine.trim().isEmpty()) {
-
-                            Audit audit = buildAuditFromString(currentLine, TOKEN);
-                            tempAuditList.add(audit);
-                    }
-                }
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(AuditDao.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            return audit;
         }
-        return tempAuditList;
     }
 }
