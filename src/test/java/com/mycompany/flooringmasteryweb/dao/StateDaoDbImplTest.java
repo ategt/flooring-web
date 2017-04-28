@@ -42,11 +42,8 @@ public class StateDaoDbImplTest {
                 State state = new State();
                 state.setState(fakeState);
                 instance.delete(state);
-
             }
-
         }
-
     }
 
     @After
@@ -57,7 +54,6 @@ public class StateDaoDbImplTest {
     public void testCreate() {
         System.out.println("create");
         State state = new State();
-        //StateDao instance = ctx.getBean("stateDao", StateDao.class);
         StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.create(state);
@@ -77,7 +73,6 @@ public class StateDaoDbImplTest {
     @Test
     public void testGetA() {
         System.out.println("get - null");
-        String state = null;
         StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.get(null);
@@ -124,19 +119,8 @@ public class StateDaoDbImplTest {
         instance.delete(state2);
         instance.delete(state3);
         instance.delete(state4);
-
     }
 
-//    @Test
-//    public void testGetB() {
-//        System.out.println("get - null");
-//        String state = null;
-//        configDao.get().setInTestMode(false);
-//        StateDao instance = ctx.getBean("stateDao", StateDao.class);
-//        State expResult = null;
-//        State result = instance.get(null);
-//        assertTrue(verifyState(expResult, result));
-//    }
     @Test
     public void testCreateC() {
         System.out.println("create");
@@ -191,7 +175,6 @@ public class StateDaoDbImplTest {
         State state = new State();
         state.setState("SW");
         StateDao instance = ctx.getBean("stateDao", StateDao.class);
-        State expResult = state;
         instance.create(state, state.getState());
         State result = instance.create(state, state.getState());
         assertNull(result);
@@ -240,7 +223,6 @@ public class StateDaoDbImplTest {
 
         instance.delete(state);
         instance.delete(otherState);
-
     }
 
     @Test
@@ -259,19 +241,16 @@ public class StateDaoDbImplTest {
         state.setState("SG");
         State expResult = state;
         State result = instance.create(state);
-        //assertEquals(expResult, result);
-
+        
         assertTrue(verifyState(expResult, result));
 
         // Test get method.
         State returnedState = instance.get(state.getState());
-        //assertTrue(verifyState(returnedState, result));
         assertTrue(verifyState(returnedState, result));
         instance.delete(state);
 
         returnedState = instance.get(state.getState());
         assertNull(returnedState);
-
     }
 
     @Test
@@ -292,7 +271,6 @@ public class StateDaoDbImplTest {
 
         returnedState = instance.get(state.getState());
         assertEquals(returnedState, null);
-
     }
 
     @Test
@@ -313,7 +291,6 @@ public class StateDaoDbImplTest {
 
         returnedState = instance.get(stateNameLowerCase);
         assertEquals(returnedState, null);
-
     }
 
     @Test
@@ -334,7 +311,6 @@ public class StateDaoDbImplTest {
 
         returnedState = instance.get(stateNameLowerCase);
         assertEquals(returnedState, null);
-
     }
 
     @Test
@@ -355,18 +331,14 @@ public class StateDaoDbImplTest {
         instance.create(secondState);
         instance.create(thirdState);
 
-//        assertEquals(3, instance.size());
-
         assertTrue(instance.getList().contains("SG"));
         assertTrue(instance.getList().contains("FG"));
         assertTrue(instance.getList().contains("DQ"));
-
     }
 
     @Test
     public void testEncodeAndDecode() {
 
-        // The true parameter in the StateDao constructor signifies a test.
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
         State testState = new State();
         double taxDouble = 0.0d;
@@ -382,7 +354,6 @@ public class StateDaoDbImplTest {
         // was the same one it was given.
         assertEquals(testState, returnedState);
 
-        //double taxDouble = 8.25;
         returnedState.setStateTax(taxDouble);
 
         // Use the update method to save this new text to file.
@@ -407,7 +378,6 @@ public class StateDaoDbImplTest {
         // the state was deleted from the file.
         StateDao thirdDao = ctx.getBean("stateDao", StateDao.class);
         assertEquals(thirdDao.get(stateName), null);
-
     }
 
     private Boolean verifyState(State state1, State state2) {
@@ -424,6 +394,5 @@ public class StateDaoDbImplTest {
         assertEquals(state1.getStateTax(), state2.getStateTax(), 0.005);
 
         return TestUtils.isStateEqual(state1, state2);
-
     }
 }

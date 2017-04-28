@@ -86,12 +86,10 @@ public class ProductDaoDbImplTest {
         // Create should not accept a product with no name.
         System.out.println("create");
         Product product = productFactory();
-        //ProductDao instance = new ProductDaoImpl(configDao);
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = null;
         product.setProductName(null);
         Product result = instance.create(product);
-        //assertEquals(expResult, result);
         assertNull(result);
         assertTrue(TestUtils.isProductEqual(expResult, result));
     }
@@ -119,16 +117,6 @@ public class ProductDaoDbImplTest {
         assertTrue(TestUtils.isProductEqual(expResult, result));
     }
 
-//    @Test
-//    public void testCreateD() {
-//        System.out.println("create");
-//        Product product = productFactory();
-//        product.setType("Product1");
-//        ProductDao instance = new ProductDao(true);
-//        Product expResult = null;
-//        Product result = instance.create(product);
-//        assertTrue(TestUtils.isProductEqual(expResult, result));
-//    }
     @Test
     public void testCreateE() {
         // This test tests the overloaded method.
@@ -160,7 +148,6 @@ public class ProductDaoDbImplTest {
         Product product = productFactory();
         product.setType(fakeProducts[3].toUpperCase());
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-        //Product expResult = product;
         Product result = instance.create(product, product.getType());
         assertEquals(fakeProducts[3], result.getType());
 
@@ -174,7 +161,6 @@ public class ProductDaoDbImplTest {
         Product product = productFactory();
         product.setType(fakeProducts[4].toUpperCase());
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-        //Product expResult = product;
         Product result = instance.create(product, product.getType());
         assertEquals(fakeProducts[4], result.getType());
 
@@ -195,7 +181,6 @@ public class ProductDaoDbImplTest {
         String productName = null;
         product.setType("BEST Product ever");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-        //Product expResult = product;
         Product ignored = instance.create(product, product.getType());
         Product result = instance.get(productName);
 
@@ -210,7 +195,6 @@ public class ProductDaoDbImplTest {
         String productName = "Fake Product That I have Not Used Yet";
         product.setType(productName);
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-        //Product expResult = product;
         instance.update(product);
 
         Product result = instance.get(productName);
@@ -230,13 +214,11 @@ public class ProductDaoDbImplTest {
         product.setLaborCost(5.0d);
         product.setCost(7.0d);
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-        //Product expResult = product;
         instance.update(product);
 
         Product result = instance.get(productName);
 
         assertNull(result);
-
     }
 
     @Test
@@ -256,7 +238,6 @@ public class ProductDaoDbImplTest {
 
         returnedProduct = instance.get(product.getType());
         assertEquals(returnedProduct, null);
-
     }
 
     @Test
@@ -272,14 +253,12 @@ public class ProductDaoDbImplTest {
         // Test get method.
         Product returnedProduct = instance.get(product.getType());
 
-        //assertTrue(TestUtils.isProductEqual(returnedProduct, result));
         assertTrue(TestUtils.isProductEqual(returnedProduct, result));
 
         instance.delete(product);
 
         returnedProduct = instance.get(product.getType());
         assertEquals(returnedProduct, null);
-
     }
 
     @Test
@@ -300,7 +279,6 @@ public class ProductDaoDbImplTest {
 
         returnedProduct = instance.get(productNameLowerCase);
         assertEquals(returnedProduct, null);
-
     }
 
     @Test
@@ -321,7 +299,6 @@ public class ProductDaoDbImplTest {
 
         returnedProduct = instance.get(productNameLowerCase);
         assertEquals(returnedProduct, null);
-
     }
 
     @Test
@@ -342,15 +319,11 @@ public class ProductDaoDbImplTest {
 
         returnedProduct = instance.get(productNameLowerCase);
         assertEquals(returnedProduct, null);
-
     }
 
     @Test
     public void testSize() {
 
-//        java.io.File tempFile = new java.io.File("ProductsTestData-temp.txt");
-//        // I change the name so the ProductDao can not find it.
-//        testFile.renameTo(tempFile);
         Product product = productFactory();
         product.setType("best floor");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
@@ -366,28 +339,14 @@ public class ProductDaoDbImplTest {
         instance.create(secondProduct);
         instance.create(thirdProduct);
 
-//        int lookAndSee = instance.size();
         assertTrue(2 < instance.size());
-//        assertTrue(7 < instance.size());
-        // The tests do not always run in a certain order and 
-        // the class is loading data from another test.
 
-        // I fixed this problem by renaming the file and then
-        // changing the name back after the test was over.
-        List<String> names = instance.getList();
-        //.contains("Good Floor");
         assertTrue(instance.getList().contains("Good Floor"));
         assertTrue(instance.getList().contains("Better Floor"));
         assertTrue(instance.getList().contains("Best Floor"));
-
-//        // Now, I change the name back, so the rest of the tests will 
-//        // work right.
-//        testFile.delete();
-//        tempFile.renameTo(testFile);
     }
 
     private Product productFactory() {
-        //testFile.renameTo(tempFile);
         Product secondProduct = new Product();
         secondProduct.setType("Generic floor");
         secondProduct.setCost(0.0d);
@@ -397,7 +356,6 @@ public class ProductDaoDbImplTest {
 
     @Test
     public void testEncodeAndDecode() {
-
         // The true parameter in the ProductDao constructor signifies a test.
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
         Product testProduct = productFactory();
@@ -443,107 +401,4 @@ public class ProductDaoDbImplTest {
         assertEquals(thirdDao.get(productName), null);
 
     }
-
-//
-//    /**
-//     * Test of create method, of class ProductDao.
-//     */
-//    @Test
-//    public void testCreate_Product_String() {
-//        System.out.println("create");
-//        Product product = null;
-//        String productName = "";
-//        ProductDao instance = new ProductDao();
-//        Product expResult = null;
-//        Product result = instance.create(product, productName);
-//        assertTrue(TestUtils.isProductEqual(expResult, result));
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of create method, of class ProductDao.
-//     */
-//    @Test
-//    public void testCreate_String_Product() {
-//        System.out.println("create");
-//        String productName = "";
-//        Product product = null;
-//        ProductDao instance = new ProductDao();
-//        Product expResult = null;
-//        Product result = instance.create(productName, product);
-//        assertTrue(TestUtils.isProductEqual(expResult, result));
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of get method, of class ProductDao.
-//     */
-//    @Test
-//    public void testGet() {
-//        System.out.println("get");
-//        String name = "";
-//        ProductDao instance = new ProductDao();
-//        Product expResult = null;
-//        Product result = instance.get(name);
-//        assertTrue(TestUtils.isProductEqual(expResult, result));
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of update method, of class ProductDao.
-//     */
-//    @Test
-//    public void testUpdate() {
-//        System.out.println("update");
-//        Product product = null;
-//        ProductDao instance = new ProductDao();
-//        instance.update(product);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of delete method, of class ProductDao.
-//     */
-//    @Test
-//    public void testDelete() {
-//        System.out.println("delete");
-//        Product product = null;
-//        ProductDao instance = new ProductDao();
-//        instance.delete(product);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of getList method, of class ProductDao.
-//     */
-//    @Test
-//    public void testGetList() {
-//        System.out.println("getList");
-//        ProductDao instance = new ProductDao();
-//        List<String> expResult = null;
-//        List<String> result = instance.getList();
-//        assertTrue(TestUtils.isProductEqual(expResult, result));
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//
-//    /**
-//     * Test of size method, of class ProductDao.
-//     */
-//    @Test
-//    public void testSize() {
-//        System.out.println("size");
-//        ProductDao instance = new ProductDao();
-//        int expResult = 0;
-//        int result = instance.size();
-//        assertTrue(TestUtils.isProductEqual(expResult, result));
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
-//    
 }

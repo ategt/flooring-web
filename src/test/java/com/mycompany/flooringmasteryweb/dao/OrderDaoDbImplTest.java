@@ -537,7 +537,6 @@ public class OrderDaoDbImplTest {
         double total = 1051.88;
 
         // Set the above values to the appropriate attributes.
-        //order.setId(1);
         order.setName(name);
         order.setState(ohio);
         order.setTaxRate(taxRate);
@@ -587,7 +586,6 @@ public class OrderDaoDbImplTest {
         OrderDao thirdOrderDao = ctx.getBean("orderDao", OrderDao.class);
 
         assertEquals(thirdOrderDao.get(id), null);
-
     }
 
     @Test
@@ -790,7 +788,6 @@ public class OrderDaoDbImplTest {
 
         assertEquals(readFile(firstValidTestFile), readFile(firstTestFile));
         assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
-
     }
 
     private String readFile(java.io.File file) {
@@ -1381,7 +1378,6 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
-
     }
 
     @Test
@@ -1521,7 +1517,6 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
-
     }
 
     @Test
@@ -1734,7 +1729,6 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
-
     }
 
     @Test
@@ -1958,7 +1952,6 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
-
     }
 
     @Test
