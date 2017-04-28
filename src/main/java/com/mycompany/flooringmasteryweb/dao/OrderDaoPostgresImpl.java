@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author apprentice
  */
-public class OrderDaoPostgresDbImpl implements OrderDao {
+public class OrderDaoPostgresImpl implements OrderDao {
 
     private JdbcTemplate jdbcTemplate;
     private ProductDao productDao;
@@ -57,7 +57,7 @@ public class OrderDaoPostgresDbImpl implements OrderDao {
     private static final String SQL_CREATE_ORDER_TABLE = "CREATE TABLE IF NOT EXISTS orders (id SERIAL PRIMARY KEY, customer_name varchar(145), material_cost decimal(10,2), tax_rate decimal(6,4), total_tax decimal(10,2), grand_total decimal(10,2), date date, labor_cost decimal(10,2), area decimal(16,4), cost_per_square_foot decimal(10,3), labor_cost_per_square_foot decimal(10,3), product_id varchar(145), state_id varchar(3));";
 
     @Inject
-    public OrderDaoPostgresDbImpl(JdbcTemplate jdbcTemplate, StateDao stateDao, ProductDao productDao) {
+    public OrderDaoPostgresImpl(JdbcTemplate jdbcTemplate, StateDao stateDao, ProductDao productDao) {
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.jdbcTemplate = jdbcTemplate;

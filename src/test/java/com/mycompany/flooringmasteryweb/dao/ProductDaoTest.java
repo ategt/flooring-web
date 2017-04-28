@@ -62,7 +62,7 @@ public class ProductDaoTest {
         // Create should not accept a product with no name.
         System.out.println("create");
         Product product = new Product();
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = null;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -73,7 +73,7 @@ public class ProductDaoTest {
         // Create should not accept a null product object.
         System.out.println("create");
         Product product = null;
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = null;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -85,7 +85,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("Product1");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = product;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -107,7 +107,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("Product2");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = product;
         Product result = instance.create(product, product.getType());
         assertEquals(expResult, result);
@@ -119,7 +119,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("Product7");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = product;
         Product result = instance.create(product, product.getType());
         assertEquals(expResult, result);
@@ -131,7 +131,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("BEST Product ever");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         //Product expResult = product;
         Product result = instance.create(product, product.getType());
         assertEquals("Best Product Ever", result.getType());
@@ -145,7 +145,7 @@ public class ProductDaoTest {
         Product product = new Product();
         String productName = null;
         product.setType("BEST Product ever");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         //Product expResult = product;
         Product ignored = instance.create(product, product.getType());
         Product result = instance.get(productName);
@@ -160,7 +160,7 @@ public class ProductDaoTest {
         Product product = new Product();
         String productName = "Fake Product That I have Not Used Yet";
         product.setType(productName);
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         //Product expResult = product;
         instance.update(product);
 
@@ -180,7 +180,7 @@ public class ProductDaoTest {
         product.setType(productName);
         product.setLaborCost(5.0d);
         product.setCost(7.0d);
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         //Product expResult = product;
         instance.update(product);
 
@@ -195,7 +195,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("Fancy New Product");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = product;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -215,7 +215,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("Better Flooring");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = product;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -235,7 +235,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("Worlds Best Floor");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = product;
         String productNameLowerCase = "worlds Best FLOOR";
         Product result = instance.create(product);
@@ -256,7 +256,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("floor1");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = product;
         String productNameLowerCase = "FLOOR1";
         Product result = instance.create(product);
@@ -277,7 +277,7 @@ public class ProductDaoTest {
         System.out.println("create");
         Product product = new Product();
         product.setType("FLOOR5");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
         Product expResult = product;
         String productNameLowerCase = "floor5";
         Product result = instance.create(product);
@@ -302,7 +302,7 @@ public class ProductDaoTest {
 
         Product product = new Product();
         product.setType("best floor");
-        ProductDao instance = new ProductDaoImpl(configDao);
+        ProductDao instance = new ProductDaoFileImpl(configDao);
 
         testFile.renameTo(tempFile);
 
@@ -337,7 +337,7 @@ public class ProductDaoTest {
     public void testEncodeAndDecode() {
 
         // The true parameter in the ProductDao constructor signifies a test.
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         Product testProduct = new Product();
 
         String productName = "German Bamboo";
@@ -360,7 +360,7 @@ public class ProductDaoTest {
         productDao.update(testProduct);
 
         // Load a new instance of the ProductDao.
-        ProductDao secondDao = new ProductDaoImpl(configDao);
+        ProductDao secondDao = new ProductDaoFileImpl(configDao);
 
         // Pull a product  using the id number recorded earlier.
         Product thirdProduct = secondDao.get(productName);
@@ -377,7 +377,7 @@ public class ProductDaoTest {
 
         // Load a third instance of the Dao and verify that 
         // the product was deleted from the file.
-        ProductDao thirdDao = new ProductDaoImpl(configDao);
+        ProductDao thirdDao = new ProductDaoFileImpl(configDao);
         assertEquals(thirdDao.get(productName), null);
 
     }

@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
  *
  * @author apprentice
  */
-public class StateDaoImpl implements StateDao {
+public class StateDaoFileImpl implements StateDao {
 
     private java.util.Map<String, State> statesMap;
     private File stateDataFile = new File("StatesData.txt");
     private StateFileIO fileIo;
 
-    public StateDaoImpl(ConfigDao configDao) {
+    public StateDaoFileImpl(ConfigDao configDao) {
 
         this.fileIo = new StateFileIOImplementation(this);
         stateDataFile = configDao.get().getTaxesFile();

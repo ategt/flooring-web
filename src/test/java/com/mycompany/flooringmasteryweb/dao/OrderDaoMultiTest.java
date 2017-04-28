@@ -9,7 +9,7 @@ import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.exceptions.ConfigurationFileCorruptException;
 import com.mycompany.flooringmasteryweb.exceptions.FileCreationException;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
-import com.mycompany.flooringmasteryweb.dao.OrderDaoImpl;
+import com.mycompany.flooringmasteryweb.dao.OrderDaoFileImpl;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.BasicOrder;
@@ -84,9 +84,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order order = new Order();
         Order expResult = order;
@@ -113,9 +113,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order order = null;
         Order expResult = order;
@@ -134,9 +134,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order order = new Order();
         Order expResult = order;
@@ -176,9 +176,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order order = new Order();
         Order expResult = order;
@@ -205,9 +205,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order order = new Order();
         Order expResult = order;
@@ -239,9 +239,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order order = new Order();
         Order expResult = order;
@@ -269,9 +269,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order returnedOrder = instance.get(null);
         assertNull(returnedOrder);
@@ -285,9 +285,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         instance.update(null);
         // If it got here, it passes.
@@ -302,9 +302,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order order = null;
         Order expResult = null;
@@ -321,9 +321,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         OrderCommand order = null;
         Order expResult = null;
@@ -340,9 +340,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         List<Order> orders = null;
         Order expResult = null;
@@ -359,9 +359,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         List<Order> orders = new ArrayList();
         //Order expResult = null;
@@ -381,9 +381,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao instance = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         Order orderOne = new Order();
         Order orderTwo = new Order();
@@ -460,9 +460,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -517,9 +517,9 @@ public class OrderDaoMultiTest {
 
         // Load a new instance of the OrderDao.
         //OrderDao secondDao = new OrderDao(true);
-        ProductDao secondProductDao = new ProductDaoImpl(configDao);
+        ProductDao secondProductDao = new ProductDaoFileImpl(configDao);
         StateDao secondStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao secondOrderDao = new OrderDaoImpl(secondProductDao, secondStateDao, configDao);
+        OrderDao secondOrderDao = new OrderDaoFileImpl(secondProductDao, secondStateDao, configDao);
 
         // Pull a note  using the id number recorded earlier.
         Order thirdOrder = secondOrderDao.get(id);
@@ -545,9 +545,9 @@ public class OrderDaoMultiTest {
 
         // Load a third instance of the Dao and verify that 
         // the note was deleted from the file.
-        ProductDao thirdProductDao = new ProductDaoImpl(configDao);
+        ProductDao thirdProductDao = new ProductDaoFileImpl(configDao);
         StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao thirdOrderDao = new OrderDaoImpl(thirdProductDao, thirdStateDao, configDao);
+        OrderDao thirdOrderDao = new OrderDaoFileImpl(thirdProductDao, thirdStateDao, configDao);
 
         //OrderDao thirdDao = new OrderDao(true);
         assertEquals(thirdOrderDao.get(id), null);
@@ -560,9 +560,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -617,9 +617,9 @@ public class OrderDaoMultiTest {
 
         // Load a new instance of the OrderDao.
         //OrderDao secondDao = new OrderDao(true);
-        ProductDao secondProductDao = new ProductDaoImpl(configDao);
+        ProductDao secondProductDao = new ProductDaoFileImpl(configDao);
         StateDao secondStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao secondOrderDao = new OrderDaoImpl(secondProductDao, secondStateDao, configDao);
+        OrderDao secondOrderDao = new OrderDaoFileImpl(secondProductDao, secondStateDao, configDao);
 
         // Pull a note  using the id number recorded earlier.
         Order thirdOrder = secondOrderDao.get(id);
@@ -645,9 +645,9 @@ public class OrderDaoMultiTest {
 
         // Load a third instance of the Dao and verify that 
         // the note was deleted from the file.
-        ProductDao thirdProductDao = new ProductDaoImpl(configDao);
+        ProductDao thirdProductDao = new ProductDaoFileImpl(configDao);
         StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao thirdOrderDao = new OrderDaoImpl(thirdProductDao, thirdStateDao, configDao);
+        OrderDao thirdOrderDao = new OrderDaoFileImpl(thirdProductDao, thirdStateDao, configDao);
 
         //OrderDao thirdDao = new OrderDao(true);
         assertEquals(thirdOrderDao.get(id), null);
@@ -660,9 +660,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -723,9 +723,9 @@ public class OrderDaoMultiTest {
 
         // Load a new instance of the OrderDao.
         //OrderDao secondDao = new OrderDao(true);
-        ProductDao secondProductDao = new ProductDaoImpl(configDao);
+        ProductDao secondProductDao = new ProductDaoFileImpl(configDao);
         StateDao secondStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao secondOrderDao = new OrderDaoImpl(secondProductDao, secondStateDao, configDao);
+        OrderDao secondOrderDao = new OrderDaoFileImpl(secondProductDao, secondStateDao, configDao);
 
         // Pull a note  using the id number recorded earlier.
         Order thirdOrder = secondOrderDao.get(id);
@@ -774,9 +774,9 @@ public class OrderDaoMultiTest {
 
         // Load a third instance of the Dao and verify that 
         // the note was deleted from the file.
-        ProductDao thirdProductDao = new ProductDaoImpl(configDao);
+        ProductDao thirdProductDao = new ProductDaoFileImpl(configDao);
         StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao thirdOrderDao = new OrderDaoImpl(thirdProductDao, thirdStateDao, configDao);
+        OrderDao thirdOrderDao = new OrderDaoFileImpl(thirdProductDao, thirdStateDao, configDao);
 
         //OrderDao thirdDao = new OrderDao(true);
         assertEquals(thirdOrderDao.get(id), null);
@@ -789,9 +789,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -897,9 +897,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -993,9 +993,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1237,9 +1237,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1309,9 +1309,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1381,9 +1381,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1453,9 +1453,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1525,9 +1525,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1597,9 +1597,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1707,9 +1707,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1814,9 +1814,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1893,9 +1893,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -1972,9 +1972,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -2057,9 +2057,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -2142,9 +2142,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -2227,9 +2227,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -2312,9 +2312,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -2397,9 +2397,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -2482,9 +2482,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
@@ -2567,9 +2567,9 @@ public class OrderDaoMultiTest {
         boolean isATest = true;
         configDao.get().setInTestMode(isATest);
 
-        ProductDao productDao = new ProductDaoImpl(configDao);
+        ProductDao productDao = new ProductDaoFileImpl(configDao);
         StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = new OrderDaoImpl(productDao, stateDao, configDao);
+        OrderDao orderDao = new OrderDaoFileImpl(productDao, stateDao, configDao);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);

@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author apprentice
  */
-public class StateDaoPostgresDbImpl implements StateDao {
+public class StateDaoPostgresImpl implements StateDao {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -44,7 +44,7 @@ public class StateDaoPostgresDbImpl implements StateDao {
     private static final String SQL_CREATE_STATES = "CREATE TABLE IF NOT EXISTS states(id serial PRIMARY KEY, state_name varchar(45), state_abbreviation varchar(2) NOT NULL UNIQUE, tax_rate decimal(6,4));";
 
     @Inject
-    public StateDaoPostgresDbImpl(JdbcTemplate jdbcTemplate) {
+    public StateDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
 
         this.jdbcTemplate = jdbcTemplate;
 

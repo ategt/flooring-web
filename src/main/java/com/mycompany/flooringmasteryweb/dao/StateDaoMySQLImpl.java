@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author apprentice
  */
-public class StateDaoDbImpl implements StateDao {
+public class StateDaoMySQLImpl implements StateDao {
     
     private JdbcTemplate jdbcTemplate;
     
@@ -41,7 +41,7 @@ public class StateDaoDbImpl implements StateDao {
     private static final String SQL_GET_STATE_LIST = "SELECT * FROM states";
     
     @Inject
-    public StateDaoDbImpl(JdbcTemplate jdbcTemplate) {
+    public StateDaoMySQLImpl(JdbcTemplate jdbcTemplate) {
         
         this.jdbcTemplate = jdbcTemplate;
         

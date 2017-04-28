@@ -7,7 +7,6 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
-import com.mycompany.flooringmasteryweb.utilities.TextUtilities;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,25 +24,21 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author apprentice
  */
-public class ProductDaoPostgresDbImpl implements ProductDao {
+public class ProductDaoMySQLImpl implements ProductDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    private static final String SQL_INSERT_PRODUCT = "INSERT INTO products ( product_name, labor_cost, material_cost ) VALUES ( ?, ?, ? ) RETURNING id;";
+    private static final String SQL_INSERT_PRODUCT = "INSERT INTO products ( product_name, labor_cost, material_cost ) VALUES ( ?, ?, ? )";
     //private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET product_name=?, labor_cost=?, material_cost=? WHERE product_name=?";
-    private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET labor_cost = ?, material_cost = ? WHERE product_name = ?;";
-    private static final String SQL_DELETE_PRODUCT = "DELETE FROM products WHERE product_name = ?;";
-    private static final String SQL_GET_PRODUCT = "SELECT * FROM products WHERE product_name = ?;";
-    private static final String SQL_GET_PRODUCT_ID = "SELECT * FROM products WHERE product_name = ?;";
-    private static final String SQL_GET_PRODUCT_LIST = "SELECT * FROM products;";
-
-    private static final String SQL_CREATE_PRODUCTS = "CREATE TABLE IF NOT EXISTS products(id serial PRIMARY KEY, product_name varchar(145) NOT NULL UNIQUE CHECK(product_name <> ''), labor_cost decimal(8,4) NOT NULL CHECK(labor_cost >= 0), material_cost decimal(8,4));";
+    private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET labor_cost=?, material_cost=? WHERE product_name=?";
+    private static final String SQL_DELETE_PRODUCT = "DELETE FROM products WHERE product_name =?";
+    private static final String SQL_GET_PRODUCT = "SELECT * FROM products WHERE product_name = ?";
+    private static final String SQL_GET_PRODUCT_ID = "SELECT * FROM products WHERE product_name =?";
+    private static final String SQL_GET_PRODUCT_LIST = "SELECT * FROM products";
 
     @Inject
-    public ProductDaoPostgresDbImpl(JdbcTemplate jdbcTemplate) {
+    public ProductDaoMySQLImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-
-        jdbcTemplate.execute(SQL_CREATE_PRODUCTS);
     }
 
     @Override
@@ -60,6 +55,30 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         return create(productName, product);
     }
 
+//    @Override
+//    public Product create(String productName, Product product) {
+//
+//        if (product == null) {
+//            return null;
+//        } else if (product.getType() == null) {
+//            return null;
+//        } else if (productName.equals(product.getType())) {
+//
+//            String titleCaseName = com.mycompany.flooringmasteryweb.utilities.TextUtilities.toTitleCase(productName);
+//
+//            if (!productsMap.containsKey(titleCaseName)) {
+//                productsMap.put(titleCaseName, product);
+//                product.setType(titleCaseName);
+//                fileIo.encode(productDataFile, getList());
+//
+//                return product;
+//            } else {
+//                return null;
+//            }
+//        } else {
+//            return null;  // Look up how to throw exceptions and consider that instead.
+//        }
+//    }
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Product create(String productName, Product product) {
@@ -70,14 +89,17 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
             return null;
         } else if (productName.equals(product.getType())) {
 
-            convertProductNameToTitleCase(product);
+            String titleCaseName = com.mycompany.flooringmasteryweb.utilities.TextUtilities.toTitleCase(productName);
+
+            product.setProductName(titleCaseName);
 
             try {
-                Integer id = jdbcTemplate.queryForObject(SQL_INSERT_PRODUCT,
-                        Integer.class,
+                jdbcTemplate.update(SQL_INSERT_PRODUCT,
                         product.getProductName(),
                         product.getLaborCost(),
                         product.getCost());
+
+                Integer id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
 
                 product.setId(id);
                 return product;
@@ -86,6 +108,15 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
                 return null;
             }
 
+//            if (!productsMap.containsKey(titleCaseName)) {
+//                productsMap.put(titleCaseName, product);
+//                product.setType(titleCaseName);
+//                fileIo.encode(productDataFile, getList());
+//
+//                return product;
+//            } else {
+//                return null;
+//            }
         } else {
             return null;  // Look up how to throw exceptions and consider that instead.
         }
@@ -101,10 +132,18 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         }
 
         try {
-            return jdbcTemplate.queryForObject(SQL_GET_PRODUCT, new ProductMapper(), TextUtilities.toTitleCase(name));
+            return jdbcTemplate.queryForObject(SQL_GET_PRODUCT, new ProductMapper(), name);
         } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
             return null;
         }
+
+//        for (String productTest : productsMap.keySet()) {
+//            if (name.equalsIgnoreCase(productTest)) {
+//                input = productTest;
+//                break;
+//            }
+//        }
+//        return productsMap.get(input);
     }
 
     @Override
@@ -114,22 +153,17 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
             return;
         }
 
-        convertProductNameToTitleCase(product);
-
         if (get(product.getProductName()) == null) {
             create(product);
         } else {
 
+            //if (product.getId() > 0) {
             jdbcTemplate.update(SQL_UPDATE_PRODUCT,
                     product.getLaborCost(),
                     product.getCost(),
                     product.getProductName());
+            //}
         }
-    }
-
-    private void convertProductNameToTitleCase(Product product) {
-        String titleCaseName = com.mycompany.flooringmasteryweb.utilities.TextUtilities.toTitleCase(product.getProductName());
-        product.setProductName(titleCaseName);
     }
 
     @Override
@@ -139,14 +173,24 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
             return;
         }
 
-        convertProductNameToTitleCase(product);
-
+        //int id = product.getId();
+        //int id = product.getId();
         String name = product.getProductName();
         try {
             jdbcTemplate.update(SQL_DELETE_PRODUCT, name);
         } catch (org.springframework.dao.DataIntegrityViolationException ex) {
 
         }
+
+//        if (productsMap.containsKey(product.getType())) {
+//            productsMap.remove(product.getType());
+//            fileIo.encode(productDataFile, getList());
+//
+//        } else {
+//            System.out.println("Throwing a Product Not Found exception!!!!");
+//            // Look up exception throwing and consider putting one here, too!
+//
+//        }
     }
 
     private static final String SQL_GET_PRODUCT_NAMES = "SELECT product_name FROM products";
@@ -154,6 +198,8 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
     @Override
     public List<String> getList() {
         return jdbcTemplate.query(SQL_GET_PRODUCT_NAMES, new ProductNameMapper());
+
+        // return new ArrayList(productsMap.keySet());
     }
 
     private static final String SQL_GET_PRODUCT_NAMES_SIZE = "SELECT COUNT(product_name) FROM products";
@@ -168,12 +214,28 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         @Override
         public Product mapRow(ResultSet rs, int i) throws SQLException {
 
+            //product_name, product_name, tax_rate
             Product product = new Product();
 
             product.setLaborCost(rs.getDouble("labor_cost"));
             product.setProductName(rs.getString("product_name"));
             product.setCost(rs.getDouble("material_cost"));
+            //product.setReleaseDate(rs.getDate("product_name"));
 
+//            try {
+//                String costStr = rs.getString("material_cost");
+//
+//                double cost = Double.parseDouble(costStr);
+//                product..setProductTax(cost);
+//
+//            } catch (NullPointerException | NumberFormatException ex) {
+//                product.setProductTax(0.0d);
+//            }
+//            product.setDirectorsName(rs.getString("directors_name"));
+//            product.setStudio(rs.getString("studio"));
+//
+//            List<Note> notes = noteDao.getNotesForProduct(product);
+            //product.setNotes(notes);
             return product;
         }
 
@@ -184,8 +246,27 @@ public class ProductDaoPostgresDbImpl implements ProductDao {
         @Override
         public String mapRow(ResultSet rs, int i) throws SQLException {
 
+            //product_name, product_name, tax_rate
             String productName = rs.getString("product_name");
 
+//            product.setId(rs.getInt("id"));
+//            product.setProductName(rs.getString("product_name"));
+//            //product.setReleaseDate(rs.getDate("product_name"));
+//
+//            try {
+//                String taxString = rs.getString("tax_rate");
+//
+//                double tax = Double.parseDouble(taxString);
+//                product.setProductTax(tax);
+//
+//            } catch (NullPointerException | NumberFormatException ex) {
+//                product.setProductTax(0.0d);
+//            }
+//            product.setDirectorsName(rs.getString("directors_name"));
+//            product.setStudio(rs.getString("studio"));
+//
+//            List<Note> notes = noteDao.getNotesForProduct(product);
+            //product.setNotes(notes);
             return productName;
         }
 

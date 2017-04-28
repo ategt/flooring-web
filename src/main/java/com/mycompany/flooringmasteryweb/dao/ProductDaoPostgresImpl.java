@@ -7,50 +7,43 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
-import com.mycompany.flooringmasteryweb.dto.State;
-import com.mycompany.flooringmasteryweb.dto.StateCommand;
-import com.mycompany.flooringmasteryweb.utilities.ProductFileIO;
-import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import com.mycompany.flooringmasteryweb.utilities.TextUtilities;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author apprentice
  */
-public class ProductDaoImpl implements ProductDao {
+public class ProductDaoPostgresImpl implements ProductDao {
 
-    java.util.Map<String, Product> productsMap;
-    int nextId;
-    File productDataFile;
-    private ProductFileIO fileIo;
+    private JdbcTemplate jdbcTemplate;
 
-    public ProductDaoImpl(ConfigDao configDao) {
+    private static final String SQL_INSERT_PRODUCT = "INSERT INTO products ( product_name, labor_cost, material_cost ) VALUES ( ?, ?, ? ) RETURNING id;";
+    //private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET product_name=?, labor_cost=?, material_cost=? WHERE product_name=?";
+    private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET labor_cost = ?, material_cost = ? WHERE product_name = ?;";
+    private static final String SQL_DELETE_PRODUCT = "DELETE FROM products WHERE product_name = ?;";
+    private static final String SQL_GET_PRODUCT = "SELECT * FROM products WHERE product_name = ?;";
+    private static final String SQL_GET_PRODUCT_ID = "SELECT * FROM products WHERE product_name = ?;";
+    private static final String SQL_GET_PRODUCT_LIST = "SELECT * FROM products;";
 
-        this.fileIo = new com.mycompany.flooringmasteryweb.utilities.ProductFileIOImpl(this);
+    private static final String SQL_CREATE_PRODUCTS = "CREATE TABLE IF NOT EXISTS products(id serial PRIMARY KEY, product_name varchar(145) NOT NULL UNIQUE CHECK(product_name <> ''), labor_cost decimal(8,4) NOT NULL CHECK(labor_cost >= 0), material_cost decimal(8,4));";
 
-        productDataFile = configDao.get().getProductFile();
+    @Inject
+    public ProductDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
 
-        productsMap = fileIo.decode(productDataFile);
-
-        if (productsMap == null) {
-            productsMap = new java.util.HashMap();
-            System.out.println("The list was empty, making a new one.");
-        }
-
+        jdbcTemplate.execute(SQL_CREATE_PRODUCTS);
     }
 
     @Override
@@ -68,6 +61,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public Product create(String productName, Product product) {
 
         if (product == null) {
@@ -76,17 +70,22 @@ public class ProductDaoImpl implements ProductDao {
             return null;
         } else if (productName.equals(product.getType())) {
 
-            String titleCaseName = com.mycompany.flooringmasteryweb.utilities.TextUtilities.toTitleCase(productName);
+            convertProductNameToTitleCase(product);
 
-            if (!productsMap.containsKey(titleCaseName)) {
-                productsMap.put(titleCaseName, product);
-                product.setType(titleCaseName);
-                fileIo.encode(productDataFile, getList());
+            try {
+                Integer id = jdbcTemplate.queryForObject(SQL_INSERT_PRODUCT,
+                        Integer.class,
+                        product.getProductName(),
+                        product.getLaborCost(),
+                        product.getCost());
 
+                product.setId(id);
                 return product;
-            } else {
+
+            } catch (org.springframework.dao.DuplicateKeyException ex) {
                 return null;
             }
+
         } else {
             return null;  // Look up how to throw exceptions and consider that instead.
         }
@@ -97,66 +96,99 @@ public class ProductDaoImpl implements ProductDao {
 
         String input = null;
 
-        if ( name == null)
+        if (name == null) {
             return null;
-            
-        for (String productTest : productsMap.keySet()) {
-            if (name.equalsIgnoreCase(productTest)) {
-                input = productTest;
-                break;
-            }
         }
-        return productsMap.get(input);
 
+        try {
+            return jdbcTemplate.queryForObject(SQL_GET_PRODUCT, new ProductMapper(), TextUtilities.toTitleCase(name));
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
     public void update(Product product) {
-        Product foundProduct = productsMap.get(product.getType());
 
-        if (foundProduct != null) {
-
-            if (foundProduct.getType().equals(product.getType())) {
-                productsMap.remove(foundProduct.getType());
-                productsMap.put(product.getType(), product);
-
-                fileIo.encode(productDataFile, getList());
-
-            } else {
-
-                System.out.println("Throwing a Product Not Found exception!!!!");
-                // Look up exception throwing and consider putting one here, too!
-            }
-        } else {
-            create(product);
-
-            //System.out.println("Throwing a Product is null exception!!!!");
-            // Look up exception throwing and consider putting one here, too!
+        if (product == null) {
+            return;
         }
+
+        convertProductNameToTitleCase(product);
+
+        if (get(product.getProductName()) == null) {
+            create(product);
+        } else {
+
+            jdbcTemplate.update(SQL_UPDATE_PRODUCT,
+                    product.getLaborCost(),
+                    product.getCost(),
+                    product.getProductName());
+        }
+    }
+
+    private void convertProductNameToTitleCase(Product product) {
+        String titleCaseName = com.mycompany.flooringmasteryweb.utilities.TextUtilities.toTitleCase(product.getProductName());
+        product.setProductName(titleCaseName);
     }
 
     @Override
     public void delete(Product product) {
 
-        if (productsMap.containsKey(product.getType())) {
-            productsMap.remove(product.getType());
-            fileIo.encode(productDataFile, getList());
+        if (product == null) {
+            return;
+        }
 
-        } else {
-            System.out.println("Throwing a Product Not Found exception!!!!");
-            // Look up exception throwing and consider putting one here, too!
+        convertProductNameToTitleCase(product);
+
+        String name = product.getProductName();
+        try {
+            jdbcTemplate.update(SQL_DELETE_PRODUCT, name);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
 
         }
     }
 
+    private static final String SQL_GET_PRODUCT_NAMES = "SELECT product_name FROM products";
+
     @Override
     public List<String> getList() {
-        return new ArrayList(productsMap.keySet());
+        return jdbcTemplate.query(SQL_GET_PRODUCT_NAMES, new ProductNameMapper());
     }
+
+    private static final String SQL_GET_PRODUCT_NAMES_SIZE = "SELECT COUNT(product_name) FROM products";
 
     @Override
     public int size() {
-        return productsMap.size();
+        return jdbcTemplate.queryForObject(SQL_GET_PRODUCT_NAMES_SIZE, Integer.class);
+    }
+
+    private final class ProductMapper implements RowMapper<Product> {
+
+        @Override
+        public Product mapRow(ResultSet rs, int i) throws SQLException {
+
+            Product product = new Product();
+
+            product.setLaborCost(rs.getDouble("labor_cost"));
+            product.setProductName(rs.getString("product_name"));
+            product.setCost(rs.getDouble("material_cost"));
+
+            return product;
+        }
+
+    }
+
+    private final class ProductNameMapper implements RowMapper<String> {
+
+        @Override
+        public String mapRow(ResultSet rs, int i) throws SQLException {
+
+            String productName = rs.getString("product_name");
+
+            return productName;
+        }
+
     }
 
     @Override
