@@ -22,6 +22,5 @@
         <constructor-arg ref="jdbcTemplate" />
         <constructor-arg ref="stateDao" />
         <constructor-arg ref="productDao" />
-    </bean>
-    
+    </bean>    
 </beans>

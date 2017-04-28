@@ -16,13 +16,9 @@
 
     <!-- Bean definitions go here -->
     
-    
-    
-    
     <tx:annotation-driven />
     
-    <bean id="stateDao" class="com.mycompany.flooringmasteryweb.dao.StateDaoDbImpl" > 
+    <bean id="stateDao" class="com.mycompany.flooringmasteryweb.dao.StateDaoPostgresImpl" > 
         <constructor-arg ref="jdbcTemplate" />
-    </bean>
-    
+    </bean>    
 </beans>
