@@ -99,6 +99,12 @@ public class AuditDaoTest {
         assertEquals(returned, result);
 
         assertEquals(size + 1, instance.getSize());
+        
+        List<Audit> audits = instance.get();
+        
+        assertTrue(audits.contains(returned));
+        assertTrue(audits.contains(result));
+        assertEquals(audits.size(), instance.getSize());
     }
 
     private Audit auditGenerator() {
