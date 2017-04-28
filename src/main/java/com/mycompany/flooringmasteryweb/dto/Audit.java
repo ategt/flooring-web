@@ -5,7 +5,9 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import com.mycompany.flooringmasteryweb.utilities.DateUtilities;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  *
@@ -20,7 +22,32 @@ public class Audit {
     private Date logDate;
     private String orderName;
     private double orderTotal;
-
+    
+    @Override
+    public int hashCode(){
+        return id;
+    }
+    
+    @Override
+    public boolean equals(Object object){
+                        
+        if (object == null)
+            return false;
+        
+        if (!(object instanceof Audit))
+            return false;
+        
+        Audit otherAudit = (Audit)object;               
+        
+        return Objects.equals(id, otherAudit.getId()) &&
+                DateUtilities.closeDate(date, otherAudit.getDate()) &&
+                Objects.equals(orderid, otherAudit.getOrderid()) && 
+                Objects.equals(actionPerformed, otherAudit.getActionPerformed()) &&
+                DateUtilities.closeDate(logDate, otherAudit.getLogDate()) &&
+                Objects.equals(orderName, orderName) &&
+                Objects.equals(orderTotal, otherAudit.getOrderTotal());                
+    }
+    
     public Date getLogDate() {
         return logDate;
     }
