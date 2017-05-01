@@ -10,7 +10,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.JoinPoint.StaticPart;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -108,6 +110,15 @@ public class TimingAspect {
         System.out.println("Stop time is " + stopTime+ " milliseconds.");
         long differenctTime = stopTime - startTime;
         System.out.println("\tThe Difference was " + differenctTime + " milliseconds.");
+        
+        String aString = jp.toString();
+        String shortString = jp.toShortString();
+        String longString = jp.toLongString();
+        
+        Signature signature = jp.getSignature();
+        String kind = jp.getKind();
+        StaticPart spart = jp.getStaticPart();
+        //spart.
     }
     
 

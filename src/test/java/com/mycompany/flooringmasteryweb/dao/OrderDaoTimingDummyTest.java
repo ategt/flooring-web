@@ -12,34 +12,44 @@ import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.State;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
  * @author ATeg
  */
 public class OrderDaoTimingDummyTest {
-    
+
+    ApplicationContext ctx;
+    TimingDao instance;
+    OrderDao orderDao;
+
     public OrderDaoTimingDummyTest() {
+        ctx = new ClassPathXmlApplicationContext("testTimingDb-DedicatedApplicationContext.xml");
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
+        instance = ctx.getBean("timingDao", TimingDao.class);
+        orderDao = ctx.getBean("orderDao", OrderDao.class);
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -50,10 +60,16 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testCreate() {
         System.out.println("create");
-        Order order = null;
-        OrderDao instance = null;
+        //com.mycompany.flooringmasteryweb.dto.Timing timing = null;
+        //TimingDao instance = null;
+        Random random = new Random();
+        
+        OrderDao dummyOrderDao = new OrderDaoTimingDummy(random.nextLong());
+        dummyOrderDao.create(null);
+        
+        instance.
         Order expResult = null;
-        Order result = instance.create(order);
+        //Order result = instance.create(order);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -350,5 +366,5 @@ public class OrderDaoTimingDummyTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
-    
+
 }

@@ -10,10 +10,30 @@ package com.mycompany.flooringmasteryweb.dto;
  * @author apprentice
  */
 public class Timing implements Identifiable {
-        private long startTime;
-        private long stopTime;
-        private long differenctTime;
-        private int id;
+
+    private long startTime;
+    private long stopTime;
+    private long differenceTime;
+    private int id;
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Timing) {
+            Timing otherTiming = (Timing) object;
+
+            return id == otherTiming.getId()
+                    && startTime == otherTiming.getStartTime()
+                    && stopTime == otherTiming.getStopTime()
+                    && differenceTime == otherTiming.getDifferenceTime();
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 
     /**
      * @return the startTime
@@ -44,23 +64,22 @@ public class Timing implements Identifiable {
     }
 
     /**
-     * @return the differenctTime
+     * @return the differenceTime
      */
-    public long getDifferenctTime() {
-        return differenctTime;
+    public long getDifferenceTime() {
+        return differenceTime;
     }
 
     /**
-     * @param differenctTime the differenctTime to set
+     * @param differenceTime the differenceTime to set
      */
-    public void setDifferenctTime(long differenctTime) {
-        this.differenctTime = differenctTime;
+    public void setDifferenceTime(long differenceTime) {
+        this.differenceTime = differenceTime;
     }
 
     /**
      * @return the id
      */
-    @Override
     public int getId() {
         return id;
     }
@@ -68,8 +87,7 @@ public class Timing implements Identifiable {
     /**
      * @param id the id to set
      */
-    @Override
     public void setId(int id) {
         this.id = id;
     }
-        }
+}
