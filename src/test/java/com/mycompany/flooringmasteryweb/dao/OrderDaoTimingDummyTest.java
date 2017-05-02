@@ -31,10 +31,9 @@ public class OrderDaoTimingDummyTest {
 
     ApplicationContext ctx;
     TimingDao instance;
-    OrderDao orderDao;
 
     public OrderDaoTimingDummyTest() {
-        ctx = new ClassPathXmlApplicationContext("testTimingDb-DedicatedApplicationContext.xml");
+        ctx = new ClassPathXmlApplicationContext("testTimingOrderDaoAspectDb-DedicatedApplicationContext.xml");
     }
 
     @BeforeClass
@@ -48,7 +47,6 @@ public class OrderDaoTimingDummyTest {
     @Before
     public void setUp() {
         instance = ctx.getBean("timingDao", TimingDao.class);
-        orderDao = ctx.getBean("orderDao", OrderDao.class);
     }
 
     @After
@@ -62,9 +60,7 @@ public class OrderDaoTimingDummyTest {
     public void testCreate() {
         System.out.println("create");
 
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -86,9 +82,7 @@ public class OrderDaoTimingDummyTest {
     public void testDelete() {
         System.out.println("delete");
 
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -109,15 +103,18 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testGet() {
         System.out.println("get");
-        Random random = new Random();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
-        long timeTaken = random.nextLong();
+        //new java.lang.Integer
         
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
+        //OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
         
         long startTime = new Date().getTime();
+        long systemStartTime = System.currentTimeMillis();
         dummyOrderDao.get(null);
         long stopTime = new Date().getTime();
+        long systemStopTime = System.currentTimeMillis();
         
         Timing timing = instance.getLast();
         
@@ -132,9 +129,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testGetList() {
         System.out.println("getList");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -155,9 +150,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testListOrderDates() {
         System.out.println("listOrderDates");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -178,9 +171,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testListOrderNumbers() {
         System.out.println("listOrderNumbers");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -201,9 +192,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByDate() {
         System.out.println("searchByDate");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -224,9 +213,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByName() {
         System.out.println("searchByName");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -247,9 +234,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByProduct() {
         System.out.println("searchByProduct");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -270,9 +255,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByState() {
         System.out.println("searchByState");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -293,9 +276,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSize() {
         System.out.println("size");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -316,9 +297,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testUpdate() {
         System.out.println("update");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -339,9 +318,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByOrderNumber() {
         System.out.println("searchByOrderNumber");
-        Random random = new Random();
-        
-        long timeTaken = random.nextLong();
+        long timeTaken = generateRandomTimeTakenTestValue();
         
         OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         
@@ -354,6 +331,12 @@ public class OrderDaoTimingDummyTest {
         assertEquals(timing.getDifferenceTime(), timeTaken);
         assertEquals(timing.getStartTime(), startTime);
         assertEquals(timing.getStopTime(), stopTime);
+    }
+
+    private long generateRandomTimeTakenTestValue() {
+        Random random = new Random();
+        long timeTaken = (long)random.nextInt(500);
+        return timeTaken;
     }
 
 }

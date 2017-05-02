@@ -5,6 +5,8 @@
  */
 package com.mycompany.flooringmasteryweb.aop;
 
+import com.mycompany.flooringmasteryweb.dao.TimingDao;
+import com.mycompany.flooringmasteryweb.dto.Timing;
 import java.io.File;
 import java.util.Calendar;
 import java.util.List;
@@ -119,8 +121,14 @@ public class TimingAspect {
         String kind = jp.getKind();
         StaticPart spart = jp.getStaticPart();
         //spart.
+       
+        Timing timing = new Timing();
+        timing.setStartTime(startTime);
+        timing.setStopTime(stopTime);
+        timing.setDifferenceTime(differenctTime);
+        
+        TimingDao timingDao = ctx.getBean("timingDao", TimingDao.class);
+        
+        timingDao.create(timing);        
     }
-    
-
-
 }
