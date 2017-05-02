@@ -80,7 +80,7 @@ public class TimingDaoTest {
         otherTiming.setStopTime(random.nextLong());
         otherTiming.setDifferenceTime(random.nextLong());
 
-        assertEquals(result, otherTiming);
+        assertNotEquals(result, otherTiming);
         Timing secondResult = instance.create(otherTiming);
 
         assertNotEquals(result, secondResult);
@@ -91,10 +91,11 @@ public class TimingDaoTest {
      * Test of getAll method, of class TimingDao.
      */
     @Test
-    public void testGetAllandDelete() {
+    public void testGetAllandSizeandDelete() {
         System.out.println("create and get all");
         
         int startingSize = instance.getAll().size();
+        assertEquals(startingSize, instance.size());
         
         Timing timing = new Timing();
 
@@ -120,21 +121,27 @@ public class TimingDaoTest {
         List<Timing> timings = instance.getAll();
         assertTrue(timings.contains(result));
         assertTrue(timings.contains(secondResult));
-        assertEquals(timings.size(), startingSize);
+        assertEquals(timings.size(), startingSize + 2);
+        assertEquals(timings.size(), instance.size());
         
         int beforeDelete = timings.size();
+        assertEquals(beforeDelete, instance.size());
+
         instance.delete(timing);
         
         List<Timing> timingsAfterFirstDelete = instance.getAll();
         assertEquals(timingsAfterFirstDelete.size(), beforeDelete - 1);
         assertFalse(timingsAfterFirstDelete.contains(timing));
         
-        int beforeSecondDelete = timings.size();
+        int beforeSecondDelete = instance.size();
+        assertEquals(beforeSecondDelete, instance.size());
         instance.delete(secondResult.getId());
         
         List<Timing> timingsAfterSecondDelete = instance.getAll();
         assertEquals(timingsAfterSecondDelete.size(), beforeSecondDelete - 1);
         assertFalse(timingsAfterSecondDelete.contains(secondResult));
+        assertEquals(startingSize, instance.getAll().size());
+        assertEquals(startingSize, instance.size());
     }
 
     /**

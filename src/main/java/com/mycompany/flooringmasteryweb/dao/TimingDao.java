@@ -41,7 +41,8 @@ public class TimingDao {
     private static final String SQL_GET_TIMING = "SELECT * FROM timing WHERE id =?";
     private static final String SQL_GET_TIMING_LIST = "SELECT * FROM timing;";
     private static final String SQL_GET_TIMING_RECENT = "SELECT * FROM timing WHERE id = (SELECT MAX(id) FROM timing);";
-
+    private static final String SQL_GET_TIMING_COUNT = "SELECT COUNT(*) FROM timing;";
+    
     private static final String SQL_CREATE_TIMING_TABLE = "CREATE TABLE IF NOT EXISTS timing (id SERIAL PRIMARY KEY, startTime bigint, stopTime bigint, differenceTime bigint);";
 
     @Inject
@@ -116,6 +117,10 @@ public class TimingDao {
         jdbcTemplate.update(SQL_DELETE_TIMING, id);
     }
 
+    public int size(){
+        return jdbcTemplate.queryForObject(SQL_GET_TIMING_COUNT, Integer.class);
+    }
+    
     private static class TimingMapper implements RowMapper<Timing> {
 
         public TimingMapper() {
