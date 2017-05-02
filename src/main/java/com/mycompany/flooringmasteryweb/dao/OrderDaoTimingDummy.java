@@ -93,12 +93,22 @@ public class OrderDaoTimingDummy implements OrderDao {
 
     @Override
     public List<Date> listOrderDates() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
     public List<Integer> listOrderNumbers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -118,32 +128,62 @@ public class OrderDaoTimingDummy implements OrderDao {
 
     @Override
     public List<Order> searchByDate(Date date) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
     public List<Order> searchByName(String orderName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
     public List<Order> searchByProduct(Product product) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
     public List<Order> searchByState(State state) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
     public int size() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
 
     @Override
     public List<Order> sortByOrderNumber(List<Order> orders) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -163,12 +203,21 @@ public class OrderDaoTimingDummy implements OrderDao {
 
     @Override
     public void update(Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public List<Order> searchByOrderNumber(Integer orderNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
 }
