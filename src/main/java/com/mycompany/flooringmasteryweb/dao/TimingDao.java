@@ -74,9 +74,9 @@ public class TimingDao {
         }
     }
 
-    public Timing getAll() {
+    public List<Timing> getAll() {
         try {
-            return jdbcTemplate.queryForObject(SQL_GET_TIMING_LIST, new TimingMapper());
+            return jdbcTemplate.query(SQL_GET_TIMING_LIST, new TimingMapper());
         } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
             return null;
         }

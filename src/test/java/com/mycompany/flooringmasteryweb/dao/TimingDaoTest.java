@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Timing;
+import java.util.List;
 import java.util.Random;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -50,8 +51,8 @@ public class TimingDaoTest {
      * Test of create method, of class TimingDao.
      */
     @Test
-    public void testCreate() {
-        System.out.println("create");
+    public void testCreateAndGet() {
+        System.out.println("create and get");
         Timing timing = new Timing();
 
         Random random = new Random();
@@ -65,9 +66,25 @@ public class TimingDaoTest {
 
         Timing result = instance.create(timing);
 
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(timing, result);
+
+        assertTrue(result.getId() > 0);
+        
+        Timing storedTiming = instance.get(result.getId());
+        
+        assertEquals(storedTiming, result);
+        
+        Timing otherTiming = new Timing();
+
+        otherTiming.setStartTime(random.nextLong());
+        otherTiming.setStopTime(random.nextLong());
+        otherTiming.setDifferenceTime(random.nextLong());
+
+        assertEquals(result, otherTiming);
+        Timing secondResult = instance.create(otherTiming);
+
+        assertNotEquals(result, secondResult);
+        assertEquals(result, timing);
     }
 
     /**
@@ -75,13 +92,35 @@ public class TimingDaoTest {
      */
     @Test
     public void testGetAll() {
-        System.out.println("getAll");
-        TimingDao instance = null;
-        Timing expResult = null;
-        Timing result = instance.getAll();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        System.out.println("create and get all");
+        
+        int startingSize = instance.getAll().size();
+        
+        Timing timing = new Timing();
+
+        Random random = new Random();
+        long start = random.nextLong();
+        long stop = random.nextLong();
+        long difference = random.nextLong();
+
+        timing.setStartTime(start);
+        timing.setStopTime(stop);
+        timing.setDifferenceTime(difference);
+
+        Timing result = instance.create(timing);
+        
+        Timing otherTiming = new Timing();
+
+        otherTiming.setStartTime(random.nextLong());
+        otherTiming.setStopTime(random.nextLong());
+        otherTiming.setDifferenceTime(random.nextLong());
+
+        Timing secondResult = instance.create(otherTiming);
+
+        List<Timing> timings = instance.getAll();
+        assertTrue(timings.contains(result));
+        assertTrue(timings.contains(secondResult));
+        assertEquals(timings.size(), startingSize);
     }
 
     /**
