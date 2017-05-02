@@ -84,14 +84,14 @@ public class TimingDaoTest {
         Timing secondResult = instance.create(otherTiming);
 
         assertNotEquals(result, secondResult);
-        assertEquals(result, timing);
+        assertEquals(result, timing);                
     }
 
     /**
      * Test of getAll method, of class TimingDao.
      */
     @Test
-    public void testGetAll() {
+    public void testGetAllandDelete() {
         System.out.println("create and get all");
         
         int startingSize = instance.getAll().size();
@@ -121,6 +121,20 @@ public class TimingDaoTest {
         assertTrue(timings.contains(result));
         assertTrue(timings.contains(secondResult));
         assertEquals(timings.size(), startingSize);
+        
+        int beforeDelete = timings.size();
+        instance.delete(timing);
+        
+        List<Timing> timingsAfterFirstDelete = instance.getAll();
+        assertEquals(timingsAfterFirstDelete.size(), beforeDelete - 1);
+        assertFalse(timingsAfterFirstDelete.contains(timing));
+        
+        int beforeSecondDelete = timings.size();
+        instance.delete(secondResult.getId());
+        
+        List<Timing> timingsAfterSecondDelete = instance.getAll();
+        assertEquals(timingsAfterSecondDelete.size(), beforeSecondDelete - 1);
+        assertFalse(timingsAfterSecondDelete.contains(secondResult));
     }
 
     /**
@@ -129,53 +143,25 @@ public class TimingDaoTest {
     @Test
     public void testGetLast() {
         System.out.println("getLast");
-        TimingDao instance = null;
-        Timing expResult = null;
-        Timing result = instance.getLast();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+        Random random = new Random();
 
-    /**
-     * Test of get method, of class TimingDao.
-     */
-    @Test
-    public void testGet() {
-        System.out.println("get");
-        Integer id = null;
-        TimingDao instance = null;
-        Timing expResult = null;
-        Timing result = instance.get(id);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+        Timing timing = new Timing();
 
-    /**
-     * Test of delete method, of class TimingDao.
-     */
-    @Test
-    public void testDelete_Timing() {
-        System.out.println("delete");
-        Timing timing = null;
-        TimingDao instance = null;
-        instance.delete(timing);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+        timing.setStartTime(random.nextLong());
+        timing.setStopTime(random.nextLong());
+        timing.setDifferenceTime(random.nextLong());
 
-    /**
-     * Test of delete method, of class TimingDao.
-     */
-    @Test
-    public void testDelete_int() {
-        System.out.println("delete");
-        int id = 0;
-        TimingDao instance = null;
-        instance.delete(id);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+        Timing result = instance.create(timing);
+        
+        Timing otherTiming = new Timing();
 
+        otherTiming.setStartTime(random.nextLong());
+        otherTiming.setStopTime(random.nextLong());
+        otherTiming.setDifferenceTime(random.nextLong());
+
+        Timing secondResult = instance.create(otherTiming);
+
+        Timing lastTiming = instance.getLast();
+        assertEquals(otherTiming, lastTiming);
+    }
 }
