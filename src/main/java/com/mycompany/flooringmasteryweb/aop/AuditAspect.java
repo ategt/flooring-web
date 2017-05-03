@@ -10,7 +10,6 @@ import com.mycompany.flooringmasteryweb.dto.Audit;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import javax.inject.Inject;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -23,7 +22,7 @@ public class AuditAspect {
 
     @Inject
     public AuditAspect(ApplicationContextProvider applicationContext) {
-        ctx = applicationContext.getApplicationContext();
+        ctx = ApplicationContextProvider.getApplicationContext();
     }
 
     private Order processJoinPoint(JoinPoint jp) {
@@ -56,7 +55,7 @@ public class AuditAspect {
         }
     }
 
-    public Audit buildAuditObject(Order order, String actionName) {
+    private Audit buildAuditObject(Order order, String actionName) {
 
         Audit audit = new Audit();
 

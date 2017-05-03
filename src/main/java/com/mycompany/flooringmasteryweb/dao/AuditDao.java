@@ -41,7 +41,8 @@ public class AuditDao {
     private static final String SQL_QUERY_AUDIT_BY_ID = "SELECT * FROM audit WHERE id = ?;";
     private static final String SQL_QUERY_AUDIT_ALL = "SELECT * FROM audit;";
     private static final String SQL_QUERY_AUDIT_COUNT = "SELECT COUNT(*) FROM audit;";
-    
+    private static final String SQL_QUERY_AUDIT_WITH_PAGINATION = "SELECT * FROM audit OFFSET ? LIMIT ?;";
+
     @Inject
     public AuditDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -50,9 +51,10 @@ public class AuditDao {
 
     public Audit create(Audit audit) {
 
-        if (audit == null)
+        if (audit == null) {
             return null;
-        
+        }
+
         Integer id = jdbcTemplate.queryForObject(SQL_INSERT_AUDIT,
                 Integer.class,
                 audit.getDate(),
@@ -74,6 +76,18 @@ public class AuditDao {
         }
     }
 
+    public List<Audit> getWithPagination(int pageNumber, int resultsPerPage) {
+        return getResultRange(pageNumber * resultsPerPage, resultsPerPage);
+    }
+
+    public List<Audit> getResultRange(int start, int length) {
+        try {
+            return jdbcTemplate.query(SQL_QUERY_AUDIT_WITH_PAGINATION, new AuditMapper(), start, length);
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
     public List<Audit> get() {
         try {
             return jdbcTemplate.query(SQL_QUERY_AUDIT_ALL, new AuditMapper());
@@ -81,8 +95,8 @@ public class AuditDao {
             return null;
         }
     }
-    
-    public int getSize(){
+
+    public int getSize() {
         return jdbcTemplate.queryForObject(SQL_QUERY_AUDIT_COUNT, Integer.class);
     }
 

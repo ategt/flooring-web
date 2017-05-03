@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Audit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -107,6 +108,44 @@ public class AuditDaoTest {
         assertEquals(audits.size(), instance.getSize());
     }
 
+    @Test
+    public void testPagination(){
+        List<Audit> audits = instance.get();
+        
+        int totalSize = audits.size();
+        List<Audit> firstAudits = instance.getResultRange(0, 10);
+        List<Audit> secondAudits = instance.getResultRange(10, 10);
+        List<Audit> thirdAudits = instance.getResultRange(20, 10);
+        
+        assertEquals(instance.getResultRange(20, 16).size(), 16);
+        
+        List<Audit> cummulativeAudits = new ArrayList();
+        cummulativeAudits.addAll(firstAudits);
+        cummulativeAudits.addAll(secondAudits);
+        cummulativeAudits.addAll(thirdAudits);
+        
+        assertEquals(cummulativeAudits.size(), 30);
+        
+        for (int i = 0; i < cummulativeAudits.size(); i++) {
+            assertEquals(cummulativeAudits.get(i), audits.get(i));            
+        }
+
+        List<Audit> paginatedAudits = instance.getWithPagination(2, 10);
+        
+        assertEquals(paginatedAudits.size(), 10);
+        
+        for (int i = 0; i < paginatedAudits.size(); i++) {
+            assertEquals(paginatedAudits.get(i), thirdAudits.get(i));
+        }
+        
+        List<Audit> endingAudits = instance.getResultRange(totalSize - 5, 10);
+        assertEquals(endingAudits.size(), 5);
+        
+        for (int i = 0; i < endingAudits.size(); i++) {
+            assertEquals(endingAudits.get(i), audits.get(audits.size() - 5 + i));
+        }
+    }
+    
     private Audit auditGenerator() {
         
         Audit instance = new Audit();

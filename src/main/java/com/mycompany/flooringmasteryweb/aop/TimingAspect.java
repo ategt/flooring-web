@@ -36,23 +36,26 @@ public class TimingAspect {
         Object result = jp.proceed(jp.getArgs());
 
         long stopTime = System.currentTimeMillis();
-        long differenctTime = stopTime - startTime;
 
-        Signature signature = jp.getSignature();
-        
-        Timing timing = new Timing();
-        timing.setStartTime(startTime);
-        timing.setStopTime(stopTime);
-        timing.setDifferenceTime(differenctTime);
-        //timing.setInvokingClassName(signature.getDeclaringTypeName());
-        timing.setInvokingClassName(jp.getTarget().toString());
-        timing.setInvokingMethodName(signature.getName());
-        timing.setModifiers(signature.getModifiers());
+        Timing timing = timingBuilder(stopTime, startTime, jp);
 
         TimingDao timingDao = ctx.getBean("timingDao", TimingDao.class);
 
         timingDao.create(timing);
         
         return result;
+    }
+
+    private Timing timingBuilder(long stopTime, long startTime, ProceedingJoinPoint jp) {
+        long differenctTime = stopTime - startTime;
+        Signature signature = jp.getSignature();
+        Timing timing = new Timing();
+        timing.setStartTime(startTime);
+        timing.setStopTime(stopTime);
+        timing.setDifferenceTime(differenctTime);
+        timing.setInvokingClassName(jp.getTarget().toString());
+        timing.setInvokingMethodName(signature.getName());
+        timing.setModifiers(signature.getModifiers());
+        return timing;
     }
 }
