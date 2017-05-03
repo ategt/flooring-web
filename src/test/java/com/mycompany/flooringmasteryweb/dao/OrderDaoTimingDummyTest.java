@@ -97,7 +97,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testGet() {
         System.out.println("get");
-        long timeTaken = generateRandomTimeTakenTestValue();
+        //long timeTaken = generateRandomTimeTakenTestValue();
         
         //new java.lang.Integer
         //int x = (int) (java.lang.Math.random() * 100.0);
@@ -111,11 +111,13 @@ public class OrderDaoTimingDummyTest {
         long stopTime = new Date().getTime();
         long systemStopTime = System.currentTimeMillis();
         
+        long timeTaken = stopTime - startTime;
+        
         Timing timing = instance.getLast();
         
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue(Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**

@@ -103,7 +103,7 @@ public class TimingAspect {
 //        return result.toString() + " :Result is also modified";
 //    }
 
-    @Around("execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.get(..))")
+    //@Around("execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.get(..))")
     public void logStartAndStopTimeForMethod(ProceedingJoinPoint jp) throws Throwable {
         long startTime = System.currentTimeMillis();
         System.out.println("Start time is " + startTime + " milliseconds.");
