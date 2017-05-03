@@ -54,19 +54,23 @@ public class OrderDaoTimingDummyTest {
     public void testCreate() {
         System.out.println("create");
 
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.create(null);
         long stopTime = new Date().getTime();
-        
+
+        long timeTaken = stopTime - startTime;
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -76,19 +80,22 @@ public class OrderDaoTimingDummyTest {
     public void testDelete() {
         System.out.println("delete");
 
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.delete(null);
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -98,26 +105,29 @@ public class OrderDaoTimingDummyTest {
     public void testGet() {
         System.out.println("get");
         //long timeTaken = generateRandomTimeTakenTestValue();
-        
+
         //new java.lang.Integer
         //int x = (int) (java.lang.Math.random() * 100.0);
-        
         //OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
-        
+
         long startTime = new Date().getTime();
         long systemStartTime = System.currentTimeMillis();
         dummyOrderDao.get(null);
         long stopTime = new Date().getTime();
         long systemStopTime = System.currentTimeMillis();
-        
+
         long timeTaken = stopTime - startTime;
-        
+
         Timing timing = instance.getLast();
-        
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
         assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
         assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
-        assertTrue(Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -126,19 +136,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testGetList() {
         System.out.println("getList");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.getList();
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -147,19 +162,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testListOrderDates() {
         System.out.println("listOrderDates");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.listOrderDates();
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -168,19 +188,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testListOrderNumbers() {
         System.out.println("listOrderNumbers");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.listOrderNumbers();
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -189,19 +214,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByDate() {
         System.out.println("searchByDate");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.searchByDate(null);
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -210,19 +240,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByName() {
         System.out.println("searchByName");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.searchByName(null);
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -231,19 +266,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByProduct() {
         System.out.println("searchByProduct");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.searchByProduct(null);
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -252,19 +292,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByState() {
         System.out.println("searchByState");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.searchByState(null);
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -273,19 +318,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSize() {
         System.out.println("size");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.size();
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -294,19 +344,24 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testUpdate() {
         System.out.println("update");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.update(null);
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
+
+        long timeTaken = stopTime - startTime;
+
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
     }
 
     /**
@@ -315,25 +370,23 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testSearchByOrderNumber() {
         System.out.println("searchByOrderNumber");
-        long timeTaken = generateRandomTimeTakenTestValue();
-        
-        OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
-        
+
+        OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
+
         long startTime = new Date().getTime();
         dummyOrderDao.searchByOrderNumber(null);
         long stopTime = new Date().getTime();
-        
+
         Timing timing = instance.getLast();
-        
-        assertEquals(timing.getDifferenceTime(), timeTaken);
-        assertEquals(timing.getStartTime(), startTime);
-        assertEquals(timing.getStopTime(), stopTime);
-    }
 
-    private long generateRandomTimeTakenTestValue() {
-        Random random = new Random();
-        long timeTaken = (long)random.nextInt(500);
-        return timeTaken;
-    }
+        long timeTaken = stopTime - startTime;
 
+        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
+        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
+        System.out.println("difference: " + "Difference Failed." + Math.abs(timing.getDifferenceTime() - timeTaken));
+
+        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
+    }
 }
