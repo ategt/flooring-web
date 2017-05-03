@@ -5,14 +5,8 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.BasicOrder;
-import com.mycompany.flooringmasteryweb.dto.Order;
-import com.mycompany.flooringmasteryweb.dto.OrderCommand;
-import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.Timing;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -106,6 +100,7 @@ public class OrderDaoTimingDummyTest {
         long timeTaken = generateRandomTimeTakenTestValue();
         
         //new java.lang.Integer
+        //int x = (int) (java.lang.Math.random() * 100.0);
         
         //OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);

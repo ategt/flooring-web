@@ -21,13 +21,14 @@
     
     
     <bean id="randomNumber" class="java.lang.Integer">
-        <property name="randomInput" value="{ T(java.lang.Math).random() * 500.0 }" />
+        <!--<constructor-arg type="int" value="#{((java.lang.Math).random() * 500.0)}" />-->
+        <constructor-arg type="int" value="#{500}" />
     </bean>
     
     <bean id="orderDao" class="com.mycompany.flooringmasteryweb.dao.OrderDaoTimingDummy">
         <constructor-arg ref="randomNumber" />
     </bean>
-    
+
     <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />
     
     <bean id="timingAspect" class="com.mycompany.flooringmasteryweb.aop.TimingAspect" />
