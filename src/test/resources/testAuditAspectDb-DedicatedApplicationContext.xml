@@ -28,7 +28,9 @@
 
     <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />
     
-    <bean id="auditAspect" class="com.mycompany.flooringmasteryweb.aop.AuditAspect" />
+    <bean id="auditAspect" class="com.mycompany.flooringmasteryweb.aop.AuditAspect" >
+        <constructor-arg ref="applicationContext" />
+    </bean>
         
     <aop:config>
         <aop:aspect ref="auditAspect">
