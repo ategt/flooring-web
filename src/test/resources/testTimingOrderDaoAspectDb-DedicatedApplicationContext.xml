@@ -19,10 +19,14 @@
     <import resource="test-SQLBase-applicationContext.xml" />
     <import resource="testTimingDb-ApplicationContext.xml" />
     
+    <bean id="orderDaoIdleTime" class="java.lang.Integer">
+        <constructor-arg type="int" value="100" />
+    </bean>
     
     <bean id="randomNumber" class="java.lang.Integer">
         <!--<constructor-arg type="int" value="#{((java.lang.Math).random() * 500.0)}" />-->
-        <constructor-arg type="int" value="#{100}" />
+        <!--<constructor-arg type="int" value="100" />-->
+        <constructor-arg ref="orderDaoIdleTime" />
     </bean>
     
     <bean id="orderDao" class="com.mycompany.flooringmasteryweb.dao.OrderDaoTimingDummy">
