@@ -8,6 +8,7 @@ package com.mycompany.flooringmasteryweb.dao;
 import com.mycompany.flooringmasteryweb.dto.Timing;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -63,6 +64,9 @@ public class TimingDaoTest {
         timing.setStartTime(start);
         timing.setStopTime(stop);
         timing.setDifferenceTime(difference);
+        timing.setModifiers(random.nextInt(32700));
+        timing.setInvokingClassName(UUID.randomUUID().toString());
+        timing.setInvokingMethodName(UUID.randomUUID().toString());
 
         Timing result = instance.create(timing);
 
@@ -157,7 +161,10 @@ public class TimingDaoTest {
         timing.setStartTime(random.nextLong());
         timing.setStopTime(random.nextLong());
         timing.setDifferenceTime(random.nextLong());
-
+        timing.setModifiers(random.nextInt(32700));
+        timing.setInvokingClassName(UUID.randomUUID().toString());
+        timing.setInvokingMethodName(UUID.randomUUID().toString());
+        
         Timing result = instance.create(timing);
         
         Timing otherTiming = new Timing();
@@ -170,5 +177,6 @@ public class TimingDaoTest {
 
         Timing lastTiming = instance.getLast();
         assertEquals(otherTiming, lastTiming);
+        assertNotEquals(secondResult, result);
     }
 }

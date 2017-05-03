@@ -36,14 +36,14 @@ public class TimingDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    private static final String SQL_INSERT_TIMING = "INSERT INTO timing (startTime, stopTime, differenceTime) VALUES ( ?, ?, ? ) RETURNING id;";
+    private static final String SQL_INSERT_TIMING = "INSERT INTO timing (startTime, stopTime, differenceTime, invokingClassName, invokingMethodName, modifiers) VALUES ( ?, ?, ?, ?, ?, ? ) RETURNING id;";
     private static final String SQL_DELETE_TIMING = "DELETE FROM timing WHERE id =?";
     private static final String SQL_GET_TIMING = "SELECT * FROM timing WHERE id =?";
     private static final String SQL_GET_TIMING_LIST = "SELECT * FROM timing;";
     private static final String SQL_GET_TIMING_RECENT = "SELECT * FROM timing WHERE id = (SELECT MAX(id) FROM timing);";
     private static final String SQL_GET_TIMING_COUNT = "SELECT COUNT(*) FROM timing;";
     
-    private static final String SQL_CREATE_TIMING_TABLE = "CREATE TABLE IF NOT EXISTS timing (id SERIAL PRIMARY KEY, startTime bigint, stopTime bigint, differenceTime bigint);";
+    private static final String SQL_CREATE_TIMING_TABLE = "CREATE TABLE IF NOT EXISTS timing (id SERIAL PRIMARY KEY, startTime bigint, stopTime bigint, differenceTime bigint, invokingClassName varchar, invokingMethodName varchar, modifiers smallint);";
 
     @Inject
     public TimingDao(JdbcTemplate jdbcTemplate) {
@@ -64,7 +64,10 @@ public class TimingDao {
                     Integer.class,
                     timing.getStartTime(),
                     timing.getStopTime(),
-                    timing.getDifferenceTime());
+                    timing.getDifferenceTime(),
+                    timing.getInvokingClassName(),
+                    timing.getInvokingMethodName(),
+                    timing.getModifiers());
 
             timing.setId(id);
 
@@ -134,9 +137,11 @@ public class TimingDao {
             timing.setStartTime(rs.getLong("startTime"));
             timing.setStopTime(rs.getLong("stopTime"));
             timing.setDifferenceTime(rs.getLong("differenceTime"));
-            
+            timing.setInvokingClassName(rs.getString("invokingClassName"));
+            timing.setInvokingMethodName(rs.getString("invokingMethodName"));
+            timing.setModifiers(rs.getInt("modifiers"));
+     
             return timing;
         }
     }
-
 }

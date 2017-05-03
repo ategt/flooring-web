@@ -5,6 +5,8 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import java.util.Objects;
+
 /**
  *
  * @author apprentice
@@ -14,6 +16,9 @@ public class Timing implements Identifiable {
     private long startTime;
     private long stopTime;
     private long differenceTime;
+    private int modifiers;
+    private String invokingClassName;
+    private String invokingMethodName;
     private int id;
 
     @Override
@@ -21,10 +26,13 @@ public class Timing implements Identifiable {
         if (object instanceof Timing) {
             Timing otherTiming = (Timing) object;
 
-            return id == otherTiming.getId()
-                    && startTime == otherTiming.getStartTime()
-                    && stopTime == otherTiming.getStopTime()
-                    && differenceTime == otherTiming.getDifferenceTime();
+            return getId() == otherTiming.getId()
+                    && getStartTime() == otherTiming.getStartTime()
+                    && getStopTime() == otherTiming.getStopTime()
+                    && getDifferenceTime() == otherTiming.getDifferenceTime()
+                    && getModifiers() == otherTiming.getModifiers()
+                    && Objects.equals(getInvokingClassName(), otherTiming.getInvokingClassName())
+                    && Objects.equals(getInvokingMethodName(), otherTiming.getInvokingMethodName());
         } else {
             return false;
         }
@@ -32,7 +40,7 @@ public class Timing implements Identifiable {
 
     @Override
     public int hashCode() {
-        return id;
+        return getId();
     }
 
     /**
@@ -89,5 +97,47 @@ public class Timing implements Identifiable {
      */
     public void setId(int id) {
         this.id = id;
+    }
+
+    /**
+     * @return the modifiers
+     */
+    public int getModifiers() {
+        return modifiers;
+    }
+
+    /**
+     * @param modifiers the modifiers to set
+     */
+    public void setModifiers(int modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    /**
+     * @return the invokingClassName
+     */
+    public String getInvokingClassName() {
+        return invokingClassName;
+    }
+
+    /**
+     * @param invokingClassName the invokingClassName to set
+     */
+    public void setInvokingClassName(String invokingClassName) {
+        this.invokingClassName = invokingClassName;
+    }
+
+    /**
+     * @return the invokingMethodName
+     */
+    public String getInvokingMethodName() {
+        return invokingMethodName;
+    }
+
+    /**
+     * @param invokingMethodName the invokingMethodName to set
+     */
+    public void setInvokingMethodName(String invokingMethodName) {
+        this.invokingMethodName = invokingMethodName;
     }
 }

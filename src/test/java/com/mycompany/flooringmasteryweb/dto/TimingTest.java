@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 import java.util.Random;
+import java.util.UUID;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,6 +55,9 @@ public class TimingTest {
         long start = random.nextLong();
         long stop = random.nextLong();
         long difference = random.nextLong();
+        String className = UUID.randomUUID().toString();
+        String methodName = UUID.randomUUID().toString();
+        int modifiers = random.nextInt();
 
         timinga.setDifferenceTime(difference);
         assertFalse(timinga.equals(timingb));
@@ -67,6 +71,27 @@ public class TimingTest {
         assertFalse(timinga.equals(timingb));
         assertNotEquals(timinga, timingb);
         timinga.setStartTime(start);
+        assertTrue(timinga.equals(timingb));
+        assertEquals(timinga, timingb);
+
+        timingb.setInvokingClassName(className);
+        assertFalse(timinga.equals(timingb));
+        assertNotEquals(timinga, timingb);
+        timinga.setInvokingClassName(className);
+        assertTrue(timinga.equals(timingb));
+        assertEquals(timinga, timingb);
+
+        timingb.setInvokingMethodName(methodName);
+        assertFalse(timinga.equals(timingb));
+        assertNotEquals(timinga, timingb);
+        timinga.setInvokingMethodName(methodName);
+        assertTrue(timinga.equals(timingb));
+        assertEquals(timinga, timingb);
+
+        timingb.setModifiers(modifiers);
+        assertFalse(timinga.equals(timingb));
+        assertNotEquals(timinga, timingb);
+        timinga.setModifiers(modifiers);
         assertTrue(timinga.equals(timingb));
         assertEquals(timinga, timingb);
 
@@ -121,6 +146,36 @@ public class TimingTest {
         assertNotEquals(timinga, timingb);
 
         timingb.setStopTime(stop);
+
+        assertTrue(timinga.equals(timingb));
+        assertEquals(timinga, timingb);
+
+        timingb.setInvokingClassName(UUID.randomUUID().toString());
+
+        assertFalse(timinga.equals(timingb));
+        assertNotEquals(timinga, timingb);
+
+        timingb.setInvokingClassName(className);
+
+        assertTrue(timinga.equals(timingb));
+        assertEquals(timinga, timingb);
+        
+        timingb.setInvokingMethodName(UUID.randomUUID().toString());
+
+        assertFalse(timinga.equals(timingb));
+        assertNotEquals(timinga, timingb);
+
+        timingb.setInvokingMethodName(methodName);
+
+        assertTrue(timinga.equals(timingb));
+        assertEquals(timinga, timingb);
+        
+        timingb.setModifiers(random.nextInt());
+
+        assertFalse(timinga.equals(timingb));
+        assertNotEquals(timinga, timingb);
+
+        timingb.setModifiers(modifiers);
 
         assertTrue(timinga.equals(timingb));
         assertEquals(timinga, timingb);
