@@ -57,6 +57,46 @@
                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.get(..))"
             />
             
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.size(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.getList(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByOrderNumber(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.sortByOrderNumber(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByState(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByName(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByProduct(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByDate(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.listOrderNumbers(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.listOrderDates(..))"
+            />
+            
         </aop:aspect>
         
     </aop:config>

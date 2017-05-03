@@ -104,7 +104,7 @@ public class TimingAspect {
 //    }
 
     //@Around("execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.get(..))")
-    public void logStartAndStopTimeForMethod(ProceedingJoinPoint jp) throws Throwable {
+    public Object logStartAndStopTimeForMethod(ProceedingJoinPoint jp) throws Throwable {
         long startTime = System.currentTimeMillis();
         System.out.println("Start time is " + startTime + " milliseconds.");
 
@@ -131,5 +131,7 @@ public class TimingAspect {
         TimingDao timingDao = ctx.getBean("timingDao", TimingDao.class);
 
         timingDao.create(timing);
+        
+        return result;
     }
 }
