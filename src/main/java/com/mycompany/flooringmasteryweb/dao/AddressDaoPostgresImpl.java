@@ -269,6 +269,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_STATE = "SELECT * FROM addresses WHERE state = ?";
+    private static final String SQL_SEARCH_ADDRESS_BY_STATE_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(state) = LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(state) LIKE LOWER(?);";    
 
     @Override
     //public Map<String /* City */, List<Address> /*Addresses Sorted By City*/> searchByState(String state) {
@@ -277,11 +279,15 @@ public class AddressDaoPostgresImpl implements AddressDao {
         List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE, new AddressMapper(), state);
 
         if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE, new AddressMapper(), state + "%");
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE_CASE_INSENSITIVE, new AddressMapper(), state);
         }
 
         if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE, new AddressMapper(), "%" + state + "%");
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE, new AddressMapper(), state + "%");
+        }
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE, new AddressMapper(), "%" + state + "%");
         }
         return result;
 
@@ -337,33 +343,5 @@ public class AddressDaoPostgresImpl implements AddressDao {
         }
 
         return result;
-
-//        List<Address> result = addresses
-//                .stream()
-//                .filter(a -> a.getZip() != null)
-//                .filter(a -> a.getZip().equalsIgnoreCase(zipcode))
-//                .collect(java.util.stream.Collectors.toList());
-//
-//        if (result.isEmpty()) {
-//            result = addresses
-//                    .stream()
-//                    .filter(a -> a.getZip() != null)
-//                    .filter(a -> a.getZip().toLowerCase().contains(zipcode.toLowerCase()))
-//                    .collect(java.util.stream.Collectors.toList());
-//        }
-//        return result;
     }
-
-    public String fixNull(String input) {
-        String returnValue = null;
-        if (input.trim().equalsIgnoreCase("null")) {
-            input = null;
-        } else if (input.trim().equalsIgnoreCase("")) {
-            input = null;
-        } else {
-            returnValue = input;
-        }
-        return returnValue;
-    }
-
 }
