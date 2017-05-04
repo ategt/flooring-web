@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author ATeg
  */
 @Controller
-@RequestMapping(value = "/addressbook")
+@RequestMapping(value = "/address")
 public class AddressController {
 
     private AddressDao addressDao;
@@ -35,6 +35,13 @@ public class AddressController {
         this.addressDao = addressDao;
     }
     
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    public String index(Map model) {
+        List<Address> addresses = addressDao.list();
+        model.put("addresses", addresses);
+        return "index";
+    }
+
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public Address createWithAjax(@Valid @RequestBody Address address) {
@@ -61,29 +68,16 @@ public class AddressController {
         addressDao.delete(addressId);
     }
 
-//    
-//
-//    @RequestMapping(value = "/", method = RequestMethod.POST)
-//    @ResponseBody
-//    public Address create(@RequestBody Address address) {
-//        
-//        return addressDao.create(address);
-//    }
-
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") Integer contactId, Map model) {
-
         Address address = addressDao.get(contactId);
-
         model.put("address", address);
-
         return "edit";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public String update(@ModelAttribute Address address) {
         addressDao.update(address);
-
         return "redirect:/";
     }
 
@@ -158,8 +152,6 @@ public class AddressController {
         Address address = addressDao.get(addressId);
         List<Address> addresses = addressDao.list();
 
-        
-        
         model.put("address", address);
         model.put("addresses", addresses);
 
@@ -171,7 +163,6 @@ public class AddressController {
 
         Address address = addressDao.get(addressId);
         List<Address> addresses = addressDao.list();
-
         
         model.put("lastNameFirst", lastNameFirst);
         model.put("address", address);
@@ -179,5 +170,4 @@ public class AddressController {
 
         return "show";
     }
-
 }
