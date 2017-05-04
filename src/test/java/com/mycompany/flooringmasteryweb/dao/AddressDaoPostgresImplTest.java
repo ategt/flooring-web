@@ -386,6 +386,10 @@ public class AddressDaoPostgresImplTest {
 
             Address result = addressDao.get(searchString);
 
+            if (address.equals(result)) {
+                System.out.println("Thing");
+            }
+
             assertEquals(result, address);
             addressDao.delete(resultId);
         }
@@ -413,14 +417,19 @@ public class AddressDaoPostgresImplTest {
             int position = new Random().nextInt(randomStrings.length);
             String searchString = randomStrings[position];
 
-            int minimumStringLength = 8;
-            int startingPostition = random.nextInt(searchString.length() - minimumStringLength);
-            int endingPostition = random.nextInt(searchString.length() - startingPostition - minimumStringLength) + startingPostition;
+            int minimumStringLength = 10;
+            int processLength = searchString.length() - minimumStringLength;
+            int startingPostition = random.nextInt(processLength - minimumStringLength);
+            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
 
             searchString = searchString.substring(startingPostition, endingPostition);
             searchString = caseRandomizer(random, searchString);
 
             Address result = addressDao.get(searchString);
+
+            if (!address.equals(result)) {
+                System.out.println("Thing");
+            }
 
             assertEquals(result, address);
             addressDao.delete(resultId);
