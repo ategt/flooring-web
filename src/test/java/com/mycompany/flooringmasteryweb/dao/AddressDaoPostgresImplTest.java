@@ -285,35 +285,34 @@ public class AddressDaoPostgresImplTest {
     @Test
     public void testSearchByZip() {
         System.out.println("searchByZip");
-        
-                String zip = UUID.randomUUID().toString();
+
+        String zip = UUID.randomUUID().toString();
 
         Address address = addressGenerator();
         address.setZip(zip);
         addressDao.create(address);
-        
+
         List<Address> result = addressDao.searchByZip(zip);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
-        
+
         result = addressDao.searchByZip(zip.toLowerCase());
         assertTrue(result.contains(address));
-        
+
         result = addressDao.searchByZip(zip.toUpperCase());
         assertTrue(result.contains(address));
-        
+
         result = addressDao.searchByZip(zip.substring(5));
         assertTrue(result.contains(address));
-        
+
         result = addressDao.searchByZip(zip.substring(5, 20));
         assertTrue(result.contains(address));
-        
+
         result = addressDao.searchByZip(zip.substring(5, 20).toLowerCase());
         assertTrue(result.contains(address));
-        
+
         result = addressDao.searchByZip(zip.substring(5, 20).toUpperCase());
         assertTrue(result.contains(address));
-        
 
     }
 
