@@ -8,7 +8,9 @@ package com.mycompany.flooringmasteryweb.dao;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -75,38 +77,36 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public Address get(String input) {
+    public Address get(String input){
+        return getBestGuess(input);
+    }
+    
+    public Address getBestGuess(String input) {
+        Set<Address> result = getGuesses(input);
+        if (result.isEmpty()) {
+            return null;
+        } else {
+            return result.iterator().next();
+        }
+    }
+
+    public Set<Address> getGuesses(String input) {
         if (input == null) {
             return null;
         }
 
-        List<Address> result = searchByFirstName(input);
-        if (result.isEmpty()) {
-            result = searchByLastName(input);
-        }
-        if (result.isEmpty()) {
-            result = searchByCity(input);
-        }
-        if (result.isEmpty()) {
-            result = searchByCompany(input);
-        }
-        if (result.isEmpty()) {
-            result = searchByState(input);
-        }
-        if (result.isEmpty()) {
-            result = searchByZip(input);
-        }
-        if (result.isEmpty()) {
-            result = searchByStreetName(input);
-        }
-        if (result.isEmpty()) {
-            result = searchByStreetNumber(input);
-        }
-        if (result.isEmpty()) {
-            return null;
-        } else {
-            return result.get(0);
-        }
+        Set<Address> result = new HashSet();
+
+        result.addAll(searchByFirstName(input));
+        result.addAll(searchByLastName(input));
+        result.addAll(searchByCity(input));
+        result.addAll(searchByCompany(input));
+        result.addAll(searchByState(input));
+        result.addAll(searchByZip(input));
+        result.addAll(searchByStreetName(input));
+        result.addAll(searchByStreetNumber(input));
+
+        return result;
     }
 
     @Override
