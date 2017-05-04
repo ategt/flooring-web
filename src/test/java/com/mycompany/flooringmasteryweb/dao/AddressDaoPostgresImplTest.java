@@ -6,9 +6,12 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -357,6 +360,7 @@ public class AddressDaoPostgresImplTest {
     @Test
     public void testGetWithString() {
         System.out.println("searchWithGet");
+        final Random random = new Random();
 
         for (int pass = 0; pass < 25; pass++) {
 
@@ -378,14 +382,86 @@ public class AddressDaoPostgresImplTest {
             int resultId = addressDao.create(address).getId();
 
             int position = new Random().nextInt(randomStrings.length);
-            String searchString = randomStrings[position];            
-            
+            String searchString = randomStrings[position];
+
             Address result = addressDao.get(searchString);
 
             assertEquals(result, address);
             addressDao.delete(resultId);
         }
 
+        for (int pass = 0; pass < 150; pass++) {
+
+            String[] randomStrings = new String[8];
+
+            for (int i = 0; i < randomStrings.length; i++) {
+                randomStrings[i] = UUID.randomUUID().toString();
+                randomStrings[i] = caseRandomizer(random, randomStrings[i]);
+            }
+
+            Address address = addressBuilder(randomStrings[0],
+                    randomStrings[1],
+                    randomStrings[2],
+                    randomStrings[3],
+                    randomStrings[4],
+                    randomStrings[5],
+                    randomStrings[6],
+                    randomStrings[7]);
+
+            int resultId = addressDao.create(address).getId();
+
+            int position = new Random().nextInt(randomStrings.length);
+            String searchString = randomStrings[position];
+
+            int minimumStringLength = 8;
+            int startingPostition = random.nextInt(searchString.length() - minimumStringLength);
+            int endingPostition = random.nextInt(searchString.length() - startingPostition - minimumStringLength) + startingPostition;
+
+            searchString = searchString.substring(startingPostition, endingPostition);
+            searchString = caseRandomizer(random, searchString);
+
+            Address result = addressDao.get(searchString);
+
+            assertEquals(result, address);
+            addressDao.delete(resultId);
+        }
+    }
+
+    private String caseRandomizer(final Random random, String input) {
+        switch (random.nextInt(6)) {
+
+            case 0:
+                input = input;
+                break;
+            case 1:
+                input = input.toLowerCase();
+                break;
+            case 2:
+                input = input.toUpperCase();
+                break;
+            default:
+                char[] charArray = input.toCharArray();
+                for (int j = 0; j < charArray.length; j++) {
+                    switch (random.nextInt(4)) {
+                        case 1:
+                            charArray[j] = Character.toLowerCase(charArray[j]);
+                            break;
+                        case 2:
+                            charArray[j] = Character.toUpperCase(charArray[j]);
+                            break;
+                        case 3:
+                            charArray[j] = Character.toTitleCase(charArray[j]);
+                            break;
+                        default:
+                            charArray[j] = charArray[j];
+                            break;
+                    }
+
+                    input = new String(charArray);
+                }
+        }
+
+        return input;
     }
 
     private Address addressGenerator() {
