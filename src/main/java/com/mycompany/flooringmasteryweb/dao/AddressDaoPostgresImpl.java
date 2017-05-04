@@ -273,7 +273,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(state) LIKE LOWER(?);";    
 
     @Override
-    //public Map<String /* City */, List<Address> /*Addresses Sorted By City*/> searchByState(String state) {
     public List<Address> searchByState(String state) {
 
         List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE, new AddressMapper(), state);
@@ -290,35 +289,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
             result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE, new AddressMapper(), "%" + state + "%");
         }
         return result;
-
-//        List<Address> secondAddressLambdaMess
-//                = addresses
-//                .stream()
-//                .filter((Address a) -> a.getState().equalsIgnoreCase(state))
-//                .collect(
-//                        java.util.stream.Collectors.toList()
-//                //                        groupingBy(
-//                //                                //(Address a) -> a.getCity(),  // This does the same as the line below it.
-//                //                                Address::getCity,
-//                //                                java.util.stream.Collectors.toList()
-//                //                        )
-//                );
-//
-//        if (secondAddressLambdaMess.isEmpty()) {
-//            secondAddressLambdaMess
-//                    = addresses
-//                    .stream()
-//                    .filter((Address a) -> a.getState().toLowerCase().contains(state.toLowerCase()))
-//                    .collect(
-//                            java.util.stream.Collectors.toList()
-//                    //                        groupingBy(
-//                    //                                //(Address a) -> a.getCity(),  // This does the same as the line below it.
-//                    //                                Address::getCity,
-//                    //                                java.util.stream.Collectors.toList()
-//                    //                        )
-//                    );
-//        }
-        //   return secondAddressLambdaMess;
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE = "SELECT * FROM addresses WHERE zip = ?";
