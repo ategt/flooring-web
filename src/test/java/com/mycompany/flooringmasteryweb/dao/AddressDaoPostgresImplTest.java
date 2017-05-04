@@ -7,6 +7,7 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -208,6 +209,43 @@ public class AddressDaoPostgresImplTest {
     }
 
     /**
+     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
+     */
+    @Test
+    public void testSearchByCompany() {
+        System.out.println("searchByCompany");
+
+        String company = UUID.randomUUID().toString();
+
+        Address address = addressGenerator();
+        address.setCompany(company);
+        addressDao.create(address);
+
+        List<Address> result = addressDao.searchByCompany(company);
+        assertTrue(result.contains(address));
+        assertEquals(result.size(), 1);
+
+        result = addressDao.searchByCompany(company.toLowerCase());
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByCompany(company.toUpperCase());
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByCompany(company.substring(5));
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByCompany(company.substring(5, 20));
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByCompany(company.substring(5, 20).toLowerCase());
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByCompany(company.substring(5, 20).toUpperCase());
+        assertTrue(result.contains(address));
+
+    }
+
+    /**
      * Test of searchByCity method, of class AddressDaoPostgresImpl.
      */
     @Test
@@ -313,6 +351,40 @@ public class AddressDaoPostgresImplTest {
 
         result = addressDao.searchByZip(zip.substring(5, 20).toUpperCase());
         assertTrue(result.contains(address));
+
+    }
+
+    @Test
+    public void testGetWithString() {
+        System.out.println("searchWithGet");
+
+        for (int pass = 0; pass < 25; pass++) {
+
+            String[] randomStrings = new String[8];
+
+            for (int i = 0; i < randomStrings.length; i++) {
+                randomStrings[i] = UUID.randomUUID().toString();
+            }
+
+            Address address = addressBuilder(randomStrings[0],
+                    randomStrings[1],
+                    randomStrings[2],
+                    randomStrings[3],
+                    randomStrings[4],
+                    randomStrings[5],
+                    randomStrings[6],
+                    randomStrings[7]);
+
+            int resultId = addressDao.create(address).getId();
+
+            int position = new Random().nextInt(randomStrings.length);
+            String searchString = randomStrings[position];            
+            
+            Address result = addressDao.get(searchString);
+
+            assertEquals(result, address);
+            addressDao.delete(resultId);
+        }
 
     }
 

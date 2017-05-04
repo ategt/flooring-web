@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author ATeg
  */
 public class AddressDaoPostgresImpl implements AddressDao {
-    
+
     private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id;";
@@ -30,7 +30,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company =?";
     private static final String SQL_GET_ADDRESS_LIST = "SELECT * FROM addresses";
     private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses;";
-    
+
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
     @Inject
@@ -42,9 +42,10 @@ public class AddressDaoPostgresImpl implements AddressDao {
     @Transactional(propagation = Propagation.REQUIRED)
     public Address create(Address address) {
 
-        if (address == null)
+        if (address == null) {
             return null;
-        
+        }
+
         Integer id = jdbcTemplate.queryForObject(SQL_INSERT_ADDRESS,
                 Integer.class,
                 address.getFirstName(),
@@ -63,42 +64,70 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public Address get(Integer id) {
-        if (id == null)
+        if (id == null) {
             return null;
+        }
         try {
             return jdbcTemplate.queryForObject(SQL_GET_ADDRESS, new AddressMapper(), id);
-        } catch (org.springframework.dao.EmptyResultDataAccessException ex){
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
             return null;
         }
     }
 
     @Override
     public Address get(String input) {
-        if (input == null)
+        if (input == null) {
             return null;
-        try {
-            return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_BY_COMPANY, new AddressMapper(), input);
-        } catch (org.springframework.dao.EmptyResultDataAccessException ex){
+        }
+
+        List<Address> result = searchByFirstName(input);
+        if (result.isEmpty()) {
+            result = searchByLastName(input);
+        }
+        if (result.isEmpty()) {
+            result = searchByCity(input);
+        }
+        if (result.isEmpty()) {
+            result = searchByCompany(input);
+        }
+        if (result.isEmpty()) {
+            result = searchByState(input);
+        }
+        if (result.isEmpty()) {
+            result = searchByZip(input);
+        }
+        if (result.isEmpty()) {
+            result = searchByStreetName(input);
+        }
+        if (result.isEmpty()) {
+            result = searchByStreetNumber(input);
+        }
+        if (result.isEmpty()) {
             return null;
+        } else {
+            return result.get(0);
         }
     }
 
     @Override
-    public Address getByCompany(String company) {
-        if (company == null)
+    public Address getByCompany(String company
+    ) {
+        if (company == null) {
             return null;
+        }
         try {
             return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_BY_COMPANY, new AddressMapper(), company);
-        } catch (org.springframework.dao.EmptyResultDataAccessException ex){
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
             return null;
         }
     }
 
     public void update(Address address) {
 
-        if (address == null)
+        if (address == null) {
             return;
-            
+        }
+
         if (address.getId() != null && address.getId() > 0) {
 
             jdbcTemplate.update(SQL_UPDATE_ADDRESS,
@@ -172,27 +201,20 @@ public class AddressDaoPostgresImpl implements AddressDao {
             result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_LAST_NAME_PARTS, new AddressMapper(), "%" + lastName + "%");
         }
 
-//        List<Address> result = addresses
-//                .stream()
-//                .filter((Address a) -> a.getLastName().equalsIgnoreCase(lastName))
-//                .collect(java.util.stream.Collectors.toList());
-//
-//        if (result.isEmpty()) {
-//            result = addresses
-//                    .stream()
-//                    .filter((Address a) -> a.getLastName().toLowerCase().contains(lastName.toLowerCase()))
-//                    .collect(java.util.stream.Collectors.toList());
-//        }
         return result;
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "SELECT * FROM addresses WHERE first_name = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL = "SELECT * FROM addresses WHERE first_name LIKE ?";
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(first_name) LIKE LOWER(?);";
 
     @Override
     public List<Address> searchByFirstName(String firstName) {
 
         List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FIRST_NAME, new AddressMapper(), firstName);
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL, new AddressMapper(), firstName);
+        }
 
         if (result.isEmpty()) {
             result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL, new AddressMapper(), firstName + "%");
@@ -202,38 +224,56 @@ public class AddressDaoPostgresImpl implements AddressDao {
             result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL, new AddressMapper(), "%" + firstName + "%");
         }
 
-//        List<Address> result = addresses
-//                .stream()
-//                .filter((Address a) -> a.getLastName().equalsIgnoreCase(lastName))
-//                .collect(java.util.stream.Collectors.toList());
-//
-//        if (result.isEmpty()) {
-//            result = addresses
-//                    .stream()
-//                    .filter((Address a) -> a.getLastName().toLowerCase().contains(lastName.toLowerCase()))
-//                    .collect(java.util.stream.Collectors.toList());
-//        }
         return result;
     }
 
-//    @Override
-//    public List<Address> searchByFirstName(String firstName) {
-//
-//        List<Address> result = addresses
-//                .stream()
-//                .filter((Address a) -> a.getFirstName().equalsIgnoreCase(firstName))
-//                .collect(java.util.stream.Collectors.toList());
-//
-//        if (result.isEmpty()) {
-//            result = addresses
-//                    .stream()
-//                    .filter((Address a) -> a.getFirstName().toLowerCase().contains(firstName.toLowerCase()))
-//                    .collect(java.util.stream.Collectors.toList());
-//        }
-//
-//        return result;
-//    }
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "SELECT * FROM addresses WHERE street_name = ?";
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_name) LIKE LOWER(?);";
+
+    public List<Address> searchByStreetName(String streetName) {
+
+        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME, new AddressMapper(), streetName);
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), streetName);
+        }
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), streetName + "%");
+        }
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), "%" + streetName + "%");
+        }
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "SELECT * FROM addresses WHERE street_number = ?";
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_number) LIKE LOWER(?);";
+
+    public List<Address> searchByStreetNumber(String streetNumber) {
+
+        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, new AddressMapper(), streetNumber);
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL, new AddressMapper(), streetNumber);
+        }
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL, new AddressMapper(), streetNumber + "%");
+        }
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL, new AddressMapper(), "%" + streetNumber + "%");
+        }
+
+        return result;
+    }
+
     private static final String SQL_SEARCH_ADDRESS_BY_CITY = "SELECT * FROM addresses WHERE city = ?";
+    private static final String SQL_SEARCH_ADDRESS_BY_CITY_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(city) = LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_CITY_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(city) LIKE LOWER(?);";
 
     @Override
     public List<Address> searchByCity(String city) {
@@ -241,22 +281,30 @@ public class AddressDaoPostgresImpl implements AddressDao {
         List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY, new AddressMapper(), city);
 
         if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY, new AddressMapper(), city + "%");
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY_CASE_INSENSITIVE, new AddressMapper(), city);
         }
 
         if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY, new AddressMapper(), "%" + city + "%");
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY_WITH_LIKE, new AddressMapper(), city + "%");
+        }
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY_WITH_LIKE, new AddressMapper(), "%" + city + "%");
         }
         return result;
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE = "SELECT * FROM addresses WHERE company LIKE ?";
+    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(company) LIKE LOWER(?);";
 
     @Override
     public List<Address> searchByCompany(String company) {
 
         List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_COMPANY, new AddressMapper(), company);
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE, new AddressMapper(), company);
+        }
 
         if (result.isEmpty()) {
             result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE, new AddressMapper(), company + "%");
@@ -270,7 +318,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_SEARCH_ADDRESS_BY_STATE = "SELECT * FROM addresses WHERE state = ?";
     private static final String SQL_SEARCH_ADDRESS_BY_STATE_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(state) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(state) LIKE LOWER(?);";    
+    private static final String SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(state) LIKE LOWER(?);";
 
     @Override
     public List<Address> searchByState(String state) {
