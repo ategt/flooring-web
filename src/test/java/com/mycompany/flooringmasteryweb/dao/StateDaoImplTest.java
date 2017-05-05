@@ -41,7 +41,7 @@ public class StateDaoImplTest {
             configDao = new ConfigDao();
             configDao.get().setTaxesFile(testFile);
         } catch (ConfigurationFileCorruptException | FileCreationException ex) {
-            Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrderDaoDbImplTest.class.getName()).log(Level.SEVERE, null, ex);
             fail("Throwing This Exception Should Not Be Possible.\n" + ex.getMessage());
         }
 

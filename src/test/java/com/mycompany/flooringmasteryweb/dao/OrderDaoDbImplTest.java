@@ -797,7 +797,7 @@ public class OrderDaoDbImplTest {
             text += scanner.useDelimiter("\\A").next();
         } catch (FileNotFoundException ex) {
             fail("File " + file.getName() + " could not be Found!");
-            Logger.getLogger(OrderDaoTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrderDaoDbImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         return text;
     }
