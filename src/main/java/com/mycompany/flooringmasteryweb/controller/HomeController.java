@@ -32,21 +32,17 @@ public class HomeController {
     ProductDao productDao;
     StateDao stateDao;
     OrderDao orderDao;
-    ConfigDao configDao;
 
     @Inject
     public HomeController(
             ProductDao productDao,
             StateDao stateDao,
-            OrderDao orderDao,
-            ConfigDao configDao
+            OrderDao orderDao
     ) {
 
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
-        this.configDao = configDao;
-
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)

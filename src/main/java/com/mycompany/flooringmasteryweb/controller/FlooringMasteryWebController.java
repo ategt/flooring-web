@@ -46,20 +46,17 @@ public class FlooringMasteryWebController {
     ProductDao productDao;
     StateDao stateDao;
     OrderDao orderDao;
-    ConfigDao configDao;
 
     @Inject
     public FlooringMasteryWebController(
             ProductDao productDao,
             StateDao stateDao,
-            OrderDao orderDao,
-            ConfigDao configDao
+            OrderDao orderDao
     ) {
 
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
-        this.configDao = configDao;
 
     }
 
@@ -127,7 +124,6 @@ public class FlooringMasteryWebController {
     public OrderCommand createWithAjax(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
 
         //validateInputs(orderCommand, bindingResult);
-
         if (bindingResult.hasErrors()) {
             return null;
         } else {

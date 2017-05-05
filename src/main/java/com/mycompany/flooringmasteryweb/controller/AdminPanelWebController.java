@@ -32,20 +32,17 @@ public class AdminPanelWebController {
     ProductDao productDao;
     StateDao stateDao;
     OrderDao orderDao;
-    ConfigDao configDao;
 
     @Inject
     public AdminPanelWebController(
             ProductDao productDao,
             StateDao stateDao,
-            OrderDao orderDao,
-            ConfigDao configDao
+            OrderDao orderDao
     ) {
 
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
-        this.configDao = configDao;
 
     }
 
