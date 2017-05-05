@@ -6,14 +6,7 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.ProductCommand;
-import com.mycompany.flooringmasteryweb.dto.State;
-import com.mycompany.flooringmasteryweb.exceptions.ConfigurationFileCorruptException;
-import com.mycompany.flooringmasteryweb.exceptions.FileCreationException;
 import com.mycompany.flooringmasteryweb.utilities.TestUtils;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +22,7 @@ public class ProductDaoDbImplTest {
 
     ApplicationContext ctx;
 
-    private static String[] fakeProducts = {"Better Flooring",
+    private static final String[] fakeProducts = {"Better Flooring",
         "Worlds Best Floor",
         "floor1",
         "Floor5",
