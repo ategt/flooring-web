@@ -1,6 +1,0 @@
-ProductFile:Data\Products.txt
-TaxesFile:ExtraTestTaxes.txt
-TestDirectory:Test
-DataDirectory:Data
-OrdersDirectory:Orders
-InTestMode:false
