@@ -122,7 +122,7 @@
     </dependencies>
 
     <build>
-        <finalName>spring-mvc-webapp</finalName>
+        <finalName>FlooringMasteryWeb</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

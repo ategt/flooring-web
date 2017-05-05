@@ -35,7 +35,7 @@ public class AddressController {
         this.addressDao = addressDao;
     }
     
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(Map model) {
         List<Address> addresses = addressDao.list();
         model.put("addresses", addresses);
