@@ -39,7 +39,7 @@ public class AddressController {
     public String index(Map model) {
         List<Address> addresses = addressDao.list();
         model.put("addresses", addresses);
-        return "index";
+        return "address\\index";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
