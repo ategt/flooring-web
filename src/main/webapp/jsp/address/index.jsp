@@ -43,7 +43,7 @@
 
                                 <td>${address.id}</td>
                                 <td><a data-address-id="${address.id}" data-toggle="modal" data-target="#showDetailModal">${address.firstName}</a></td>
-                                <td><a href="contact/show/${address.id}">${address.lastName}</a></td>
+                                <td><a href="show/${address.id}">${address.lastName}</a></td>
                                 <td><a data-address-id="${address.id}" data-toggle="modal" data-target="#editDetailModal">Edit</a></td>
                                 <td><a data-address-id="${address.id}" class="delete-link">Delete</a></td>
 
@@ -163,6 +163,11 @@
                         </tr>
 
                         <tr>
+                            <th>Company:</th>
+                            <td id="address-company"></td>
+                        </tr>
+
+                        <tr>
                             <th>Street Name:</th>
                             <td id="address-street-name"></td>
                         </tr>
@@ -237,6 +242,13 @@
                         </tr>
 
                         <tr>
+                            <th>Company:</th>
+                            <td>
+                                <input type="text" id="edit-address-company" />
+                            </td>
+                        </tr>
+
+                        <tr>
                             <th>Street Name:</th>
                             <td>
                                 <input type="text" id="edit-address-street-name" />
@@ -292,12 +304,13 @@
 
     <script>
         var contextRoot = "${pageContext.request.contextPath}";
+        var addressPath = contextRoot + "/address/";
     </script>
 
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/app.js"></script>
+    <script src="${pageContext.request.contextPath}/js/addressapp.js"></script>
 
 </body>
 </html>

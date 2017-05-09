@@ -200,26 +200,12 @@ $(document).ready(function () {
 
     $('#editDetailModal').on('show.bs.modal', function (e) {
 
-//            firstName: $("#firstName").val(),
-//            lastName: $("#lastName").val(),
-//            streetNumber: $("#streetNumber").val(),
-//            streetName: $("#streetName").val(),
-//            city: $("#city").val(),
-//            state: $("#state").val(),
-//            zip: $("#zip").val()
-
-
-
-
-
-
-
         var link = $(e.relatedTarget);
 
         var orderId = link.data('order-id');
 
         $.ajax({
-            url: contextRoot + "/FlooringMaster/" + orderId,
+            url: contextRoot + "/FlooringMaster/address/" + orderId,
             type: "GET",
             dataType: 'json',
             beforeSend: function (xhr) {

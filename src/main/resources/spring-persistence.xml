@@ -20,13 +20,7 @@
     <import resource="stateDao-context.xml" />
     <import resource="productDb-applicationContext.xml" />
     <import resource="OrdersDb-ApplicationContext.xml" />
-    
-    <bean id="flooringMasteryWebController" class="com.mycompany.flooringmasteryweb.controller.FlooringMasteryWebController">
-        <constructor-arg ref="productDao" />
-        <constructor-arg ref="stateDao" />
-        <constructor-arg ref="orderDao" />
-    </bean>
-    
+        
     <bean id="addressDao" class="com.mycompany.flooringmasteryweb.dao.AddressDaoPostgresImpl" > 
         <constructor-arg ref="jdbcTemplate" />
     </bean>    

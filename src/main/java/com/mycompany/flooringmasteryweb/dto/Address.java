@@ -30,8 +30,6 @@ public class Address {
     @Size(min = 1, max = 45)
     private String lastName;
 
-    @NotEmpty
-    @NotNull
     @Size(min = 1, max = 45)
     private String company;
 
