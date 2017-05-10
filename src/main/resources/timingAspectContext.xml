@@ -19,29 +19,70 @@
     <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />
     
     <bean id="timingAspect" class="com.mycompany.flooringmasteryweb.aop.TimingAspect" />
-        
+    
     <aop:config>
         <aop:aspect ref="timingAspect">
             
-            <aop:around method="create"
-                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
             />
     
-            <aop:around method="createAuditEntry"
-                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.update(..))"
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.update(..))"
             />
     
-            <aop:around method="createAuditEntry"
-                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.delete(..))"
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.delete(..))"
             />
     
-            <aop:around method="createAuditEntry"
-                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.get(..))"
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.get(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.size(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.getList(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByOrderNumber(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.sortByOrderNumber(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByState(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByName(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByProduct(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.searchByDate(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.listOrderNumbers(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.listOrderDates(..))"
             />
             
         </aop:aspect>
         
     </aop:config>
+
     
     <!--This is the main project context file.-->
             

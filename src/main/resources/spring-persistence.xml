@@ -25,6 +25,8 @@
         <constructor-arg ref="jdbcTemplate" />
     </bean>    
     
+    <import resource="timingAspectContext.xml" />
+    
     <!-- Register the messages.properties -->
     <bean id="messageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
