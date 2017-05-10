@@ -60,30 +60,14 @@ public class FlooringMasteryWebController {
 
     }
 
-//    @RequestMapping(value = "/", method = RequestMethod.POST)
-//    @ResponseBody
-//    public Order createWithAjax(@RequestBody Order order) {
-//
-//        return orderDao.create(order);
-//    }
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Order showWithAjax(@PathVariable("id") Integer orderId) {
-
         Order contact = orderDao.get(orderId);
 
         return contact;
     }
 
-//
-//    @RequestMapping(value = "/", method = RequestMethod.PUT)
-//    @ResponseBody
-//    public Order editSubmitWithAjax(@RequestBody Order order) {
-//
-//        orderDao.update(order);
-//
-//        return order;
-//    }
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
@@ -115,7 +99,6 @@ public class FlooringMasteryWebController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void deleteWithAjax(@PathVariable("id") Integer orderId) {
-
         orderDao.delete(orderDao.get(orderId));
     }
 
@@ -123,7 +106,6 @@ public class FlooringMasteryWebController {
     @ResponseBody
     public OrderCommand createWithAjax(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
 
-        //validateInputs(orderCommand, bindingResult);
         if (bindingResult.hasErrors()) {
             return null;
         } else {
@@ -212,9 +194,7 @@ public class FlooringMasteryWebController {
             }
 
             return "redirect:/";
-
         }
-
     }
 
     private void validateProduct(OrderCommand orderCommand, BindingResult bindingResult) {
@@ -233,7 +213,6 @@ public class FlooringMasteryWebController {
             } else {
                 orderCommand.setProduct(productGuess);
             }
-
         }
     }
 
