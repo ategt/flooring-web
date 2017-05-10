@@ -30,10 +30,18 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id =?";
     private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id =?";
     private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
+    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
+    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME = "SELECT * FROM addresses ORDER BY first_name ASC, last_name ASC, company ASC, id ASC;";
+    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY = "SELECT * FROM addresses ORDER BY company ASC, last_name ASC, first_name ASC, id ASC;";
+    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_ID = "SELECT * FROM addresses ORDER BY id ASC;";
     private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses;";
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
+
+    public static final int SORT_BY_LAST_NAME = 0;
+    public static final int SORT_BY_FIRST_NAME = 1;
+    public static final int SORT_BY_COMPANY = 2;
+    public static final int SORT_BY_ID = 3;
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -77,10 +85,10 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public Address get(String input){
+    public Address get(String input) {
         return getBestGuess(input);
     }
-    
+
     public Address getBestGuess(String input) {
         Set<Address> result = getGuesses(input);
         if (result.isEmpty()) {
@@ -149,7 +157,22 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> list() {
-        return jdbcTemplate.query(SQL_GET_ADDRESS_LIST, new AddressMapper());
+        return list(SORT_BY_LAST_NAME);
+    }
+
+    @Override
+    public List<Address> list(Integer sortBy) {
+        switch (sortBy) {
+            case SORT_BY_COMPANY:
+                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY, new AddressMapper());
+            case SORT_BY_FIRST_NAME:
+                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME, new AddressMapper());
+            case SORT_BY_ID:
+                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_ID, new AddressMapper());
+            case SORT_BY_LAST_NAME:
+            default:
+                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME, new AddressMapper());
+        }
     }
 
     @Override

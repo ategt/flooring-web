@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
+import com.mycompany.flooringmasteryweb.dao.AddressDaoPostgresImpl;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +37,25 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(Map model) {
-        List<Address> addresses = addressDao.list();
+    public String index(@RequestParam(name = "sort_by", required = false) String sortBy, Map model) {
+        List<Address> addresses = null;
+
+        if (sortBy != null) {
+            if (sortBy.equalsIgnoreCase("company")) {
+                addresses = addressDao.list(AddressDao.SORT_BY_COMPANY);
+            } else if (sortBy.equalsIgnoreCase("id")) {
+                addresses = addressDao.list(AddressDao.SORT_BY_ID);
+            } else if (sortBy.equalsIgnoreCase("first_name")) {
+                addresses = addressDao.list(AddressDao.SORT_BY_FIRST_NAME);
+            } else if (sortBy.equalsIgnoreCase("last_name")) {
+                addresses = addressDao.list(AddressDao.SORT_BY_LAST_NAME);
+            } else {
+                addresses = addressDao.list();
+            }
+        } else {
+            addresses = addressDao.list();
+        }
+
         model.put("addresses", addresses);
         return "address\\index";
     }
