@@ -25,6 +25,10 @@
         <constructor-arg ref="jdbcTemplate" />
     </bean>    
     
+    <bean id="timingDao" class="com.mycompany.flooringmasteryweb.dao.TimingDao" > 
+        <constructor-arg ref="jdbcTemplate" />
+    </bean>    
+    
     <import resource="timingAspectContext.xml" />
     
     <!-- Register the messages.properties -->

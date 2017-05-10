@@ -68,8 +68,16 @@ public class AddressController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Address showWithAjax(@PathVariable("id") Integer addressId) {
-        Address contact = addressDao.get(addressId);
+    public Address showWithAjax(@PathVariable("id") String addressInput) {
+        Address contact = null;
+
+        try {
+            int addressId = Integer.parseInt(addressInput);
+            contact = addressDao.get(addressId);
+        } catch (NumberFormatException ex) {
+            contact = addressDao.get(addressInput);
+        }
+
         return contact;
     }
 
