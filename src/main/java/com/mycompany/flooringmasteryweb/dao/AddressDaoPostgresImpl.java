@@ -29,8 +29,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
     private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id =?";
     private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id =?";
-    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company =?";
-    private static final String SQL_GET_ADDRESS_LIST = "SELECT * FROM addresses";
+    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
+    private static final String SQL_GET_ADDRESS_LIST = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
     private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses;";
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";

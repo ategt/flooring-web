@@ -54,7 +54,7 @@ public class AuditAspectTest {
      * Test of createAuditEntry method, of class AuditAspect.
      */
     @Test
-    public void testCreateAuditEntry() throws Exception {
+    public void testCreateAuditEntry() {
         System.out.println("createAuditEntry");
 
         Random random = new Random();

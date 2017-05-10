@@ -7,7 +7,9 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Function;
@@ -429,6 +431,26 @@ public class AddressDaoPostgresImplTest {
 
             assertEquals(result, address);
             addressDao.delete(resultId);
+        }
+    }
+
+    @Test
+    public void getSortedByName() {
+        List<Address> addresses = addressDao.list();
+        List<Address> addressesFromDb = addressDao.list();
+
+        addresses.sort((Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+            
+            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+
         }
     }
 

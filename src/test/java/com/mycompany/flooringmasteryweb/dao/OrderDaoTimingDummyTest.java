@@ -115,11 +115,7 @@ public class OrderDaoTimingDummyTest {
     @Test
     public void testGet() {
         System.out.println("get");
-        //long timeTaken = generateRandomTimeTakenTestValue();
 
-        //new java.lang.Integer
-        //int x = (int) (java.lang.Math.random() * 100.0);
-        //OrderDao dummyOrderDao = new OrderDaoTimingDummy(timeTaken);
         OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
 
         long startTime = new Date().getTime();
@@ -137,11 +133,12 @@ public class OrderDaoTimingDummyTest {
         System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
         System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
         System.out.println("difference: " + Math.abs(timing.getDifferenceTime() - timeTaken) + " / " + expectedTime);
+        System.out.println("expectation: " + Math.abs(timing.getDifferenceTime() - expectedTime) + " should be " + expectedTime );
 
         assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
         assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
         assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
-        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
+        assertTrue("Expectation Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
     }
 
     /**
