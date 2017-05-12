@@ -307,21 +307,21 @@
         </div>
 
     <script>
-        $(function () {
-            $("#jQueryDatePicker").datepicker();
-            $("#jQueryDatePicker").datepicker('setDate', new Date());
-        });
-    </script>
-    <script>
     var contextRoot = "${pageContext.request.contextPath}";
     var flooringPath = contextRoot + "/FlooringMaster/";
     var addressPath = contextRoot + "/address/";
     </script>
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery-3.2.1.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/jquery.autocomplete.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/flooringapp.js"></script>
+    <script>
+        $(function () {
+            $("#jQueryDatePicker").datepicker();
+            $("#jQueryDatePicker").datepicker('setDate', new Date());
+        });
+    </script>
 
 </body>
 </html>
