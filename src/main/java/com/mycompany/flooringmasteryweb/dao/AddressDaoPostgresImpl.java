@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -115,6 +116,29 @@ public class AddressDaoPostgresImpl implements AddressDao {
         result.addAll(searchByStreetNumber(input));
 
         return result;
+    }
+
+    @Override
+    public Set<String> getCompletionGuesses(String input) {
+        if (input == null) {
+            return null;
+        }
+
+        Set<String> result = new HashSet();
+
+        result.addAll(searchByFirstName(input).stream().map(address -> address.getFirstName()).collect(Collectors.toSet()));
+        result.addAll(searchByLastName(input).stream().map(address -> address.getLastName()).collect(Collectors.toSet()));
+        result.addAll(searchByCompany(input).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
+
+        if (result.size() < 30) {
+            result.addAll(searchByCity(input).stream().map(address -> address.getCity()).collect(Collectors.toSet()));
+            result.addAll(searchByState(input).stream().map(address -> address.getState()).collect(Collectors.toSet()));
+            result.addAll(searchByZip(input).stream().map(address -> address.getZip()).collect(Collectors.toSet()));
+            result.addAll(searchByStreetName(input).stream().map(address -> address.getStreetName()).collect(Collectors.toSet()));
+            result.addAll(searchByStreetNumber(input).stream().map(address -> address.getStreetNumber()).collect(Collectors.toSet()));
+        }
+
+        return result.stream().limit(30).collect(Collectors.toSet());
     }
 
     @Override

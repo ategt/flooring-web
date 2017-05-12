@@ -10,6 +10,7 @@ import com.mycompany.flooringmasteryweb.dao.AddressDaoPostgresImpl;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -68,17 +69,34 @@ public class AddressController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Address showWithAjax(@PathVariable("id") String addressInput) {
-        Address contact = null;
-
-        try {
-            int addressId = Integer.parseInt(addressInput);
-            contact = addressDao.get(addressId);
-        } catch (NumberFormatException ex) {
-            contact = addressDao.get(addressInput);
-        }
+    public Address showWithAjax(@PathVariable("id") Integer addressId) {
+        Address contact = addressDao.get(addressId);
 
         return contact;
+    }
+
+    @RequestMapping(value = "/{input}/search", method = RequestMethod.GET)
+    @ResponseBody
+    public Address guessWithAjax(@PathVariable("input") String addressInput) {
+        Address contact = addressDao.get(addressInput);
+
+        return contact;
+    }
+
+    @RequestMapping(value = "/{input}/name_completion", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<String> listNamesWithAjax(@PathVariable("input") String addressInput) {
+        Set<String> names = addressDao.getCompletionGuesses(addressInput);
+
+        return names;
+    }
+
+    @RequestMapping(value = "/name_completion", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<String> altListNamesWithAjax(@RequestParam(name = "query", required = false) String addressInput) {
+        Set<String> names = addressDao.getCompletionGuesses(addressInput);
+
+        return names;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)

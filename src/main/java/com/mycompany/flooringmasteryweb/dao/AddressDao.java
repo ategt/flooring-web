@@ -7,6 +7,7 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -28,6 +29,7 @@ public interface AddressDao {
 
     public int size();
     
+    public Set<String> getCompletionGuesses(String input);
     public List<Address> list();
     public List<Address> list(Integer sortBy);
     public List<Address> searchByFirstName(String firstName);

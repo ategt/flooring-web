@@ -74,13 +74,13 @@ public class AuditAspectTest {
         int lastAuditPosition = auditDao.getSize();
         Audit lastAudit = auditDao.getResultRange(lastAuditPosition - 1, 1).get(0);
 
-        assertTrue(Math.abs(lastAudit.getDate().getTime() - order.getDate().getTime()) - 25000 < 50);
+        assertTrue("Order Creation Truth", Math.abs(lastAudit.getDate().getTime() - order.getDate().getTime()) - 25000 < 50);
 
-        assertEquals(lastAudit.getActionPerformed(), "create");
-        assertEquals(lastAudit.getOrderid(), order.getId());
-        assertTrue(Math.abs(lastAudit.getLogDate().getTime() - System.currentTimeMillis()) < 50);
-        assertEquals(lastAudit.getOrderName(), order.getName());
-        assertEquals(lastAudit.getOrderTotal(), order.getTotal(), 100);
+        assertEquals("Action Performed Check", lastAudit.getActionPerformed(), "create");
+        assertEquals("Order ID Check", lastAudit.getOrderid(), order.getId());
+        assertTrue("Log Time Check", Math.abs(lastAudit.getLogDate().getTime() - System.currentTimeMillis()) < 50);
+        assertEquals("Order Name Check", lastAudit.getOrderName(), order.getName());
+        assertEquals("Total Check", lastAudit.getOrderTotal(), order.getTotal(), 100);
 
     }
 }

@@ -13,7 +13,9 @@ import com.mycompany.flooringmasteryweb.dto.BasicOrderImpl;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.Product;
+import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
+import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.utilities.DateUtilities;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 import java.text.ParseException;
@@ -60,6 +62,17 @@ public class FlooringMasteryWebController {
 
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String index(Map model) {
+        loadOrdersToMap(model);
+        loadStateCommandsToMap(model);
+        loadProductCommandsToMap(model);
+
+        putBlankOrder(model);
+
+        return "flooring\\index";
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Order showWithAjax(@PathVariable("id") Integer orderId) {
@@ -70,7 +83,7 @@ public class FlooringMasteryWebController {
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
-    public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
+    public OrderCommand updateWithAjax(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
 
         validateInputs(orderCommand, bindingResult);
 
@@ -183,7 +196,7 @@ public class FlooringMasteryWebController {
 
             model.put("orderCommand", orderCommand);
 
-            return "home";
+            return "flooring\\index";
         } else {
 
             Order order = orderDao.orderBuilder(orderCommand);
@@ -254,7 +267,7 @@ public class FlooringMasteryWebController {
         model.put("orderCommand", orderCommand);
         loadTheOrdersList(model);
 
-        return "home";
+        return "flooring\\index";
     }
 
     @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
@@ -299,7 +312,7 @@ public class FlooringMasteryWebController {
 
         loadTheOrdersList(model);
 
-        return "searchOrder";
+        return "flooring\\searchOrder";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -349,15 +362,38 @@ public class FlooringMasteryWebController {
                 State state = stateDao.get(stateGuess);
                 orders = orderDao.searchByState(state);
             }
-
         }
 
         model.put("orders", orders);
         model.put("error", error);
         model.put("dateError", dateError);
 
-        return "searchOrder";
+        return "flooring\\searchOrder";
+    }
 
+    private void loadOrdersToMap(Map model) {
+        List<Order> orders = orderDao.getList();
+        orders = orderDao.sortByOrderNumber(orders);
+        model.put("orders", orders);
+    }
+
+    private void loadProductCommandsToMap(Map model) {
+        List<Product> products = productDao.getListOfProducts();
+        List<ProductCommand> productCommands = productDao.buildCommandProductList(products);
+        model.put("productCommands", productCommands);
+    }
+
+    private void loadStateCommandsToMap(Map model) {
+        List<State> states = stateDao.getListOfStates();
+        List<StateCommand> stateCommands = stateDao.buildCommandStateList(states);
+        model.put("stateCommands", stateCommands);
+    }
+
+    public void putBlankOrder(Map model) {
+        OrderCommand orderCommand = new OrderCommand();
+        orderCommand.setId(0);
+
+        model.put("orderCommand", orderCommand);
     }
 
 }
