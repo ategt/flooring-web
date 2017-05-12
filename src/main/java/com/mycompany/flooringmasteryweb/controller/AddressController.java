@@ -102,13 +102,19 @@ public class AddressController {
     @ResponseBody
     public Set<String> altListNamesWithAjax(
             @RequestParam(name = "query", required = false) String addressInput,
+            @RequestParam(name = "term", required = false) String altAddressInput,
             @RequestParam(name = "limit", required = false) Integer addressLimit) {
 
         if (addressLimit == null) {
             addressLimit = 30;
         }
 
-        Set<String> names = addressDao.getCompletionGuesses(addressInput, addressLimit);
+        String input = addressInput;
+        if (addressInput == null){
+            input = altAddressInput;
+        }
+        
+        Set<String> names = addressDao.getCompletionGuesses(input, addressLimit);
 
         return names;
     }

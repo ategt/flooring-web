@@ -314,7 +314,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="${pageContext.request.contextPath}/js/jquery-3.2.1.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/jquery.autocomplete.min.js"></script>
+    <!--<script src="${pageContext.request.contextPath}/js/jquery.autocomplete.min.js"></script>-->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="${pageContext.request.contextPath}/js/flooringapp.js"></script>
     <script>
         $(function () {

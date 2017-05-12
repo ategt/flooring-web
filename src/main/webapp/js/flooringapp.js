@@ -251,23 +251,14 @@ $(document).ready(function () {
 //    });
 
     $('#name').autocomplete({
-        serviceUrl: addressPath + "name_completion",
-        transformResult: function (response) {
-            return {
-                suggestions: $.map(response,
-                    function (dataItem) {
-                        return {
-                            value: dataItem,
-                            data: dataItem
-                        }
-                    }
-                )
-            }        
-        },
-        onSelect: function (suggestion) {
-            $('#name').val(suggestion);
+        source: addressPath + "name_completion",
+        minLength: 2,
+        select: function (event, ui) {
+            $('#name').val(ui.item);
         }
+
     });
+
     function updateAddress(address) {
         var addressText = address.lastName + ", " + address.firstName + "<br />" +
                 address.company + "<br />" +
