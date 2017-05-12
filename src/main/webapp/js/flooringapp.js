@@ -10,9 +10,7 @@ $(document).ready(function () {
     $('#create-submit').on('click', function (e) {
 
         e.preventDefault();
-
         var postableUrl = flooringPath;
-
         var orderData = JSON.stringify({
             name: $("#name").val(),
             state: $("#state-selector").val(),
@@ -20,7 +18,6 @@ $(document).ready(function () {
             date: $("#jQueryDatePicker").val(),
             area: $("#area").val()
         });
-
         $.ajax({
             url: postableUrl,
             type: "POST",
@@ -33,20 +30,16 @@ $(document).ready(function () {
             success: function (data, status) {
 
                 var tableRow = buildOrderRow(data);
-
                 $('#order-table').append($(tableRow));
-
             },
             error: function (data, status) {
                 var errors = data.responseJSON.errors;
-
                 $.each(errors, function (index, error) {
                     $("#add-contact-validation-errors").append(error.fieldname + ":" + error.message + "<br />");
                 });
             }
         });
     });
-
     function buildOrderRow(data) {
 
         var strRowTable = "<tr id=\"order-row-" + data.id + "\" >\n\
@@ -57,7 +50,6 @@ $(document).ready(function () {
         <td><a data-order-id=\"" + data.id + "\" class=\"delete-link\">Delete</a></td>\n\
                                                                                         \n\
         </tr>";
-
         var strTableRow = "  <tr>\n\
                                 <td><a href=\"/FlooringMaster/show/" + data.id + "\">" + data.id + "</a></td>\n\
                                 <td><a href=\"/FlooringMaster/show/" + data.id + "\">" + data.name + "</a></td>\n\
@@ -65,7 +57,6 @@ $(document).ready(function () {
                                 <td><a href=\"/FlooringMaster/delete/" + data.id + "\">Delete</a></td>\n\
 \n\
                             </tr>";
-
         return strRowTable;
     }
 
@@ -76,9 +67,7 @@ $(document).ready(function () {
 
     $('#showDetailModal').on('show.bs.modal', function (e) {
         var link = $(e.relatedTarget);
-
         var orderId = link.data('order-id');
-
         $.ajax({
             url: flooringPath + orderId,
             type: "GET",
@@ -99,56 +88,40 @@ $(document).ready(function () {
                 $('#order-total-invoice').text(formatDollar(data.total));
                 $('#order-total-tax').text(formatDollar(data.tax));
                 $('#order-tax-rate').text(data.taxRate + " %");
-
                 var totalStr = data.total;
                 var taxStr = data.tax;
-
                 var total = parseInt(totalStr);
                 var tax = parseInt(taxStr);
-
                 var subTotal = eval(total - tax);
-
                 subTotal = formatDollar(subTotal);
-
                 $('#order-subtotal').text(subTotal);
-
                 var orderDate = data.date;
                 orderDate = new Date(orderDate);
-
                 if (orderDate === null) {
                     orderDate = new Date();
                 }
 
                 $('#order-date-f').text(orderDate.toDateString());
-
-
                 var stateObj = data.state;
                 var displayState = "Error - Data Invalid";
                 if (stateObj !== null)
                     displayState = stateObj.stateName;
-
                 $('#order-state').text(displayState);
-
                 var productObj = data.product;
                 var displayProduct = "Error - Data Invalid";
                 if (productObj !== null)
                     displayProduct = productObj.productName;
-
                 $('#order-product').text(displayProduct);
-
             },
             error: function (data, status) {
                 alert(status);
             }
         });
     });
-
     $('#editDetailModal').on('show.bs.modal', function (e) {
 
         var link = $(e.relatedTarget);
-
         var orderId = link.data('order-id');
-
         $.ajax({
             url: flooringPath + orderId,
             type: "GET",
@@ -161,16 +134,12 @@ $(document).ready(function () {
                 $('#edit-order-area').val(data.area);
                 $('#edit-id').val(data.id);
                 $('#edit-display-id').text(data.id);
-
                 var $datepicker = $('#edit-order-date');
                 $datepicker.datepicker();
-
                 var orderDate = data.date;
                 if (orderDate === null)
                     orderDate = new Date();
-
                 $datepicker.datepicker('setDate', orderDate);
-
                 var stateObj = data.state;
                 var displayState = "Error - Data Invalid";
                 if (stateObj !== null) {
@@ -181,7 +150,6 @@ $(document).ready(function () {
 
                 console.log(displayState);
                 $('#edit-order-state').val(displayState);
-
                 var productObj = data.product;
                 var displayProduct = "Error - Data Invalid";
                 if (productObj !== null) {
@@ -198,11 +166,9 @@ $(document).ready(function () {
             }
         });
     });
-
     $('#edit-order-button').on('click', function (e) {
 
         e.preventDefault();
-
         var orderData = JSON.stringify({
             id: $("#edit-id").val(),
             name: $("#edit-order-name").val(),
@@ -211,7 +177,6 @@ $(document).ready(function () {
             state: $("#edit-order-state").val(),
             area: $("#edit-order-area").val()
         });
-
         $.ajax({
             url: flooringPath,
             type: "PUT",
@@ -223,24 +188,18 @@ $(document).ready(function () {
             },
             success: function (data, status) {
                 $('#editDetailModal').modal('hide');
-
                 var tableRow = buildOrderRow(data);
-
                 $('#order-row-' + data.id).replaceWith($(tableRow));
-
             },
             error: function (data, status) {
                 alert("error");
             }
         });
     });
-
     $(document).on('click', '.delete-link', function (e) {
 
         e.preventDefault();
-
         var orderId = $(e.target).data('order-id');
-
         $.ajax({
             type: "DELETE",
             url: flooringPath + orderId,
@@ -252,10 +211,8 @@ $(document).ready(function () {
             }
         });
     });
-
     $(document).on('blur', '.order-name', function (e) {
         var searchString = $("#name").val();
-
         $.ajax({
             url: addressPath + searchString + "/search",
             type: "GET",
@@ -272,8 +229,8 @@ $(document).ready(function () {
                 }
             }
         });
+        $("#name-address").html("Searching for Contact Information...");
     });
-
 //    $(document).on('keypress', '.order-name', function (e) {
 //        var searchString = $("#name").val();
 //
@@ -295,18 +252,22 @@ $(document).ready(function () {
 
     $('#name').autocomplete({
         serviceUrl: addressPath + "name_completion",
-        transformResult: function(response){
-         return {
-             suggestions: $.map(response.myData, 
-             function(dataItem){ return {value: dataItem.valueField, data: dateItem.dataField }; 
-                         )
-         }   
+        transformResult: function (response) {
+            return {
+                suggestions: $.map(response,
+                    function (dataItem) {
+                        return {
+                            value: dataItem,
+                            data: dataItem
+                        }
+                    }
+                )
+            }        
         },
         onSelect: function (suggestion) {
             $('#name').val(suggestion);
         }
     });
-
     function updateAddress(address) {
         var addressText = address.lastName + ", " + address.firstName + "<br />" +
                 address.company + "<br />" +

@@ -29,7 +29,7 @@ public interface AddressDao {
 
     public int size();
     
-    public Set<String> getCompletionGuesses(String input);
+    public Set<String> getCompletionGuesses(String input, int limit);
     public List<Address> list();
     public List<Address> list(Integer sortBy);
     public List<Address> searchByFirstName(String firstName);

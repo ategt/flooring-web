@@ -85,16 +85,30 @@ public class AddressController {
 
     @RequestMapping(value = "/{input}/name_completion", method = RequestMethod.GET)
     @ResponseBody
-    public Set<String> listNamesWithAjax(@PathVariable("input") String addressInput) {
-        Set<String> names = addressDao.getCompletionGuesses(addressInput);
+    public Set<String> listNamesWithAjax(
+            @PathVariable("input") String addressInput,
+            @RequestParam(name = "limit", required = false) Integer addressLimit) {
+
+        if (addressLimit == null) {
+            addressLimit = 30;
+        }
+        
+        Set<String> names = addressDao.getCompletionGuesses(addressInput, addressLimit);
 
         return names;
     }
 
     @RequestMapping(value = "/name_completion", method = RequestMethod.GET)
     @ResponseBody
-    public Set<String> altListNamesWithAjax(@RequestParam(name = "query", required = false) String addressInput) {
-        Set<String> names = addressDao.getCompletionGuesses(addressInput);
+    public Set<String> altListNamesWithAjax(
+            @RequestParam(name = "query", required = false) String addressInput,
+            @RequestParam(name = "limit", required = false) Integer addressLimit) {
+
+        if (addressLimit == null) {
+            addressLimit = 30;
+        }
+
+        Set<String> names = addressDao.getCompletionGuesses(addressInput, addressLimit);
 
         return names;
     }

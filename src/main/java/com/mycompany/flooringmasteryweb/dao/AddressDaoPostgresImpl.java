@@ -119,7 +119,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public Set<String> getCompletionGuesses(String input) {
+    public Set<String> getCompletionGuesses(String input, int limit) {
         if (input == null) {
             return null;
         }
@@ -130,15 +130,15 @@ public class AddressDaoPostgresImpl implements AddressDao {
         result.addAll(searchByLastName(input).stream().map(address -> address.getLastName()).collect(Collectors.toSet()));
         result.addAll(searchByCompany(input).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
 
-        if (result.size() < 30) {
-            result.addAll(searchByCity(input).stream().map(address -> address.getCity()).collect(Collectors.toSet()));
-            result.addAll(searchByState(input).stream().map(address -> address.getState()).collect(Collectors.toSet()));
-            result.addAll(searchByZip(input).stream().map(address -> address.getZip()).collect(Collectors.toSet()));
-            result.addAll(searchByStreetName(input).stream().map(address -> address.getStreetName()).collect(Collectors.toSet()));
-            result.addAll(searchByStreetNumber(input).stream().map(address -> address.getStreetNumber()).collect(Collectors.toSet()));
-        }
+//        if (result.size() < 30) {
+//            result.addAll(searchByCity(input).stream().map(address -> address.getCity()).collect(Collectors.toSet()));
+//            result.addAll(searchByState(input).stream().map(address -> address.getState()).collect(Collectors.toSet()));
+//            result.addAll(searchByZip(input).stream().map(address -> address.getZip()).collect(Collectors.toSet()));
+//            result.addAll(searchByStreetName(input).stream().map(address -> address.getStreetName()).collect(Collectors.toSet()));
+//            result.addAll(searchByStreetNumber(input).stream().map(address -> address.getStreetNumber()).collect(Collectors.toSet()));
+//        }
 
-        return result.stream().limit(30).collect(Collectors.toSet());
+        return result.stream().limit(limit).collect(Collectors.toSet());
     }
 
     @Override

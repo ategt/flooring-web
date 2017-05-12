@@ -26,25 +26,8 @@
 
             <%@ include file="../partials/banner.jspf" %>
 
-            <div class="row">
+            <div class="row">                
                 <div class="col-md-6 col-md-push-6">
-
-                    <table id="order-table" class="table table-hover">
-                        <th>Order Number</th>
-                        <th>Order Name</th>
-                        <th><i class="glyphicon glyphicon-edit"></i> Edit</th>
-                        <th><i class="glyphicon glyphicon-remove"></i> Delete</th>
-                            <c:forEach items="${orders}" var="order">
-                            <tr id="order-row-${order.id}" >
-                                <td><a data-order-id="${order.id}" data-toggle="modal" data-target="#showDetailModal">${order.id}</a></td>
-                                <td><a href="show/${order.id}">${order.name}</a></td>
-                                <td><a data-order-id="${order.id}" data-toggle="modal" data-target="#editDetailModal">Edit</a></td>
-                                <td><a data-order-id="${order.id}" class="delete-link">Delete</a></td>
-                            </tr>
-                        </c:forEach>
-                    </table>
-                </div>
-                <div class="col-md-6 col-md-pull-6">
                     <form method="POST" class="form-horizontal">
                         <div class="form-group">
                             <div class="col-sm-3"></div>
@@ -125,13 +108,30 @@
                                 <input value="Create" id="create-submit" type="submit" class="btn btn-default" />
                             </div>
                         </div>
+                    </form>
                 </div>
-                </form>
+
+                <div class="col-md-6 col-md-pull-6">
+
+                    <table id="order-table" class="table table-hover">
+                        <th>Order Number</th>
+                        <th>Order Name</th>
+                        <th><i class="glyphicon glyphicon-edit"></i> Edit</th>
+                        <th><i class="glyphicon glyphicon-remove"></i> Delete</th>
+                            <c:forEach items="${orders}" var="order">
+                            <tr id="order-row-${order.id}" >
+                                <td><a data-order-id="${order.id}" data-toggle="modal" data-target="#showDetailModal">${order.id}</a></td>
+                                <td><a href="show/${order.id}">${order.name}</a></td>
+                                <td><a data-order-id="${order.id}" data-toggle="modal" data-target="#editDetailModal">Edit</a></td>
+                                <td><a data-order-id="${order.id}" class="delete-link">Delete</a></td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="showDetailModal" class="modal fade" role="dialog">
+        <div id="showDetailModal" class="modal fade" role="dialog">
           <div class="modal-dialog">
 
             <!-- Modal content-->
@@ -142,99 +142,99 @@
               </div>
               <div class="modal-body">
 
-                    <table class="table table-bordered table-striped" id="show-order-table">
-                        <tr>
-                            <th>Order Name:</th>
-                            <td id="order-name"></td>
-                        </tr>
+                        <table class="table table-bordered table-striped" id="show-order-table">
+                            <tr>
+                                <th>Order Name:</th>
+                                <td id="order-name"></td>
+                            </tr>
 
-                        <tr>
-                            <th>State:</th>
-                            <td id="order-state"></td>
-                        </tr>
+                            <tr>
+                                <th>State:</th>
+                                <td id="order-state"></td>
+                            </tr>
 
-                        <tr>
-                            <th>Product:</th>
-                            <td id="order-product"></td>
-                        </tr>
+                            <tr>
+                                <th>Product:</th>
+                                <td id="order-product"></td>
+                            </tr>
 
-                        <tr>
-                            <th>Date:</th>
-                            <td id="order-date"></td>
-                        </tr>
+                            <tr>
+                                <th>Date:</th>
+                                <td id="order-date"></td>
+                            </tr>
 
-                        <tr>
-                            <th>Area:</th>
-                            <td id="order-area"></td>
-                        </tr>
+                            <tr>
+                                <th>Area:</th>
+                                <td id="order-area"></td>
+                            </tr>
 
-                        <tr>
-                            <th>
-                                Order Date:
-                            </th>
-                            <td id="order-date-f">
-                            </td>
-                        </tr>
+                            <tr>
+                                <th>
+                                    Order Date:
+                                </th>
+                                <td id="order-date-f">
+                                </td>
+                            </tr>
 
-                        <tr>
-                            <th>
-                                Material Unit Cost:
-                            </th>
-                            <td id="order-material-unit-cost">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Material Total Cost:
-                            </th>
-                            <td id="order-material-cost">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Installation Unit Cost:
-                            </th>
-                            <td id="order-labor-unit-cost">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Installation Total Cost:
-                            </th>
-                            <td id="order-labor-total-cost">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Total Before Tax:
-                            </th>
-                            <td id="order-subtotal">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Sales Tax Rate:
-                            </th>
-                            <td id="order-tax-rate">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Total Sales Tax:
-                            </th>
-                            <td id="order-total-tax">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Total Invoice:
-                            </th>
-                            <td id="order-total-invoice">
-                            </td>
-                        </tr>
-                </div>
+                            <tr>
+                                <th>
+                                    Material Unit Cost:
+                                </th>
+                                <td id="order-material-unit-cost">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Material Total Cost:
+                                </th>
+                                <td id="order-material-cost">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Installation Unit Cost:
+                                </th>
+                                <td id="order-labor-unit-cost">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Installation Total Cost:
+                                </th>
+                                <td id="order-labor-total-cost">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Total Before Tax:
+                                </th>
+                                <td id="order-subtotal">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Sales Tax Rate:
+                                </th>
+                                <td id="order-tax-rate">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Total Sales Tax:
+                                </th>
+                                <td id="order-total-tax">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Total Invoice:
+                                </th>
+                                <td id="order-total-invoice">
+                                </td>
+                            </tr>
+                    </div>
 
-                </table>
+                    </table>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -243,7 +243,7 @@
           </div>
         </div>
 
-<div id="editDetailModal" class="modal fade" role="dialog">
+    <div id="editDetailModal" class="modal fade" role="dialog">
           <div class="modal-dialog">
 
             <!-- Modal content-->
@@ -253,50 +253,50 @@
                 <h4 class="modal-title">Edit Order Details</h4>
               </div>
               <div class="modal-body">
-                <table class="table table-bordered">
-                    <input type="hidden" id="edit-id" class="form-control" />
-                    <tr>
-                        <th>ID:</th>
-                        <td id="edit-display-id">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Order Name:</th>
-                        <td>
-                            <input type="text" id="edit-order-name" class="form-control" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>State:</th>
-                        <td>
-                            <select id="edit-order-state" class="form-control" name="state" >
-                                <c:forEach items="${stateCommands}" var="stateCommand">
-                                    <option value="${stateCommand.stateAbbreviation}"  >${stateCommand.stateName} - ${stateCommand.stateTax}%</option>
-                                </c:forEach>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Product:</th>
-                        <td>
-                            <select name="product" id="edit-order-product" class="form-control" >
-                                <c:forEach items="${productCommands}" var="productCommand">
-                                    <option value="${productCommand.productName}" >${productCommand.productName}</option>
-                                </c:forEach>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Date:</th>
-                        <td>
-                            <input pattern="MM/dd/yyyy" type="text" class="form-control" id="edit-order-date"  />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Area:</th>
-                        <td><input type="text" id="edit-order-area" class="form-control" /></td>
-                    </tr>
-                </table>
+                    <table class="table table-bordered">
+                        <input type="hidden" id="edit-id" class="form-control" />
+                        <tr>
+                            <th>ID:</th>
+                            <td id="edit-display-id">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Order Name:</th>
+                            <td>
+                                <input type="text" id="edit-order-name" class="form-control" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>State:</th>
+                            <td>
+                                <select id="edit-order-state" class="form-control" name="state" >
+                                    <c:forEach items="${stateCommands}" var="stateCommand">
+                                        <option value="${stateCommand.stateAbbreviation}"  >${stateCommand.stateName} - ${stateCommand.stateTax}%</option>
+                                    </c:forEach>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Product:</th>
+                            <td>
+                                <select name="product" id="edit-order-product" class="form-control" >
+                                    <c:forEach items="${productCommands}" var="productCommand">
+                                        <option value="${productCommand.productName}" >${productCommand.productName}</option>
+                                    </c:forEach>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Date:</th>
+                            <td>
+                                <input pattern="MM/dd/yyyy" type="text" class="form-control" id="edit-order-date"  />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Area:</th>
+                            <td><input type="text" id="edit-order-area" class="form-control" /></td>
+                        </tr>
+                    </table>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -306,22 +306,22 @@
           </div>
         </div>
 
-<script>
-    $(function () {
-        $("#jQueryDatePicker").datepicker();
-        $("#jQueryDatePicker").datepicker('setDate', new Date());
-    });
-</script>
-<script>
+    <script>
+        $(function () {
+            $("#jQueryDatePicker").datepicker();
+            $("#jQueryDatePicker").datepicker('setDate', new Date());
+        });
+    </script>
+    <script>
     var contextRoot = "${pageContext.request.contextPath}";
     var flooringPath = contextRoot + "/FlooringMaster/";
     var addressPath = contextRoot + "/address/";
-</script>
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery.autocomplete.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/flooringapp.js"></script>
+    </script>
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery.autocomplete.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/flooringapp.js"></script>
 
 </body>
 </html>
