@@ -38,14 +38,7 @@ $(document).ready(function () {
                 resetCreateForm();
 
                 var tableRow = buildAddressRow(data);
-
-                //$('#recently-added').prepend($(tableRow));
                 $('#address-table').append($(tableRow));
-
-
-//                a
-//                data - address - id = "${address.id}" data - toggle = "modal" data - target = "#showDetailModal"
-
                 $("#showDetailModal").modal();
                 populateModal(data.id);
 
@@ -97,9 +90,7 @@ $(document).ready(function () {
     $('#showDetailModal').on('show.bs.modal', function (e) {
 
         var link = $(e.relatedTarget);
-
         var addressId = link.data('address-id');
-
         populateModal(addressId);
 
     });

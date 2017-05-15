@@ -306,11 +306,6 @@
           </div>
         </div>
 
-    <script>
-    var contextRoot = "${pageContext.request.contextPath}";
-    var flooringPath = contextRoot + "/FlooringMaster/";
-    var addressPath = contextRoot + "/address/";
-    </script>
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="${pageContext.request.contextPath}/js/jquery-3.2.1.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>

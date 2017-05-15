@@ -1,0 +1,74 @@
+<%@ page pageEncoding="windows-1252" %>
+<form method="POST" class="form-horizontal" id="createAddressForm" >
+    <input type="hidden" id="objectId" value="0" />
+    <div class="form-group color-container" id="firstName-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 error-container" id="firstName-errors" ></div>
+        <label for="firstName" class="col-sm-2 control-label" >First:</label>
+        <div class="col-sm-10">
+            <input class="form-control create-address-form" type="text" name="firstName" id="firstName" placeholder="First Name" />
+        </div>
+    </div>
+    <div class="form-group color-container" id="lastName-group" >
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 error-container" id="lastName-errors" ></div>
+        <label for="lastName" class="col-sm-2 control-label" >Last:</label>
+        <div class="col-sm-10">
+            <input class="form-control create-address-form" type="text" name="lastName" id="lastName" placeholder="Last Name" />
+        </div>
+    </div>
+    <div class="form-group color-container" id="company-group" >
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 error-container" id="company-errors" ></div>
+        <label for="company" class="col-sm-2 control-label" >Company:</label>
+        <div class="col-sm-10">
+            <input class="form-control create-address-form" type="text" name="company" id="company" placeholder="Company Name" />
+        </div>
+    </div>
+    <div class="form-group color-container" id="streetNumber-group" >
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 error-container" id="streetNumber-errors" ></div>
+        <label for="streetNumber" class="col-sm-2 control-label" >Street Number:</label>
+        <div class="col-sm-10">
+            <input class="form-control create-address-form" type="text" name="streetNumber" id="streetNumber" placeholder="Street Number" />
+        </div>
+    </div>
+    <div class="form-group color-container" id="streetName-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 error-container" id="streetName-errors" ></div>
+        <label for="streetName" class="col-sm-2 control-label" >Street Name:</label>
+        <div class="col-sm-10">
+            <input class="form-control create-address-form" type="text" name="streetName" id="streetName" placeholder="Street Name" />
+        </div>
+    </div>
+    <div class="form-group color-container" id="city-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 error-container" id="city-errors" ></div>
+        <label for="city" class="col-sm-2 control-label" >City:</label>
+        <div class="col-sm-10">
+            <input class="form-control create-address-form" type="text" name="city" id="city" placeholder="City" />
+        </div>
+    </div>
+    <div class="form-group color-container" id="state-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 error-container" id="state-errors" ></div>
+        <label for="state" class="col-sm-2 control-label" >State:</label>
+        <div class="col-sm-10">
+            <input class="form-control create-address-form" type="text" name="state" id="state" placeholder="State" />
+        </div>
+    </div>
+    <div class="form-group color-container" id="zip-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10 error-container" id="zip-errors" ></div>
+        <label for="zip" class="col-sm-2 control-label" >Zip:</label>
+        <div class="col-sm-10">
+            <input class="form-control create-address-form" type="text" name="zip" id="zip" placeholder="Zip" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2" id="add-contact-validation-errors" ></div>
+        <div class="col-sm-10">
+            <input type="submit" id="create-submit"  class="btn btn-default" />
+        </div>
+    </div>
+</form>

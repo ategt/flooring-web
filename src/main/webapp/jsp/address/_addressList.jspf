@@ -1,0 +1,18 @@
+<%@ page pageEncoding="windows-1252" %>
+<table id="address-table" class="table table-hover">
+    <th>ID</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th><i class="glyphicon glyphicon-edit"></i> Edit</th>
+    <th><i class="glyphicon glyphicon-remove"></i> Delete</th>
+
+    <c:forEach items="${addresses}" var="address">
+        <tr id="address-row-${address.id}" >
+            <td>${address.id}</td>
+            <td><a data-address-id="${address.id}" data-toggle="modal" data-target="#showDetailModal">${address.firstName}</a></td>
+            <td><a href="show/${address.id}">${address.lastName}</a></td>
+            <td><a data-address-id="${address.id}" data-toggle="modal" data-target="#editDetailModal">Edit</a></td>
+            <td><a data-address-id="${address.id}" class="delete-link">Delete</a></td>
+        </tr>
+    </c:forEach>
+</table>

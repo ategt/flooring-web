@@ -1,0 +1,67 @@
+<%@ page pageEncoding="windows-1252" %>
+<div id="editDetailModal" class="modal fade" role="dialog"><div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Address Details</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>ID:</th>
+                        <td>
+                            <input type="text" id="edit-id" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>First Name:</th>
+                        <td>
+                            <input type="text" id="edit-address-first-name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Last Name:</th>
+                        <td>
+                            <input type="text" id="edit-address-last-name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Company:</th>
+                        <td>
+                            <input type="text" id="edit-address-company" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Street Name:</th>
+                        <td>
+                            <input type="text" id="edit-address-street-name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Street Number:</th>
+                        <td>
+                            <input type="text" id="edit-address-street-number" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>City:</th>
+                        <td><input type="text" id="edit-address-city" /></td>
+                    </tr>
+                    <tr>
+                        <th>State:</th>
+                        <td><input type="text" id="edit-address-state" /></td>
+                    </tr>
+                    <tr>
+                        <th>Zipcode:</th>
+                        <td><input type="text" id="edit-address-zipcode" /></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="edit-address-button">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
