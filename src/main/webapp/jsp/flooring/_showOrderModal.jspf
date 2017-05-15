@@ -1,0 +1,102 @@
+<%@ page pageEncoding="windows-1252" %>
+<div id="showDetailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Order Details</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" id="show-order-table">
+                    <tr>
+                        <th>Order Name:</th>
+                        <td id="order-name"></td>
+                    </tr>
+                    <tr>
+                        <th>State:</th>
+                        <td id="order-state"></td>
+                    </tr>
+                    <tr>
+                        <th>Product:</th>
+                        <td id="order-product"></td>
+                    </tr>
+                    <tr>
+                        <th>Date:</th>
+                        <td id="order-date"></td>
+                    </tr>
+                    <tr>
+                        <th>Area:</th>
+                        <td id="order-area"></td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Order Date:
+                        </th>
+                        <td id="order-date-f">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Material Unit Cost:
+                        </th>
+                        <td id="order-material-unit-cost">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Material Total Cost:
+                        </th>
+                        <td id="order-material-cost">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Installation Unit Cost:
+                        </th>
+                        <td id="order-labor-unit-cost">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Installation Total Cost:
+                        </th>
+                        <td id="order-labor-total-cost">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Total Before Tax:
+                        </th>
+                        <td id="order-subtotal">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Sales Tax Rate:
+                        </th>
+                        <td id="order-tax-rate">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Total Sales Tax:
+                        </th>
+                        <td id="order-total-tax">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Total Invoice:
+                        </th>
+                        <td id="order-total-invoice">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

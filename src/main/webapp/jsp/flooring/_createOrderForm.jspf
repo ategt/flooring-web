@@ -1,0 +1,80 @@
+<%@ page pageEncoding="windows-1252" %>
+<form method="POST" class="form-horizontal">
+    <div class="form-group">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-9 text-center">
+            <strong><span class="name" /></strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="name" class="col-sm-3 control-label" >Order Name:</label>
+        <div class="col-sm-9">
+            <input name="name" class="form-control order-name" style="text-align: center" type="text" id="name" placeholder="Order Name" />
+        </div>
+        <div class="offset-col-sm-3 col-sm-9" id="name-address">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-9 text-center">
+            <strong><span class="state" /></strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="state" class="col-sm-3 control-label" >State:</label>
+        <div class="col-sm-9">
+            <select id="state-selector" style="text-align: center" class="form-control" name="state" >
+                <c:forEach items="${stateCommands}" var="stateCommand">
+                    <option value="${stateCommand.stateAbbreviation}"  >${stateCommand.stateName} - ${stateCommand.stateTax}%</option>
+                </c:forEach>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-9 text-center">
+            <strong><span class="product" /></strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="product" class="col-sm-3 control-label" >Product:</label>
+        <div class="col-sm-9">
+            <select name="product" id="product-selector" class="form-control" name="state-drop-down" >
+                <c:forEach items="${productCommands}" var="productCommand">
+                    <option value="${productCommand.productName}" style="text-align: center">${productCommand.productName}</option>
+                </c:forEach>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-9 text-center">
+            <strong><span class="date" /></strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="dateb" class="col-sm-3 control-label" >Date:</label>
+        <div class="col-sm-9">
+            <input name="dateb" class="form-control" style="text-align: center" pattern="MM/dd/yyyy" type="text" id="jQueryDatePicker"  />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-9 text-center">
+            <strong><span class="area" /></strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="area" class="col-sm-3 control-label" >Area:</label>
+        <div class="col-sm-9">
+            <input name="area" class="form-control" style="text-align: center" type="text" id="area" placeholder="Area" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-9 text-center">
+            <div id="add-contact-validation-errors"></div>
+            <input value="Create" id="create-submit" type="submit" class="btn btn-default" />
+        </div>
+    </div>
+</form>

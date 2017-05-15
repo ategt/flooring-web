@@ -1,0 +1,15 @@
+<%@ page pageEncoding="windows-1252" %>
+<table id="order-table" class="table table-hover">
+    <th>Order Number</th>
+    <th>Order Name</th>
+    <th><i class="glyphicon glyphicon-edit"></i> Edit</th>
+    <th><i class="glyphicon glyphicon-remove"></i> Delete</th>
+    <c:forEach items="${orders}" var="order">
+        <tr id="order-row-${order.id}" >
+            <td><a data-order-id="${order.id}" data-toggle="modal" data-target="#showDetailModal">${order.id}</a></td>
+            <td><a href="show/${order.id}">${order.name}</a></td>
+            <td><a data-order-id="${order.id}" data-toggle="modal" data-target="#editDetailModal">Edit</a></td>
+            <td><a data-order-id="${order.id}" class="delete-link">Delete</a></td>
+        </tr>
+    </c:forEach>
+</table>
