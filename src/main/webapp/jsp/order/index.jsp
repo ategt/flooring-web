@@ -9,6 +9,9 @@
     <head>
         <title>Flooring Master</title>
         <%@ include file="../partials/commonHead.jspf" %>
+        <link href="${pageContext.request.contextPath}/css/jquery-ui.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/jquery-ui.structure.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/jquery-ui.theme.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
@@ -33,7 +36,7 @@
         <!-- Placed at the end of the document so the pages load faster -->
         <%@ include file="../partials/commonScript.jspf" %>
 
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="${pageContext.request.contextPath}/jquery-ui-1.12.1/jquery-ui.min.js"></script>
         <script src="${pageContext.request.contextPath}/js/flooringapp.js"></script>
         <script>
             $(function () {

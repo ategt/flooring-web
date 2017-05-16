@@ -93,7 +93,7 @@ public class HomeController {
         return "redirect:/adminPanel/";
     }
 
-    @RequestMapping(value = "/product", method = RequestMethod.GET)
+    @RequestMapping(value = "/state", method = RequestMethod.GET)
     public String stateBlank() {
         return "redirect:/state/";
     }

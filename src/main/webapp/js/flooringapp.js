@@ -221,6 +221,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Accept", "application/json");
             },
             success: function (data, status) {
+                sanitizeAddress(data);
                 updateAddress(data);
             },
             error: function (data, status) {
@@ -256,13 +257,45 @@ $(document).ready(function () {
         select: function (event, ui) {
             $('#name').val(ui.item);
         }
-
     });
 
+    function sanitizeAddress(address) {
+        if (address.company == null) {
+            address.company = "No Company";
+        }
+
+        if (address.lastName == null) {
+            address.lastName = " ";
+        }
+
+        if (address.firstName == null) {
+            address.firstName = " ";
+        }
+
+        if (address.city == null) {
+            address.city = " ";
+        }
+
+        if (address.state == null) {
+            address.state = " ";
+        }
+
+        if (address.zip == null) {
+            address.zip = " ";
+        }
+
+        if (address.streetNumber == null) {
+            address.streetNumber = " ";
+        }
+
+        if (address.streetName == null) {
+            address.streetName = " ";
+        }
+    }
+
     function updateAddress(address) {
-        var addressText = address.lastName + ", " + address.firstName + "<br />" +
-                address.company + "<br />" +
-                address.streetNumber + " " + address.streetName + "<br />" +
+        var addressText = address.company + " - " + address.lastName + ", " + address.firstName + "<br />" +
+                address.streetNumber + " " + address.streetName + " - " +
                 address.city + ", " + address.state + " " + address.zip;
         $("#name-address").html(addressText);
     }

@@ -1,1 +1,5 @@
-
+#name-address {
+    text-align: center;
+    min-height: 40px;
+    font-size: smaller;
+}
