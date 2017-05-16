@@ -8,16 +8,7 @@
 <html>
     <head>
         <title>Flooring Master</title>
-        <!-- Bootstrap core CSS -->
-        <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Custom styles for this template -->
-        <link href="${pageContext.request.contextPath}/css/main.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/css/autocomplete.css" rel="stylesheet">
-
-        <!-- SWC Icon -->
-        <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.png">
-
+        <%@ include file="../partials/commonHead.jspf" %>
     </head>
     <body>
         <div class="container">

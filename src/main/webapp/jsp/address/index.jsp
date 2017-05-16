@@ -6,9 +6,7 @@
 <html>
     <head>
         <title>Address Book</title>
-        <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/css/starter-template.css" rel="stylesheet">
-        <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.png">
+        <%@ include file="../partials/commonHead.jspf" %>
     </head>
     <body>
         <div class="container">
@@ -29,7 +27,7 @@
 
         <%@ include file="_showModal.jspf" %>
         <%@ include file="_editModal.jspf" %>
-        
+
         <%@ include file="../partials/commonScript.jspf" %>
 
         <!-- Placed at the end of the document so the pages load faster -->

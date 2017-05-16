@@ -42,15 +42,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author apprentice
  */
 @Controller
-@RequestMapping(value = "/FlooringMaster")
-public class FlooringMasteryWebController {
+@RequestMapping(value = "/orders")
+public class OrdersController {
 
     ProductDao productDao;
     StateDao stateDao;
     OrderDao orderDao;
 
     @Inject
-    public FlooringMasteryWebController(
+    public OrdersController(
             ProductDao productDao,
             StateDao stateDao,
             OrderDao orderDao
@@ -70,7 +70,7 @@ public class FlooringMasteryWebController {
 
         putBlankOrder(model);
 
-        return "flooring\\index";
+        return "order\\index";
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -141,42 +141,6 @@ public class FlooringMasteryWebController {
 
         validateInputs(orderCommand, bindingResult);
 
-        if (bindingResult.hasFieldErrors("date")) {
-
-            FieldError dateFieldError = bindingResult.getFieldError("date");
-
-            if (dateFieldError.isBindingFailure()) {
-
-                String failedDate = dateFieldError.getRejectedValue().toString();
-
-                String dateFormat = DateUtilities.determineDateFormat(failedDate);
-
-                if (dateFormat != null) {
-
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-
-                    try {
-                        Date date = simpleDateFormat.parse(failedDate);
-
-                        // If it makes it to here, then date parsing was succesful.
-                        orderCommand.setDate(date);
-
-                        SimpleDateFormat properDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        String springFriendlyDate = properDateFormat.format(date);
-                        session.setAttribute("date", springFriendlyDate);
-
-                        OrderCommand orderCommandTarget = (OrderCommand) bindingResult.getTarget();
-                        orderCommandTarget.setDate(date);
-
-                    } catch (ParseException ex) {
-
-                    }
-
-                }
-            }
-
-        }
-
         if (bindingResult.hasErrors()) {
 
             String[] fields = {"name", "state", "area", "date", "product"};
@@ -196,7 +160,7 @@ public class FlooringMasteryWebController {
 
             model.put("orderCommand", orderCommand);
 
-            return "flooring\\index";
+            return "order\\index";
         } else {
 
             Order order = orderDao.orderBuilder(orderCommand);
@@ -267,7 +231,7 @@ public class FlooringMasteryWebController {
         model.put("orderCommand", orderCommand);
         loadTheOrdersList(model);
 
-        return "flooring\\index";
+        return "order\\index";
     }
 
     @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
@@ -312,7 +276,7 @@ public class FlooringMasteryWebController {
 
         loadTheOrdersList(model);
 
-        return "flooring\\searchOrder";
+        return "order\\searchOrder";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -368,7 +332,7 @@ public class FlooringMasteryWebController {
         model.put("error", error);
         model.put("dateError", dateError);
 
-        return "flooring\\searchOrder";
+        return "order\\searchOrder";
     }
 
     private void loadOrdersToMap(Map model) {

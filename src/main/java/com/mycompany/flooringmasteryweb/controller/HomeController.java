@@ -39,7 +39,6 @@ public class HomeController {
             StateDao stateDao,
             OrderDao orderDao
     ) {
-
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
@@ -48,13 +47,13 @@ public class HomeController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String home(Map model) {
 
-        loadOrdersToMap(model);
-        loadStateCommandsToMap(model);
-        loadProductCommandsToMap(model);
+//        loadOrdersToMap(model);
+//        loadStateCommandsToMap(model);
+//        loadProductCommandsToMap(model);
+//
+//        putBlankOrder(model);
 
-        putBlankOrder(model);
-
-        return "home";
+        return "redirect:/orders/";
     }
 
     private void loadOrdersToMap(Map model) {
@@ -85,7 +84,7 @@ public class HomeController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search() {
 
-        return "redirect:/FlooringMaster/search";
+        return "redirect:/orders/search";
     }
 
     @RequestMapping(value = "/adminPanel", method = RequestMethod.GET)
@@ -94,14 +93,13 @@ public class HomeController {
         return "redirect:/adminPanel/";
     }
 
-    @RequestMapping(value = "/adminStatePanel", method = RequestMethod.GET)
+    @RequestMapping(value = "/product", method = RequestMethod.GET)
     public String stateBlank() {
-        return "redirect:/adminStatePanel/";
+        return "redirect:/state/";
     }
 
-    @RequestMapping(value = "/adminProductPanel", method = RequestMethod.GET)
+    @RequestMapping(value = "/product", method = RequestMethod.GET)
     public String productBlank() {
-        return "redirect:/adminProductPanel/";
+        return "redirect:/product/";
     }
-
 }

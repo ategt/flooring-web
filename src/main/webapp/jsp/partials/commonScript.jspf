@@ -2,7 +2,7 @@
 
 <script>
     var contextRoot = "${pageContext.request.contextPath}";
-    var flooringPath = contextRoot + "/FlooringMaster/";
+    var flooringPath = contextRoot + "/orders/";
     var addressPath = contextRoot + "/address/";
 </script>
 

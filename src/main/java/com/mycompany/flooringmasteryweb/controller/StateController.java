@@ -27,15 +27,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author apprentice
  */
 @Controller
-@RequestMapping(value = "/adminStatePanel")
-public class AdminStatePanelWebController {
+@RequestMapping(value = "/state")
+public class StateController {
 
     ProductDao productDao;
     StateDao stateDao;
     OrderDao orderDao;
 
     @Inject
-    public AdminStatePanelWebController(
+    public StateController(
             ProductDao productDao,
             StateDao stateDao,
             OrderDao orderDao
@@ -53,7 +53,7 @@ public class AdminStatePanelWebController {
         model.put("states", stateCommands);
         model.put("stateCommand", new StateCommand());
 
-        return "editState";
+        return "state\\edit";
     }
 
     private List<StateCommand> stateList() {
@@ -73,7 +73,7 @@ public class AdminStatePanelWebController {
         model.put("states", stateList());
         model.put("stateCommand", stateDao.buildCommandState(stateDao.get(stateName)));
 
-        return "editState";
+        return "state\\edit";
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -104,7 +104,7 @@ public class AdminStatePanelWebController {
             model.put("stateError", !stateValid);
             model.put("taxError", !taxValid);
 
-            return "editState";
+            return "state\\edit";
 
         } else {
             String enteredName = stateCommand.getStateName();
@@ -121,7 +121,7 @@ public class AdminStatePanelWebController {
                 stateDao.update(state);
             }
 
-            return "redirect:/adminStatePanel/";
+            return "redirect:/state/";
         }
 
     }
@@ -131,7 +131,7 @@ public class AdminStatePanelWebController {
 
         stateDao.delete(stateDao.get(stateName));
 
-        return "redirect:/adminStatePanel/";
+        return "redirect:/state/";
     }
 
 }

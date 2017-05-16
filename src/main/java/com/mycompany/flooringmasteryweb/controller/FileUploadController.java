@@ -40,7 +40,7 @@ public class FileUploadController {
                 .collect(Collectors.toList())
         );
 
-        return "uploadForm";
+        return "fileUpload\\uploadForm";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/")
@@ -75,5 +75,4 @@ public class FileUploadController {
 
         return "redirect:/";
     }
-
 }

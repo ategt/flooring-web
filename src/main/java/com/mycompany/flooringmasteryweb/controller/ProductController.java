@@ -11,12 +11,13 @@ import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
-import com.mycompany.flooringmasteryweb.dto.State;
-import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,44 +27,33 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author apprentice
  */
 @Controller
-@RequestMapping(value = "/adminPanel")
-public class AdminPanelWebController {
+@RequestMapping(value = "/product")
+public class ProductController {
 
     ProductDao productDao;
     StateDao stateDao;
     OrderDao orderDao;
 
     @Inject
-    public AdminPanelWebController(
+    public ProductController(
             ProductDao productDao,
             StateDao stateDao,
             OrderDao orderDao
     ) {
-
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
-
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String blank(Map model) {
 
         List<ProductCommand> productCommands = productCommandList();
-        List<StateCommand> stateCommands = stateList();
 
-        model.put("states", stateCommands);
         model.put("productCommands", productCommands);
+        model.put("productCommand", new ProductCommand());
 
-        return "adminHome";
-    }
-
-  
-    private List<StateCommand> stateList() {
-        List<State> states = stateDao.getListOfStates();
-        states = stateDao.sortByStateName(states);
-        List<StateCommand> stateCommands = stateDao.buildCommandStateList(states);
-        return stateCommands;
+        return "product\\edit";
     }
 
     private List<ProductCommand> productCommandList() {
@@ -73,21 +63,47 @@ public class AdminPanelWebController {
         return productCommands;
     }
 
-    @RequestMapping(value = "/editProduct/{productName}", method = RequestMethod.GET)
-    public String editProduct(@PathVariable("productName") String productName, Map model) {
+    @RequestMapping(value = "/edit/{productName}", method = RequestMethod.GET)
+    public String edit(@PathVariable("productName") String productName, Map model) {
 
         model.put("productCommands", productCommandList());
         model.put("productCommand", productDao.buildCommandProduct(productDao.get(productName)));
-        return "editProduct";
+
+        return "product\\edit";
     }
 
-    @RequestMapping(value = "/editState/{stateName}", method = RequestMethod.GET)
-    public String edit(@PathVariable("stateName") String stateName, Map model) {
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute ProductCommand productCommand, BindingResult bindingResult, Map model) {
 
-        model.put("states", stateList());
-        model.put("stateCommand", stateDao.buildCommandState(stateDao.get(stateName)));
+        if (bindingResult.hasErrors()) {
 
-        return "editState";
+            model.put("productCommand", productCommand);
+            model.put("productCommands", productCommandList());
+
+            return "product\\edit";
+
+        } else {
+
+            Product product = productDao.resolveCommandProduct(productCommand);
+
+            if (productDao.get(product.getProductName()) == null) {
+                productDao.create(product);
+            } else {
+                productDao.update(product);
+            }
+
+            return "redirect:/product/";
+        }
+
+    }
+
+    @RequestMapping(value = "/delete/{productName}", method = RequestMethod.GET)
+    public String delete(@PathVariable("productName") String productName) {
+
+        //orderDao.delete(orderDao.get(orderId));
+        productDao.delete(productDao.get(productName));
+
+        return "redirect:/product/";
     }
 
 }
