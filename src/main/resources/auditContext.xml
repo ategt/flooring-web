@@ -16,17 +16,15 @@
  http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
  
 
-    <bean id="auditLogFile" class="java.io.File" >
-        <constructor-arg type="java.lang.String" value="auditLog.txt" />
-    </bean>
-    
-    <bean id="auditDao" class="com.mycompany.flooringmasteryweb.dao.AuditDao" >
-        <constructor-arg ref="auditLogFile" />
+    <bean id="auditDao" class="com.mycompany.flooringmasteryweb.dao.AuditDao" > 
+        <constructor-arg ref="jdbcTemplate" />
     </bean>
     
     <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />
     
-    <bean id="auditAspect" class="com.mycompany.flooringmasteryweb.aop.AuditAspect" />
+    <bean id="auditAspect" class="com.mycompany.flooringmasteryweb.aop.AuditAspect" >
+        <constructor-arg ref="applicationContext" />
+    </bean>
         
     <aop:config>
         <aop:aspect ref="auditAspect">
@@ -43,10 +41,6 @@
                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.delete(..))"
             />
     
-            <aop:after method="createAuditEntry"
-                                   pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
-            />
-            
         </aop:aspect>
         
     </aop:config>

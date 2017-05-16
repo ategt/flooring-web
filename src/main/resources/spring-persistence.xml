@@ -19,7 +19,7 @@
     <import resource="SQLBase-applicationContext.xml" />
     <import resource="stateDao-context.xml" />
     <import resource="productDb-applicationContext.xml" />
-    <import resource="OrdersDb-ApplicationContext.xml" />
+    <import resource="orderDb-ApplicationContext.xml" />
         
     <bean id="addressDao" class="com.mycompany.flooringmasteryweb.dao.AddressDaoPostgresImpl" > 
         <constructor-arg ref="jdbcTemplate" />
@@ -30,6 +30,7 @@
     </bean>    
     
     <import resource="timingAspectContext.xml" />
+    <import resource="auditContext.xml" />
     
     <!-- Register the messages.properties -->
     <bean id="messageSource"
