@@ -1,0 +1,15 @@
+<%@ page pageEncoding="windows-1252" %>
+<table class="table table-hover">
+    <th>State Name</th>
+    <th>Sales Tax</th>
+    <th><i class="glyphicon glyphicon-edit"></i> Edit</th>
+    <th><i class="glyphicon glyphicon-remove"></i> Delete</th>
+        <c:forEach items="${states}" var="state">
+        <tr>
+            <td><a href="${pageContext.request.contextPath}/state/edit/${state.stateAbbreviation}">${state.stateName}</a></td>
+            <td><a href="${pageContext.request.contextPath}/state/edit/${state.stateAbbreviation}">${state.stateTax}</a></td>
+            <td><a href="${pageContext.request.contextPath}/state/edit/${state.stateAbbreviation}">Edit</a></td>
+            <td><a href="${pageContext.request.contextPath}/state/delete/${state.stateAbbreviation}">Delete</a></td>
+        </tr>
+    </c:forEach>
+</table>

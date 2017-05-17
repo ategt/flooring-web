@@ -131,11 +131,6 @@
                             <fmt:formatNumber value="${order.total}" type="currency"/>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 text-center">
-                            <a href="${pageContext.request.contextPath}/orders/edit/${orderCommand.id}" ><h2>Edit</h2></a>
-                        </div>                    
-                    </div>
                 </div>
             </div>
         </div>

@@ -3,7 +3,7 @@
                     <li role="presentation"><a href="${pageContext.request.contextPath}">Home</a></li>
                     <li role="presentation"><a href="${pageContext.request.contextPath}/orders/search">Search</a></li>
                     <li role="presentation"><a href="${pageContext.request.contextPath}/address/">Address Panel</a></li>
-                    <li role="presentation"><a href="${pageContext.request.contextPath}/adminPanel/">Administration Home</a></li>
+                    <li role="presentation"><a href="${pageContext.request.contextPath}/admin/">Administration Home</a></li>
                     <li role="presentation"><a href="${pageContext.request.contextPath}/state/">Sales Tax Panel</a></li>
                     <li role="presentation"><a href="${pageContext.request.contextPath}/product/">Product Panel</a></li>
                 </ul>    
