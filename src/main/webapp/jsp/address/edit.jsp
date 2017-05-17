@@ -6,31 +6,20 @@
 <html>
     <head>
         <title>Address Book</title>
-        <!-- Bootstrap core CSS -->
-        <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Custom styles for this template -->
-        <link href="${pageContext.request.contextPath}/css/starter-template.css" rel="stylesheet">
-
-        <!-- SWC Icon -->
-        <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.png">
-
+        <%@ include file="../partials/commonHead.jspf" %>
     </head>
     <body>
         <div class="container">
             <h1>Address Book</h1>
             <hr/>
-            <div class="navbar">
-                <ul class="nav nav-tabs">
-                    <li role="presentation"><a href="${pageContext.request.contextPath}">Home</a></li>
-
-
-                </ul>    
-            </div>
+            <%@ include file="../partials/banner.jspf" %>
 
             <div class="row">
-                <form method="POST" action="./" class="form-horizontal">
+                <form method="POST" action="${pageContext.request.contextPath}/address/edit/" class="form-horizontal">
                     <div class="col-md-6">
+                        <div class="error-container" >
+                            ${errors}
+                        </div>
                         <div class="form-group">
 
                             <input type="hidden" name="id" id="id" value="${address.id}" />
@@ -86,20 +75,16 @@
                                 <input type="submit" value="Update" class="btn btn-default" />
                             </div>
                         </div>
+                    </div>
                 </form>
             </div>
 
         </div>
 
-
-
-
-
+        <%@ include file="../partials/commonScript.jspf" %>
 
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
-        <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-
+        <script src="${pageContext.request.contextPath}/js/addressapp.js"></script>
     </body>
 </html>
 

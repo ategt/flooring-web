@@ -14,6 +14,8 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,7 +94,7 @@ public class AddressController {
         if (addressLimit == null) {
             addressLimit = 30;
         }
-        
+
         Set<String> names = addressDao.getCompletionGuesses(addressInput, addressLimit);
 
         return names;
@@ -110,10 +112,10 @@ public class AddressController {
         }
 
         String input = addressInput;
-        if (addressInput == null){
+        if (addressInput == null) {
             input = altAddressInput;
         }
-        
+
         Set<String> names = addressDao.getCompletionGuesses(input, addressLimit);
 
         return names;
@@ -134,9 +136,34 @@ public class AddressController {
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") Integer contactId, Map model) {
+        loadAddress(contactId, model);
+        return "address\\edit";
+    }
+
+    private void loadAddress(Integer contactId, Map model) {
         Address address = addressDao.get(contactId);
         model.put("address", address);
-        return "address\\edit";
+    }
+
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
+    public String update(@PathVariable("id") Integer contactId, @ModelAttribute Address address, Map model, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getErrorCount();
+            List<ObjectError> errors = bindingResult.getAllErrors();
+
+            String errorString = "";
+            for (ObjectError error : errors) {
+                errorString += error.getDefaultMessage() + "<br />";
+            }
+            
+            model.put("errors", errorString);
+            
+            loadAddress(contactId, model);
+            return "address\\edit";
+        } else {
+            addressDao.update(address);
+            return "redirect:/address/show/" + address.getId();
+        }
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)

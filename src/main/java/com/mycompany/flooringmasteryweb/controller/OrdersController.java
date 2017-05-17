@@ -245,7 +245,7 @@ public class OrdersController {
         model.put("order", order);
         loadTheOrdersList(model);
 
-        return "displayOrder";
+        return "order\\show";
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -276,7 +276,7 @@ public class OrdersController {
 
         loadTheOrdersList(model);
 
-        return "order\\searchOrder";
+        return "order\\search";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -332,7 +332,7 @@ public class OrdersController {
         model.put("error", error);
         model.put("dateError", dateError);
 
-        return "order\\searchOrder";
+        return "order\\search";
     }
 
     private void loadOrdersToMap(Map model) {

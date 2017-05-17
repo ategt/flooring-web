@@ -8,30 +8,18 @@
 <html>
     <head>
         <title>Flooring Master</title>
-        <!-- Bootstrap core CSS -->
-        <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Custom styles for this template -->
-        <link href="${pageContext.request.contextPath}/css/starter-template.css" rel="stylesheet">
-
-        <!-- SWC Icon -->
-        <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.png">
-
+        <%@ include file="../partials/commonHead.jspf" %>
     </head>
     <body>
         <div class="container">
             <h1>Flooring Master</h1>
             <hr/>
-            <%@ include file="adminBanner.jspf" %>
+            <%@ include file="../partials/banner.jspf" %>
 
             <div class="row">
                 <div class="col-md-6">
-
-                    <%@ include file="orderChart.jspf" %>
-
-
+                    <%@ include file="_listOrders.jspf" %>
                 </div>
-
                 <div class="col-md-6 text-center">
 
                     <div class="row">
@@ -82,61 +70,42 @@
                         </div>
                     </div>
                     <div class="row">
-
-
                         <div class="col-md-6 text-right">
                             Material Total Cost:
                         </div>
                         <div class="col-md-6 text-left">
-
                             <fmt:setLocale value="en_US"/>
                             <fmt:formatNumber value="${order.materialCost}" type="currency"/>
-
                         </div>
                     </div>
                     <div class="row">
-
-
                         <div class="col-md-6 text-right">
                             Installation Unit Cost:
                         </div>
                         <div class="col-md-6 text-left">
-
-
                             <fmt:setLocale value="en_US"/>
                             <fmt:formatNumber value="${order.laborCostPerSquareFoot}" type="currency"/>
-
                         </div>
                     </div>
                     <div class="row">
-
                         <div class="col-md-6 text-right">
                             Installation Total Cost:
                         </div>
                         <div class="col-md-6 text-left">
-
                             <fmt:setLocale value="en_US"/>
                             <fmt:formatNumber value="${order.laborCost}" type="currency"/>
-
-
                         </div>
                     </div>
                     <div class="row">
-
                         <div class="col-md-6 text-right">
                             Total Before Tax:
                         </div>
                         <div class="col-md-6 text-left">
-
-
                             <fmt:setLocale value="en_US"/>
                             <fmt:formatNumber value="${order.total - order.tax}" type="currency"/>
-
-
                         </div>
                     </div>
                     <div class="row">
-
                         <div class="col-md-6 text-right">
                             Sales Tax Rate:
                         </div>
@@ -145,61 +114,31 @@
                         </div>
                     </div>
                     <div class="row">
-
-
                         <div class="col-md-6 text-right">
                             Total Sales Tax:
                         </div>
                         <div class="col-md-6 text-left">
-
-
                             <fmt:setLocale value="en_US"/>
                             <fmt:formatNumber value="${order.tax}" type="currency"/>
-
-
                         </div>
                     </div>
                     <div class="row">
-
-
                         <div class="col-md-6 text-right">
                             Total Invoice:
                         </div>
                         <div class="col-md-6 text-left">
                             <fmt:setLocale value="en_US"/>
                             <fmt:formatNumber value="${order.total}" type="currency"/>
-
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <a href="${pageContext.request.contextPath}/FlooringMaster/edit/${orderCommand.id}" ><h2>Edit</h2></a>
+                            <a href="${pageContext.request.contextPath}/orders/edit/${orderCommand.id}" ><h2>Edit</h2></a>
                         </div>                    
                     </div>
-
-
                 </div>
-
-
-
-
-
-
-
-
             </div>
         </div>
-
-
-
-
-
-
-    </div>
-</div>
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-
-</body>
+        <%@ include file="../partials/commonScript.jspf" %>
+    </body>
 </html>

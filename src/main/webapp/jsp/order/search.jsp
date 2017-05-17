@@ -14,19 +14,16 @@
         <div class="container">
             <h1>Flooring Master</h1>
             <hr/>
-            <%@ include file="adminBanner.jspf" %>
+            <%@ include file="../partials/banner.jspf" %>
 
             <div class="row">
                 <div class="col-md-6">
-
-                    <%@ include file="orderChart.jspf" %>
-
-
+                    <%@ include file="_listOrders.jspf" %>
                 </div>
 
                 <div class="col-md-6 text-center">
 
-                    <form method="POST" action="${pageContext.request.contextPath}/FlooringMaster/search" class="form-horizontal">
+                    <form method="POST" action="${pageContext.request.contextPath}/orders/search" class="form-horizontal">
 
                         <div class="form-group">
 
@@ -41,13 +38,9 @@
                                 </div>
                             </div>
 
-
-
-
                             <div class="form-group">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-6">
-
                                     <select name="searchBy" class="form-control">
                                         <option value="searchByOrderNumber" >Search By Order Number</option>
                                         <option value="searchByName" >Search By Order Name</option>
@@ -68,8 +61,6 @@
                                     </c:if>
                                 </div>
                             </div>
-
-
                             <div class="form-group">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-6">
@@ -84,28 +75,23 @@
                             </div>
                         </div>
                     </form>
-
                 </div>
-
-
-
-
-
-
-
             </div>
         </div>
 
+        <%@ include file="_showOrderModal.jspf" %>
+        <%@ include file="_editOrderModal.jspf" %>
 
+        <!-- Placed at the end of the document so the pages load faster -->
+        <%@ include file="../partials/commonScript.jspf" %>
 
-
-
-
-    </div>
-</div>
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-
-</body>
+        <script src="${pageContext.request.contextPath}/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/flooringapp.js"></script>
+        <script>
+            $(function () {
+                $("#jQueryDatePicker").datepicker();
+                $("#jQueryDatePicker").datepicker('setDate', new Date());
+            });
+        </script>
+    </body>
 </html>

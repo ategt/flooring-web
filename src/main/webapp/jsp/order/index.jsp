@@ -44,7 +44,6 @@
                 $("#jQueryDatePicker").datepicker('setDate', new Date());
             });
         </script>
-
     </body>
 </html>
 

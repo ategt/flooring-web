@@ -3,3 +3,8 @@
     min-height: 30px;
     font-size: smaller;
 }
+
+.mask-link {
+    text-decoration: inherit;
+    color: inherit;
+}

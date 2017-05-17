@@ -6,51 +6,24 @@
 <html>
     <head>
         <title>Address Book</title>
-        <!-- Bootstrap core CSS -->
-        <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Custom styles for this template -->
-        <link href="${pageContext.request.contextPath}/css/starter-template.css" rel="stylesheet">
-
-        <!-- SWC Icon -->
-        <link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon.png">
-
+        <%@ include file="../partials/commonHead.jspf" %>
     </head>
     <body>
         <div class="container">
             <h1>Address Book</h1>
             <hr/>
-            <div class="navbar">
-                <ul class="nav nav-tabs">
-                    <li role="presentation"><a href="${pageContext.request.contextPath}">Home</a></li>
-
-
-                </ul>    
-            </div>
+            <%@ include file="../partials/banner.jspf" %>
 
             <div class="row">
 
                 <div class="col-md-6 text-center">
                     <h2>
-                        <c:choose>
-                            <c:when test="${lastNameFirst}">
-                                ${address.lastName}, ${address.firstName}<br />
-                            </c:when>
-                            <c:otherwise>
-                                ${address.firstName} ${address.lastName}<br />
-                            </c:otherwise>
-                        </c:choose>
+                        ${address.firstName} ${address.lastName}<br />
                         ${address.streetNumber} ${address.streetName}<br />
                         ${address.city}, ${address.state} ${address.zip}<br />
                     </h2>
-                    <div class="col-sm-6">
-                        <a href="${pageContext.request.contextPath}/addressbook/show/${address.id}/true">Last Name First</a>
-                    </div>
-                    <div class="col-sm-6">
-                        <a href="${pageContext.request.contextPath}/addressbook/show/${address.id}/false">First Name First</a>
-                    </div>
                     <div class="col-sm-12 text-center">
-                        <a href="${pageContext.request.contextPath}/addressbook/edit/${address.id}">Edit</a>
+                        <a href="${pageContext.request.contextPath}/address/edit/${address.id}">Edit</a>
                     </div>
                 </div>
                 <div class="col-md-6 text-center">

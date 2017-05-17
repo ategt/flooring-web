@@ -1,8 +1,8 @@
 <%@ page pageEncoding="windows-1252" %>
 <table id="address-table" class="table table-hover">
-    <th>ID</th>
-    <th>First Name</th>
-    <th>Last Name</th>
+    <th><a class="mask-link" href="?sort_by=id">ID</a></th>
+    <th><a class="mask-link" href="?sort_by=firstName">First Name</a></th>
+    <th><a class="mask-link" href="?sort_by=lastName">Last Name</a></th>
     <th><i class="glyphicon glyphicon-edit"></i> Edit</th>
     <th><i class="glyphicon glyphicon-remove"></i> Delete</th>
 
