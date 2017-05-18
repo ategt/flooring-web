@@ -16,12 +16,7 @@ import java.util.List;
 public interface StateDao {
 
     StateCommand buildCommandState(State state);
-
     List<StateCommand> buildCommandStateList(List<State> states);
-
-    State create(State state);
-
-    State create(State state, String stateName);
 
     /**
      * The state Name must be the two character state postal code abbreviation
@@ -32,29 +27,22 @@ public interface StateDao {
      * @return
      */
     State create(String stateName, State state);
-
-    void delete(State state);
+    State create(State state);
+    State create(State state, String stateName);
 
     State get(String name);
+    void update(State state);
+    void delete(State state);
 
     List<String> getList();
-
     List<State> getListOfStates();
 
     int size();
 
     List<StateCommand> sortByStateFullName(List<StateCommand> states);
-
     List<StateCommand> sortByStateFullNameRev(List<StateCommand> states);
-
     List<State> sortByStateName(List<State> states);
-
     List<State> sortByStateNameRev(List<State> states);
-
     List<State> sortByStateTax(List<State> states);
-
     List<State> sortByStateTaxRev(List<State> states);
-
-    void update(State state);
-    
 }

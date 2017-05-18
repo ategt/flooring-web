@@ -30,12 +30,13 @@ public class ProductDaoPostgresImpl implements ProductDao {
     private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_INSERT_PRODUCT = "INSERT INTO products ( product_name, labor_cost, material_cost ) VALUES ( ?, ?, ? ) RETURNING id;";
-    //private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET product_name=?, labor_cost=?, material_cost=? WHERE product_name=?";
     private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET labor_cost = ?, material_cost = ? WHERE product_name = ?;";
     private static final String SQL_DELETE_PRODUCT = "DELETE FROM products WHERE product_name = ?;";
     private static final String SQL_GET_PRODUCT = "SELECT * FROM products WHERE product_name = ?;";
     private static final String SQL_GET_PRODUCT_ID = "SELECT * FROM products WHERE product_name = ?;";
     private static final String SQL_GET_PRODUCT_LIST = "SELECT * FROM products;";
+    private static final String SQL_GET_PRODUCT_NAMES_SIZE = "SELECT COUNT(product_name) FROM products";
+    private static final String SQL_GET_PRODUCT_NAMES = "SELECT product_name FROM products";
 
     private static final String SQL_CREATE_PRODUCTS = "CREATE TABLE IF NOT EXISTS products(id serial PRIMARY KEY, product_name varchar(145) NOT NULL UNIQUE CHECK(product_name <> ''), labor_cost decimal(8,4) NOT NULL CHECK(labor_cost >= 0), material_cost decimal(8,4));";
 
@@ -93,7 +94,6 @@ public class ProductDaoPostgresImpl implements ProductDao {
 
     @Override
     public Product get(String name) {
-
         String input = null;
 
         if (name == null) {
@@ -149,14 +149,10 @@ public class ProductDaoPostgresImpl implements ProductDao {
         }
     }
 
-    private static final String SQL_GET_PRODUCT_NAMES = "SELECT product_name FROM products";
-
     @Override
     public List<String> getList() {
         return jdbcTemplate.query(SQL_GET_PRODUCT_NAMES, new ProductNameMapper());
     }
-
-    private static final String SQL_GET_PRODUCT_NAMES_SIZE = "SELECT COUNT(product_name) FROM products";
 
     @Override
     public int size() {
@@ -360,5 +356,4 @@ public class ProductDaoPostgresImpl implements ProductDao {
         Collections.reverse(shallowCopy);
         return shallowCopy;
     }
-
 }

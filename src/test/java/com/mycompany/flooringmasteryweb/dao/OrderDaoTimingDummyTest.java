@@ -371,7 +371,12 @@ public class OrderDaoTimingDummyTest {
         assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
         assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
         assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
-        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
+        assertTrue("2000ms Expectation Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 2000);
+        assertTrue("1000ms Expectation Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 1000);
+        assertTrue("500ms Expectation Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 500);
+        assertTrue("250ms Expectation Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 250);
+        assertTrue("150ms Expectation Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 150);
+        assertTrue("50ms Expectation Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
     }
 
     /**
