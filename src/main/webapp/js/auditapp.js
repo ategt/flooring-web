@@ -7,8 +7,6 @@ $(document).ready(function () {
 });
 
 function considerLoadingMoreAudits() {
-    //console.log("Document: " + ($(document).height() - $(window).height()));
-    //console.log("Scroll Pos: " + $(window).scrollTop() + ", (" + ($(window).scrollTop() + $(window).height() + 200) + ")");
     if (($(document).height() - $(window).height()) < $(window).scrollTop() + $(window).height() + 200)
     {
         if (!currentlyLoadingNextPage) {
@@ -52,7 +50,7 @@ function loadMoreAudits(page, audits = 50) {
 function buildAuditRow(data) {
     var result = "<tr id=\"audit-row-" + data.id + "\">" +
             "<td>" + data.id + "</td>" +
-            "<td>" + data.orderid + "</td>" +
+            "<td><a href=\"" + flooringPath + data.orderid + "\">" + data.orderid + "</a></td>" +
             "<td>" + data.actionPerformed + "</td>" +
             "<td>" + data.date + "</td>" +
             "<td>" + data.logDate + "</td>" +

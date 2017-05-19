@@ -5,28 +5,13 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.Timing;
-import com.mycompany.flooringmasteryweb.utilities.OrderDaoFileIOImplementation;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.inject.Inject;
-import org.springframework.context.ApplicationContext;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
