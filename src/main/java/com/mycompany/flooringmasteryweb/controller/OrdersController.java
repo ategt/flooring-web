@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -69,12 +70,25 @@ public class OrdersController {
         return "order\\index";
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_XML_VALUE}, headers = "Accept=application/json")
     @ResponseBody
     public Order showWithAjax(@PathVariable("id") Integer orderId) {
         Order contact = orderDao.get(orderId);
 
         return contact;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces=MediaType.TEXT_HTML_VALUE) //, headers = "Accept=text/html")
+    public String showWithHtml(@PathVariable("id") Integer orderId, Map model) {
+        Order order = orderDao.get(orderId);
+
+        OrderCommand orderCommand = orderDao.resolveOrderCommand(order);
+
+        model.put("orderCommand", orderCommand);
+        model.put("order", order);
+        loadTheOrdersList(model);
+
+        return "order\\show";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
@@ -228,21 +242,7 @@ public class OrdersController {
 
         return "order\\index";
     }
-
-    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("id") Integer orderId, Map model) {
-
-        Order order = orderDao.get(orderId);
-
-        OrderCommand orderCommand = orderDao.resolveOrderCommand(order);
-
-        model.put("orderCommand", orderCommand);
-        model.put("order", order);
-        loadTheOrdersList(model);
-
-        return "order\\show";
-    }
-
+    
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@ModelAttribute BasicOrderImpl basicOrder) {
         Order order = orderDao.orderBuilder(basicOrder);
@@ -354,5 +354,4 @@ public class OrdersController {
 
         model.put("orderCommand", orderCommand);
     }
-
 }

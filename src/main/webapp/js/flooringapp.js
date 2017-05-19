@@ -6,6 +6,9 @@
 
 
 $(document).ready(function () {
+    $(".disable-link").click(function (event) {
+        event.preventDefault();
+    });
 
     $('#create-submit').on('click', function (e) {
 
@@ -66,6 +69,7 @@ $(document).ready(function () {
     }
 
     $('#showDetailModal').on('show.bs.modal', function (e) {
+        e.preventDefault();
         var link = $(e.relatedTarget);
         var orderId = link.data('order-id');
         $.ajax({

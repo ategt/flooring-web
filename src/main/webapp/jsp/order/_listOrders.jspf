@@ -6,8 +6,8 @@
     <th><i class="glyphicon glyphicon-remove"></i> Delete</th>
     <c:forEach items="${orders}" var="order">
         <tr id="order-row-${order.id}" >
-            <td><a data-order-id="${order.id}" data-toggle="modal" data-target="#showDetailModal">${order.id}</a></td>
-            <td><a href="${pageContext.request.contextPath}/orders/show/${order.id}">${order.name}</a></td>
+            <td><a class="disable-link" data-order-id="${order.id}" data-toggle="modal" data-target="#showDetailModal" href="${pageContext.request.contextPath}/orders/${order.id}">${order.id}</a></td>
+            <td><a href="${pageContext.request.contextPath}/orders/${order.id}">${order.name}</a></td>
             <td><a data-order-id="${order.id}" data-toggle="modal" data-target="#editDetailModal">Edit</a></td>
             <td><a data-order-id="${order.id}" class="delete-link">Delete</a></td>
         </tr>

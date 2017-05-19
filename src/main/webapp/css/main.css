@@ -8,3 +8,8 @@
     text-decoration: inherit;
     color: inherit;
 }
+
+.loading-division {
+    text-align: center;
+    font-size: x-large;
+}

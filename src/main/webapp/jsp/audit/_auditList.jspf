@@ -13,10 +13,19 @@
             <td>${audit.id}</td>
             <td>${audit.orderid}</td>
             <td>${audit.actionPerformed}</td>
-            <td><fmt:formatDate type="date" dateStyle="long"   value="${audit.date}" /></td>
-            <td><fmt:formatDate type="date" dateStyle="long"   value="${audit.logDate}" /></td>
-            <td>${audit.orderName}</td>
-            <td>${audit.orderTotal}</td>
+            <td><fmt:formatDate type="date" dateStyle="long" value="${audit.date}" /></td>
+        <td><fmt:formatDate type="date" dateStyle="long" value="${audit.logDate}" /></td>
+        <td>${audit.orderName}</td>
+        <td>${audit.orderTotal}</td>
         </tr>
     </c:forEach>
 </table>
+
+<div id="loading-animation">
+    <div colspan="7" class="loading-division">
+        <img src="${pageContext.request.contextPath}/img/ui-anim_basic_16x16.gif" class="loading-spinner" />
+        <span class="loading-text">
+            Loading Audits, Please Wait...
+        </span>
+    </div>
+</div>
