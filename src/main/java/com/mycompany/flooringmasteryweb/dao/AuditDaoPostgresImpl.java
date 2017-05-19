@@ -24,9 +24,9 @@ public class AuditDaoPostgresImpl implements AuditDao {
     private static final String SQL_CREATE_AUDIT_TABLE = "CREATE TABLE IF NOT EXISTS audit (id SERIAL PRIMARY KEY, date timestamp, orderid integer, actionPerformed varchar(45), logDate timestamp, orderName varchar(145), orderTotal decimal(12,2))";
     private static final String SQL_INSERT_AUDIT = "INSERT INTO audit (date, orderid, actionPerformed, logDate, orderName, orderTotal) VALUES (?, ?, ?, ?, ?, ?) RETURNING id;";
     private static final String SQL_QUERY_AUDIT_BY_ID = "SELECT * FROM audit WHERE id = ?;";
-    private static final String SQL_QUERY_AUDIT_ALL = "SELECT * FROM audit;";
+    private static final String SQL_QUERY_AUDIT_ALL = "SELECT * FROM audit ORDER BY id DESC;";
     private static final String SQL_QUERY_AUDIT_COUNT = "SELECT COUNT(*) FROM audit;";
-    private static final String SQL_QUERY_AUDIT_WITH_PAGINATION = "SELECT * FROM audit OFFSET ? LIMIT ?;";
+    private static final String SQL_QUERY_AUDIT_WITH_PAGINATION = "SELECT * FROM audit ORDER BY id DESC OFFSET ? LIMIT ?;";
 
     @Inject    
     public AuditDaoPostgresImpl(JdbcTemplate jdbcTemplate) {

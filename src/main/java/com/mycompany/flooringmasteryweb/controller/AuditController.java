@@ -7,7 +7,6 @@ package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AuditDao;
 import com.mycompany.flooringmasteryweb.dto.Audit;
-import com.mycompany.flooringmasteryweb.dto.Order;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -34,9 +33,7 @@ public class AuditController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String indexInHtml(Map model) {
-        List<Audit> audits = auditDao.get();
-        model.put("audits", audits);
+    public String indexInHtml(Map model) {        
         return "audit\\index";
     }
 
@@ -65,5 +62,4 @@ public class AuditController {
     public Audit show(@PathVariable("id") Integer auditId) {
         return auditDao.get(auditId);
     }
-
 }
