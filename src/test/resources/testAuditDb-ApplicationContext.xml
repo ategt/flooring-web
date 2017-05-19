@@ -17,7 +17,7 @@
     <!-- Bean definitions go here -->
     
     <tx:annotation-driven />
-    <bean id="auditDao" class="com.mycompany.flooringmasteryweb.dao.AuditDao" > 
+    <bean id="auditDao" class="com.mycompany.flooringmasteryweb.dao.AuditDaoPostgresImpl" > 
         <constructor-arg ref="jdbcTemplate" />
     </bean>
     
