@@ -6,10 +6,6 @@
 
 
 $(document).ready(function () {
-    $(".disable-link").click(function (event) {
-        event.preventDefault();
-    });
-
     $('#create-submit').on('click', function (e) {
 
         e.preventDefault();

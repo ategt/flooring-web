@@ -31,6 +31,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,16 +71,16 @@ public class OrdersController {
         return "order\\index";
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_XML_VALUE}, headers = "Accept=application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
-    public Order showWithAjax(@PathVariable("id") Integer orderId) {
+    public Order showWithAjax(@PathVariable("id") Integer orderId, @RequestHeader(value = "Accept", required = true) String acceptHeader) {
         Order contact = orderDao.get(orderId);
 
         return contact;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces=MediaType.TEXT_HTML_VALUE) //, headers = "Accept=text/html")
-    public String showWithHtml(@PathVariable("id") Integer orderId, Map model) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html", "Accept=*/*"})
+    public String showWithHtml(@PathVariable("id") Integer orderId, Map model, @RequestHeader(value = "Accept", required = true) String acceptHeader) {
         Order order = orderDao.get(orderId);
 
         OrderCommand orderCommand = orderDao.resolveOrderCommand(order);
