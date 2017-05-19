@@ -33,8 +33,6 @@ public class ProductDaoPostgresImpl implements ProductDao {
     private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET labor_cost = ?, material_cost = ? WHERE product_name = ?;";
     private static final String SQL_DELETE_PRODUCT = "DELETE FROM products WHERE product_name = ?;";
     private static final String SQL_GET_PRODUCT = "SELECT * FROM products WHERE product_name = ?;";
-    private static final String SQL_GET_PRODUCT_ID = "SELECT * FROM products WHERE product_name = ?;";
-    private static final String SQL_GET_PRODUCT_LIST = "SELECT * FROM products;";
     private static final String SQL_GET_PRODUCT_NAMES_SIZE = "SELECT COUNT(product_name) FROM products";
     private static final String SQL_GET_PRODUCT_NAMES = "SELECT product_name FROM products";
 
