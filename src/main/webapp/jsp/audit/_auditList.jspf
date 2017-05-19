@@ -1,0 +1,22 @@
+<%@ page pageEncoding="windows-1252" %>
+<table id="audit-table" class="table table-hover">
+    <th>ID</th>
+    <th>Order ID</th>
+    <th>Action Performed</th>
+    <th>Date From Order</th>
+    <th>Date Of Audit</th>
+    <th>Order Name</th>
+    <th>Order Total</th>
+
+    <c:forEach items="${audits}" var="audit">
+        <tr id="audit-row-${audit.id}" >
+            <td>${audit.id}</td>
+            <td>${audit.orderid}</td>
+            <td>${audit.actionPerformed}</td>
+            <td><fmt:formatDate type="date" dateStyle="long"   value="${audit.date}" /></td>
+            <td><fmt:formatDate type="date" dateStyle="long"   value="${audit.logDate}" /></td>
+            <td>${audit.orderName}</td>
+            <td>${audit.orderTotal}</td>
+        </tr>
+    </c:forEach>
+</table>

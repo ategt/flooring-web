@@ -4,6 +4,7 @@
     var contextRoot = "${pageContext.request.contextPath}";
     var flooringPath = contextRoot + "/orders/";
     var addressPath = contextRoot + "/address/";
+    var auditPath = contextRoot + "/audits/";
 </script>
 
 <script src="${pageContext.request.contextPath}/js/jquery-3.2.1.min.js"></script>

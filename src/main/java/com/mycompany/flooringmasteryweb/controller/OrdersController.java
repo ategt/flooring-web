@@ -5,7 +5,6 @@
  */
 package com.mycompany.flooringmasteryweb.controller;
 
-import com.mycompany.flooringmasteryweb.dao.ConfigDao;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
@@ -16,7 +15,6 @@ import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
-import com.mycompany.flooringmasteryweb.utilities.DateUtilities;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,11 +53,9 @@ public class OrdersController {
             StateDao stateDao,
             OrderDao orderDao
     ) {
-
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
-
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -227,7 +223,6 @@ public class OrdersController {
         Order order = orderDao.get(orderId);
 
         OrderCommand orderCommand = orderDao.resolveOrderCommand(order);
-
         model.put("orderCommand", orderCommand);
         loadTheOrdersList(model);
 
