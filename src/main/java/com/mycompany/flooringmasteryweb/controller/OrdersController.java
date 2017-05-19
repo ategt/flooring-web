@@ -79,7 +79,7 @@ public class OrdersController {
         return contact;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = {"Accept=text/html", "Accept=*/*"})
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String showWithHtml(@PathVariable("id") Integer orderId, Map model, @RequestHeader(value = "Accept", required = true) String acceptHeader) {
         Order order = orderDao.get(orderId);
 
