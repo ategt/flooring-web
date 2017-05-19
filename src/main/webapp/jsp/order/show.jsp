@@ -17,10 +17,7 @@
             <%@ include file="../partials/banner.jspf" %>
 
             <div class="row">
-                <div class="col-md-6">
-                    <%@ include file="_listOrders.jspf" %>
-                </div>
-                <div class="col-md-6 text-center">
+                <div class="col-md-6 col-md-offset-3 text-center">
 
                     <div class="row">
                         <div class="col-md-6 text-right">
