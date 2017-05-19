@@ -33,7 +33,7 @@
                             Order Date:
                         </div>
                         <div class="col-md-6 text-left">
-                            <fmt:formatDate type="date" dateStyle="long"   value="${orderCommand.date}" />
+                            <fmt:formatDate type="date" dateStyle="long" value="${orderCommand.date}" />
                         </div>
                     </div>
                     <div class="row">

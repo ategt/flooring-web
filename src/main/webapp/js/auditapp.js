@@ -1,4 +1,5 @@
 var currentPage = 0;
+var currentlyLoadingNextPage = false;
 
 $(document).ready(function () {
     considerLoadingMoreAudits();
@@ -6,12 +7,21 @@ $(document).ready(function () {
 });
 
 function considerLoadingMoreAudits() {
-    if (($(document).height() - $(window).height()) > $(window).scrollTop() - 200)
+    //console.log("Document: " + ($(document).height() - $(window).height()));
+    //console.log("Scroll Pos: " + $(window).scrollTop() + ", (" + ($(window).scrollTop() + $(window).height() + 200) + ")");
+    if (($(document).height() - $(window).height()) < $(window).scrollTop() + $(window).height() + 200)
     {
-        console.log("Scroll to Page " + currentPage + "...");
-        loadMoreAudits(currentPage);
-        currentPage++;
+        if (!currentlyLoadingNextPage) {
+            currentlyLoadingNextPage = true;
+            console.log("Scroll to Page " + currentPage + "...");
+            loadMoreAudits(currentPage);
+            currentPage++;
+        }
     }
+}
+
+function loadNextPage() {
+
 }
 
 function loadMoreAudits(page, audits = 50) {
@@ -25,13 +35,16 @@ function loadMoreAudits(page, audits = 50) {
         success: function (data, status) {
             if (data.length < audits) {
                 $("#loading-animation").hide();
+                console.log("All pages loaded.");
+            } else {
+                currentlyLoadingNextPage = false;
             }
             $.each(data, function (index, item) {
                 $('#audit-table > tbody:last-child').append(buildAuditRow(sanitizeAudit(item)));
             });
         },
         error: function (data, status) {
-
+            currentlyLoadingNextPage = false;
         }
     });
 }
