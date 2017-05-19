@@ -32,7 +32,7 @@
                             Start Time:
                         </div>
                         <div class="col-md-6 text-left">
-                            <fmt:formatDate type="date" dateStyle="long" value="${timing.startTime}" />
+                            ${timing.startTime} ms
                         </div>
                     </div>
                     <div class="row">
@@ -40,7 +40,7 @@
                             Stop Time:
                         </div>
                         <div class="col-md-6 text-left">
-                            <fmt:formatDate type="date" dateStyle="long" value="${timing.stopTime}" />
+                            ${timing.stopTime} ms
                         </div>
                     </div>
                     <div class="row">
