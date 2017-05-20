@@ -79,6 +79,62 @@
                         pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.listOrderDates(..))"
             />
             
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.create(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.update(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.get(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.getByCompany(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.delete(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.size(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.getCompletionGuesses(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.list(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.searchByFirstName(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.searchByLastName(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.searchByCity(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.searchByCompany(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.searchByState(..))"
+            />
+            
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.searchByZip(..))"
+            />
+            
         </aop:aspect>
         
     </aop:config>
