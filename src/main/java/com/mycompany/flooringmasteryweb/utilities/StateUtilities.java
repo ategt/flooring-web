@@ -260,8 +260,6 @@ public class StateUtilities {
 
         unityMap.putAll(STATE_TO_ABBR);
 
-        //unityMap.putAll(unityMap);
-        //ABBR_TO_STATE.keySet().stream().forEach(a -> unityMap.put(a.));
         ABBR_TO_STATE.keySet().stream().forEach(a -> unityMap.put(ABBR_TO_STATE.get(a), a));
 
         return unityMap;
@@ -290,5 +288,4 @@ public class StateUtilities {
 
         return unityMapRev;
     }
-
 }

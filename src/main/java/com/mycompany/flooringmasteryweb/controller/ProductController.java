@@ -5,7 +5,6 @@
  */
 package com.mycompany.flooringmasteryweb.controller;
 
-import com.mycompany.flooringmasteryweb.dao.ConfigDao;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
