@@ -5,7 +5,6 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.BasicOrder;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.Product;
@@ -56,7 +55,6 @@ public class OrderDaoPostgresImpl implements OrderDao {
         jdbcTemplate.execute(SQL_CREATE_ORDER_TABLE);
     }
 
-    //"INSERT INTO orders (customer_name, material_cost, tax_rate, total_tax, grand_total, date, labor_cost, area, cost_per_square_foot, labor_cost_per_square_foot, product_id, state_id ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Order create(Order order) {
@@ -149,30 +147,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
             } catch (org.springframework.dao.DataIntegrityViolationException ex) {
                 return;
             }
-
-//"UPDATE orders SET 
-//customer_name = ?,
-//material_cost = ?,
-//tax_rate = ?,
-//total_tax = ?, 
-//grand_total = ?,
-//date = ?, 
-//labor_cost = ?,
-//area = ?,
-//cost_per_square_foot = ?,
-//labor_cost_per_square_foot = ?,
-//product_id = ?,
-//state_id = ?
-//        WHERE id=?";            
-//            jdbcTemplate.update(SQL_UPDATE_ORDER,
-//                    order.getTitle(),
-//                    order.getReleaseDate(),
-//                    order.getRating(),
-//                    order.getDirectorsName(),
-//                    order.getStudio(),
-//                    order.getId());
         }
-
     }
 
     @Override
@@ -198,9 +173,6 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
             Order order = new Order();
 
-            // customer_name, material_cost, tax_rate, total_tax, grand_total, date, labor_cost, area,
-            //cost_per_square_foot, labor_cost_per_square_foot, product_id, state_id 
-            //) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
             order.setId(rs.getInt("id"));
             order.setName(rs.getString("customer_name"));
             order.setMaterialCost(rs.getDouble("material_cost"));
@@ -228,7 +200,6 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
             return order;
         }
-
     }
 
     public List<Order> getAllOrders() {
@@ -247,16 +218,6 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return jdbcTemplate.queryForObject(SQL_COUNT_ORDERS, Integer.class);
     }
 
-//    @Override
-//    public List<Order> getList() {
-//        List<Order> copy = new ArrayList();
-//        copy.addAll(orders);
-//        return copy;
-//    }
-//    @Override
-//    public int size() {
-//        return orders.size();
-//    }
     @Override
     public java.util.List<Order> searchByDate(java.util.Date date) {
         java.util.List<Order> specificOrders = new ArrayList();
@@ -532,7 +493,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return date;
     }
 
-    public Order orderBuilder(BasicOrder basicOrder) {
+    public Order orderBuilder(OrderCommand basicOrder) {
         Order newOrder = new Order();
 
         if (basicOrder == null) {
@@ -640,5 +601,4 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
         return orders;
     }
-
 }
