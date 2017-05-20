@@ -8,7 +8,6 @@ package com.mycompany.flooringmasteryweb.controller;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
-import com.mycompany.flooringmasteryweb.dto.BasicOrderImpl;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.Product;
@@ -227,7 +226,6 @@ public class OrdersController {
     private void loadTheOrdersList(Map model) {
 
         List<Order> orders = orderDao.getList();
-        orders = orderDao.sortByOrderNumber(orders);
         model.put("orders", orders);
     }
 
@@ -244,7 +242,7 @@ public class OrdersController {
     }
     
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute BasicOrderImpl basicOrder) {
+    public String update(@ModelAttribute OrderCommand basicOrder) {
         Order order = orderDao.orderBuilder(basicOrder);
         orderDao.update(order);
 
@@ -260,7 +258,7 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String editSubmit(@ModelAttribute BasicOrderImpl basicOrder) {
+    public String editSubmit(@ModelAttribute OrderCommand basicOrder) {
         Order order = orderDao.orderBuilder(basicOrder);
         orderDao.update(order);
         return "redirect:/";
@@ -332,7 +330,6 @@ public class OrdersController {
 
     private void loadOrdersToMap(Map model) {
         List<Order> orders = orderDao.getList();
-        orders = orderDao.sortByOrderNumber(orders);
         model.put("orders", orders);
     }
 

@@ -57,7 +57,6 @@ public class HomeController {
 
     private void loadOrdersToMap(Map model) {
         List<Order> orders = orderDao.getList();
-        orders = orderDao.sortByOrderNumber(orders);
         model.put("orders", orders);
     }
 

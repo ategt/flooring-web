@@ -5,7 +5,6 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.BasicOrder;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.Product;
@@ -28,26 +27,6 @@ public class OrderDaoTimingDummy implements OrderDao {
     }
     
     @Override
-    public String addLabels(Order order, String TOKEN) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String addLabels(String orderString, String TOKEN) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String addLabels(Order order, String TOKEN, String SECOND_TOKEN) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String addLabels(String orderString, String TOKEN, String SECOND_TOKEN) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Order create(Order order) {
         try {
             Thread.sleep(timeToSleep);
@@ -64,11 +43,6 @@ public class OrderDaoTimingDummy implements OrderDao {
         } catch (InterruptedException ex) {
             Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    @Override
-    public Date extractDate(String dateString) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -109,16 +83,6 @@ public class OrderDaoTimingDummy implements OrderDao {
             Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-    }
-
-    @Override
-    public Order orderBuilder(BasicOrder basicOrder) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void purgeTestFiles() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -177,31 +141,6 @@ public class OrderDaoTimingDummy implements OrderDao {
     }
 
     @Override
-    public List<Order> sortByOrderNumber(List<Order> orders) {
-        try {
-            Thread.sleep(timeToSleep);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-
-    @Override
-    public String toString(Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String toString(Order order, String TOKEN) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String toString(Order order, String TOKEN, String CSV_ESCAPE) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void update(Order order) {
         try {
             Thread.sleep(timeToSleep);
@@ -218,5 +157,10 @@ public class OrderDaoTimingDummy implements OrderDao {
             Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    @Override
+    public Order orderBuilder(OrderCommand basicOrder) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
