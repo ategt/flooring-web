@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.TimingDao;
+import com.mycompany.flooringmasteryweb.dto.Timing;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/timing")
@@ -27,9 +29,21 @@ public class TimingController {
         return "timing\\show";
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/", headers = "Accept=application/json")
+    @ResponseBody
+    public Timing getLast() {
+        return timingDao.getLast();       
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public String show(@PathVariable("id") Integer timingId, Map model) {
         model.put("timing", timingDao.get(timingId));
         return "timing\\show";
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}", headers = "Accept=application/json")
+    @ResponseBody
+    public Timing show(@PathVariable("id") Integer timingId) {
+        return timingDao.get(timingId);        
     }
 }

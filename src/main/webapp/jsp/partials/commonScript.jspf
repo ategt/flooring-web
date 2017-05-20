@@ -5,7 +5,9 @@
     var flooringPath = contextRoot + "/orders/";
     var addressPath = contextRoot + "/address/";
     var auditPath = contextRoot + "/audits/";
+    var timingPath = contextRoot + "/timing/";
 </script>
 
 <script src="${pageContext.request.contextPath}/js/jquery-3.2.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/timingapp.js"></script>
