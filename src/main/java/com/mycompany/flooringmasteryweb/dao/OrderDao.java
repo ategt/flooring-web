@@ -5,7 +5,6 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.BasicOrder;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.Product;
@@ -52,7 +51,7 @@ public interface OrderDao {
 
     List<Integer> listOrderNumbers();
 
-    Order orderBuilder(BasicOrder basicOrder);
+    Order orderBuilder(OrderCommand basicOrder);
 
     void purgeTestFiles();
 
