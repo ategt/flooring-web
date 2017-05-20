@@ -5,58 +5,43 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
  * @author apprentice
  */
-public class OrderCommand implements BasicOrder {
+public class OrderCommand{
 
     @Min(0)
     private int id;
-    // OrderNumber
+
     @NotNull(message = "You Must Include A Name For This Order")
     @Size(min = 2, max = 45, message = "The Name For This Order Must Be Between 2 and 45 Characters")
-    private String name;        // CustomerName
+    private String name;
 
     @NotNull(message = "You Must Include A State For This Order")
     @Size(min = 2, max = 45, message = "The State For This Order Must Be Between 2 and 45 Characters")
-    private String state;        // State
+    private String state;
 
     @NotNull(message = "You Must Include A Product For This Order")
     @Size(min = 2, max = 45, message = "The Product For This Order Must Be Between 2 and 45 Characters")
-    private String product;    // ProductType
-
+    private String product;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy",timezone="EST")
     @NotNull(message="You Must Include A Date For This Order")
-    //@DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date date;          // file name
+    private Date date;
     
     @Min(0)
-    private double area;        // Area
-    
-    
-    
-//    private double materialCost; // MaterialCost
-//    private double taxRate;
-//    private double tax;         // Tax
-//    private double total;       // Total
-//    private double laborCost;   // LaborCost
-//    private double costPerSquareFoot;
-    //   private double laborCostPerSquareFoot;
+    private double area;
 
     /**
      * @return the id
      */
-    @Override
     public int getId() {
         return id;
     }
@@ -64,7 +49,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @param id the id to set
      */
-    @Override
     public void setId(int id) {
         this.id = id;
     }
@@ -72,7 +56,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @return the name
      */
-    @Override
     public String getName() {
         return name;
     }
@@ -80,7 +63,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @param name the name to set
      */
-    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -88,7 +70,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @return the state
      */
-    @Override
     public String getState() {
         return state;
     }
@@ -96,7 +77,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @param state the state to set
      */
-    @Override
     public void setState(String state) {
         this.state = state;
     }
@@ -104,7 +84,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @return the product
      */
-    @Override
     public String getProduct() {
         return product;
     }
@@ -112,7 +91,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @param product the product to set
      */
-    @Override
     public void setProduct(String product) {
         this.product = product;
     }
@@ -120,7 +98,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @return the date
      */
-    @Override
     public Date getDate() {
         return date;
     }
@@ -128,7 +105,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @param date the date to set
      */
-    @Override
     public void setDate(Date date) {
         this.date = date;
     }
@@ -136,7 +112,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @return the area
      */
-    @Override
     public double getArea() {
         return area;
     }
@@ -144,7 +119,6 @@ public class OrderCommand implements BasicOrder {
     /**
      * @param area the area to set
      */
-    @Override
     public void setArea(double area) {
         this.area = area;
     }

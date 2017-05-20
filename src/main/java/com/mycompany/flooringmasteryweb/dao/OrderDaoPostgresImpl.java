@@ -10,12 +10,6 @@ import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.State;
-import com.mycompany.flooringmasteryweb.utilities.OrderDaoFileIOImplementation;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -24,15 +18,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Propagation;
@@ -511,15 +502,6 @@ public class OrderDaoPostgresImpl implements OrderDao {
         }
         return labeledOrderString;
 
-    }
-
-    private java.io.File[] lookForOrders(java.io.File file) {
-        if (file.isDirectory()) {
-            java.io.File[] orderFiles = file.listFiles(new com.mycompany.flooringmasteryweb.utilities.OrderFilter());
-            return orderFiles;
-        } else {
-            return null;
-        }
     }
 
     public Date extractDate(String dateString) {
