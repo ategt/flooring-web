@@ -30,6 +30,18 @@ public class DateUtilities {
         return Math.abs(mills1 - mills2) < 2000;
     }
 
+    public static boolean isSameDay(java.util.Date date1, java.util.Date date2) {
+        if (date1 == null && date2 == null) {
+            return true;
+        }
+        java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyyMMdd");
+
+        if (date1 == null || date2 == null) {
+            return false;
+        }
+        return fmt.format(date1).equals(fmt.format(date2));
+    }
+
     /**
      * I got this from StackOverflow, it seems to be better thought out than
      * mine.
