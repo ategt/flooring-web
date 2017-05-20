@@ -144,6 +144,13 @@ public class AuditTest {
         assertEquals(expResult, result);
         assertEquals(secondAudit, firstAudit);
     }
+    
+    @Test
+    public void orderNameTest(){
+        fail("Order name is wrong and should not test equal.");
+        fail();
+    }
+    
     private Audit auditGenerator() {
         Audit instance = new Audit();
         Random random = new Random();

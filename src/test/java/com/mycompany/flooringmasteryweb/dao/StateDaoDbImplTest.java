@@ -6,11 +6,6 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.State;
-import com.mycompany.flooringmasteryweb.exceptions.ConfigurationFileCorruptException;
-import com.mycompany.flooringmasteryweb.exceptions.FileCreationException;
-import com.mycompany.flooringmasteryweb.utilities.TestUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

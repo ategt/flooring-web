@@ -5,6 +5,8 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import java.util.Objects;
+
 /**
  *
  * @author apprentice
@@ -15,6 +17,30 @@ public class State {
     private double stateTax;
     private int id;
 
+    @Override
+    public int hashCode(){
+        return id;
+    }
+    
+    @Override
+    public boolean equals(Object object){
+                        
+        if (object == null)
+            return false;
+        
+        if (!(object instanceof State))
+            return false;
+        
+        State otherState = (State)object;               
+        
+        return Objects.equals(id, otherState.getId()) &&
+                Objects.equals(state, otherState.getState()) && 
+                Objects.equals(state, otherState.getStateName()) && 
+                Objects.equals(orderName, orderName) &&
+                Objects.equals(orderTotal, otherAudit.getOrderTotal());                
+    }
+    
+    
     /**
      * @return the state
      */

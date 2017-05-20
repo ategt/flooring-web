@@ -5,14 +5,8 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.BasicOrder;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
-import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.State;
-import com.mycompany.flooringmasteryweb.exceptions.ConfigurationFileCorruptException;
-import com.mycompany.flooringmasteryweb.exceptions.FileCreationException;
-import com.mycompany.flooringmasteryweb.utilities.TestUtils;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -275,37 +269,6 @@ public class OrderDaoDbImplTest {
         Order result = instance.orderBuilder(order);
 
         assertEquals(expResult, result);
-
-    }
-
-    @Test
-    public void testCreateD() {
-        System.out.println("create - null");
-
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
-
-        List<Order> orders = null;
-        Order expResult = null;
-        List<Order> result = instance.sortByOrderNumber(orders);
-
-        assertEquals(expResult, result);
-
-    }
-
-    @Test
-    public void testCreateE() {
-        System.out.println("create - null");
-
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
-
-        List<Order> orders = new ArrayList();
-        List<Order> result = instance.sortByOrderNumber(orders);
-
-        assertTrue(result.isEmpty());
 
     }
 
