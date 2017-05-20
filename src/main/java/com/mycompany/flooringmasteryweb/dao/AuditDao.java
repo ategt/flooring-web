@@ -7,8 +7,6 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Audit;
 import java.util.List;
-import javax.inject.Inject;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  *
