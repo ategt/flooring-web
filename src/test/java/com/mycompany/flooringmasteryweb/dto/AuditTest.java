@@ -112,45 +112,42 @@ public class AuditTest {
         boolean result = object.equals(object);
         assertEquals(expResult, result);
     }
-    
-@Test
+
+    @Test
     public void testEqualsWithExample() {
         System.out.println("equals");
         Audit firstAudit = new Audit();
         firstAudit.setId(11);
         firstAudit.setDate(new Date());
         firstAudit.setOrderid(62);
-        
+
         firstAudit.setActionPerformed("action");
         firstAudit.setLogDate(new Date());
         firstAudit.setOrderName("Order name");
         firstAudit.setOrderTotal(103.0);
-        
-        
+
         Audit secondAudit = new Audit();
         secondAudit.setId(11);
         secondAudit.setDate(new Date());
         secondAudit.setOrderid(62);
-        
+
         secondAudit.setActionPerformed("action");
         secondAudit.setLogDate(new Date());
         secondAudit.setOrderName("Order name");
         secondAudit.setOrderTotal(103.0);
-        
-        
 
         boolean expResult = true;
         boolean result = firstAudit.equals(secondAudit);
         assertEquals(expResult, result);
         assertEquals(secondAudit, firstAudit);
     }
-    
+
     @Test
-    public void orderNameTest(){
+    public void orderNameTest() {
         fail("Order name is wrong and should not test equal.");
         fail();
     }
-    
+
     private Audit auditGenerator() {
         Audit instance = new Audit();
         Random random = new Random();
@@ -168,5 +165,74 @@ public class AuditTest {
     public void testHashCode() {
         Audit audit = new Audit();
         assertTrue(audit.hashCode() >= 0);
+    }
+    
+    @Test
+    public void testEqualsAnotherWay(){
+        System.out.println("Equals Again.");
+        
+        Audit audita = new Audit();
+        Audit auditb = new Audit();
+        
+        assertEquals(auditb, auditb);
+        
+        audita.setActionPerformed(UUID.randomUUID().toString());
+        
+        assertNotEquals(audita, auditb);
+        
+        auditb.setActionPerformed(audita.getActionPerformed());
+        
+        assertEquals(auditb, auditb);
+        
+        
+        audita.setDate(new Date());
+        
+        assertNotEquals(audita, auditb);
+        
+        auditb.setDate(audita.getDate());
+        
+        assertEquals(auditb, auditb);
+        
+        
+        audita.setId(new Random().nextInt());
+        
+        assertNotEquals(audita, auditb);
+        
+        auditb.setId(audita.getId());
+        
+        assertEquals(auditb, auditb);
+        
+        
+        audita.setLogDate(new Date());
+        
+        assertNotEquals(audita, auditb);
+        
+        auditb.setLogDate(audita.getLogDate());
+        
+        assertEquals(auditb, auditb);
+        
+        audita.setOrderName(UUID.randomUUID().toString());
+        
+        assertNotEquals(audita, auditb);
+        
+        auditb.setOrderName(audita.getOrderName());
+        
+        assertEquals(auditb, auditb);
+        
+        audita.setOrderTotal(new Random().nextDouble());
+        
+        assertNotEquals(audita, auditb);
+        
+        auditb.setOrderTotal(audita.getOrderTotal());
+        
+        assertEquals(auditb, auditb);
+        
+        audita.setOrderid(new Random().nextInt());
+        
+        assertNotEquals(audita, auditb);
+        
+        auditb.setOrderid(audita.getOrderid());
+        
+        assertEquals(auditb, auditb);                
     }
 }
