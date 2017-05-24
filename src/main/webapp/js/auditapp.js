@@ -18,10 +18,6 @@ function considerLoadingMoreAudits() {
     }
 }
 
-function loadNextPage() {
-
-}
-
 function loadMoreAudits(page, audits = 50) {
     $.ajax({
         url: auditPath + "?page=" + page + "&audits_per_page=" + audits,
