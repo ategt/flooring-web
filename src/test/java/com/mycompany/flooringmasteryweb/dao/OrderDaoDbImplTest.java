@@ -1317,7 +1317,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1335,8 +1335,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
 
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
 
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
@@ -1387,7 +1387,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1405,9 +1405,9 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
 
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
 
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -1458,7 +1458,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1475,8 +1475,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -1526,7 +1526,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1543,8 +1543,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -1590,7 +1590,7 @@ public class OrderDaoDbImplTest {
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(builtOrder);
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1613,8 +1613,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -1664,7 +1664,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1687,8 +1687,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -1738,7 +1738,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1761,8 +1761,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -1812,7 +1812,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1835,8 +1835,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -1887,7 +1887,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1910,8 +1910,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -1961,7 +1961,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -1984,8 +1984,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -2036,7 +2036,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -2059,8 +2059,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -2111,7 +2111,7 @@ public class OrderDaoDbImplTest {
         // Record the orders id number.
         int id = builtOrder.getId();
 
-        BasicOrder basicOrder = orderDao.resolveOrderCommand(builtOrder);
+        OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 
         assertNotNull(basicOrder);
 
@@ -2134,8 +2134,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
@@ -2225,8 +2225,8 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
         assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertTrue(TestUtils.isProductEqual(builtOrder.getProduct(), unresolvedOrder.getProduct()));
-        assertTrue(TestUtils.isStateEqual(builtOrder.getState(), unresolvedOrder.getState()));
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
         assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);

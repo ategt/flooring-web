@@ -169,5 +169,4 @@ public class AuditDaoTest {
         instance.setOrderid(random.nextInt(10000) / 100);
         return instance;
     }
-
 }
