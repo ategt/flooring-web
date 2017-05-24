@@ -15,7 +15,7 @@ public class State {
 
     private String state;
     private double stateTax;
-    private int id;
+    private Integer id;
 
     @Override
     public int hashCode() {
@@ -35,11 +35,10 @@ public class State {
 
         State otherState = (State) object;
 
-        return Objects.equals(id, otherState.getId())
-                && Objects.equals(state, otherState.getState())
+        return Objects.equals(getId(), otherState.getId())
+                && Objects.equals(getState(), otherState.getState())
                 && Objects.equals(getStateName(), otherState.getStateName())
-                && Objects.equals(getStateName(), otherState.getStateName())
-                && Objects.equals(stateTax, otherState.getStateTax());
+                && Objects.equals(getStateTax(), otherState.getStateTax());
     }
 
     /**
@@ -90,14 +89,14 @@ public class State {
     /**
      * @return the id
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -6,9 +6,8 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.State;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  *
@@ -16,7 +15,7 @@ import java.util.Date;
  */
 public class Order {
 
-    private int id;             // OrderNumber
+    private Integer id;             // OrderNumber
     private String name;        // CustomerName
     private State state;        // State
     private Product product;    // ProductType
@@ -31,6 +30,41 @@ public class Order {
     private double area;        // Area
     private double costPerSquareFoot;
     private double laborCostPerSquareFoot;
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+
+        if (object instanceof Order) {
+            Order otherOrder = (Order) object;
+
+            return Objects.equals(getArea(), otherOrder.getArea())
+                    && Objects.equals(getCostPerSquareFoot(), otherOrder.getCostPerSquareFoot())
+                    && Objects.equals(getDate(), otherOrder.getDate())
+                    && Objects.equals(getId(), otherOrder.getId())
+                    && Objects.equals(getLaborCost(), otherOrder.getLaborCost())
+                    && Objects.equals(getLaborCostPerSquareFoot(), otherOrder.getLaborCostPerSquareFoot())
+                    && Objects.equals(getMaterialCost(), otherOrder.getMaterialCost())
+                    && Objects.equals(getName(), otherOrder.getName())
+                    && Objects.equals(getState(), otherOrder.getState())
+                    && Objects.equals(getTax(), otherOrder.getTax())
+                    && Objects.equals(getTaxRate(), otherOrder.getTaxRate())
+                    && Objects.equals(getTotal(), otherOrder.getTotal())
+                    && Objects.equals(getProduct(), otherOrder.getProduct());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        if (id == null) {
+            return 0;
+        }
+        return id;
+    }
 
 //    -OrderNumber
 //    -CustomerName
@@ -52,14 +86,14 @@ PerSquareFoot,MaterialCost,LaborCost,Tax,Total
      * @return the id
      */
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
