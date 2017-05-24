@@ -77,7 +77,7 @@ public class AuditAspectTest {
         assertTrue("Order Creation Truth: " + (lastAudit.getDate().getTime() - order.getDate().getTime()), Math.abs(lastAudit.getDate().getTime() - order.getDate().getTime()) - 25000 < 50);
 
         assertEquals("Action Performed Check", lastAudit.getActionPerformed(), "create");
-        assertEquals("Order ID Check", lastAudit.getOrderid(), order.getId());
+        assertEquals("Order ID Check", lastAudit.getOrderid(), (Object)order.getId());
         assertTrue("Log Time Check: " + Math.abs(lastAudit.getLogDate().getTime() - System.currentTimeMillis()), Math.abs(lastAudit.getLogDate().getTime() - System.currentTimeMillis()) < 75);
         assertEquals("Order Name Check", lastAudit.getOrderName(), order.getName());
         assertEquals("Total Check", lastAudit.getOrderTotal(), order.getTotal(), 100);

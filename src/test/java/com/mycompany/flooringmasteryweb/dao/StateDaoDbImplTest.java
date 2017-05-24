@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.State;
+import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -388,6 +389,6 @@ public class StateDaoDbImplTest {
         assertEquals(state1.getStateName(), state2.getStateName());
         assertEquals(state1.getStateTax(), state2.getStateTax(), 0.005);
 
-        return TestUtils.isStateEqual(state1, state2);
+        return Objects.equals(state1, state2);
     }
 }

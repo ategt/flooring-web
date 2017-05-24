@@ -620,7 +620,7 @@ public class OrderDaoDbImplTest {
         // Pull a order  using the id number recorded earlier.
         Order thirdOrder = secondOrderDao.get(id);
 
-        String thirdOrderString = secondOrderDao.toString(thirdOrder, System.lineSeparator());
+        //String thirdOrderString = secondOrderDao.toString(thirdOrder, System.lineSeparator());
 
         try (PrintWriter out = new PrintWriter(new FileWriter(new java.io.File("myTestFile.txt")))) {
 

@@ -29,9 +29,9 @@ public class StateDaoPostgresImpl implements StateDao {
     private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_INSERT_STATE = "INSERT INTO states ( state_name, state_abbreviation, tax_rate ) VALUES ( ?, ?, ? ) RETURNING id";
-    private static final String SQL_UPDATE_STATE = "UPDATE states SET tax_rate=? WHERE state_abbreviation=?";
-    private static final String SQL_DELETE_STATE = "DELETE FROM states WHERE state_abbreviation = ?";
-    private static final String SQL_GET_STATE = "SELECT * FROM states WHERE state_abbreviation = ? LIMIT 1";
+    private static final String SQL_UPDATE_STATE = "UPDATE states SET tax_rate = ? WHERE LOWER(state_abbreviation) = LOWER(?);";
+    private static final String SQL_DELETE_STATE = "DELETE FROM states WHERE LOWER(state_abbreviation) = LOWER(?);";
+    private static final String SQL_GET_STATE = "SELECT * FROM states WHERE LOWER(state_abbreviation) = LOWER(?) LIMIT 1;";
     private static final String SQL_GET_STATE_LIST = "SELECT * FROM states";
     private static final String SQL_COUNT_STATES = "SELECT COUNT(*) FROM states";
     private static final String SQL_GET_STATE_NAMES = "SELECT state_abbreviation FROM states";
@@ -98,7 +98,7 @@ public class StateDaoPostgresImpl implements StateDao {
             return null;
         }
 
-        name = name.toUpperCase();
+        //name = name.toUpperCase();
 
         try {
             return jdbcTemplate.queryForObject(SQL_GET_STATE, new StateMapper(), name);
@@ -149,7 +149,8 @@ public class StateDaoPostgresImpl implements StateDao {
         public State mapRow(ResultSet rs, int i) throws SQLException {
             State state = new State();
             state.setStateName(rs.getString("state_abbreviation"));
-
+            state.setId(rs.getInt("id"));
+            
             try {
                 String taxString = rs.getString("tax_rate");
 
