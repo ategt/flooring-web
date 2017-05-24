@@ -22,6 +22,4 @@
     <import resource="testProductDb-ApplicationContext.xml" />
     <import resource="testOrdersDb-ApplicationContext.xml" />
     
-    <bean id="viewUtilities" class="com.mycompany.flooringmasteryweb.utilities.ViewUtilities" />
-    
 </beans>

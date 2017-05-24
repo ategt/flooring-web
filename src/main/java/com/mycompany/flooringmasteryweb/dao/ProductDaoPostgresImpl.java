@@ -7,7 +7,6 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
-import com.mycompany.flooringmasteryweb.utilities.TextUtilities;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

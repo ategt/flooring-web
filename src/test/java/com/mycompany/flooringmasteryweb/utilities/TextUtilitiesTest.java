@@ -73,5 +73,27 @@ public class TextUtilitiesTest {
         assertEquals(expResult, result);
     }
     
-    
+    /**
+     * Test of toTitleCase method, of class TextUtilities.
+     */
+    @Test
+    public void testToTitleCaseWithSample() {
+        System.out.println("toTitleCase");
+        String givenString = "this should not be like this.";
+        String expResult = "This Should Not Be Like This.";
+        String result = TextUtilities.toTitleCase(givenString);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of toTitleCase method, of class TextUtilities.
+     */
+    @Test
+    public void testToTitleCaseWithSample2() {
+        System.out.println("toTitleCase");
+        String givenString = "this shoUld noT be Like this.";
+        String expResult = "This Should Not Be Like This.";
+        String result = TextUtilities.toTitleCase(givenString);
+        assertEquals(expResult, result);
+    }
 }
