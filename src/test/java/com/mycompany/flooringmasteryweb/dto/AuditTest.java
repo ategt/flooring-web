@@ -142,12 +142,6 @@ public class AuditTest {
         assertEquals(secondAudit, firstAudit);
     }
 
-    @Test
-    public void orderNameTest() {
-        fail("Order name is wrong and should not test equal.");
-        fail();
-    }
-
     private Audit auditGenerator() {
         Audit instance = new Audit();
         Random random = new Random();
@@ -166,73 +160,70 @@ public class AuditTest {
         Audit audit = new Audit();
         assertTrue(audit.hashCode() >= 0);
     }
-    
+
     @Test
-    public void testEqualsAnotherWay(){
+    public void testEqualsAnotherWay() {
         System.out.println("Equals Again.");
-        
+
         Audit audita = new Audit();
         Audit auditb = new Audit();
-        
+
         assertEquals(auditb, auditb);
-        
+
         audita.setActionPerformed(UUID.randomUUID().toString());
-        
+
         assertNotEquals(audita, auditb);
-        
+
         auditb.setActionPerformed(audita.getActionPerformed());
-        
+
         assertEquals(auditb, auditb);
-        
-        
+
         audita.setDate(new Date());
-        
+
         assertNotEquals(audita, auditb);
-        
+
         auditb.setDate(audita.getDate());
-        
+
         assertEquals(auditb, auditb);
-        
-        
+
         audita.setId(new Random().nextInt());
-        
+
         assertNotEquals(audita, auditb);
-        
+
         auditb.setId(audita.getId());
-        
+
         assertEquals(auditb, auditb);
-        
-        
+
         audita.setLogDate(new Date());
-        
+
         assertNotEquals(audita, auditb);
-        
+
         auditb.setLogDate(audita.getLogDate());
-        
+
         assertEquals(auditb, auditb);
-        
+
         audita.setOrderName(UUID.randomUUID().toString());
-        
+
         assertNotEquals(audita, auditb);
-        
+
         auditb.setOrderName(audita.getOrderName());
-        
+
         assertEquals(auditb, auditb);
-        
+
         audita.setOrderTotal(new Random().nextDouble());
-        
+
         assertNotEquals(audita, auditb);
-        
+
         auditb.setOrderTotal(audita.getOrderTotal());
-        
+
         assertEquals(auditb, auditb);
-        
+
         audita.setOrderid(new Random().nextInt());
-        
+
         assertNotEquals(audita, auditb);
-        
+
         auditb.setOrderid(audita.getOrderid());
-        
-        assertEquals(auditb, auditb);                
+
+        assertEquals(auditb, auditb);
     }
 }

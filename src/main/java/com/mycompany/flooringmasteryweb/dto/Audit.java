@@ -39,13 +39,13 @@ public class Audit {
         
         Audit otherAudit = (Audit)object;               
         
-        return Objects.equals(id, otherAudit.getId()) &&
-                DateUtilities.closeDate(date, otherAudit.getDate()) &&
-                Objects.equals(orderid, otherAudit.getOrderid()) && 
-                Objects.equals(actionPerformed, otherAudit.getActionPerformed()) &&
-                DateUtilities.closeDate(logDate, otherAudit.getLogDate()) &&
-                Objects.equals(orderName, orderName) &&
-                Objects.equals(orderTotal, otherAudit.getOrderTotal());                
+        return Objects.equals(getId(), otherAudit.getId()) &&
+                DateUtilities.closeDate(getDate(), otherAudit.getDate()) &&
+                Objects.equals(getOrderid(), otherAudit.getOrderid()) && 
+                Objects.equals(getActionPerformed(), otherAudit.getActionPerformed()) &&
+                DateUtilities.closeDate(getLogDate(), otherAudit.getLogDate()) &&
+                Objects.equals(getOrderName(), otherAudit.getOrderName()) &&
+                Objects.equals(getOrderTotal(), otherAudit.getOrderTotal());                
     }
     
     public Date getLogDate() {
