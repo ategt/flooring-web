@@ -1,5 +1,0 @@
-ProductType,CostPerSquareFoot,LaborCostPerSquareFoot
-Product1,0.0,0.0
-Product2,0.0,0.0
-Best Product Ever,0.0,0.0
-Product7,0.0,0.0
