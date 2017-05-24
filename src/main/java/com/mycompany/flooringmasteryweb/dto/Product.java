@@ -5,16 +5,42 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import java.util.Objects;
+
 /**
  *
  * @author apprentice
  */
 public class Product {
-    
+
     private String type;
     private double cost;
     private double laborCost;
     private int id;
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+
+        if (object instanceof Product) {
+            Product product = (Product) object;
+
+            return Objects.equals(getCost(), product.getCost())
+                    && Objects.equals(getId(), product.getId())
+                    && Objects.equals(getLaborCost(), product.getLaborCost())
+                    && Objects.equals(getProductName(), product.getProductName())
+                    && Objects.equals(getType(), product.getType());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 
     /**
      * @return the type
@@ -85,8 +111,5 @@ public class Product {
     public void setId(int id) {
         this.id = id;
     }
-    
-    
-    
-    
+
 }

@@ -19,6 +19,7 @@ public class State {
 
     @Override
     public int hashCode() {
+        if (id == null) return 0;
         return id;
     }
 

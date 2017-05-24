@@ -19,35 +19,35 @@ import static org.junit.Assert.*;
  *
  * @author ATeg
  */
-public class StateTest {
-    
-    public StateTest() {
+public class OrderCommandTest {
+
+    public OrderCommandTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
 
     /**
-     * Test of equals method, of class State.
+     * Test of equals method, of class OrderCommand.
      */
     @Test
     public void testEqualsWithNull() {
         System.out.println("equals");
         Object object = null;
-        State instance = new State();
+        OrderCommand instance = new OrderCommand();
         boolean expResult = false;
         boolean result = instance.equals(object);
         assertEquals(expResult, result);
@@ -56,8 +56,8 @@ public class StateTest {
     @Test
     public void testEqualsWithNew() {
         System.out.println("equals");
-        State object = new State();
-        State instance = orderGenerator();
+        OrderCommand object = new OrderCommand();
+        OrderCommand instance = orderGenerator();
 
         boolean expResult = false;
         boolean result = instance.equals(object);
@@ -67,8 +67,8 @@ public class StateTest {
     @Test
     public void testEqualsWithTwoNew() {
         System.out.println("equals");
-        State object = new State();
-        State instance = new State();
+        OrderCommand object = new OrderCommand();
+        OrderCommand instance = new OrderCommand();
 
         boolean expResult = true;
         boolean result = instance.equals(object);
@@ -78,10 +78,10 @@ public class StateTest {
     @Test
     public void testEqualsWithRandom() {
         System.out.println("equals");
-        State object = new State();
+        OrderCommand object = new OrderCommand();
         for (int i = 0; i < 50; i++) {
 
-            State instance = orderGenerator();
+            OrderCommand instance = orderGenerator();
 
             boolean expResult = false;
             boolean result = instance.equals(object);
@@ -92,10 +92,10 @@ public class StateTest {
     @Test
     public void testEqualsWithOtherRandom() {
         System.out.println("equals");
-        State object = new State();
+        OrderCommand object = new OrderCommand();
         for (int i = 0; i < 50; i++) {
 
-            State instance = orderGenerator();
+            OrderCommand instance = orderGenerator();
 
             boolean expResult = false;
             boolean result = object.equals(instance);
@@ -106,26 +106,28 @@ public class StateTest {
     @Test
     public void testEqualsWithSelf() {
         System.out.println("equals");
-        State object = new State();
+        OrderCommand object = new OrderCommand();
 
         boolean expResult = true;
         boolean result = object.equals(object);
         assertEquals(expResult, result);
     }
 
-    private State orderGenerator() {        
-        State instance = new State();
+    private OrderCommand orderGenerator() {
+        OrderCommand instance = new OrderCommand();
         Random random = new Random();
+        instance.setArea(random.nextDouble());
+        instance.setDate(new Date(random.nextLong()));
         instance.setId(random.nextInt());
+        instance.setName(UUID.randomUUID().toString());
+        instance.setProduct(UUID.randomUUID().toString());
         instance.setState(UUID.randomUUID().toString());
-        instance.setStateName(UUID.randomUUID().toString());
-        instance.setStateTax(random.nextDouble());
         return instance;
     }
 
     @Test
     public void testHashCode() {
-        State audit = new State();
+        OrderCommand audit = new OrderCommand();
         assertTrue(audit.hashCode() >= 0);
     }
 
@@ -134,45 +136,61 @@ public class StateTest {
         System.out.println("Equals Again.");
 
         Random random = new Random();
-        State audita = new State();
+        OrderCommand ordera = new OrderCommand();
 
-        assertNotEquals(audita, null);
+        assertNotEquals(ordera, null);
 
-        State auditb = new State();
+        OrderCommand orderb = new OrderCommand();
 
-        assertEquals(auditb, auditb);
-        assertEquals(audita, auditb);
+        assertEquals(orderb, orderb);
+        assertEquals(ordera, orderb);
 
-        audita.setId(random.nextInt());
+        ordera.setArea(random.nextDouble());
 
-        assertNotEquals(audita, auditb);
+        assertNotEquals(ordera, orderb);
 
-        auditb.setId(audita.getId());
+        orderb.setArea(ordera.getArea());
 
-        assertEquals(audita, auditb);
+        assertEquals(ordera, orderb);
 
-        audita.setState(UUID.randomUUID().toString());
+        ordera.setDate(new Date(random.nextLong()));
 
-        assertNotEquals(audita, auditb);
+        assertNotEquals(ordera, orderb);
 
-        auditb.setState(audita.getState());
+        orderb.setDate(ordera.getDate());
 
-        assertEquals(audita, auditb);
+        assertEquals(ordera, orderb);
 
-        audita.setStateName(UUID.randomUUID().toString());
+        ordera.setId(random.nextInt());
 
-        assertNotEquals(audita, auditb);
+        assertNotEquals(ordera, orderb);
 
-        auditb.setStateName(audita.getStateName());
+        orderb.setId(ordera.getId());
 
-        assertEquals(audita, auditb);
+        assertEquals(ordera, orderb);
 
-        audita.setStateTax(random.nextDouble());
+        ordera.setName(UUID.randomUUID().toString());
 
-        assertNotEquals(audita, auditb);
+        assertNotEquals(ordera, orderb);
 
-        auditb.setStateTax(audita.getStateTax());
+        orderb.setName(ordera.getName());
 
-        assertEquals(audita, auditb);
+        assertEquals(ordera, orderb);
+
+        ordera.setProduct(UUID.randomUUID().toString());
+
+        assertNotEquals(ordera, orderb);
+
+        orderb.setProduct(ordera.getProduct());
+
+        assertEquals(ordera, orderb);
+
+        ordera.setState(UUID.randomUUID().toString());
+
+        assertNotEquals(ordera, orderb);
+
+        orderb.setState(ordera.getState());
+
+        assertEquals(ordera, orderb);
     }
 }

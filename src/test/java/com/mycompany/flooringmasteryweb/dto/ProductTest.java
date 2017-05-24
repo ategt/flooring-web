@@ -19,9 +19,9 @@ import static org.junit.Assert.*;
  *
  * @author ATeg
  */
-public class StateTest {
+public class ProductTest {
     
-    public StateTest() {
+    public ProductTest() {
     }
     
     @BeforeClass
@@ -40,14 +40,14 @@ public class StateTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of equals method, of class State.
+        /**
+     * Test of equals method, of class Product.
      */
     @Test
     public void testEqualsWithNull() {
         System.out.println("equals");
         Object object = null;
-        State instance = new State();
+        Product instance = new Product();
         boolean expResult = false;
         boolean result = instance.equals(object);
         assertEquals(expResult, result);
@@ -56,8 +56,8 @@ public class StateTest {
     @Test
     public void testEqualsWithNew() {
         System.out.println("equals");
-        State object = new State();
-        State instance = orderGenerator();
+        Product object = new Product();
+        Product instance = orderGenerator();
 
         boolean expResult = false;
         boolean result = instance.equals(object);
@@ -67,8 +67,8 @@ public class StateTest {
     @Test
     public void testEqualsWithTwoNew() {
         System.out.println("equals");
-        State object = new State();
-        State instance = new State();
+        Product object = new Product();
+        Product instance = new Product();
 
         boolean expResult = true;
         boolean result = instance.equals(object);
@@ -78,10 +78,10 @@ public class StateTest {
     @Test
     public void testEqualsWithRandom() {
         System.out.println("equals");
-        State object = new State();
+        Product object = new Product();
         for (int i = 0; i < 50; i++) {
 
-            State instance = orderGenerator();
+            Product instance = orderGenerator();
 
             boolean expResult = false;
             boolean result = instance.equals(object);
@@ -92,10 +92,10 @@ public class StateTest {
     @Test
     public void testEqualsWithOtherRandom() {
         System.out.println("equals");
-        State object = new State();
+        Product object = new Product();
         for (int i = 0; i < 50; i++) {
 
-            State instance = orderGenerator();
+            Product instance = orderGenerator();
 
             boolean expResult = false;
             boolean result = object.equals(instance);
@@ -106,26 +106,27 @@ public class StateTest {
     @Test
     public void testEqualsWithSelf() {
         System.out.println("equals");
-        State object = new State();
+        Product object = new Product();
 
         boolean expResult = true;
         boolean result = object.equals(object);
         assertEquals(expResult, result);
     }
 
-    private State orderGenerator() {        
-        State instance = new State();
+    private Product orderGenerator() {
+        Product instance = new Product();
         Random random = new Random();
+        instance.setCost(random.nextDouble());
         instance.setId(random.nextInt());
-        instance.setState(UUID.randomUUID().toString());
-        instance.setStateName(UUID.randomUUID().toString());
-        instance.setStateTax(random.nextDouble());
+        instance.setLaborCost(random.nextDouble());
+        instance.setProductName(UUID.randomUUID().toString());
+        instance.setType(UUID.randomUUID().toString());
         return instance;
     }
 
     @Test
     public void testHashCode() {
-        State audit = new State();
+        Product audit = new Product();
         assertTrue(audit.hashCode() >= 0);
     }
 
@@ -134,45 +135,53 @@ public class StateTest {
         System.out.println("Equals Again.");
 
         Random random = new Random();
-        State audita = new State();
+        Product ordera = new Product();
 
-        assertNotEquals(audita, null);
+        assertNotEquals(ordera, null);
 
-        State auditb = new State();
+        Product orderb = new Product();
 
-        assertEquals(auditb, auditb);
-        assertEquals(audita, auditb);
+        assertEquals(orderb, orderb);
+        assertEquals(ordera, orderb);
 
-        audita.setId(random.nextInt());
+        ordera.setCost(random.nextDouble());
 
-        assertNotEquals(audita, auditb);
+        assertNotEquals(ordera, orderb);
 
-        auditb.setId(audita.getId());
+        orderb.setCost(ordera.getCost());
 
-        assertEquals(audita, auditb);
+        assertEquals(ordera, orderb);
 
-        audita.setState(UUID.randomUUID().toString());
+        ordera.setId(random.nextInt());
 
-        assertNotEquals(audita, auditb);
+        assertNotEquals(ordera, orderb);
 
-        auditb.setState(audita.getState());
+        orderb.setId(ordera.getId());
 
-        assertEquals(audita, auditb);
+        assertEquals(ordera, orderb);
 
-        audita.setStateName(UUID.randomUUID().toString());
+        ordera.setLaborCost(random.nextDouble());
 
-        assertNotEquals(audita, auditb);
+        assertNotEquals(ordera, orderb);
 
-        auditb.setStateName(audita.getStateName());
+        orderb.setLaborCost(ordera.getLaborCost());
 
-        assertEquals(audita, auditb);
+        assertEquals(ordera, orderb);
 
-        audita.setStateTax(random.nextDouble());
+        ordera.setProductName(UUID.randomUUID().toString());
 
-        assertNotEquals(audita, auditb);
+        assertNotEquals(ordera, orderb);
 
-        auditb.setStateTax(audita.getStateTax());
+        orderb.setProductName(ordera.getProductName());
 
-        assertEquals(audita, auditb);
+        assertEquals(ordera, orderb);
+
+        ordera.setType(UUID.randomUUID().toString());
+
+        assertNotEquals(ordera, orderb);
+
+        orderb.setType(ordera.getType());
+
+        assertEquals(ordera, orderb);
     }
 }

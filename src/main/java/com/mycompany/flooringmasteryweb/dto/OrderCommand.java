@@ -7,6 +7,7 @@ package com.mycompany.flooringmasteryweb.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
+import java.util.Objects;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -15,7 +16,7 @@ import javax.validation.constraints.Size;
  *
  * @author apprentice
  */
-public class OrderCommand{
+public class OrderCommand {
 
     @Min(0)
     private int id;
@@ -32,12 +33,37 @@ public class OrderCommand{
     @Size(min = 2, max = 45, message = "The Product For This Order Must Be Between 2 and 45 Characters")
     private String product;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy",timezone="EST")
-    @NotNull(message="You Must Include A Date For This Order")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "EST")
+    @NotNull(message = "You Must Include A Date For This Order")
     private Date date;
-    
+
     @Min(0)
     private double area;
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+
+        if (object instanceof OrderCommand) {
+            OrderCommand otherOrderCommand = (OrderCommand) object;
+
+            return Objects.equals(getArea(), otherOrderCommand.getArea())
+                    && Objects.equals(getDate(), otherOrderCommand.getDate())
+                    && Objects.equals(getId(), otherOrderCommand.getId())
+                    && Objects.equals(getName(), otherOrderCommand.getName())
+                    && Objects.equals(getState(), otherOrderCommand.getState())
+                    && Objects.equals(getProduct(), otherOrderCommand.getProduct());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 
     /**
      * @return the id
