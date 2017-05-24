@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -240,7 +241,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
     @Override
     public java.util.List<Order> searchByState(State state) {
         java.util.List<Order> specificOrders = getAllOrders().stream()
-                .filter(o -> o.getState() != null)
+                .filter(o -> Objects.nonNull(o.getState()))
                 .filter(o -> o.getState() == state)
                 .collect(Collectors.toList());
 
@@ -282,7 +283,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         java.util.List<Order> specificOrders = new ArrayList();
         java.util.List<Order> closeOrders = new ArrayList();
 
-        if (orderName == null) {
+        if (Objects.isNull(orderName)) {
             specificOrders.addAll(getAllOrders());
             return specificOrders;
         }
@@ -292,7 +293,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
                 specificOrders.add(order);
             }
 
-            if (order != null) {
+            if (Objects.nonNull(order)) {
                 if (order.getName().toLowerCase().startsWith(orderName.toLowerCase()) || order.getName().toLowerCase().startsWith(orderName.toLowerCase())) {
                     closeOrders.add(order);
                 }
@@ -315,6 +316,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         }
     }
 
+    @Override
     public Order orderBuilder(OrderCommand basicOrder) {
         Order newOrder = new Order();
 
@@ -373,6 +375,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return newOrder;
     }
 
+    @Override
     public OrderCommand resolveOrderCommand(Order order) {
 
         if (order == null) {
