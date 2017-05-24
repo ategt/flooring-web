@@ -6,7 +6,6 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.utilities.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,7 +83,7 @@ public class ProductDaoDbImplTest {
         product.setProductName(null);
         Product result = instance.create(product);
         assertNull(result);
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
     }
 
     @Test
@@ -95,7 +94,7 @@ public class ProductDaoDbImplTest {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = null;
         Product result = instance.create(product);
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
     }
 
     @Test
@@ -107,7 +106,7 @@ public class ProductDaoDbImplTest {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product);
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
     }
 
     @Test
@@ -119,7 +118,7 @@ public class ProductDaoDbImplTest {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product, product.getType());
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
     }
 
     @Test
@@ -131,7 +130,7 @@ public class ProductDaoDbImplTest {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product, product.getType());
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
     }
 
     @Test
@@ -222,11 +221,11 @@ public class ProductDaoDbImplTest {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product);
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
 
         // Test get method.
         Product returnedProduct = instance.get(product.getType());
-        assertTrue(TestUtils.isProductEqual(returnedProduct, result));
+        assertEquals(returnedProduct, result);
         instance.delete(product);
 
         returnedProduct = instance.get(product.getType());
@@ -241,12 +240,12 @@ public class ProductDaoDbImplTest {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product);
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
 
         // Test get method.
         Product returnedProduct = instance.get(product.getType());
 
-        assertTrue(TestUtils.isProductEqual(returnedProduct, result));
+        assertEquals(returnedProduct, result);
 
         instance.delete(product);
 
@@ -263,11 +262,11 @@ public class ProductDaoDbImplTest {
         Product expResult = product;
         String productNameLowerCase = "worlds Best FLOOR";
         Product result = instance.create(product);
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
 
         // Test get method.
         Product returnedProduct = instance.get(productNameLowerCase);
-        assertTrue(TestUtils.isProductEqual(returnedProduct, result));
+        assertEquals(returnedProduct, result);
         instance.delete(product);
 
         returnedProduct = instance.get(productNameLowerCase);
@@ -283,11 +282,11 @@ public class ProductDaoDbImplTest {
         Product expResult = product;
         String productNameLowerCase = "FLOOR1";
         Product result = instance.create(product);
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
 
         // Test get method.
         Product returnedProduct = instance.get(productNameLowerCase);
-        assertTrue(TestUtils.isProductEqual(returnedProduct, result));
+        assertEquals(returnedProduct, result);
         instance.delete(product);
 
         returnedProduct = instance.get(productNameLowerCase);
@@ -303,11 +302,11 @@ public class ProductDaoDbImplTest {
         Product expResult = product;
         String productNameLowerCase = "floor5";
         Product result = instance.create(product);
-        assertTrue(TestUtils.isProductEqual(expResult, result));
+        assertEquals(expResult, result);
 
         // Test get method.
         Product returnedProduct = instance.get(productNameLowerCase);
-        assertTrue(TestUtils.isProductEqual(returnedProduct, result));
+        assertEquals(returnedProduct, result);
         instance.delete(product);
 
         returnedProduct = instance.get(productNameLowerCase);
