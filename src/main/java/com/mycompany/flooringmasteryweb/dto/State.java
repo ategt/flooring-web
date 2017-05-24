@@ -18,29 +18,30 @@ public class State {
     private int id;
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return id;
     }
-    
+
     @Override
-    public boolean equals(Object object){
-                        
-        if (object == null)
+    public boolean equals(Object object) {
+
+        if (object == null) {
             return false;
-        
-        if (!(object instanceof State))
+        }
+
+        if (!(object instanceof State)) {
             return false;
-        
-        State otherState = (State)object;               
-        
-        return Objects.equals(id, otherState.getId()) &&
-                Objects.equals(state, otherState.getState()) && 
-                Objects.equals(state, otherState.getStateName()) && 
-                Objects.equals(orderName, orderName) &&
-                Objects.equals(orderTotal, otherAudit.getOrderTotal());                
+        }
+
+        State otherState = (State) object;
+
+        return Objects.equals(id, otherState.getId())
+                && Objects.equals(state, otherState.getState())
+                && Objects.equals(getStateName(), otherState.getStateName())
+                && Objects.equals(getStateName(), otherState.getStateName())
+                && Objects.equals(stateTax, otherState.getStateTax());
     }
-    
-    
+
     /**
      * @return the state
      */

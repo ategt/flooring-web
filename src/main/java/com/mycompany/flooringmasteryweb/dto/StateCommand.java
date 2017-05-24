@@ -5,6 +5,8 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import java.util.Objects;
+
 /**
  *
  * @author apprentice
@@ -14,6 +16,27 @@ public class StateCommand {
     private String stateAbbreviation;
     private double stateTax;
 
+    @Override
+    public int hashCode(){
+        return getStateAbbreviation().hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object object){
+                        
+        if (object == null)
+            return false;
+        
+        if (!(object instanceof StateCommand))
+            return false;
+        
+        StateCommand otherStateCommand = (StateCommand)object;  
+        
+        return Objects.equals(stateName, otherStateCommand.getStateName()) &&
+                Objects.equals(stateAbbreviation, otherStateCommand.getStateAbbreviation()) && 
+                Objects.equals(stateTax, otherStateCommand.getStateTax());                
+    }
+    
     /**
      * @return the stateName
      */
