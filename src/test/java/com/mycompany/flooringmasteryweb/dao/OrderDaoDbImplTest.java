@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
@@ -2151,7 +2152,7 @@ public class OrderDaoDbImplTest {
         Order choosenOrder = null;
 
         for (Order testOrder : orderList) {
-            if (testOrder.getId() == id) {
+            if (Objects.equals(testOrder.getId(), id)) {
                 choosenOrder = testOrder;
                 break;
             }

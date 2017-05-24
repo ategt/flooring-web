@@ -34,9 +34,9 @@ public class OrderDaoPostgresImpl implements OrderDao {
     private StateDao stateDao;
 
     private static final String SQL_INSERT_ORDER = "INSERT INTO orders (customer_name, material_cost, tax_rate, total_tax, grand_total, date, labor_cost, area, cost_per_square_foot, labor_cost_per_square_foot, product_id, state_id ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id;";
-    private static final String SQL_UPDATE_ORDER = "UPDATE orders SET customer_name = ?, material_cost = ?, tax_rate = ?, total_tax = ?, grand_total = ?, date = ?, labor_cost = ?, area = ?, cost_per_square_foot = ?, labor_cost_per_square_foot = ?, product_id = ?, state_id = ? WHERE id=?";
-    private static final String SQL_DELETE_ORDER = "DELETE FROM orders WHERE id =?";
-    private static final String SQL_GET_ORDER = "SELECT * FROM orders WHERE id =?";
+    private static final String SQL_UPDATE_ORDER = "UPDATE orders SET customer_name = ?, material_cost = ?, tax_rate = ?, total_tax = ?, grand_total = ?, date = ?, labor_cost = ?, area = ?, cost_per_square_foot = ?, labor_cost_per_square_foot = ?, product_id = ?, state_id = ? WHERE id = ?";
+    private static final String SQL_DELETE_ORDER = "DELETE FROM orders WHERE id = ?";
+    private static final String SQL_GET_ORDER = "SELECT * FROM orders WHERE id = ?";
     private static final String SQL_GET_ORDER_LIST = "SELECT * FROM orders";
     private static final String SQL_COUNT_ORDERS = "SELECT COUNT(*) FROM orders";
     
