@@ -6,16 +6,18 @@
 package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
-import com.mycompany.flooringmasteryweb.dao.AddressDaoPostgresImpl;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,23 +42,14 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(@RequestParam(name = "sort_by", required = false) String sortBy, Map model) {
+    public String index(@CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie, @RequestParam(name = "sort_by", required = false) String sortBy, HttpServletResponse response, Map model) {
         List<Address> addresses = null;
 
         if (sortBy != null) {
-            if (sortBy.equalsIgnoreCase("company")) {
-                addresses = addressDao.list(AddressDao.SORT_BY_COMPANY);
-            } else if (sortBy.equalsIgnoreCase("id")) {
-                addresses = addressDao.list(AddressDao.SORT_BY_ID);
-            } else if (sortBy.equalsIgnoreCase("first_name")) {
-                addresses = addressDao.list(AddressDao.SORT_BY_FIRST_NAME);
-            } else if (sortBy.equalsIgnoreCase("last_name")) {
-                addresses = addressDao.list(AddressDao.SORT_BY_LAST_NAME);
-            } else {
-                addresses = addressDao.list();
-            }
+            addresses = addressDao.getAddressesSortedByParameter(sortBy);
         } else {
-            addresses = addressDao.list();
+            response.addCookie(new Cookie("sort_cookie", sortBy));
+            addresses = addressDao.getAddressesSortedByParameter(sortCookie);            
         }
 
         model.put("addresses", addresses);
@@ -65,16 +58,8 @@ public class AddressController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public Address createWithAjax(@Valid @RequestBody Address address) {
+    public Address create(@Valid @RequestBody Address address) {
         return addressDao.create(address);
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ResponseBody
-    public Address showWithAjax(@PathVariable("id") Integer addressId) {
-        Address contact = addressDao.get(addressId);
-
-        return contact;
     }
 
     @RequestMapping(value = "/{input}/search", method = RequestMethod.GET)
@@ -162,7 +147,7 @@ public class AddressController {
             return "address\\edit";
         } else {
             addressDao.update(address);
-            return "redirect:/address/show/" + address.getId();
+            return "redirect:/address/" + address.getId();
         }
     }
 
@@ -208,7 +193,7 @@ public class AddressController {
         return "address\\search";
     }
 
-    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("id") Integer addressId, Map model) {
 
         Address address = addressDao.get(addressId);
@@ -218,5 +203,13 @@ public class AddressController {
         model.put("addresses", addresses);
 
         return "address\\show";
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public Address show(@PathVariable("id") Integer addressId) {
+        Address contact = addressDao.get(addressId);
+
+        return contact;
     }
 }

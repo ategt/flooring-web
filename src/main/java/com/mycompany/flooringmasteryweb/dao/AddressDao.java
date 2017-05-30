@@ -29,6 +29,7 @@ public interface AddressDao {
 
     public int size();
     
+    public List<Address> getAddressesSortedByParameter(String sortBy);
     public Set<String> getCompletionGuesses(String input, int limit);
     public List<Address> list();
     public List<Address> list(Integer sortBy);

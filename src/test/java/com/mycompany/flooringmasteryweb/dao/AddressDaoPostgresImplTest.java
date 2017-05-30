@@ -6,14 +6,9 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -446,6 +441,37 @@ public class AddressDaoPostgresImplTest {
             
             return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
         });
+
+        for (int i = 0; i < addresses.size(); i++) {
+
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+
+        }
+    }
+    
+    @Test
+    public void getSortedByNameUsingSortByParam() {
+        List<Address> addresses = addressDao.list();
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name");
+
+        addresses.sort((Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+            
+            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+
+        }
+    }
+    @Test
+    public void getSortedByIdUsingSortByParam() {
+        List<Address> addresses = addressDao.list(AddressDao.SORT_BY_ID);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("id");
 
         for (int i = 0; i < addresses.size(); i++) {
 
