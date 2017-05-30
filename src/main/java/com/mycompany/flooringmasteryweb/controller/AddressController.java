@@ -42,13 +42,18 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(@CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie, @RequestParam(name = "sort_by", required = false) String sortBy, HttpServletResponse response, Map model) {
+    public String index(
+            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie, 
+            @RequestParam(name = "sort_by", required = false) String sortBy, 
+            HttpServletResponse response, 
+            Map model) {
+        
         List<Address> addresses = null;
 
         if (sortBy != null) {
+            response.addCookie(new Cookie("sort_cookie", sortBy));
             addresses = addressDao.getAddressesSortedByParameter(sortBy);
         } else {
-            response.addCookie(new Cookie("sort_cookie", sortBy));
             addresses = addressDao.getAddressesSortedByParameter(sortCookie);            
         }
 
