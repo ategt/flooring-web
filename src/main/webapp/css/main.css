@@ -19,3 +19,24 @@
     text-align: center;
     font-size: smaller;
 }
+
+.timing-label {
+    text-align: right;
+}
+
+.timing-value {
+    text-align: left;
+}
+
+@media (max-width: 992px) {
+    .timing-label {
+        text-align: left;
+    }
+    .timing-value {
+        text-align: left;
+    }
+    .timing-row {
+        margin: 10px;
+    }
+}
+

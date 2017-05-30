@@ -17,61 +17,61 @@
             <%@ include file="../partials/banner.jspf" %>
 
             <div class="row">
-                <div class="col-md-6 col-md-offset-3 text-center">
+                <div class="col-sm-6 col-sm-offset-2 text-center">
 
-                    <div class="row">
-                        <div class="col-md-6 text-right">
+                    <div class="row timing-row">
+                        <div class="col-md-6 timing-label">
                             Timing ID:
                         </div>
-                        <div class="col-md-6 text-left">
+                        <div id="timing-id" class="col-md-6 timing-value">
                             ${timing.id}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 text-right">
+                    <div class="row timing-row">
+                        <div class="col-md-6 timing-label">
                             Start Time:
                         </div>
-                        <div class="col-md-6 text-left">
+                        <div class="col-md-6 timing-value">
                             ${timing.startTime} ms
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 text-right">
+                    <div class="row timing-row">
+                        <div class="col-md-6 timing-label">
                             Stop Time:
                         </div>
-                        <div class="col-md-6 text-left">
+                        <div class="col-md-6 timing-value">
                             ${timing.stopTime} ms
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 text-right">
+                    <div class="row timing-row">
+                        <div class="col-md-6 timing-label">
                             Difference Of Time:
                         </div>
-                        <div class="col-md-6 text-left">
+                        <div id="timing-difference" class="col-md-6 timing-value">
                             ${timing.differenceTime} ms
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 text-right">
+                    <div class="row timing-row">
+                        <div class="col-md-6 timing-label">
                             Modifiers:
                         </div>
-                        <div class="col-md-6 text-left">
+                        <div class="col-md-6 timing-value">
                             ${timing.modifiers}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 text-right">
+                    <div class="row timing-row">
+                        <div class="col-md-6 timing-label">
                             Invoking Class Name:
                         </div>
-                        <div class="col-md-6 text-left">
+                        <div class="col-md-6 timing-value">
                             ${timing.invokingClassName}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 text-right">
+                    <div class="row timing-row">
+                        <div class="col-md-6 timing-label">
                             Invoking Method Name:
                         </div>
-                        <div class="col-md-6 text-left">
+                        <div class="col-md-6 timing-value">
                             ${timing.invokingMethodName}
                         </div>
                     </div>
