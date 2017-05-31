@@ -1,0 +1,1 @@
+SET DATABASE_URL=postgres://myself:post@localhost:5432/flooring_master
