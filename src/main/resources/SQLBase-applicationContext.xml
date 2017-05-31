@@ -5,6 +5,7 @@
         xmlns:jee="http://www.springframework.org/schema/jee" 
         xmlns:tx="http://www.springframework.org/schema/tx" 
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:mvc="http://www.springframework.org/schema/mvc"	
         xsi:schemaLocation="http://www.springframework.org/schema/aop 
         http://www.springframework.org/schema/aop/spring-aop-3.2.xsd         
         http://www.springframework.org/schema/beans 
@@ -14,10 +15,14 @@
         http://www.springframework.org/schema/jee 
         http://www.springframework.org/schema/jee/spring-jee-3.2.xsd         
         http://www.springframework.org/schema/tx 
-        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
    
+    <context:component-scan base-package="com.mycompany.flooringmasteryweb.controller" />
     <context:spring-configured />
-    <tx:annotation-driven />
+    <!--<tx:annotation-driven />-->
+    <mvc:annotation-driven />
     
     <bean class="java.net.URI" id="dbUrl">
         <!--<constructor-arg value="${DATABASE_URL}" />-->
