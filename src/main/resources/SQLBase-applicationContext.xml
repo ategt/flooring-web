@@ -22,11 +22,19 @@
     <!--<context:component-scan base-package="com.mycompany.flooringmasteryweb.controller" />-->
     <!--<context:spring-configured />-->
     <!--<tx:annotation-driven />-->
+    <context:property-placeholder />
     <mvc:annotation-driven />
     
+<!--    <bean id="aSharedProperty" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="All beans need me :)"/>
+        <constructor-arg type="java.lang.String" value="${DATABASE_URL}"/>
+    </bean>-->
+
     <bean class="java.net.URI" id="dbUrl">
-        <!--<constructor-arg value="${DATABASE_URL}" />-->
-        <constructor-arg value="postgres://myself:post@localhost:5432/flooring_master"/>
+        <!--<constructor-arg type="java.lang.String" name="aSharedProperty" ref="aSharedProperty"/>-->
+        <!--<constructor-arg type="java.lang.String" value="${DATABASE_URL}"/>-->
+        <constructor-arg value="${DATABASE_URL}"/>
+        <!--<constructor-arg value="postgres://myself:post@localhost:5432/flooring_master"/>-->
     </bean>
     
     <!--    <bean class="java.lang.String" id="dbVal" >        
@@ -36,9 +44,6 @@
         <constructor-arg type="String" value="100b" />
     </bean>-->
     
-    <bean id="aSharedProperty" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="All beans need me :)"/>
-    </bean>
     
     <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
