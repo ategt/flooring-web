@@ -35,13 +35,6 @@ public class FileUploadController {
         return ctx.getBean("dbUrl", java.net.URI.class);
     }
 
-    @ResponseBody
-    @RequestMapping(method = RequestMethod.GET, value = "/dbSource")
-    public org.apache.commons.dbcp.BasicDataSource provideDataSourcrInfo() {
-        ApplicationContext ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
-        return ctx.getBean("dataSource", org.apache.commons.dbcp.BasicDataSource.class);
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "/")
     public String provideUploadInfo(Model model) {
         File rootFolder = new File("./");
