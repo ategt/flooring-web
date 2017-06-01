@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.context.ApplicationContext;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,12 +20,27 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/fileio")
 public class FileUploadController {
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.GET, value = "/uri")
+    public java.net.URI provideUriInfo() {
+        ApplicationContext ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
+        return ctx.getBean("dbUrl", java.net.URI.class);
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.GET, value = "/dbSource")
+    public org.apache.commons.dbcp.BasicDataSource provideDataSourcrInfo() {
+        ApplicationContext ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
+        return ctx.getBean("dataSource", org.apache.commons.dbcp.BasicDataSource.class);
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/")
     public String provideUploadInfo(Model model) {
@@ -35,9 +51,9 @@ public class FileUploadController {
 
         model.addAttribute("files",
                 Arrays.stream(rootFolder.listFiles())
-                .sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-                .map(f -> f.getName())
-                .collect(Collectors.toList())
+                        .sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
+                        .map(f -> f.getName())
+                        .collect(Collectors.toList())
         );
 
         return "fileUpload\\uploadForm";
