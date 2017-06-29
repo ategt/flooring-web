@@ -61,6 +61,25 @@ public class AddressController {
         return "address\\index";
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public Address[] index(
+            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie, 
+            @RequestParam(name = "sort_by", required = false) String sortBy, 
+            HttpServletResponse response) {
+        
+        List<Address> addresses = null;
+
+        if (sortBy != null) {
+            response.addCookie(new Cookie("sort_cookie", sortBy));
+            addresses = addressDao.getAddressesSortedByParameter(sortBy);
+        } else {
+            addresses = addressDao.getAddressesSortedByParameter(sortCookie);            
+        }
+
+        return addresses.toArray(new Address[addresses.size()]);
+    }
+
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public Address create(@Valid @RequestBody Address address) {
