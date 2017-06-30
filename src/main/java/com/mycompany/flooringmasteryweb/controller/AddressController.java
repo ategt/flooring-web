@@ -43,18 +43,18 @@ public class AddressController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie, 
-            @RequestParam(name = "sort_by", required = false) String sortBy, 
-            HttpServletResponse response, 
+            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            HttpServletResponse response,
             Map model) {
-        
+
         List<Address> addresses = null;
 
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
             addresses = addressDao.getAddressesSortedByParameter(sortBy);
         } else {
-            addresses = addressDao.getAddressesSortedByParameter(sortCookie);            
+            addresses = addressDao.getAddressesSortedByParameter(sortCookie);
         }
 
         model.put("addresses", addresses);
@@ -64,17 +64,17 @@ public class AddressController {
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public Address[] index(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie, 
-            @RequestParam(name = "sort_by", required = false) String sortBy, 
+            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
             HttpServletResponse response) {
-        
+
         List<Address> addresses = null;
 
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
             addresses = addressDao.getAddressesSortedByParameter(sortBy);
         } else {
-            addresses = addressDao.getAddressesSortedByParameter(sortCookie);            
+            addresses = addressDao.getAddressesSortedByParameter(sortCookie);
         }
 
         return addresses.toArray(new Address[addresses.size()]);
@@ -164,9 +164,9 @@ public class AddressController {
             for (ObjectError error : errors) {
                 errorString += error.getDefaultMessage() + "<br />";
             }
-            
+
             model.put("errors", errorString);
-            
+
             loadAddress(contactId, model);
             return "address\\edit";
         } else {
@@ -181,8 +181,25 @@ public class AddressController {
             @RequestParam("searchText") String searchText,
             Map model) {
 
-        List<Address> addresses = null;
+        List<Address> addresses = searchDatabase(searchBy, searchText);
 
+        model.put("addresses", addresses);
+
+        return "address\\search";
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
+    public List<Address> search(
+            @RequestParam("searchBy") String searchBy,
+            @RequestParam("searchText") String searchText) {
+
+        List<Address> addresses = searchDatabase(searchBy, searchText);
+
+        return addresses;
+    }
+
+    private List<Address> searchDatabase(String searchBy, String searchText) {
+        List<Address> addresses = null;
         if ("searchByLastName".equalsIgnoreCase(searchBy)) {
             addresses = addressDao.searchByLastName(searchText);
 
@@ -201,10 +218,7 @@ public class AddressController {
         } else {
             addresses = addressDao.list();
         }
-
-        model.put("addresses", addresses);
-
-        return "address\\search";
+        return addresses;
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
