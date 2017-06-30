@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-
 $(document).ready(function () {
 
     $('#create-submit').on('click', function (e) {
@@ -23,7 +22,6 @@ $(document).ready(function () {
             id: 0
         });
 
-
         $.ajax({
             url: addressPath,
             type: "POST",
@@ -34,14 +32,12 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Content-type", "application/json");
             },
             success: function (data, status) {
-
                 resetCreateForm();
 
                 var tableRow = buildAddressRow(data);
                 $('#address-table').append($(tableRow));
                 $("#showDetailModal").modal();
                 populateModal(data.id);
-
             },
             error: function (data, status) {
                 var errors = data.responseJSON.errors;
@@ -53,22 +49,15 @@ $(document).ready(function () {
                 $(".error-container").html("");
 
                 $.each(errors, function (index, error) {
-
                     var errorFieldName = error.fieldName;
                     validationErrorMessage += errorFieldName + ":" + error.message + "<br />";
 
                     updateErrorField(errorFieldName, error);
-
                 });
-
+                
                 $("#add-contact-validation-errors").html(validationErrorMessage);
-
             }
-
-
         });
-
-
     });
 
     function buildAddressRow(data) {
@@ -82,22 +71,17 @@ $(document).ready(function () {
         <td><a data-address-id=\"" + data.id + "\" class=\"delete-link\">Delete</a></td>\n\
                                                                                         \n\
         </tr>";
-
+        
         return strFooter;
-
     }
 
     $('#showDetailModal').on('show.bs.modal', function (e) {
-
         var link = $(e.relatedTarget);
         var addressId = link.data('address-id');
         populateModal(addressId);
-
     });
 
-
     function populateModal(addressId) {
-
         $.ajax({
             url: addressPath + addressId,
             type: "GET",
@@ -106,7 +90,6 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Accept", "application/json");
             },
             success: function (data, status) {
-
                 $('#address-first-name').text(data.firstName);
                 $('#address-last-name').text(data.lastName);
                 $('#address-company').text(data.company);
@@ -115,16 +98,12 @@ $(document).ready(function () {
                 $('#address-city').text(data.city);
                 $('#address-state').text(data.state);
                 $('#address-zipcode').text(data.zip);
-
             },
             error: function (data, status) {
 
             }
-
         });
-
     }
-
 
     $('#editDetailModal').on('show.bs.modal', function (e) {
 
@@ -153,9 +132,7 @@ $(document).ready(function () {
             error: function (data, status) {
 
             }
-
         });
-
     });
 
     $('#edit-address-button').on('click', function (e) {
@@ -174,7 +151,6 @@ $(document).ready(function () {
             zip: $("#edit-address-zipcode").val()
         });
 
-
         $.ajax({
             url: addressPath,
             type: "PUT",
@@ -190,16 +166,11 @@ $(document).ready(function () {
                 var tableRow = buildAddressRow(data);
 
                 $('#address-row-' + data.id).replaceWith($(tableRow));
-
             },
             error: function (data, status) {
                 alert("error");
             }
-
-
-
         });
-
     });
 
     $(document).on('click', '.delete-link', function (e) {
@@ -217,7 +188,6 @@ $(document).ready(function () {
             error: function (data, status) {
 
             }
-
         });
     });
 
@@ -227,7 +197,6 @@ $(document).ready(function () {
         $(".create-address-form").val('');
         $(".error-container").html('');
         $("#add-contact-validation-errors").html('');
-
     }
 
     function resetCreateFormColors() {
@@ -243,7 +212,5 @@ $(document).ready(function () {
         $("#" + errorFieldName + "-errors").html(error.message);
         $("#" + errorFieldName + "-group").addClass("has-error");
     }
-
-
 
 });

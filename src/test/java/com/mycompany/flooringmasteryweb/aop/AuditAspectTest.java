@@ -14,7 +14,6 @@ import java.util.Random;
 import java.util.UUID;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -78,7 +77,7 @@ public class AuditAspectTest {
 
         assertEquals("Action Performed Check", lastAudit.getActionPerformed(), "create");
         assertEquals("Order ID Check", lastAudit.getOrderid(), (Object)order.getId());
-        assertTrue("Log Time Check: " + Math.abs(lastAudit.getLogDate().getTime() - System.currentTimeMillis()), Math.abs(lastAudit.getLogDate().getTime() - System.currentTimeMillis()) < 75);
+        assertTrue("Log Time Check: " + Math.abs(lastAudit.getLogDate().getTime() - System.currentTimeMillis()), Math.abs(lastAudit.getLogDate().getTime() - System.currentTimeMillis()) < 95);
         assertEquals("Order Name Check", lastAudit.getOrderName(), order.getName());
         assertEquals("Total Check", lastAudit.getOrderTotal(), order.getTotal(), 100);
 

@@ -7,6 +7,7 @@ package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -177,11 +178,10 @@ public class AddressController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
-            @RequestParam("searchBy") String searchBy,
-            @RequestParam("searchText") String searchText,
+            @ModelAttribute AddressSearchRequest addressSearchRequest,
             Map model) {
 
-        List<Address> addresses = searchDatabase(searchBy, searchText);
+        List<Address> addresses = searchDatabase(addressSearchRequest);
 
         model.put("addresses", addresses);
 
@@ -189,31 +189,29 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
-    public List<Address> search(
-            @RequestParam("searchBy") String searchBy,
-            @RequestParam("searchText") String searchText) {
+    public List<Address> search(@ModelAttribute AddressSearchRequest addressSearchRequest) {
 
-        List<Address> addresses = searchDatabase(searchBy, searchText);
+        List<Address> addresses = searchDatabase(addressSearchRequest);
 
         return addresses;
     }
 
-    private List<Address> searchDatabase(String searchBy, String searchText) {
+    private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
         List<Address> addresses = null;
-        if ("searchByLastName".equalsIgnoreCase(searchBy)) {
-            addresses = addressDao.searchByLastName(searchText);
+        if ("searchByLastName".equalsIgnoreCase(searchRequest.getSearchBy())) {
+            addresses = addressDao.searchByLastName(searchRequest.getSearchText());
 
-        } else if ("searchByFirstName".equalsIgnoreCase(searchBy)) {
-            addresses = addressDao.searchByFirstName(searchText);
+        } else if ("searchByFirstName".equalsIgnoreCase(searchRequest.getSearchBy())) {
+            addresses = addressDao.searchByFirstName(searchRequest.getSearchText());
 
-        } else if ("searchByCity".equalsIgnoreCase(searchBy)) {
-            addresses = addressDao.searchByCity(searchText);
+        } else if ("searchByCity".equalsIgnoreCase(searchRequest.getSearchBy())) {
+            addresses = addressDao.searchByCity(searchRequest.getSearchText());
 
-        } else if ("searchByState".equalsIgnoreCase(searchBy)) {
-            addresses = addressDao.searchByState(searchText);
+        } else if ("searchByState".equalsIgnoreCase(searchRequest.getSearchBy())) {
+            addresses = addressDao.searchByState(searchRequest.getSearchText());
 
-        } else if ("searchByZip".equalsIgnoreCase(searchBy)) {
-            addresses = addressDao.searchByZip(searchText);
+        } else if ("searchByZip".equalsIgnoreCase(searchRequest.getSearchBy())) {
+            addresses = addressDao.searchByZip(searchRequest.getSearchText());
 
         } else {
             addresses = addressDao.list();

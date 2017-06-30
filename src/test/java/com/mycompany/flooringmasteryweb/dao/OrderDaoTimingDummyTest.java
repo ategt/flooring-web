@@ -119,10 +119,8 @@ public class OrderDaoTimingDummyTest {
         OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
 
         long startTime = new Date().getTime();
-        long systemStartTime = System.currentTimeMillis();
         dummyOrderDao.get(null);
         long stopTime = new Date().getTime();
-        long systemStopTime = System.currentTimeMillis();
 
         long timeTaken = stopTime - startTime;
 
@@ -130,15 +128,14 @@ public class OrderDaoTimingDummyTest {
 
         Integer expectedTime = ctx.getBean("orderDaoIdleTime", Integer.class);
         
-        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
-        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
-        System.out.println("difference: " + Math.abs(timing.getDifferenceTime() - timeTaken) + " / " + expectedTime);
-        System.out.println("expectation: " + Math.abs(timing.getDifferenceTime() - expectedTime) + " should be " + expectedTime );
-
-        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
-        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
-        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
-        assertTrue("Expectation Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
+        assertTrue("Start Time Variance Exceeds Expectations: " + Math.abs(timing.getStartTime() - startTime),
+                Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue("Stop Time Variance Exceeds Expectations: " + Math.abs(timing.getStopTime() - stopTime), 
+                Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed: " + Math.abs(timing.getDifferenceTime() - timeTaken),
+                Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
+        assertTrue("Expectation Failed: " + Math.abs(timing.getDifferenceTime() - expectedTime),
+                Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
     }
 
     /**

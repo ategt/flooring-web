@@ -383,10 +383,6 @@ public class AddressDaoPostgresImplTest {
 
             Address result = addressDao.get(searchString);
 
-            if (address.equals(result)) {
-                System.out.println("Thing");
-            }
-
             assertEquals(result, address);
             addressDao.delete(resultId);
         }
