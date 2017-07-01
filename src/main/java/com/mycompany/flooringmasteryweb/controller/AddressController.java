@@ -189,6 +189,7 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
+    @ResponseBody
     public List<Address> search(@ModelAttribute AddressSearchRequest addressSearchRequest) {
 
         List<Address> addresses = searchDatabase(addressSearchRequest);
