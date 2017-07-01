@@ -41,8 +41,8 @@ public class AddressSearchRequest {
             return searchString;
         }
 
-        public ADDRESS_SEARCH_BY parse(String input) {
-            Optional<ADDRESS_SEARCH_BY> result = Arrays.stream(values()).filter(option -> option.value().equalsIgnoreCase(searchString)).findAny();
+        public static ADDRESS_SEARCH_BY parse(String input) {
+            Optional<ADDRESS_SEARCH_BY> result = Arrays.stream(values()).filter(option -> option.value().equalsIgnoreCase(input)).findAny();
             return result.orElse(LAST_NAME);
         }
     }

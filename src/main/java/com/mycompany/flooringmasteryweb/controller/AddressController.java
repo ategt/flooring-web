@@ -198,7 +198,8 @@ public class AddressController {
     }
 
     private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
-        return addressDao.search(searchRequest.getSearchText(), AddressSearchRequest.ADDRESS_SEARCH_BY.STATE);
+        return addressDao.search(searchRequest.getSearchText(), 
+                AddressSearchRequest.ADDRESS_SEARCH_BY.parse(searchRequest.getSearchBy()));
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
