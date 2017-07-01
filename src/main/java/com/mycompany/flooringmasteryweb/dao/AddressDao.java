@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.util.List;
 import java.util.Set;
 
@@ -39,4 +40,5 @@ public interface AddressDao {
     public List<Address> searchByCompany(String company);
     public List<Address> searchByState(String state);
     public List<Address> searchByZip(String zip);
+    public List<Address> search(String queryString, AddressSearchRequest.ADDRESS_SEARCH_BY searchOption);
 }

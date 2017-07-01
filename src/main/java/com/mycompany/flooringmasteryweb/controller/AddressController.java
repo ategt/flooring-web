@@ -198,26 +198,7 @@ public class AddressController {
     }
 
     private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
-        List<Address> addresses = null;
-        if ("searchByLastName".equalsIgnoreCase(searchRequest.getSearchBy())) {
-            addresses = addressDao.searchByLastName(searchRequest.getSearchText());
-
-        } else if ("searchByFirstName".equalsIgnoreCase(searchRequest.getSearchBy())) {
-            addresses = addressDao.searchByFirstName(searchRequest.getSearchText());
-
-        } else if ("searchByCity".equalsIgnoreCase(searchRequest.getSearchBy())) {
-            addresses = addressDao.searchByCity(searchRequest.getSearchText());
-
-        } else if ("searchByState".equalsIgnoreCase(searchRequest.getSearchBy())) {
-            addresses = addressDao.searchByState(searchRequest.getSearchText());
-
-        } else if ("searchByZip".equalsIgnoreCase(searchRequest.getSearchBy())) {
-            addresses = addressDao.searchByZip(searchRequest.getSearchText());
-
-        } else {
-            addresses = addressDao.list();
-        }
-        return addresses;
+        return addressDao.search(searchRequest.getSearchText(), AddressSearchRequest.ADDRESS_SEARCH_BY.STATE);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)

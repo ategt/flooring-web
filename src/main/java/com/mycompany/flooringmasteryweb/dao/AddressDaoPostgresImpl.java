@@ -6,8 +6,10 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -129,14 +131,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
         result.addAll(searchByFirstName(input).stream().map(address -> address.getFirstName()).collect(Collectors.toSet()));
         result.addAll(searchByLastName(input).stream().map(address -> address.getLastName()).collect(Collectors.toSet()));
         result.addAll(searchByCompany(input).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
-
-//        if (result.size() < 30) {
-//            result.addAll(searchByCity(input).stream().map(address -> address.getCity()).collect(Collectors.toSet()));
-//            result.addAll(searchByState(input).stream().map(address -> address.getState()).collect(Collectors.toSet()));
-//            result.addAll(searchByZip(input).stream().map(address -> address.getZip()).collect(Collectors.toSet()));
-//            result.addAll(searchByStreetName(input).stream().map(address -> address.getStreetName()).collect(Collectors.toSet()));
-//            result.addAll(searchByStreetNumber(input).stream().map(address -> address.getStreetNumber()).collect(Collectors.toSet()));
-//        }
 
         return result.stream().limit(limit).collect(Collectors.toSet());
     }
@@ -409,7 +403,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return result;
     }
-    
+
     @Override
     public List<Address> getAddressesSortedByParameter(String sortBy) {
         List<Address> addresses;
@@ -423,6 +417,67 @@ public class AddressDaoPostgresImpl implements AddressDao {
             addresses = list(AddressDao.SORT_BY_LAST_NAME);
         } else {
             addresses = list();
+        }
+        return addresses;
+    }
+
+    public List<Address> search(String queryString, AddressSearchRequest.ADDRESS_SEARCH_BY searchOption) {
+        List<Address> addresses = null;
+
+        if (null == searchOption) {
+            addresses = list();
+        } else {
+            switch (searchOption) {
+                case LAST_NAME:
+                    addresses = searchByLastName(queryString);
+                    break;
+                case FIRST_NAME:
+                    addresses = searchByFirstName(queryString);
+                    break;
+                case COMPANY:
+                    addresses = searchByCompany(queryString);
+                    break;
+                case CITY:
+                    addresses = searchByCity(queryString);
+                    break;
+                case STATE:
+                    addresses = searchByState(queryString);
+                    break;
+                case STREET_NAME:
+                    addresses = searchByStreetName(queryString);
+                    break;
+                case STREET_NUMBER:
+                    addresses = searchByStreetNumber(queryString);
+                    break;
+                case STREET:
+                    Set<Address> tempStreetAddresses = new HashSet();
+                    tempStreetAddresses.addAll(searchByStreetNumber(queryString));
+                    tempStreetAddresses.addAll(searchByStreetName(queryString));
+                    addresses = new ArrayList(tempStreetAddresses);
+                    break;
+                case ZIP:
+                    addresses = searchByZip(queryString);
+                    break;
+                case NAME:
+                    Set<Address> tempNameAddresses = new HashSet();
+                    tempNameAddresses.addAll(searchByFirstName(queryString));
+                    tempNameAddresses.addAll(searchByLastName(queryString));
+                    addresses = new ArrayList(tempNameAddresses);
+                    break;
+                case NAME_OR_COMPANY:
+                    Set<Address> tempNameCompanyAddresses = new HashSet();
+                    tempNameCompanyAddresses.addAll(searchByFirstName(queryString));
+                    tempNameCompanyAddresses.addAll(searchByLastName(queryString));
+                    tempNameCompanyAddresses.addAll(searchByCompany(queryString));
+                    addresses = new ArrayList(tempNameCompanyAddresses);
+                    break;
+                case ALL:
+                    addresses = new ArrayList(getGuesses(queryString));
+                    break;                
+                default:
+                    addresses = list();
+                    break;
+            }
         }
         return addresses;
     }
