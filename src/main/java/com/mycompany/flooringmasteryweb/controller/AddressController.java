@@ -178,8 +178,14 @@ public class AddressController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
-            @ModelAttribute AddressSearchRequest addressSearchRequest,
+            //@ModelAttribute AddressSearchRequest addressSearchRequest,
+            @RequestParam("searchBy") String searchBy,
+            @RequestParam("searchText") String searchText,
             Map model) {
+
+        AddressSearchRequest addressSearchRequest = new AddressSearchRequest();
+        addressSearchRequest.setSearchBy(searchBy);
+        addressSearchRequest.setSearchText(searchText);
 
         List<Address> addresses = searchDatabase(addressSearchRequest);
 
@@ -190,15 +196,23 @@ public class AddressController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public List<Address> search(@ModelAttribute AddressSearchRequest addressSearchRequest) {
-                
+    public List<Address> search(
+            //@ModelAttribute AddressSearchRequest addressSearchRequest
+            @RequestParam("searchBy") String searchBy,
+            @RequestParam("searchText") String searchText
+    ) {
+
+        AddressSearchRequest addressSearchRequest = new AddressSearchRequest();
+        addressSearchRequest.setSearchBy(searchBy);
+        addressSearchRequest.setSearchText(searchText);
+
         List<Address> addresses = searchDatabase(addressSearchRequest);
 
         return addresses;
     }
 
     private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
-        return addressDao.search(searchRequest.getSearchText(), 
+        return addressDao.search(searchRequest.getSearchText(),
                 AddressSearchRequest.ADDRESS_SEARCH_BY.parse(searchRequest.getSearchBy()));
     }
 
