@@ -211,6 +211,17 @@ public class AddressController {
         return addresses;
     }
 
+    @RequestMapping(value = "/search", method = RequestMethod.POST, headers = {"Content-type=application/json", "Accept=application/json"})
+    @ResponseBody
+    public List<Address> search(
+            @Valid @RequestBody AddressSearchRequest addressSearchRequest
+    ) {
+
+        List<Address> addresses = searchDatabase(addressSearchRequest);
+
+        return addresses;
+    }
+
     private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
         return addressDao.search(searchRequest.getSearchText(),
                 AddressSearchRequest.ADDRESS_SEARCH_BY.parse(searchRequest.getSearchBy()));
@@ -248,7 +259,7 @@ public class AddressController {
 
     @RequestMapping(value = "/size", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
-    public Integer size(@PathVariable("id") Integer addressId) {
+    public Integer size() {
         return addressDao.size();
     }
 }
