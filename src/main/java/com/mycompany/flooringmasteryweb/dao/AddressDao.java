@@ -26,7 +26,7 @@ public interface AddressDao {
     public Address get(Integer id);
     public Address get(String input);
     public Address getByCompany(String company);
-    public void delete(Integer id);
+    public Address delete(Integer id);
 
     public int size();
     

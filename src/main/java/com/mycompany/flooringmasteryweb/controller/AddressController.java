@@ -140,8 +140,8 @@ public class AddressController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteWithAjax(@PathVariable("id") Integer addressId) {
-        addressDao.delete(addressId);
+    public Address deleteWithAjax(@PathVariable("id") Integer addressId) {
+        return addressDao.delete(addressId);
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -244,5 +244,11 @@ public class AddressController {
         Address contact = addressDao.get(addressId);
 
         return contact;
+    }
+
+    @RequestMapping(value = "/size", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public Integer size(@PathVariable("id") Integer addressId) {
+        return addressDao.size();
     }
 }

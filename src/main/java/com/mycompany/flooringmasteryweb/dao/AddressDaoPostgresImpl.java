@@ -30,7 +30,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id;";
     private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
-    private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id =?";
+    private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *;";
     private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id =?";
     private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
     private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
@@ -169,8 +169,17 @@ public class AddressDaoPostgresImpl implements AddressDao {
         }
     }
 
-    public void delete(Integer id) {
-        jdbcTemplate.update(SQL_DELETE_ADDRESS, id);
+    @Override
+    public Address delete(Integer id) {
+        if (id == null) {
+            return null;
+        }
+        
+        try {
+            return jdbcTemplate.queryForObject(SQL_DELETE_ADDRESS, new AddressMapper(), id);
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
     @Override
@@ -473,7 +482,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     break;
                 case ALL:
                     addresses = new ArrayList(getGuesses(queryString));
-                    break;                
+                    break;
                 default:
                     addresses = list();
                     break;
