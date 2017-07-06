@@ -798,365 +798,429 @@ public class AddressSeleneseIT {
      * Test of list method, of class AddressDaoPostgresImpl.
      */
     @Test
-    public void testList() {
+    public void testList() throws IOException {
         System.out.println("list");
         
         Address address = addressGenerator();
-        addressDao.create(address);
         
-        List<Address> list = addressDao.list();
+        // Create Generated Address
+                HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .build();
         
-        assertEquals(list.size(), addressDao.size());
+        WebClient createAddressWebClient = new WebClient();
+        
+        Gson gson = new GsonBuilder().create();
+        String addressJson = gson.toJson(address);
+        
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
+        createRequest.setRequestBody(addressJson);
+        
+        createAddressWebClient.getPage(createRequest);
+
+        // Get The List Of Addresses
+        HttpUrl getListUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .build();
+        
+        WebClient getListWebClient = new WebClient();
+        getListWebClient.addRequestHeader("Accept", "application/json");
+        
+        Page getListPage = getListWebClient.getPage(getListUrl.url());
+        WebResponse getListWebResponse = getListPage.getWebResponse();
+        assertEquals(getListWebResponse.getStatusCode(), 200);
+        assertTrue(getListWebResponse.getContentLength() > 100);
+        
+        List<Address> list = null;
+
+        if (getListWebResponse.getContentType().equals("application/json")) {
+            String json = getListWebResponse.getContentAsString();
+            Address[] addresses = gson.fromJson(json, Address[].class);
+            
+            assertTrue(addresses.length > 20);
+            
+            list = Arrays.asList(addresses);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        // Get Database Size
+        
+        HttpUrl sizeUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("size")
+                .build();
+        
+        WebClient sizeWebClient = new WebClient();
+        sizeWebClient.addRequestHeader("Accept", "application/json");
+        
+        Page sizePage = sizeWebClient.getPage(sizeUrl.url());
+        WebResponse sizeResponse = sizePage.getWebResponse();
+        assertEquals(sizeResponse.getStatusCode(), 200);
+        assertTrue(sizeResponse.getContentLength() < 50);
+        
+        Integer databaseSize = null;
+        
+        if (sizeResponse.getContentType().equals("application/json")) {
+            String json = sizeResponse.getContentAsString();
+            databaseSize = gson.fromJson(json, Integer.class);
+            
+            Assert.assertNotNull(databaseSize);
+        } else {
+            fail("Should have been JSON.");
+        }
+        
+        
+        assertEquals(list.size(), databaseSize.intValue());
         
         assertTrue(list.contains(address));
     }
 
-    /**
-     * Test of searchByLastName method, of class AddressDaoPostgresImpl.
-     */
-    @Test
-    public void testSearchByLastName() {
-        System.out.println("searchByLastName");
-        String lastName = UUID.randomUUID().toString();
-        
-        Address address = addressGenerator();
-        address.setLastName(lastName);
-        address = addressDao.create(address);
-        
-        List<Address> result = addressDao.searchByLastName(lastName);
-        
-        assertNotNull(result);
-        assertTrue(result.contains(address));
-        assertEquals(result.size(), 1);
-        
-        result = addressDao.searchByLastName(lastName.toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByLastName(lastName.toUpperCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByLastName(lastName.substring(5));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByLastName(lastName.substring(5, 20));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByLastName(lastName.substring(5, 20).toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByLastName(lastName.substring(5, 20).toUpperCase());
-        assertTrue(result.contains(address));
-        
-    }
+//    /**
+//     * Test of searchByLastName method, of class AddressDaoPostgresImpl.
+//     */
+//    @Test
+//    public void testSearchByLastName() {
+//        System.out.println("searchByLastName");
+//        String lastName = UUID.randomUUID().toString();
+//        
+//        Address address = addressGenerator();
+//        address.setLastName(lastName);
+//        address = addressDao.create(address);
+//        
+//        List<Address> result = addressDao.searchByLastName(lastName);
+//        
+//        assertNotNull(result);
+//        assertTrue(result.contains(address));
+//        assertEquals(result.size(), 1);
+//        
+//        result = addressDao.searchByLastName(lastName.toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByLastName(lastName.toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByLastName(lastName.substring(5));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByLastName(lastName.substring(5, 20));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByLastName(lastName.substring(5, 20).toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByLastName(lastName.substring(5, 20).toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//    }
 
-    /**
-     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
-     */
-    @Test
-    public void testSearchByFirstName() {
-        System.out.println("searchByFirstName");
-        
-        String firstName = UUID.randomUUID().toString();
-        
-        Address address = addressGenerator();
-        address.setFirstName(firstName);
-        addressDao.create(address);
-        
-        List<Address> result = addressDao.searchByFirstName(firstName);
-        assertTrue(result.contains(address));
-        assertEquals(result.size(), 1);
-        
-        result = addressDao.searchByFirstName(firstName.toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByFirstName(firstName.toUpperCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByFirstName(firstName.substring(5));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByFirstName(firstName.substring(5, 20));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByFirstName(firstName.substring(5, 20).toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByFirstName(firstName.substring(5, 20).toUpperCase());
-        assertTrue(result.contains(address));
-        
-    }
+//    /**
+//     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
+//     */
+//    @Test
+//    public void testSearchByFirstName() {
+//        System.out.println("searchByFirstName");
+//        
+//        String firstName = UUID.randomUUID().toString();
+//        
+//        Address address = addressGenerator();
+//        address.setFirstName(firstName);
+//        addressDao.create(address);
+//        
+//        List<Address> result = addressDao.searchByFirstName(firstName);
+//        assertTrue(result.contains(address));
+//        assertEquals(result.size(), 1);
+//        
+//        result = addressDao.searchByFirstName(firstName.toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByFirstName(firstName.toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByFirstName(firstName.substring(5));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByFirstName(firstName.substring(5, 20));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByFirstName(firstName.substring(5, 20).toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByFirstName(firstName.substring(5, 20).toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//    }
 
-    /**
-     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
-     */
-    @Test
-    public void testSearchByCompany() {
-        System.out.println("searchByCompany");
-        
-        String company = UUID.randomUUID().toString();
-        
-        Address address = addressGenerator();
-        address.setCompany(company);
-        addressDao.create(address);
-        
-        List<Address> result = addressDao.searchByCompany(company);
-        assertTrue(result.contains(address));
-        assertEquals(result.size(), 1);
-        
-        result = addressDao.searchByCompany(company.toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCompany(company.toUpperCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCompany(company.substring(5));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCompany(company.substring(5, 20));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCompany(company.substring(5, 20).toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCompany(company.substring(5, 20).toUpperCase());
-        assertTrue(result.contains(address));
-        
-    }
+//    /**
+//     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
+//     */
+//    @Test
+//    public void testSearchByCompany() {
+//        System.out.println("searchByCompany");
+//        
+//        String company = UUID.randomUUID().toString();
+//        
+//        Address address = addressGenerator();
+//        address.setCompany(company);
+//        addressDao.create(address);
+//        
+//        List<Address> result = addressDao.searchByCompany(company);
+//        assertTrue(result.contains(address));
+//        assertEquals(result.size(), 1);
+//        
+//        result = addressDao.searchByCompany(company.toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCompany(company.toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCompany(company.substring(5));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCompany(company.substring(5, 20));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCompany(company.substring(5, 20).toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCompany(company.substring(5, 20).toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//    }
 
-    /**
-     * Test of searchByCity method, of class AddressDaoPostgresImpl.
-     */
-    @Test
-    public void testSearchByCity() {
-        System.out.println("searchByCity");
-        String city = UUID.randomUUID().toString();
-        
-        Address address = addressGenerator();
-        address.setCity(city);
-        addressDao.create(address);
-        
-        List<Address> result = addressDao.searchByCity(city);
-        assertTrue(result.contains(address));
-        assertEquals(result.size(), 1);
-        
-        result = addressDao.searchByCity(city.toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCity(city.toUpperCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCity(city.substring(5));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCity(city.substring(5, 20));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCity(city.substring(5, 20).toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByCity(city.substring(5, 20).toUpperCase());
-        assertTrue(result.contains(address));
-        
-    }
+//    /**
+//     * Test of searchByCity method, of class AddressDaoPostgresImpl.
+//     */
+//    @Test
+//    public void testSearchByCity() {
+//        System.out.println("searchByCity");
+//        String city = UUID.randomUUID().toString();
+//        
+//        Address address = addressGenerator();
+//        address.setCity(city);
+//        addressDao.create(address);
+//        
+//        List<Address> result = addressDao.searchByCity(city);
+//        assertTrue(result.contains(address));
+//        assertEquals(result.size(), 1);
+//        
+//        result = addressDao.searchByCity(city.toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCity(city.toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCity(city.substring(5));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCity(city.substring(5, 20));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCity(city.substring(5, 20).toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByCity(city.substring(5, 20).toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//    }
 
-    /**
-     * Test of searchByState method, of class AddressDaoPostgresImpl.
-     */
-    @Test
-    public void testSearchByState() {
-        System.out.println("searchByState");
-        
-        String state = UUID.randomUUID().toString();
-        
-        Address address = addressGenerator();
-        address.setState(state);
-        addressDao.create(address);
-        
-        List<Address> result = addressDao.searchByState(state);
-        assertTrue(result.contains(address));
-        assertEquals(result.size(), 1);
-        
-        result = addressDao.searchByState(state.toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByState(state.toUpperCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByState(state.substring(5));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByState(state.substring(5, 20));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByState(state.substring(5, 20).toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByState(state.substring(5, 20).toUpperCase());
-        assertTrue(result.contains(address));
-    }
+//    /**
+//     * Test of searchByState method, of class AddressDaoPostgresImpl.
+//     */
+//    @Test
+//    public void testSearchByState() {
+//        System.out.println("searchByState");
+//        
+//        String state = UUID.randomUUID().toString();
+//        
+//        Address address = addressGenerator();
+//        address.setState(state);
+//        addressDao.create(address);
+//        
+//        List<Address> result = addressDao.searchByState(state);
+//        assertTrue(result.contains(address));
+//        assertEquals(result.size(), 1);
+//        
+//        result = addressDao.searchByState(state.toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByState(state.toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByState(state.substring(5));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByState(state.substring(5, 20));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByState(state.substring(5, 20).toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByState(state.substring(5, 20).toUpperCase());
+//        assertTrue(result.contains(address));
+//    }
 
-    /**
-     * Test of searchByZip method, of class AddressDaoPostgresImpl.
-     */
-    @Test
-    public void testSearchByZip() {
-        System.out.println("searchByZip");
-        
-        String zip = UUID.randomUUID().toString();
-        
-        Address address = addressGenerator();
-        address.setZip(zip);
-        addressDao.create(address);
-        
-        List<Address> result = addressDao.searchByZip(zip);
-        assertTrue(result.contains(address));
-        assertEquals(result.size(), 1);
-        
-        result = addressDao.searchByZip(zip.toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByZip(zip.toUpperCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByZip(zip.substring(5));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByZip(zip.substring(5, 20));
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByZip(zip.substring(5, 20).toLowerCase());
-        assertTrue(result.contains(address));
-        
-        result = addressDao.searchByZip(zip.substring(5, 20).toUpperCase());
-        assertTrue(result.contains(address));
-        
-    }
+//    /**
+//     * Test of searchByZip method, of class AddressDaoPostgresImpl.
+//     */
+//    @Test
+//    public void testSearchByZip() {
+//        System.out.println("searchByZip");
+//        
+//        String zip = UUID.randomUUID().toString();
+//        
+//        Address address = addressGenerator();
+//        address.setZip(zip);
+//        addressDao.create(address);
+//        
+//        List<Address> result = addressDao.searchByZip(zip);
+//        assertTrue(result.contains(address));
+//        assertEquals(result.size(), 1);
+//        
+//        result = addressDao.searchByZip(zip.toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByZip(zip.toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByZip(zip.substring(5));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByZip(zip.substring(5, 20));
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByZip(zip.substring(5, 20).toLowerCase());
+//        assertTrue(result.contains(address));
+//        
+//        result = addressDao.searchByZip(zip.substring(5, 20).toUpperCase());
+//        assertTrue(result.contains(address));
+//        
+//    }
     
-    @Test
-    public void testGetWithString() {
-        System.out.println("searchWithGet");
-        final Random random = new Random();
-        
-        for (int pass = 0; pass < 25; pass++) {
-            
-            String[] randomStrings = new String[8];
-            
-            for (int i = 0; i < randomStrings.length; i++) {
-                randomStrings[i] = UUID.randomUUID().toString();
-            }
-            
-            Address address = addressBuilder(randomStrings[0],
-                    randomStrings[1],
-                    randomStrings[2],
-                    randomStrings[3],
-                    randomStrings[4],
-                    randomStrings[5],
-                    randomStrings[6],
-                    randomStrings[7]);
-            
-            address = addressDao.create(address);
-            int resultId = address.getId();
-            
-            int position = new Random().nextInt(randomStrings.length);
-            String searchString = randomStrings[position];
-            
-            Address result = addressDao.get(searchString);
-
-//            if (address.equals(result)) {
-//                System.out.println("Thing");
+//    @Test
+//    public void testGetWithString() {
+//        System.out.println("searchWithGet");
+//        final Random random = new Random();
+//        
+//        for (int pass = 0; pass < 25; pass++) {
+//            
+//            String[] randomStrings = new String[8];
+//            
+//            for (int i = 0; i < randomStrings.length; i++) {
+//                randomStrings[i] = UUID.randomUUID().toString();
 //            }
-            assertEquals(result, address);
-            addressDao.delete(resultId);
-        }
-        
-        for (int pass = 0; pass < 150; pass++) {
-            
-            String[] randomStrings = new String[8];
-            
-            for (int i = 0; i < randomStrings.length; i++) {
-                randomStrings[i] = UUID.randomUUID().toString();
-                randomStrings[i] = caseRandomizer(random, randomStrings[i]);
-            }
-            
-            Address address = addressBuilder(randomStrings[0],
-                    randomStrings[1],
-                    randomStrings[2],
-                    randomStrings[3],
-                    randomStrings[4],
-                    randomStrings[5],
-                    randomStrings[6],
-                    randomStrings[7]);
-            
-            address = addressDao.create(address);
-            int resultId = address.getId();
-            
-            int position = new Random().nextInt(randomStrings.length);
-            String searchString = randomStrings[position];
-            
-            int minimumStringLength = 10;
-            int processLength = searchString.length() - minimumStringLength;
-            int startingPostition = random.nextInt(processLength - minimumStringLength);
-            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
-            
-            searchString = searchString.substring(startingPostition, endingPostition);
-            searchString = caseRandomizer(random, searchString);
-            
-            Address result = addressDao.get(searchString);
-            
-            assertEquals(result, address);
-            addressDao.delete(resultId);
-        }
-    }
+//            
+//            Address address = addressBuilder(randomStrings[0],
+//                    randomStrings[1],
+//                    randomStrings[2],
+//                    randomStrings[3],
+//                    randomStrings[4],
+//                    randomStrings[5],
+//                    randomStrings[6],
+//                    randomStrings[7]);
+//            
+//            address = addressDao.create(address);
+//            int resultId = address.getId();
+//            
+//            int position = new Random().nextInt(randomStrings.length);
+//            String searchString = randomStrings[position];
+//            
+//            Address result = addressDao.get(searchString);
+//
+//            assertEquals(result, address);
+//            addressDao.delete(resultId);
+//        }
+//        
+//        for (int pass = 0; pass < 150; pass++) {
+//            
+//            String[] randomStrings = new String[8];
+//            
+//            for (int i = 0; i < randomStrings.length; i++) {
+//                randomStrings[i] = UUID.randomUUID().toString();
+//                randomStrings[i] = caseRandomizer(random, randomStrings[i]);
+//            }
+//            
+//            Address address = addressBuilder(randomStrings[0],
+//                    randomStrings[1],
+//                    randomStrings[2],
+//                    randomStrings[3],
+//                    randomStrings[4],
+//                    randomStrings[5],
+//                    randomStrings[6],
+//                    randomStrings[7]);
+//            
+//            address = addressDao.create(address);
+//            int resultId = address.getId();
+//            
+//            int position = new Random().nextInt(randomStrings.length);
+//            String searchString = randomStrings[position];
+//            
+//            int minimumStringLength = 10;
+//            int processLength = searchString.length() - minimumStringLength;
+//            int startingPostition = random.nextInt(processLength - minimumStringLength);
+//            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
+//            
+//            searchString = searchString.substring(startingPostition, endingPostition);
+//            searchString = caseRandomizer(random, searchString);
+//            
+//            Address result = addressDao.get(searchString);
+//            
+//            assertEquals(result, address);
+//            addressDao.delete(resultId);
+//        }
+//    }
     
-    @SuppressWarnings("Since15")
-    @Test
-    public void getSortedByName() {
-        List<Address> addresses = addressDao.list();
-        List<Address> addressesFromDb = addressDao.list();
-        
-        addresses.sort(new Comparator<Address>() {
-            @Override
-            public int compare(Address address1, Address address2) {
-                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-            }
-        });
-        
-        for (int i = 0; i < addresses.size(); i++) {
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
-        }
-    }
+//    @SuppressWarnings("Since15")
+//    @Test
+//    public void getSortedByName() {
+//        List<Address> addresses = addressDao.list();
+//        List<Address> addressesFromDb = addressDao.list();
+//        
+//        addresses.sort(new Comparator<Address>() {
+//            @Override
+//            public int compare(Address address1, Address address2) {
+//                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+//            }
+//        });
+//        
+//        for (int i = 0; i < addresses.size(); i++) {
+//            assertEquals(addresses.get(i), addressesFromDb.get(i));
+//        }
+//    }
     
-    @Test
-    public void getSortedByNameUsingSortByParam() {
-        List<Address> addresses = addressDao.list();
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name");
-
-        //noinspection Since15
-        addresses.sort(new Comparator<Address>() {
-            @Override
-            public int compare(Address address1, Address address2) {
-                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-            }
-        });
-        
-        for (int i = 0; i < addresses.size(); i++) {
-            
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
-            
-        }
-    }
+//    @Test
+//    public void getSortedByNameUsingSortByParam() {
+//        List<Address> addresses = addressDao.list();
+//        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name");
+//
+//        //noinspection Since15
+//        addresses.sort(new Comparator<Address>() {
+//            @Override
+//            public int compare(Address address1, Address address2) {
+//                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+//            }
+//        });
+//        
+//        for (int i = 0; i < addresses.size(); i++) {
+//            
+//            assertEquals(addresses.get(i), addressesFromDb.get(i));
+//            
+//        }
+//    }
     
-    @Test
-    public void getSortedByIdUsingSortByParam() {
-        List<Address> addresses = addressDao.list(AddressDao.SORT_BY_ID);
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("id");
-        
-        for (int i = 0; i < addresses.size(); i++) {
-            
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
-            
-        }
-    }
+//    @Test
+//    public void getSortedByIdUsingSortByParam() {
+//        List<Address> addresses = addressDao.list(AddressDao.SORT_BY_ID);
+//        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("id");
+//        
+//        for (int i = 0; i < addresses.size(); i++) {
+//            
+//            assertEquals(addresses.get(i), addressesFromDb.get(i));
+//            
+//        }
+//    }
     
     private String caseRandomizer(final Random random, String input) {
         switch (random.nextInt(6)) {
