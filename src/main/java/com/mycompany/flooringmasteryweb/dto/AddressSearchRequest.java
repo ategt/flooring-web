@@ -62,7 +62,7 @@ public class AddressSearchRequest {
      * @param searchBy the searchBy to set
      */
     public void setSearchBy(String searchBy) {
-        this.searchBy = ADDRESS_SEARCH_BY.valueOf(searchBy);
+        this.searchBy = ADDRESS_SEARCH_BY.parse(searchBy);
     }
 
     public void setSearchBy(ADDRESS_SEARCH_BY searchBy) {
