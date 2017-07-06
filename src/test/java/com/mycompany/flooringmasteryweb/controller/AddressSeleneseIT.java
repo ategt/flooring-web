@@ -331,10 +331,12 @@ public class AddressSeleneseIT {
         }
         
         Random random = new Random();
-        int randomAddressId = random.nextInt(addresses.length);
+        int randomAddressPlace = random.nextInt(addresses.length);
         
-        Address randomAddress = addresses[randomAddressId];
+        Address randomAddress = addresses[randomAddressPlace];
         Assert.assertNotNull(randomAddress);
+        
+        final int randomAddressId = randomAddress.getId();
         
         HttpUrl showUrl = HttpUrl.get(uriToTest).newBuilder()
                 .addPathSegment("address")
@@ -347,7 +349,7 @@ public class AddressSeleneseIT {
         Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
         WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
         assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
-        assertTrue(jsonSingleAddressResponse.getContentLength() > 50);
+        assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 50);
         
         Address specificAddress = null;
         
@@ -358,7 +360,7 @@ public class AddressSeleneseIT {
             
             Assert.assertNotNull(specificAddress);
             
-            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == 3));
+            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == randomAddressId));
         } else {
             fail("Should have been JSON.");
         }
