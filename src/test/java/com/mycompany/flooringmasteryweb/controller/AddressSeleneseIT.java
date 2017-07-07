@@ -1120,29 +1120,29 @@ public class AddressSeleneseIT {
         String title = lastNameSearchHtmlPage.getTitleText();
         assertEquals(title, "Address Book");
         DomElement addressTable = lastNameSearchHtmlPage.getElementById("address-table");
-        
+
         DomNodeList<HtmlElement> tableRows = addressTable.getElementsByTagName("tr");
-        
-        assertTrue(tableRows.size() > 1);               
-        
+
+        assertTrue(tableRows.size() > 1);
+
         java.util.Iterator<HtmlElement> tableRowIterator = tableRows.iterator();
-        
+
         Integer createdAddressRowNumber = null;
-        while(tableRowIterator.hasNext()){
+        while (tableRowIterator.hasNext()) {
             HtmlElement htmlElement = tableRowIterator.next();
             String htmlText = htmlElement.asText();
-            if (htmlText.contains(Integer.toString(createdAddress.getId()))){
+            if (htmlText.contains(Integer.toString(createdAddress.getId()))) {
                 createdAddressRowNumber = tableRows.indexOf(htmlElement);
                 break;
             }
         }
-        
+
         assertNotNull(createdAddressRowNumber);
-        
+
         HtmlElement specificRow = tableRows.get(createdAddressRowNumber);
-        
+
         String xml = specificRow.asXml();
-        
+
         assertTrue(xml.contains(createdAddress.getFirstName()));
         assertTrue(xml.contains(createdAddress.getLastName()));
         assertTrue(xml.contains(Integer.toString(createdAddress.getId())));
@@ -1187,6 +1187,220 @@ public class AddressSeleneseIT {
 
         List<Address> result = Arrays.asList(returnedAddressList);
         return result;
+    }
+
+    /**
+     * Test of searchByLastName method, of class AddressDaoPostgresImpl.
+     */
+    @Test
+    public void testSearchByEverything() throws IOException {
+        System.out.println("searchByEverything");
+
+        AddressSearchRequest.ADDRESS_SEARCH_BY[] searchOptions = AddressSearchRequest.ADDRESS_SEARCH_BY.values();
+
+        for (int i = 0; searchOptions.length < i; i++) {
+
+            String searchingBy = searchOptions[i].value();
+            String randomString = UUID.randomUUID().toString();
+
+            Address address = addressGenerator();
+
+            switch (searchingBy) {
+                case "searchByLastName":
+                    address.setLastName(randomString);
+                    break;
+                case "searchByFirstName":
+                    address.setFirstName(randomString);
+                    break;
+                case "searchByCity":
+                    address.setCity(randomString);
+                    break;
+                case "searchByState":
+                    address.setState(randomString);
+                    break;
+                case "searchByZip":
+                    address.setZip(randomString);
+                    break;
+                case "searchByCompany":
+                    address.setCompany(randomString);
+                    break;
+                case "searchByStreet":
+                    address.setStreetName(randomString);
+                    break;
+                case "searchByStreetNumber":
+                    address.setStreetNumber(randomString);
+                    break;
+                case "searchByStreetName":
+                    address.setStreetName(randomString);
+                    break;
+                case "searchByName":
+                    address.setStreetName(randomString);
+                    break;
+                case "searchByNameOrCompany":
+                    address.setStreetName(randomString);
+                    break;
+                case "searchByAll":
+                    address.setStreetName(randomString);
+                    break;
+                default:
+                    fail("This should never happen.");                    
+            }
+
+            // Create a Address Using the POST endpoint
+            HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
+                    .addPathSegment("address")
+                    .addPathSegment("")
+                    .build();
+
+            WebClient createAddressWebClient = new WebClient();
+
+            Gson gson = new GsonBuilder().create();
+            String addressJson = gson.toJson(address);
+
+            WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
+            createRequest.setRequestBody(addressJson);
+            createRequest.setAdditionalHeader("Accept", "application/json");
+            createRequest.setAdditionalHeader("Content-type", "application/json");
+
+            Page createdAddressPage = createAddressWebClient.getPage(createRequest);
+
+            WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
+            assertEquals(createAddressWebResponse.getStatusCode(), 200);
+            assertTrue(createAddressWebResponse.getContentLength() > 100);
+
+            Address createdAddress = null;
+
+            if (createAddressWebResponse.getContentType().equals("application/json")) {
+                String json = createAddressWebResponse.getContentAsString();
+                createdAddress = gson.fromJson(json, Address.class);
+
+                assertNotNull(createdAddress);
+            } else {
+                fail("Should have been JSON.");
+            }
+
+            // Search for created Address.
+            WebClient searchWebClient = new WebClient();
+
+            List<NameValuePair> paramsList = new ArrayList();
+
+            paramsList.add(new NameValuePair("searchText", randomString));
+            paramsList.add(new NameValuePair("searchBy", searchingBy));
+
+            HttpUrl searchUrl = HttpUrl.get(uriToTest).newBuilder()
+                    .addPathSegment("address")
+                    .addPathSegment("search")
+                    .build();
+
+            WebRequest searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+            searchByLastNameRequest.setRequestParameters(paramsList);
+            searchByLastNameRequest.setAdditionalHeader("Accept", "application/json");
+
+            Page lastNameSearchPage = searchWebClient.getPage(searchByLastNameRequest);
+
+            assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
+
+            String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
+
+            Address[] returnedAddressList = gson.fromJson(lastNameSearchJson, Address[].class);
+
+            assertEquals(returnedAddressList.length, 1);
+
+            List<Address> result = Arrays.asList(returnedAddressList);
+
+            assertNotNull(result);
+            assertTrue(result.contains(createdAddress));
+            assertEquals(result.size(), 1);
+
+            List<Address> resultb = searchForAddressByLastNameUsingXForm(randomString, gson, searchUrl.url(), searchingBy);
+
+            assertNotNull(resultb);
+            assertTrue(resultb.contains(createdAddress));
+            assertEquals(resultb.size(), 1);
+
+            List<Address> resultc = searchForAddressByUsingJson(randomString, gson, searchOptions[i], searchUrl.url());
+
+            assertNotNull(resultc);
+            assertTrue(resultc.contains(createdAddress));
+            assertEquals(resultc.size(), 1);
+
+            result = searchForAddressByUsingJson(randomString.toLowerCase(), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByLastNameUsingXForm(randomString.toLowerCase(), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByUsingJson(randomString.toUpperCase(), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByLastNameUsingXForm(randomString.toUpperCase(), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByUsingJson(randomString.substring(5), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByLastNameUsingXForm(randomString.substring(5), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByUsingJson(randomString.substring(5, 20), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByLastNameUsingXForm(randomString.substring(5, 20), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByUsingJson(randomString.substring(5, 20).toLowerCase(), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByLastNameUsingXForm(randomString.substring(5, 20).toLowerCase(), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByUsingJson(randomString.substring(5, 20).toUpperCase(), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdAddress));
+
+            result = searchForAddressByLastNameUsingXForm(randomString.substring(5, 20).toUpperCase(), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdAddress));
+
+            searchWebClient = new WebClient();
+
+            searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+            searchByLastNameRequest.setRequestParameters(paramsList);
+
+            HtmlPage randomStringSearchHtmlPage = searchWebClient.getPage(searchByLastNameRequest);
+
+            assertEquals(randomStringSearchHtmlPage.getWebResponse().getStatusCode(), 200);
+
+            String title = randomStringSearchHtmlPage.getTitleText();
+            assertEquals(title, "Address Book");
+            DomElement addressTable = randomStringSearchHtmlPage.getElementById("address-table");
+
+            DomNodeList<HtmlElement> tableRows = addressTable.getElementsByTagName("tr");
+
+            assertTrue(tableRows.size() > 1);
+
+            java.util.Iterator<HtmlElement> tableRowIterator = tableRows.iterator();
+
+            Integer createdAddressRowNumber = null;
+            while (tableRowIterator.hasNext()) {
+                HtmlElement htmlElement = tableRowIterator.next();
+                String htmlText = htmlElement.asText();
+                if (htmlText.contains(Integer.toString(createdAddress.getId()))) {
+                    createdAddressRowNumber = tableRows.indexOf(htmlElement);
+                    break;
+                }
+            }
+
+            assertNotNull(createdAddressRowNumber);
+
+            HtmlElement specificRow = tableRows.get(createdAddressRowNumber);
+
+            String xml = specificRow.asXml();
+
+            assertTrue(xml.contains(createdAddress.getFirstName()));
+            assertTrue(xml.contains(createdAddress.getLastName()));
+            assertTrue(xml.contains(Integer.toString(createdAddress.getId())));
+            assertTrue(xml.contains("Edit"));
+            assertTrue(xml.contains("Delete"));
+        }
     }
 
 //    /**
