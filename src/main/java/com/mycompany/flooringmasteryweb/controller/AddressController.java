@@ -251,7 +251,7 @@ public class AddressController {
     @ResponseBody
     public Integer size(HttpServletRequest request, HttpServletResponse response) {
         String acceptHeader = request.getHeader("Accept");
-        if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase("Accept=application/json")) {
+        if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase("application/json")) {
             return addressDao.size();
         } else {
             response.setStatus(404);

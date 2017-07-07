@@ -1307,7 +1307,7 @@ public class AddressSeleneseIT {
 
             String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
             assertNotEquals("Failed while performing " + searchingBy, lastNameSearchJson, "");
-            
+
             Address[] returnedAddressList = gson.fromJson(lastNameSearchJson, Address[].class);
 
             assertEquals(searchingBy + " gave: " + lastNameSearchJson, returnedAddressList.length, 1);
@@ -1768,6 +1768,56 @@ public class AddressSeleneseIT {
             fail("Should have been JSON.");
         }
         return createdAddress;
+    }
+
+    @Test
+    public void databaseSizeIsNotAccessibleFromABrowser() throws IOException {
+
+        HttpUrl sizeUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("size")
+                .build();
+
+        WebClient sizeWebClient = new WebClient();
+        sizeWebClient.addRequestHeader("Accept", "application/json");
+
+        Page sizePage = sizeWebClient.getPage(sizeUrl.url());
+        WebResponse sizeResponse = sizePage.getWebResponse();
+        assertEquals(sizeResponse.getStatusCode(), 200);
+        assertTrue(sizeResponse.getContentLength() < 50);
+
+        if (sizeResponse.getContentType().equals("application/json")) {
+            String json = sizeResponse.getContentAsString();
+            Integer numberReturned = Integer.parseInt(json);
+
+            Assert.assertNotNull(numberReturned);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        // Now try without the Accept Json Header
+        sizeWebClient = new WebClient();
+
+        int statusCode = 0;
+        String message;
+        WebResponse webResponse = null;
+
+        try {
+            sizeWebClient.getPage(sizeUrl.url());
+            fail("This was supposed to fail with a 404 error.");
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
+            statusCode = ex.getStatusCode();
+            message = ex.getStatusMessage();
+            webResponse = ex.getResponse();
+        }
+        
+        assertEquals(statusCode, 404);
+        
+        assertNotNull(webResponse);
+        assertTrue(webResponse.getContentLength() == 0);
+
+        String json = webResponse.getContentAsString();
+        assertEquals(json, "");
     }
 
 //    @SuppressWarnings("Since15")
