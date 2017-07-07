@@ -1239,10 +1239,10 @@ public class AddressSeleneseIT {
                     address.setStreetName(randomString);
                     break;
                 case "searchByName":
-                    address.setStreetName(randomString);
+                    address.setFirstName(randomString);
                     break;
                 case "searchByNameOrCompany":
-                    address.setStreetName(randomString);
+                    address.setCompany(randomString);
                     break;
                 case "searchByAll":
                     address.setStreetName(randomString);
