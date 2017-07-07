@@ -111,6 +111,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         result.addAll(searchByFirstName(input));
         result.addAll(searchByLastName(input));
+        result.addAll(searchByFullName(input));
         result.addAll(searchByCity(input));
         result.addAll(searchByCompany(input));
         result.addAll(searchByState(input));
@@ -262,6 +263,31 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         if (result.isEmpty()) {
             result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_LAST_NAME_PARTS, new AddressMapper(), "%" + lastName + "%");
+        }
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FULL_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', first_name, last_name) = ?), secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) = LOWER(?)), thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER('%?%')) SELECT * FROM addresses WHERE id IN (SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery));";
+    //private static final String SQL_SEARCH_ADDRESS_BY_FULL_NAME = "SELECT * FROM addresses WHERE CONCAT_WS(' ', first_name, last_name) = ?;";
+    private static final String SQL_SEARCH_ADDRESS_BY_FULL_NAME_CASEINSENSITIVE = "SELECT * FROM addresses WHERE LOWER(last_name) = LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_FULL_NAME_PARTS = "SELECT * FROM addresses WHERE LOWER(last_name) LIKE LOWER(?);";
+
+    @Override
+    public List<Address> searchByFullName(String fullName) {
+
+        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME, new AddressMapper(), fullName);
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME_CASEINSENSITIVE, new AddressMapper(), fullName);
+        }
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME_PARTS, new AddressMapper(), fullName + "%");
+        }
+
+        if (result.isEmpty()) {
+            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME_PARTS, new AddressMapper(), "%" + fullName + "%");
         }
 
         return result;
