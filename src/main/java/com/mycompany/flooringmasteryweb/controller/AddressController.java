@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/address")
 public class AddressController {
 
-    private AddressDao addressDao;
+    private final AddressDao addressDao;
 
     @Inject
     public AddressController(AddressDao addressDao) {
@@ -51,7 +51,7 @@ public class AddressController {
             HttpServletResponse response,
             Map model) {
 
-        List<Address> addresses = null;
+        List<Address> addresses;
 
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
@@ -71,7 +71,7 @@ public class AddressController {
             @RequestParam(name = "sort_by", required = false) String sortBy,
             HttpServletResponse response) {
 
-        List<Address> addresses = null;
+        List<Address> addresses;
 
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
@@ -180,15 +180,8 @@ public class AddressController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
-            //@ModelAttribute AddressSearchRequest addressSearchRequest,
-            @RequestParam("searchBy") String searchBy,
-            @RequestParam("searchText") String searchText,
+            @ModelAttribute AddressSearchRequest addressSearchRequest,
             Map model) {
-
-        AddressSearchRequest addressSearchRequest = new AddressSearchRequest();
-        addressSearchRequest.setSearchBy(searchBy);
-        addressSearchRequest.setSearchText(searchText);
-
         List<Address> addresses = searchDatabase(addressSearchRequest);
 
         model.put("addresses", addresses);
@@ -202,9 +195,6 @@ public class AddressController {
             @Valid @RequestBody AddressSearchRequest addressSearchRequest,
             HttpServletRequest request
     ) {
-
-        displayRequestInfo(request);
-
         List<Address> addresses = searchDatabase(addressSearchRequest);
 
         return addresses;
@@ -213,35 +203,11 @@ public class AddressController {
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Address> search(
-            HttpServletRequest request,
             @ModelAttribute AddressSearchRequest addressSearchRequest
     ) {
-
-        displayRequestInfo(request);
-
         List<Address> addresses = searchDatabase(addressSearchRequest);
 
         return addresses;
-    }
-
-    private void displayRequestInfo(HttpServletRequest request) {
-        String pathInfo = request.getPathInfo();
-        String requestUrl = request.getRequestURI();
-        String servletPath = request.getServletPath();
-
-        System.out.println("");
-        System.out.println(" ----------------------------------------");
-        System.out.println("    Path Info: " + pathInfo);
-        System.out.println("    Request Url: " + requestUrl);
-        System.out.println("    Servlet Path: " + servletPath);
-
-        Enumeration<String> headerNames = request.getHeaderNames();
-
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            String value = request.getHeader(headerName);
-            System.out.println("        - " + headerName + " = " + value);
-        }
     }
 
     private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
