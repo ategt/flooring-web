@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.UUID;
 import okhttp3.HttpUrl;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -48,7 +47,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -659,8 +657,6 @@ public class AddressSeleneseIT {
         // Check search using json object.
         WebClient jsonSearchWebClient = new WebClient();
 
-        //AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchByOptionEnum.CITY);
-        //String addressSearchRequestJson = gson.toJson(addressSearchRequest);
         String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
 
         WebRequest searchByCityRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
@@ -691,7 +687,6 @@ public class AddressSeleneseIT {
         AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchByOptionEnum.CITY);
 
         String addressSearchRequestJson2 = gson.toJson(addressSearchRequest);
-        //String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
 
         WebRequest searchByCityRequest2 = new WebRequest(searchUrl.url(), HttpMethod.POST);
         searchByCityRequest2.setRequestBody(addressSearchRequestJson2);
