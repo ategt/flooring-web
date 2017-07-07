@@ -981,24 +981,84 @@ public class AddressSeleneseIT {
         assertEquals(address, createdAddress);
     }
 
-//    /**
-//     * Test of searchByLastName method, of class AddressDaoPostgresImpl.
-//     */
-//    @Test
-//    public void testSearchByLastName() {
-//        System.out.println("searchByLastName");
-//        String lastName = UUID.randomUUID().toString();
-//        
-//        Address address = addressGenerator();
-//        address.setLastName(lastName);
-//        address = addressDao.create(address);
-//        
-//        List<Address> result = addressDao.searchByLastName(lastName);
-//        
-//        assertNotNull(result);
-//        assertTrue(result.contains(address));
-//        assertEquals(result.size(), 1);
-//        
+    /**
+     * Test of searchByLastName method, of class AddressDaoPostgresImpl.
+     */
+    @Test
+    public void testSearchByLastName() throws IOException {
+        System.out.println("searchByLastName");
+        String lastName = UUID.randomUUID().toString();
+        
+        Address address = addressGenerator();
+        address.setLastName(lastName);
+
+        // Create a Address Using the POST endpoint
+        
+        HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .build();
+
+        WebClient createAddressWebClient = new WebClient();
+
+        Gson gson = new GsonBuilder().create();
+        String addressJson = gson.toJson(address);
+
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
+        createRequest.setRequestBody(addressJson);
+        createRequest.setAdditionalHeader("Accept", "application/json");
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page createdAddressPage = createAddressWebClient.getPage(createRequest);
+        
+        WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
+        assertEquals(createAddressWebResponse.getStatusCode(), 200);
+        assertTrue(createAddressWebResponse.getContentLength() > 100);
+
+       Address createdAddress = null;
+
+        if (createAddressWebResponse.getContentType().equals("application/json")) {
+            String json = createAddressWebResponse.getContentAsString();
+            createdAddress = gson.fromJson(json, Address.class);
+
+            assertNotNull(createdAddress);
+        } else {
+            fail("Should have been JSON.");
+        }
+        
+        // Search for Address by Last Name       
+        WebClient searchWebClient = new WebClient();
+
+        List<NameValuePair> paramsList = new ArrayList();
+
+        paramsList.add(new NameValuePair("searchText", lastName));
+        paramsList.add(new NameValuePair("searchBy", "searchByLastName"));
+        
+        HttpUrl searchUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("search")
+                .build();
+
+        WebRequest searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+        searchByLastNameRequest.setRequestParameters(paramsList);
+        searchByLastNameRequest.setAdditionalHeader("Accept", "application/json");
+
+        Page lastNameSearchPage = searchWebClient.getPage(searchByLastNameRequest);
+
+        assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
+
+        String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
+
+        Address[] returnedAddressList = gson.fromJson(lastNameSearchJson, Address[].class);
+
+        assertEquals(returnedAddressList.length, 1);
+        
+        List<Address> result = Arrays.asList(returnedAddressList);
+        
+        assertNotNull(result);
+        assertTrue(result.contains(createdAddress));
+        assertEquals(result.size(), 1);
+        
 //        result = addressDao.searchByLastName(lastName.toLowerCase());
 //        assertTrue(result.contains(address));
 //        
@@ -1016,8 +1076,9 @@ public class AddressSeleneseIT {
 //        
 //        result = addressDao.searchByLastName(lastName.substring(5, 20).toUpperCase());
 //        assertTrue(result.contains(address));
-//        
-//    }
+        
+    }
+
 //    /**
 //     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
 //     */
