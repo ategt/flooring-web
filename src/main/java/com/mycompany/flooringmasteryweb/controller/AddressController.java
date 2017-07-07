@@ -195,15 +195,17 @@ public class AddressController {
 
         return "address\\search";
     }
-    
+
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = {"Content-type=application/json", "Accept=application/json"})
     @ResponseBody
-    public List<Address> search2(
-            @RequestBody AddressSearchRequest addressSearchRequest
+    public List<Address> search(
+            @Valid @RequestBody AddressSearchRequest addressSearchRequest,
+            HttpServletRequest request
     ) {
 
-        //List<Address> addresses = searchDatabase(addressSearchRequest);
-        List<Address> addresses = null;
+        displayRequestInfo(request);
+
+        List<Address> addresses = searchDatabase(addressSearchRequest);
 
         return addresses;
     }
@@ -211,19 +213,22 @@ public class AddressController {
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Address> search(
-            @ModelAttribute AddressSearchRequest addressSearchRequest,
-            HttpServletResponse response,
-            HttpServletRequest request
-//            @RequestParam("searchBy") String searchBy,
-//            @RequestParam("searchText") String searchText
+            HttpServletRequest request,
+            @ModelAttribute AddressSearchRequest addressSearchRequest
     ) {
 
-        //response.getHeader
+        displayRequestInfo(request);
 
+        List<Address> addresses = searchDatabase(addressSearchRequest);
+
+        return addresses;
+    }
+
+    private void displayRequestInfo(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         String requestUrl = request.getRequestURI();
-        String servletPath = request.getServletPath(); 
-        
+        String servletPath = request.getServletPath();
+
         System.out.println("");
         System.out.println(" ----------------------------------------");
         System.out.println("    Path Info: " + pathInfo);
@@ -231,21 +236,12 @@ public class AddressController {
         System.out.println("    Servlet Path: " + servletPath);
 
         Enumeration<String> headerNames = request.getHeaderNames();
-        
-        while(headerNames.hasMoreElements()){
+
+        while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             String value = request.getHeader(headerName);
             System.out.println("        - " + headerName + " = " + value);
         }
-        
-        
-        //AddressSearchRequest addressSearchRequest = new AddressSearchRequest();
-        //addressSearchRequest.setSearchBy(searchBy);
-        //addressSearchRequest.setSearchText(searchText);
-
-        List<Address> addresses = searchDatabase(addressSearchRequest);
-
-        return addresses;
     }
 
     private List<Address> searchDatabase(AddressSearchRequest searchRequest) {

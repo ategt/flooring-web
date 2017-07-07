@@ -531,7 +531,7 @@ public class AddressSeleneseIT {
 
         assertNotNull(addressReturned.getId());
         assertTrue(addressReturned.getId() > 0);
-        
+
         // Get Database Size After Creation
         WebClient sizeWebClient2 = new WebClient();
         sizeWebClient2.addRequestHeader("Accept", "application/json");
@@ -633,7 +633,7 @@ public class AddressSeleneseIT {
         searchByCompanyRequest.setRequestParameters(paramsList);
 
         searchByCompanyRequest.setAdditionalHeader("Accept", "application/json");
-        
+
         Page companySearchPage = searchWebClient.getPage(searchByCompanyRequest);
 
         assertEquals(companySearchPage.getWebResponse().getStatusCode(), 200);
@@ -650,15 +650,13 @@ public class AddressSeleneseIT {
         assertEquals(addressReturned, returnedCompanySearchAddress);
         assertNotEquals(specificAddress, returnedCompanySearchAddress);
 
-
         // Check search using json object.
         WebClient jsonSearchWebClient = new WebClient();
 
         //AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchRequest.ADDRESS_SEARCH_BY.CITY);
-        
         //String addressSearchRequestJson = gson.toJson(addressSearchRequest);
-        String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"2b35e379-3169-4305-a537-656db13d15e3\"}";
-        
+        String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
+
         WebRequest searchByCityRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
         searchByCityRequest.setRequestBody(addressSearchRequestJson);
 
@@ -673,13 +671,45 @@ public class AddressSeleneseIT {
 
         Address[] returnedCitySearchAddresses = gson.fromJson(citySearchAddressJson, Address[].class);
 
-        assertEquals(returnedCompanySearchAddresses.length, 1);
+        assertEquals(returnedCitySearchAddresses.length, 1);
 
         Address returnedCitySearchAddress = returnedCitySearchAddresses[0];
 
         assertEquals(returnedUpdatedAddress, returnedCitySearchAddress);
         assertEquals(addressReturned, returnedCitySearchAddress);
         assertNotEquals(specificAddress, returnedCitySearchAddress);
+
+        // Check search using json object built with my purspective api.
+        WebClient jsonSearchWebClient2 = new WebClient();
+
+        AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchRequest.ADDRESS_SEARCH_BY.CITY);
+
+        String addressSearchRequestJson2 = gson.toJson(addressSearchRequest);
+        //String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
+
+        WebRequest searchByCityRequest2 = new WebRequest(searchUrl.url(), HttpMethod.POST);
+        searchByCityRequest2.setRequestBody(addressSearchRequestJson2);
+
+        searchByCityRequest2.setAdditionalHeader("Accept", "application/json");
+        searchByCityRequest2.setAdditionalHeader("Content-type", "application/json");
+
+        Page citySearchPage2 = jsonSearchWebClient2.getPage(searchByCityRequest2);
+
+        assertEquals(citySearchPage2.getWebResponse().getStatusCode(), 200);
+
+        String citySearchAddressJson2 = citySearchPage2.getWebResponse().getContentAsString();
+
+        Address[] returnedCitySearchAddresses2 = gson.fromJson(citySearchAddressJson2, Address[].class);
+
+        assertEquals(returnedCitySearchAddresses2.length, 1);
+
+        Address returnedCitySearchAddress2 = returnedCitySearchAddresses2[0];
+
+        assertEquals(returnedUpdatedAddress, returnedCitySearchAddress2);
+        assertEquals(addressReturned, returnedCitySearchAddress2);
+        assertNotEquals(specificAddress, returnedCitySearchAddress2);
+
+        assertEquals(returnedCitySearchAddress, returnedCitySearchAddress2);
 
         // Verify Update Did Not Increase the Size of the Database
         WebClient sizeWebClient3 = new WebClient();
@@ -704,22 +734,39 @@ public class AddressSeleneseIT {
         assertEquals(afterUpdate.intValue(), afterCreation.intValue());
 
         // Delete the Created Address
+        String addressIdString = Integer.toString(addressReturned.getId());
+
         HttpUrl deleteUrl = HttpUrl.get(uriToTest).newBuilder()
                 .addPathSegment("address")
-                .addPathSegment(addressReturned.getId().toString())
+                .addPathSegment(addressIdString)
                 .build();
 
         WebClient deleteAddressWebClient = new WebClient();
 
         WebRequest deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
 
-        Page deletePage = updateAddressWebClient.getPage(updateRequest);
+        Page deletePage = deleteAddressWebClient.getPage(deleteRequest);
 
         String returnedDeleteAddressJson = deletePage.getWebResponse().getContentAsString();
 
         Address returnedDeleteAddress = gson.fromJson(returnedDeleteAddressJson, Address.class);
 
-        assertEquals(returnedDeleteAddressJson, returnedUpdatedAddress);
+        assertEquals(returnedDeleteAddress, returnedUpdatedAddress);
+
+        // Delete The Created Address A Second Time
+        deleteAddressWebClient = new WebClient();
+
+        deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
+
+        deletePage = deleteAddressWebClient.getPage(deleteRequest);
+
+        returnedDeleteAddressJson = deletePage.getWebResponse().getContentAsString();
+        assertEquals(returnedDeleteAddressJson, "");
+
+        Address returnedDeleteAddress2 = gson.fromJson(returnedDeleteAddressJson, Address.class);
+        assertNull(returnedDeleteAddress2);
+
+        assertNotEquals(returnedDeleteAddress, returnedDeleteAddress2);
 
         // Verify Address Database Size Has Shrunk By One After Deletion
         WebClient sizeWebClient4 = new WebClient();
@@ -756,21 +803,14 @@ public class AddressSeleneseIT {
         Page singleAddressPage2 = showAddressWebClient2.getPage(showUrl.url());
         WebResponse jsonSingleAddressResponse2 = singleAddressPage2.getWebResponse();
         assertEquals(jsonSingleAddressResponse2.getStatusCode(), 200);
-        assertTrue(jsonSingleAddressResponse2.getContentLength() > 50);
+        assertTrue(jsonSingleAddressResponse2.getContentLength() < 50);
 
-        Address alreadyDeletedAddress = null;
+        String contentType = jsonSingleAddressResponse2.getContentType();
+        assertEquals(contentType, "");
+        
+        String contentString = jsonSingleAddressResponse2.getContentAsString();
 
-        if (jsonSingleAddressResponse2.getContentType().equals("application/json")) {
-            String json = jsonSingleAddressResponse2.getContentAsString();
-            alreadyDeletedAddress = gson.fromJson(json, Address.class);
-
-            Assert.assertNull(alreadyDeletedAddress);
-
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        Assert.assertNull(alreadyDeletedAddress);
+        assertEquals(contentString, "");
 
         // Get Deleted Address By Company
         WebClient searchWebClient2 = new WebClient();
