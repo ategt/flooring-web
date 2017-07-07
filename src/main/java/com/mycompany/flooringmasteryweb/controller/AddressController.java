@@ -7,8 +7,8 @@ package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -212,7 +212,7 @@ public class AddressController {
 
     private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
         return addressDao.search(searchRequest.getSearchText(),
-                AddressSearchRequest.ADDRESS_SEARCH_BY.parse(searchRequest.getSearchBy()));
+                AddressSearchByOptionEnum.parse(searchRequest.getSearchBy()));
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)

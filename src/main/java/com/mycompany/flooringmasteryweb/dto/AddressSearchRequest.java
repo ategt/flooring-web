@@ -5,64 +5,21 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 /**
  *
  * @author ATeg
  */
 public class AddressSearchRequest {
 
-    private ADDRESS_SEARCH_BY searchBy;
+    private AddressSearchByOptionEnum searchBy;
     private String searchText;
-
-    public enum ADDRESS_SEARCH_BY {
-        LAST_NAME("searchByLastName"),
-        FIRST_NAME("searchByFirstName"),
-        CITY("searchByCity"),
-        STATE("searchByState"),
-        ZIP("searchByZip"),
-        COMPANY("searchByCompany"),
-        STREET_NUMBER("searchByStreetNumber"),
-        STREET_NAME("searchByStreetName"),
-        STREET("searchByStreet"),
-        NAME("searchByName"),
-        NAME_OR_COMPANY("searchByNameOrCompany"),
-        ALL("searchByAll"),
-        DEFAULT("searchByAll");
-
-        private String searchString;
-
-        private ADDRESS_SEARCH_BY(String searchString) {
-            this.searchString = searchString;
-        }
-
-        public String value() {
-            return searchString;
-        }
-
-        public static ADDRESS_SEARCH_BY parse(String input) {
-            Optional<ADDRESS_SEARCH_BY> result = Arrays.stream(values()).filter(option -> option.value().equalsIgnoreCase(input)).findAny();
-            
-            if (!result.isPresent()){
-                result = Arrays.stream(values()).filter(option -> option.name().equalsIgnoreCase(input)).findAny();
-            }
-
-            if (!result.isPresent()){
-                result = Arrays.stream(values()).filter(option -> Integer.compare(option.ordinal(), Integer.parseInt(input)) == 0).findAny();
-            }
-            
-            return result.orElse(LAST_NAME);
-        }
-    }
 
     public AddressSearchRequest() {
         this.searchText = "";
-        this.searchBy = ADDRESS_SEARCH_BY.DEFAULT;
+        this.searchBy = AddressSearchByOptionEnum.DEFAULT;
     }
 
-    public AddressSearchRequest(String searchText, ADDRESS_SEARCH_BY searchBy) {
+    public AddressSearchRequest(String searchText, AddressSearchByOptionEnum searchBy) {
         this.searchText = searchText;
         this.searchBy = searchBy;
     }
@@ -72,12 +29,12 @@ public class AddressSearchRequest {
      */
     public String getSearchBy() {
         if (searchBy == null){
-            return ADDRESS_SEARCH_BY.DEFAULT.value(); 
+            return AddressSearchByOptionEnum.DEFAULT.value(); 
         }
-        return searchBy.searchString;
+        return searchBy.value();
     }
 
-    public ADDRESS_SEARCH_BY searchBy() {
+    public AddressSearchByOptionEnum searchBy() {
         return searchBy;
     }
 
@@ -85,10 +42,10 @@ public class AddressSearchRequest {
      * @param searchBy the searchBy to set
      */
     public void setSearchBy(String searchBy) {
-        this.searchBy = ADDRESS_SEARCH_BY.parse(searchBy);
+        this.searchBy = AddressSearchByOptionEnum.parse(searchBy);
     }
 
-    public void setSearchByEnum(ADDRESS_SEARCH_BY searchBy) {
+    public void setSearchByEnum(AddressSearchByOptionEnum searchBy) {
         this.searchBy = searchBy;
     }
 

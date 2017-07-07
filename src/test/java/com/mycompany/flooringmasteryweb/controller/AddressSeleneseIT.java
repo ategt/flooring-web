@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -656,7 +657,7 @@ public class AddressSeleneseIT {
         // Check search using json object.
         WebClient jsonSearchWebClient = new WebClient();
 
-        //AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchRequest.ADDRESS_SEARCH_BY.CITY);
+        //AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchByOptionEnum.CITY);
         //String addressSearchRequestJson = gson.toJson(addressSearchRequest);
         String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
 
@@ -685,7 +686,7 @@ public class AddressSeleneseIT {
         // Check search using json object built with my purspective api.
         WebClient jsonSearchWebClient2 = new WebClient();
 
-        AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchRequest.ADDRESS_SEARCH_BY.CITY);
+        AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchByOptionEnum.CITY);
 
         String addressSearchRequestJson2 = gson.toJson(addressSearchRequest);
         //String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
@@ -1066,43 +1067,43 @@ public class AddressSeleneseIT {
         assertTrue(resultb.contains(createdAddress));
         assertEquals(resultb.size(), 1);
 
-        List<Address> resultc = searchForAddressByUsingJson(lastName, gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());
+        List<Address> resultc = searchForAddressByUsingJson(lastName, gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
 
         assertNotNull(resultc);
         assertTrue(resultc.contains(createdAddress));
         assertEquals(resultc.size(), 1);
 
-        result = searchForAddressByUsingJson(lastName.toLowerCase(), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());
+        result = searchForAddressByUsingJson(lastName.toLowerCase(), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
         assertTrue(result.contains(createdAddress));
 
         result = searchForAddressByLastNameUsingXForm(lastName.toLowerCase(), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdAddress));
 
-        result = searchForAddressByUsingJson(lastName.toUpperCase(), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());
+        result = searchForAddressByUsingJson(lastName.toUpperCase(), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
         assertTrue(result.contains(createdAddress));
 
         result = searchForAddressByLastNameUsingXForm(lastName.toUpperCase(), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdAddress));
 
-        result = searchForAddressByUsingJson(lastName.substring(5), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());
+        result = searchForAddressByUsingJson(lastName.substring(5), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
         assertTrue(result.contains(createdAddress));
 
         result = searchForAddressByLastNameUsingXForm(lastName.substring(5), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdAddress));
 
-        result = searchForAddressByUsingJson(lastName.substring(5, 20), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());
+        result = searchForAddressByUsingJson(lastName.substring(5, 20), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
         assertTrue(result.contains(createdAddress));
 
         result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdAddress));
 
-        result = searchForAddressByUsingJson(lastName.substring(5, 20).toLowerCase(), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());
+        result = searchForAddressByUsingJson(lastName.substring(5, 20).toLowerCase(), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
         assertTrue(result.contains(createdAddress));
 
         result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20).toLowerCase(), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdAddress));
 
-        result = searchForAddressByUsingJson(lastName.substring(5, 20).toUpperCase(), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());
+        result = searchForAddressByUsingJson(lastName.substring(5, 20).toUpperCase(), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
         assertTrue(result.contains(createdAddress));
 
         result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20).toUpperCase(), gson, searchUrl.url(), "searchByLastName");
@@ -1169,7 +1170,7 @@ public class AddressSeleneseIT {
         return result;
     }
 
-    private List<Address> searchForAddressByUsingJson(String lastName, Gson gson, AddressSearchRequest.ADDRESS_SEARCH_BY searchOptionEnum, URL searchUrl) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
+    private List<Address> searchForAddressByUsingJson(String lastName, Gson gson, AddressSearchByOptionEnum searchOptionEnum, URL searchUrl) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
         WebClient searchWebClient = new WebClient();
 
         AddressSearchRequest searchRequest = new AddressSearchRequest(lastName, searchOptionEnum);
@@ -1196,7 +1197,7 @@ public class AddressSeleneseIT {
     public void testSearchByEverything() throws IOException {
         System.out.println("searchByEverything");
 
-        AddressSearchRequest.ADDRESS_SEARCH_BY[] searchOptions = AddressSearchRequest.ADDRESS_SEARCH_BY.values();
+        AddressSearchByOptionEnum[] searchOptions = AddressSearchByOptionEnum.values();
 
         assertTrue(searchOptions.length > 5);
 

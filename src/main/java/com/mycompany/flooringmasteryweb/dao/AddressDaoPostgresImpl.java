@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -430,7 +431,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return addresses;
     }
 
-    public List<Address> search(String queryString, AddressSearchRequest.ADDRESS_SEARCH_BY searchOption) {
+    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption) {
         List<Address> addresses = null;
 
         if (null == searchOption) {
