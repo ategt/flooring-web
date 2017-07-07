@@ -327,6 +327,7 @@ public class AddressSeleneseIT {
         }
 
         Random random = new Random();
+        assertNotNull(addresses);
         int randomAddressPlace = random.nextInt(addresses.length);
 
         Address randomAddress = addresses[randomAddressPlace];
@@ -547,7 +548,8 @@ public class AddressSeleneseIT {
             fail("Should have been JSON.");
         }
 
-        assertEquals(beforeCreation.intValue() + 1, afterCreation.intValue());
+        assertNotNull(afterCreation);
+        assertEquals(beforeCreation + 1, afterCreation.intValue());
 
         assertNotNull(addressReturned);
         assertNotNull(addressReturned.getId());
@@ -720,6 +722,7 @@ public class AddressSeleneseIT {
             fail("Should have been JSON.");
         }
 
+        assertNotNull(afterUpdate);
         assertEquals(afterUpdate.intValue(), afterCreation.intValue());
 
         // Delete the Created Address
@@ -776,8 +779,10 @@ public class AddressSeleneseIT {
             fail("Should have been JSON.");
         }
 
+        assertNotNull(beforeCreation);
+        assertNotNull(afterDeletion);
         assertEquals(beforeCreation.intValue(), afterDeletion.intValue());
-        assertEquals(afterCreation.intValue() - 1, afterDeletion.intValue());
+        assertEquals(afterCreation - 1, afterDeletion.intValue());
 
         // Try to Get Deleted Address
         HttpUrl showUrl2 = getAddressUrlBuilder()
@@ -951,11 +956,14 @@ public class AddressSeleneseIT {
             fail("Should have been JSON.");
         }
 
+        Assert.assertNotNull(list);
+        Assert.assertNotNull(databaseSize);
         assertEquals(list.size(), databaseSize.intValue());
 
         assertTrue(list.contains(createdAddress));
         assertNotEquals(address, createdAddress);
 
+        assertNotNull(createdAddress);
         Integer createdAddressId = createdAddress.getId();
         address.setId(createdAddressId);
 
@@ -1005,6 +1013,8 @@ public class AddressSeleneseIT {
         } else {
             fail("Should have been JSON.");
         }
+
+        assertNotNull(createdAddress);
 
         // Search for created Address.
         WebClient searchWebClient = new WebClient();
@@ -1259,6 +1269,8 @@ public class AddressSeleneseIT {
             } else {
                 fail("Should have been JSON.");
             }
+
+            assertNotNull(createdAddress);
 
             // Search for created Address.
             WebClient searchWebClient = new WebClient();
@@ -1587,6 +1599,8 @@ public class AddressSeleneseIT {
                 fail("Should have been JSON.");
             }
 
+            Assert.assertNotNull(returnedSuggestions);
+
             assertTrue(Arrays.asList(returnedSuggestions).stream().anyMatch(suggestionString -> suggestionString.contains(searchString)));
 
             assertTrue(returnedSuggestions.length < 31);
@@ -1646,7 +1660,7 @@ public class AddressSeleneseIT {
             modifiedSearchString = caseRandomizer(random, modifiedSearchString);
 
             // Search for Address Using Search GET Endpoint
-            HttpUrl getUrl = null;
+            HttpUrl getUrl;
             if (random.nextBoolean()) {
                 getUrl = getAddressUrlBuilder()
                         .addPathSegment("name_completion")
@@ -1679,6 +1693,8 @@ public class AddressSeleneseIT {
             } else {
                 fail("Should have been JSON.");
             }
+
+            Assert.assertNotNull(returnedSuggestions);
 
             assertTrue(Arrays.asList(returnedSuggestions).stream().anyMatch(suggestion -> suggestion.contains(searchString)));
 
