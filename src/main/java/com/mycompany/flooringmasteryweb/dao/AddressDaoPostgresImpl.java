@@ -129,8 +129,20 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         Set<String> result = new HashSet();
 
-        result.addAll(searchByFirstName(input).stream().map(address -> address.getFirstName()).collect(Collectors.toSet()));
-        result.addAll(searchByLastName(input).stream().map(address -> address.getLastName()).collect(Collectors.toSet()));
+        result.addAll(searchByFirstName(input).stream().map(
+                address -> new StringBuffer()
+                        .append(address.getFirstName())
+                        .append(" ")
+                        .append(address.getLastName()).toString()
+        ).collect(Collectors.toSet()));
+
+        result.addAll(searchByLastName(input).stream().map(
+                address -> new StringBuffer()
+                        .append(address.getFirstName())
+                        .append(" ")
+                        .append(address.getLastName()).toString()
+        ).collect(Collectors.toSet()));
+
         result.addAll(searchByCompany(input).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
 
         return result.stream().limit(limit).collect(Collectors.toSet());
@@ -175,7 +187,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
         if (id == null) {
             return null;
         }
-        
+
         try {
             return jdbcTemplate.queryForObject(SQL_DELETE_ADDRESS, new AddressMapper(), id);
         } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
