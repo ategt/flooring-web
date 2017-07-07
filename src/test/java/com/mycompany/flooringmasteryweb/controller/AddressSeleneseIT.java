@@ -81,9 +81,7 @@ public class AddressSeleneseIT {
 
         WebClient webClient = new WebClient();
 
-        HttpUrl httpUrl = HttpUrl.get(uriToTest)
-                .newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
@@ -96,8 +94,7 @@ public class AddressSeleneseIT {
     @Test
     public void testSearch() throws IOException {
 
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
@@ -134,8 +131,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void loadIndexPage() throws IOException {
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -188,13 +184,11 @@ public class AddressSeleneseIT {
 
         URL firstNameUrl = urlWithQuery;
 
-        HtmlPage firstNameSortedPage = webClient.getPage(firstNameUrl);
+        webClient.getPage(firstNameUrl);
 
         Set<Cookie> firstNameSortedCookies = webClient.getCookies(firstNameUrl);
 
         String host = httpUrl.url().getHost();
-
-        Cookie cookie = new Cookie(host, "sort_cookie", "first_name");
 
         Optional<Cookie> optionalSortCookie = firstNameSortedCookies.stream()
                 .filter(thisCookie -> Objects.equals(thisCookie.getName(), "sort_cookie"))
@@ -217,8 +211,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void loadIndexJson() throws IOException {
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -251,8 +244,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void verifyJsonAndHtmlIndexHaveSameAddresses() throws IOException {
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -288,6 +280,7 @@ public class AddressSeleneseIT {
 
         DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
 
+        assertNotNull(addresses);
         assertEquals(addressRows.size(), addresses.length + 1);
 
         String htmlText = htmlPage.asText();
@@ -309,8 +302,7 @@ public class AddressSeleneseIT {
     @Test
     public void getTest() throws IOException {
 
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -342,8 +334,7 @@ public class AddressSeleneseIT {
 
         final int randomAddressId = randomAddress.getId();
 
-        HttpUrl showUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl showUrl = getAddressUrlBuilder()
                 .addPathSegment(Integer.toString(randomAddressId))
                 .build();
 
@@ -373,6 +364,11 @@ public class AddressSeleneseIT {
         Assert.assertEquals(specificAddress, randomAddress);
     }
 
+    private HttpUrl.Builder getAddressUrlBuilder() {
+        return HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address");
+    }
+
     @Test
     public void createTest() throws IOException {
 
@@ -380,8 +376,7 @@ public class AddressSeleneseIT {
         Assert.assertNotNull(address);
         Assert.assertNull(address.getId());
 
-        HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl createUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -411,8 +406,7 @@ public class AddressSeleneseIT {
 
         int addressId = addressReturned.getId();
 
-        HttpUrl showUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl showUrl = getAddressUrlBuilder()
                 .addPathSegment(Integer.toString(addressId))
                 .build();
 
@@ -440,8 +434,7 @@ public class AddressSeleneseIT {
 
         Address storedAddress = null;
 
-        HttpUrl showUrl2 = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl showUrl2 = getAddressUrlBuilder()
                 .addPathSegment(Integer.toString(addressId))
                 .build();
 
@@ -487,8 +480,7 @@ public class AddressSeleneseIT {
         Gson gson = new GsonBuilder().create();
 
         // Get Size of Database before creation.
-        HttpUrl sizeUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl sizeUrl = getAddressUrlBuilder()
                 .addPathSegment("size")
                 .build();
 
@@ -512,8 +504,7 @@ public class AddressSeleneseIT {
         }
 
         // Create Address
-        HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl createUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -564,8 +555,7 @@ public class AddressSeleneseIT {
         assertTrue(addressReturned.getId() > 0);
 
         // Check that created address is in the Database.
-        HttpUrl showUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl showUrl = getAddressUrlBuilder()
                 .addPathSegment(Integer.toString(addressReturned.getId()))
                 .build();
 
@@ -597,8 +587,7 @@ public class AddressSeleneseIT {
         addressReturned.setCity(updatedCity);
 
         // Update Address With Service PUT endpoint
-        HttpUrl updateUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl updateUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -621,8 +610,7 @@ public class AddressSeleneseIT {
         assertEquals(updatedCity, returnedUpdatedAddress.getCity());
 
         // Get Address By Company
-        HttpUrl searchUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl searchUrl = getAddressUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
@@ -737,8 +725,7 @@ public class AddressSeleneseIT {
         // Delete the Created Address
         String addressIdString = Integer.toString(addressReturned.getId());
 
-        HttpUrl deleteUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl deleteUrl = getAddressUrlBuilder()
                 .addPathSegment(addressIdString)
                 .build();
 
@@ -793,8 +780,7 @@ public class AddressSeleneseIT {
         assertEquals(afterCreation.intValue() - 1, afterDeletion.intValue());
 
         // Try to Get Deleted Address
-        HttpUrl showUrl2 = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl showUrl2 = getAddressUrlBuilder()
                 .addPathSegment(Integer.toString(addressReturned.getId()))
                 .build();
 
@@ -837,8 +823,7 @@ public class AddressSeleneseIT {
         assertEquals(returnedCitySearchAddresses3.length, 0);
 
         // Search for deleted Company by get Search
-        HttpUrl searchUrl2 = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl searchUrl2 = getAddressUrlBuilder()
                 .addPathSegment(updatedCity)
                 .addPathSegment("search")
                 .build();
@@ -885,8 +870,7 @@ public class AddressSeleneseIT {
         Address address = addressGenerator();
 
         // Create Generated Address
-        HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl createUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -918,8 +902,7 @@ public class AddressSeleneseIT {
         }
 
         // Get The List Of Addresses
-        HttpUrl getListUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl getListUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -945,8 +928,7 @@ public class AddressSeleneseIT {
         }
 
         // Get Database Size
-        HttpUrl sizeUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl sizeUrl = getAddressUrlBuilder()
                 .addPathSegment("size")
                 .build();
 
@@ -993,8 +975,7 @@ public class AddressSeleneseIT {
         address.setLastName(lastName);
 
         // Create a Address Using the POST endpoint
-        HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl createUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -1033,8 +1014,7 @@ public class AddressSeleneseIT {
         paramsList.add(new NameValuePair("searchText", lastName));
         paramsList.add(new NameValuePair("searchBy", "searchByLastName"));
 
-        HttpUrl searchUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl searchUrl = getAddressUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
@@ -1249,8 +1229,7 @@ public class AddressSeleneseIT {
             }
 
             // Create a Address Using the POST endpoint
-            HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
-                    .addPathSegment("address")
+            HttpUrl createUrl = getAddressUrlBuilder()
                     .addPathSegment("")
                     .build();
 
@@ -1289,8 +1268,7 @@ public class AddressSeleneseIT {
             paramsList.add(new NameValuePair("searchText", randomString));
             paramsList.add(new NameValuePair("searchBy", searchingBy));
 
-            HttpUrl searchUrl = HttpUrl.get(uriToTest).newBuilder()
-                    .addPathSegment("address")
+            HttpUrl searchUrl = getAddressUrlBuilder()
                     .addPathSegment("search")
                     .build();
 
@@ -1412,8 +1390,7 @@ public class AddressSeleneseIT {
 
     private Integer getDatabaseSize() throws JsonSyntaxException, IOException, FailingHttpStatusCodeException {
         // Get Database size.        
-        HttpUrl sizeUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl sizeUrl = getAddressUrlBuilder()
                 .addPathSegment("size")
                 .build();
         WebClient sizeWebClient = new WebClient();
@@ -1502,8 +1479,7 @@ public class AddressSeleneseIT {
             searchString = caseRandomizer(random, searchString);
 
             // Search for Address Using Search GET Endpoint
-            HttpUrl getUrl = HttpUrl.get(uriToTest).newBuilder()
-                    .addPathSegment("address")
+            HttpUrl getUrl = getAddressUrlBuilder()
                     .addPathSegment(searchString)
                     .addPathSegment("search")
                     .build();
@@ -1582,8 +1558,7 @@ public class AddressSeleneseIT {
             modifiedSearchString = caseRandomizer(random, modifiedSearchString);
 
             // Search for Address Using Search GET Endpoint
-            HttpUrl getUrl = HttpUrl.get(uriToTest).newBuilder()
-                    .addPathSegment("address")
+            HttpUrl getUrl = getAddressUrlBuilder()
                     .addPathSegment(modifiedSearchString)
                     .addPathSegment("name_completion")
                     .build();
@@ -1673,14 +1648,12 @@ public class AddressSeleneseIT {
             // Search for Address Using Search GET Endpoint
             HttpUrl getUrl = null;
             if (random.nextBoolean()) {
-                getUrl = HttpUrl.get(uriToTest).newBuilder()
-                        .addPathSegment("address")
+                getUrl = getAddressUrlBuilder()
                         .addPathSegment("name_completion")
                         .addQueryParameter("term", modifiedSearchString)
                         .build();
             } else {
-                getUrl = HttpUrl.get(uriToTest).newBuilder()
-                        .addPathSegment("address")
+                getUrl = getAddressUrlBuilder()
                         .addPathSegment("name_completion")
                         .addQueryParameter("query", modifiedSearchString)
                         .build();
@@ -1722,8 +1695,7 @@ public class AddressSeleneseIT {
     private Address deleteAddress(int resultId) throws FailingHttpStatusCodeException, JsonSyntaxException, IOException {
         // Delete the Created Address
         String addressIdString = Integer.toString(resultId);
-        HttpUrl deleteUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl deleteUrl = getAddressUrlBuilder()
                 .addPathSegment(addressIdString)
                 .build();
         Gson gson = new GsonBuilder().create();
@@ -1737,8 +1709,7 @@ public class AddressSeleneseIT {
 
     private Address createAddressUsingJson(Address address) throws IOException, FailingHttpStatusCodeException, JsonSyntaxException, RuntimeException {
         // Create Address
-        HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl createUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
         WebClient createAddressWebClient = new WebClient();
@@ -1767,8 +1738,7 @@ public class AddressSeleneseIT {
     @Test
     public void databaseSizeIsNotAccessibleFromABrowser() throws IOException {
 
-        HttpUrl sizeUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl sizeUrl = getAddressUrlBuilder()
                 .addPathSegment("size")
                 .build();
 
@@ -1816,8 +1786,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedByLastName() throws IOException {
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "last_name")
                 .build();
@@ -1862,8 +1831,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedByFirstName() throws IOException {
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "first_name")
                 .build();
@@ -1908,8 +1876,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedByCompany() throws IOException {
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "company")
                 .build();
@@ -1977,8 +1944,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedById() throws IOException {
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "id")
                 .build();
@@ -2023,8 +1989,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedByDefault() throws IOException {
-        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address")
+        HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
 
