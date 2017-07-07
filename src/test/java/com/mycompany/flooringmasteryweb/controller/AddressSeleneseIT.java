@@ -389,6 +389,7 @@ public class AddressSeleneseIT {
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
         createRequest.setRequestBody(addressJson);
+        createRequest.setAdditionalHeader("Content-type", "application/json");
 
         Page createPage = createAddressWebClient.getPage(createRequest);
 
@@ -896,8 +897,25 @@ public class AddressSeleneseIT {
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
         createRequest.setRequestBody(addressJson);
+        createRequest.setAdditionalHeader("Accept", "application/json");
+        createRequest.setAdditionalHeader("Content-type", "application/json");
 
-        createAddressWebClient.getPage(createRequest);
+        Page createdAddressPage = createAddressWebClient.getPage(createRequest);
+        
+        WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
+        assertEquals(createAddressWebResponse.getStatusCode(), 200);
+        assertTrue(createAddressWebResponse.getContentLength() > 100);
+
+       Address createdAddress = null;
+
+        if (createAddressWebResponse.getContentType().equals("application/json")) {
+            String json = createAddressWebResponse.getContentAsString();
+            createdAddress = gson.fromJson(json, Address.class);
+
+            assertNotNull(createdAddress);
+        } else {
+            fail("Should have been JSON.");
+        }
 
         // Get The List Of Addresses
         HttpUrl getListUrl = HttpUrl.get(uriToTest).newBuilder()
@@ -953,7 +971,14 @@ public class AddressSeleneseIT {
 
         assertEquals(list.size(), databaseSize.intValue());
 
-        assertTrue(list.contains(address));
+        assertTrue(list.contains(createdAddress));
+        assertNotEquals(address, createdAddress);
+        
+        Integer createdAddressId = createdAddress.getId();        
+        address.setId(createdAddressId);
+        
+        assertNotNull(createdAddressId);
+        assertEquals(address, createdAddress);
     }
 
 //    /**
