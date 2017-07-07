@@ -1198,6 +1198,10 @@ public class AddressSeleneseIT {
 
         AddressSearchRequest.ADDRESS_SEARCH_BY[] searchOptions = AddressSearchRequest.ADDRESS_SEARCH_BY.values();
 
+        assertTrue(searchOptions.length > 5);
+                
+        Integer databaseSizeBeforeTest = getDatabaseSize();
+        
         for (int i = 0; searchOptions.length < i; i++) {
 
             String searchingBy = searchOptions[i].value();
@@ -1401,6 +1405,35 @@ public class AddressSeleneseIT {
             assertTrue(xml.contains("Edit"));
             assertTrue(xml.contains("Delete"));
         }
+                        
+        Integer databaseSizeAfterTest = getDatabaseSize();
+        
+        assertEquals(databaseSizeAfterTest.intValue(), databaseSizeBeforeTest + searchOptions.length);        
+    }
+
+    private Integer getDatabaseSize() throws JsonSyntaxException, IOException, FailingHttpStatusCodeException {
+        // Get Database size.        
+        HttpUrl sizeUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("size")
+                .build();
+        WebClient sizeWebClient = new WebClient();
+        sizeWebClient.addRequestHeader("Accept", "application/json");
+        Gson gson = new GsonBuilder().create();
+        Page sizePage = sizeWebClient.getPage(sizeUrl.url());
+        WebResponse sizeResponse = sizePage.getWebResponse();
+        assertEquals(sizeResponse.getStatusCode(), 200);
+        assertTrue(sizeResponse.getContentLength() < 50);
+        Integer databaseSize = null;
+        if (sizeResponse.getContentType().equals("application/json")) {
+            String json = sizeResponse.getContentAsString();
+            databaseSize = gson.fromJson(json, Integer.class);
+            
+            Assert.assertNotNull(databaseSize);
+        } else {
+            fail("Should have been JSON.");
+        }
+        return databaseSize;
     }
 
 //    /**
