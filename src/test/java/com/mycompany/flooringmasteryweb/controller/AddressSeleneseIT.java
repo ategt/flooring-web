@@ -1199,9 +1199,9 @@ public class AddressSeleneseIT {
         AddressSearchRequest.ADDRESS_SEARCH_BY[] searchOptions = AddressSearchRequest.ADDRESS_SEARCH_BY.values();
 
         assertTrue(searchOptions.length > 5);
-                
+
         Integer databaseSizeBeforeTest = getDatabaseSize();
-        
+
         for (int i = 0; searchOptions.length < i; i++) {
 
             String searchingBy = searchOptions[i].value();
@@ -1247,7 +1247,7 @@ public class AddressSeleneseIT {
                     address.setStreetName(randomString);
                     break;
                 default:
-                    fail("This should never happen.");                    
+                    fail("This should never happen.");
             }
 
             // Create a Address Using the POST endpoint
@@ -1405,10 +1405,10 @@ public class AddressSeleneseIT {
             assertTrue(xml.contains("Edit"));
             assertTrue(xml.contains("Delete"));
         }
-                        
+
         Integer databaseSizeAfterTest = getDatabaseSize();
-        
-        assertEquals(databaseSizeAfterTest.intValue(), databaseSizeBeforeTest + searchOptions.length);        
+
+        assertEquals(databaseSizeAfterTest.intValue(), databaseSizeBeforeTest + searchOptions.length);
     }
 
     private Integer getDatabaseSize() throws JsonSyntaxException, IOException, FailingHttpStatusCodeException {
@@ -1428,7 +1428,7 @@ public class AddressSeleneseIT {
         if (sizeResponse.getContentType().equals("application/json")) {
             String json = sizeResponse.getContentAsString();
             databaseSize = gson.fromJson(json, Integer.class);
-            
+
             Assert.assertNotNull(databaseSize);
         } else {
             fail("Should have been JSON.");
@@ -1436,256 +1436,151 @@ public class AddressSeleneseIT {
         return databaseSize;
     }
 
-//    /**
-//     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
-//     */
-//    @Test
-//    public void testSearchByFirstName() {
-//        System.out.println("searchByFirstName");
-//        
-//        String firstName = UUID.randomUUID().toString();
-//        
-//        Address address = addressGenerator();
-//        address.setFirstName(firstName);
-//        addressDao.create(address);
-//        
-//        List<Address> result = addressDao.searchByFirstName(firstName);
-//        assertTrue(result.contains(address));
-//        assertEquals(result.size(), 1);
-//        
-//        result = addressDao.searchByFirstName(firstName.toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByFirstName(firstName.toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByFirstName(firstName.substring(5));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByFirstName(firstName.substring(5, 20));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByFirstName(firstName.substring(5, 20).toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByFirstName(firstName.substring(5, 20).toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//    }
-//    /**
-//     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
-//     */
-//    @Test
-//    public void testSearchByCompany() {
-//        System.out.println("searchByCompany");
-//        
-//        String company = UUID.randomUUID().toString();
-//        
-//        Address address = addressGenerator();
-//        address.setCompany(company);
-//        addressDao.create(address);
-//        
-//        List<Address> result = addressDao.searchByCompany(company);
-//        assertTrue(result.contains(address));
-//        assertEquals(result.size(), 1);
-//        
-//        result = addressDao.searchByCompany(company.toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCompany(company.toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCompany(company.substring(5));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCompany(company.substring(5, 20));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCompany(company.substring(5, 20).toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCompany(company.substring(5, 20).toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//    }
-//    /**
-//     * Test of searchByCity method, of class AddressDaoPostgresImpl.
-//     */
-//    @Test
-//    public void testSearchByCity() {
-//        System.out.println("searchByCity");
-//        String city = UUID.randomUUID().toString();
-//        
-//        Address address = addressGenerator();
-//        address.setCity(city);
-//        addressDao.create(address);
-//        
-//        List<Address> result = addressDao.searchByCity(city);
-//        assertTrue(result.contains(address));
-//        assertEquals(result.size(), 1);
-//        
-//        result = addressDao.searchByCity(city.toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCity(city.toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCity(city.substring(5));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCity(city.substring(5, 20));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCity(city.substring(5, 20).toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByCity(city.substring(5, 20).toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//    }
-//    /**
-//     * Test of searchByState method, of class AddressDaoPostgresImpl.
-//     */
-//    @Test
-//    public void testSearchByState() {
-//        System.out.println("searchByState");
-//        
-//        String state = UUID.randomUUID().toString();
-//        
-//        Address address = addressGenerator();
-//        address.setState(state);
-//        addressDao.create(address);
-//        
-//        List<Address> result = addressDao.searchByState(state);
-//        assertTrue(result.contains(address));
-//        assertEquals(result.size(), 1);
-//        
-//        result = addressDao.searchByState(state.toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByState(state.toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByState(state.substring(5));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByState(state.substring(5, 20));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByState(state.substring(5, 20).toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByState(state.substring(5, 20).toUpperCase());
-//        assertTrue(result.contains(address));
-//    }
-//    /**
-//     * Test of searchByZip method, of class AddressDaoPostgresImpl.
-//     */
-//    @Test
-//    public void testSearchByZip() {
-//        System.out.println("searchByZip");
-//        
-//        String zip = UUID.randomUUID().toString();
-//        
-//        Address address = addressGenerator();
-//        address.setZip(zip);
-//        addressDao.create(address);
-//        
-//        List<Address> result = addressDao.searchByZip(zip);
-//        assertTrue(result.contains(address));
-//        assertEquals(result.size(), 1);
-//        
-//        result = addressDao.searchByZip(zip.toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByZip(zip.toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByZip(zip.substring(5));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByZip(zip.substring(5, 20));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByZip(zip.substring(5, 20).toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByZip(zip.substring(5, 20).toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//    }
-//    @Test
-//    public void testGetWithString() {
-//        System.out.println("searchWithGet");
-//        final Random random = new Random();
-//        
-//        for (int pass = 0; pass < 25; pass++) {
-//            
-//            String[] randomStrings = new String[8];
-//            
-//            for (int i = 0; i < randomStrings.length; i++) {
-//                randomStrings[i] = UUID.randomUUID().toString();
-//            }
-//            
-//            Address address = addressBuilder(randomStrings[0],
-//                    randomStrings[1],
-//                    randomStrings[2],
-//                    randomStrings[3],
-//                    randomStrings[4],
-//                    randomStrings[5],
-//                    randomStrings[6],
-//                    randomStrings[7]);
-//            
-//            address = addressDao.create(address);
-//            int resultId = address.getId();
-//            
-//            int position = new Random().nextInt(randomStrings.length);
-//            String searchString = randomStrings[position];
-//            
-//            Address result = addressDao.get(searchString);
-//
-//            assertEquals(result, address);
-//            addressDao.delete(resultId);
-//        }
-//        
-//        for (int pass = 0; pass < 150; pass++) {
-//            
-//            String[] randomStrings = new String[8];
-//            
-//            for (int i = 0; i < randomStrings.length; i++) {
-//                randomStrings[i] = UUID.randomUUID().toString();
-//                randomStrings[i] = caseRandomizer(random, randomStrings[i]);
-//            }
-//            
-//            Address address = addressBuilder(randomStrings[0],
-//                    randomStrings[1],
-//                    randomStrings[2],
-//                    randomStrings[3],
-//                    randomStrings[4],
-//                    randomStrings[5],
-//                    randomStrings[6],
-//                    randomStrings[7]);
-//            
-//            address = addressDao.create(address);
-//            int resultId = address.getId();
-//            
-//            int position = new Random().nextInt(randomStrings.length);
-//            String searchString = randomStrings[position];
-//            
-//            int minimumStringLength = 10;
-//            int processLength = searchString.length() - minimumStringLength;
-//            int startingPostition = random.nextInt(processLength - minimumStringLength);
-//            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
-//            
-//            searchString = searchString.substring(startingPostition, endingPostition);
-//            searchString = caseRandomizer(random, searchString);
-//            
-//            Address result = addressDao.get(searchString);
-//            
-//            assertEquals(result, address);
-//            addressDao.delete(resultId);
-//        }
-//    }
+    @Test
+    public void testGetWithString() throws IOException {
+        System.out.println("searchWithGet");
+        final Random random = new Random();
+
+        for (int pass = 0; pass < 25; pass++) {
+
+            String[] randomStrings = new String[8];
+
+            for (int i = 0; i < randomStrings.length; i++) {
+                randomStrings[i] = UUID.randomUUID().toString();
+            }
+
+            Address address = addressBuilder(randomStrings[0],
+                    randomStrings[1],
+                    randomStrings[2],
+                    randomStrings[3],
+                    randomStrings[4],
+                    randomStrings[5],
+                    randomStrings[6],
+                    randomStrings[7]);
+
+            Address createdAddress = createAddressUsingJson(address);
+            int resultId = createdAddress.getId();
+
+            int position = new Random().nextInt(randomStrings.length);
+            String searchString = randomStrings[position];
+
+            Address result = createdAddress;
+
+            Address returnedDeleteAddress = deleteAddress(resultId);
+            assertNotNull(returnedDeleteAddress);
+        }
+
+        for (int pass = 0; pass < 150; pass++) {
+
+            String[] randomStrings = new String[8];
+
+            for (int i = 0; i < randomStrings.length; i++) {
+                randomStrings[i] = UUID.randomUUID().toString();
+                randomStrings[i] = caseRandomizer(random, randomStrings[i]);
+            }
+
+            Address address = addressBuilder(randomStrings[0],
+                    randomStrings[1],
+                    randomStrings[2],
+                    randomStrings[3],
+                    randomStrings[4],
+                    randomStrings[5],
+                    randomStrings[6],
+                    randomStrings[7]);
+
+            address = createAddressUsingJson(address);
+            int resultId = address.getId();
+
+            int position = new Random().nextInt(randomStrings.length);
+            String searchString = randomStrings[position];
+
+            int minimumStringLength = 10;
+            int processLength = searchString.length() - minimumStringLength;
+            int startingPostition = random.nextInt(processLength - minimumStringLength);
+            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
+
+            searchString = searchString.substring(startingPostition, endingPostition);
+            searchString = caseRandomizer(random, searchString);
+
+            // Search for Address Using Search GET Endpoint
+            HttpUrl getUrl = HttpUrl.get(uriToTest).newBuilder()
+                    .addPathSegment("address")
+                    .addPathSegment(searchString)
+                    .addPathSegment("search")
+                    .build();
+
+            WebClient showAddressWebClient = new WebClient();
+            showAddressWebClient.addRequestHeader("Accept", "application/json");
+
+            Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
+            WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
+            assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
+            assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 50);
+
+            Address specificAddress = null;
+
+            if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
+                String json = jsonSingleAddressResponse.getContentAsString();
+                Gson gson = new GsonBuilder().create();
+                specificAddress = gson.fromJson(json, Address.class);
+
+                Assert.assertNotNull(specificAddress);
+            } else {
+                fail("Should have been JSON.");
+            }            
+
+            assertEquals(specificAddress, address);
+            
+            Address returnedDeleteAddress = deleteAddress(resultId);
+            assertNotNull(returnedDeleteAddress);
+        }
+    }
+
+    private Address deleteAddress(int resultId) throws FailingHttpStatusCodeException, JsonSyntaxException, IOException {
+        // Delete the Created Address
+        String addressIdString = Integer.toString(resultId);
+        HttpUrl deleteUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment(addressIdString)
+                .build();
+        Gson gson = new GsonBuilder().create();
+        WebClient deleteAddressWebClient = new WebClient();
+        WebRequest deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
+        Page deletePage = deleteAddressWebClient.getPage(deleteRequest);
+        String returnedDeleteAddressJson = deletePage.getWebResponse().getContentAsString();
+        Address returnedDeleteAddress = gson.fromJson(returnedDeleteAddressJson, Address.class);
+        return returnedDeleteAddress;
+    }
+
+    private Address createAddressUsingJson(Address address) throws IOException, FailingHttpStatusCodeException, JsonSyntaxException, RuntimeException {
+        // Create Address
+        HttpUrl createUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .build();
+        WebClient createAddressWebClient = new WebClient();
+        Gson gson = new GsonBuilder().create();
+        String addressJson = gson.toJson(address);
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
+        createRequest.setRequestBody(addressJson);
+        createRequest.setAdditionalHeader("Accept", "application/json");
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+        Page createdAddressPage = createAddressWebClient.getPage(createRequest);
+        WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
+        assertEquals(createAddressWebResponse.getStatusCode(), 200);
+        assertTrue(createAddressWebResponse.getContentLength() > 100);
+        Address createdAddress = null;
+        if (createAddressWebResponse.getContentType().equals("application/json")) {
+            String json = createAddressWebResponse.getContentAsString();
+            createdAddress = gson.fromJson(json, Address.class);
+
+            assertNotNull(createdAddress);
+        } else {
+            fail("Should have been JSON.");
+        }
+        return createdAddress;
+    }
+
 //    @SuppressWarnings("Since15")
 //    @Test
 //    public void getSortedByName() {
