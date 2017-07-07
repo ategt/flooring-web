@@ -1202,7 +1202,7 @@ public class AddressSeleneseIT {
 
         Integer databaseSizeBeforeTest = getDatabaseSize();
 
-        for (int i = 0; searchOptions.length < i; i++) {
+        for (int i = 0; searchOptions.length > i; i++) {
 
             String searchingBy = searchOptions[i].value();
             String randomString = UUID.randomUUID().toString();
@@ -1305,10 +1305,11 @@ public class AddressSeleneseIT {
             assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
 
             String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
-
+            assertNotEquals("Failed while performing " + searchingBy, lastNameSearchJson, "");
+            
             Address[] returnedAddressList = gson.fromJson(lastNameSearchJson, Address[].class);
 
-            assertEquals(returnedAddressList.length, 1);
+            assertEquals(searchingBy + " gave: " + lastNameSearchJson, returnedAddressList.length, 1);
 
             List<Address> result = Arrays.asList(returnedAddressList);
 
