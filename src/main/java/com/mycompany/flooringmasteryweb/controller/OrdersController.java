@@ -83,7 +83,7 @@ public class OrdersController {
         Order order = orderDao.get(orderId);
 
         if (Objects.isNull(order)){
-            return "notFound";
+            return "order\\orderNotFound";
         }
         
         OrderCommand orderCommand = orderDao.resolveOrderCommand(order);
