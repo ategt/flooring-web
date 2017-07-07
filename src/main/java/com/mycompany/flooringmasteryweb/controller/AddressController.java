@@ -11,12 +11,14 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -247,7 +249,13 @@ public class AddressController {
 
     @RequestMapping(value = "/size", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
-    public Integer size() {
-        return addressDao.size();
+    public Integer size(HttpServletRequest request, HttpServletResponse response) {
+        String acceptHeader = request.getHeader("Accept");
+        if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase("Accept=application/json")) {
+            return addressDao.size();
+        } else {
+            response.setStatus(404);
+            return null;
+        }
     }
 }
