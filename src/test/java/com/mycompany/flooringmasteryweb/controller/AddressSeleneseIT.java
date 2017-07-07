@@ -1060,7 +1060,7 @@ public class AddressSeleneseIT {
         assertTrue(result.contains(createdAddress));
         assertEquals(result.size(), 1);
 
-        List<Address> resultb = searchForAddressByLastNameUsingXForm(lastName, gson, searchUrl.url());
+        List<Address> resultb = searchForAddressByLastNameUsingXForm(lastName, gson, searchUrl.url(), "searchByLastName");
 
         assertNotNull(resultb);
         assertTrue(resultb.contains(createdAddress));
@@ -1072,31 +1072,48 @@ public class AddressSeleneseIT {
         assertTrue(resultc.contains(createdAddress));
         assertEquals(resultc.size(), 1);
         
-//        result = addressDao.searchByLastName(lastName.toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByLastName(lastName.toUpperCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByLastName(lastName.substring(5));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByLastName(lastName.substring(5, 20));
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByLastName(lastName.substring(5, 20).toLowerCase());
-//        assertTrue(result.contains(address));
-//        
-//        result = addressDao.searchByLastName(lastName.substring(5, 20).toUpperCase());
-//        assertTrue(result.contains(address));
+        result = searchForAddressByUsingJson(lastName.toLowerCase(), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());        
+        assertTrue(result.contains(createdAddress));
+
+        result = searchForAddressByLastNameUsingXForm(lastName.toLowerCase(), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdAddress));
         
+        result = searchForAddressByUsingJson(lastName.toUpperCase(), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());        
+        assertTrue(result.contains(createdAddress));
+
+        result = searchForAddressByLastNameUsingXForm(lastName.toUpperCase(), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdAddress));
+        
+        result = searchForAddressByUsingJson(lastName.substring(5), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());        
+        assertTrue(result.contains(createdAddress));
+
+        result = searchForAddressByLastNameUsingXForm(lastName.substring(5), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdAddress));
+        
+        result = searchForAddressByUsingJson(lastName.substring(5, 20), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());        
+        assertTrue(result.contains(createdAddress));
+
+        result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdAddress));
+        
+        result = searchForAddressByUsingJson(lastName.substring(5, 20).toLowerCase(), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());        
+        assertTrue(result.contains(createdAddress));
+
+        result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20).toLowerCase(), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdAddress));
+        
+        result = searchForAddressByUsingJson(lastName.substring(5, 20).toUpperCase(), gson, AddressSearchRequest.ADDRESS_SEARCH_BY.LAST_NAME, searchUrl.url());        
+        assertTrue(result.contains(createdAddress));
+
+        result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20).toUpperCase(), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdAddress));        
     }
 
-    private List<Address> searchForAddressByLastNameUsingXForm(String lastName, Gson gson, URL searchUrl) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {        
+    private List<Address> searchForAddressByLastNameUsingXForm(String lastName, Gson gson, URL searchUrl, String searchBy) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {        
         WebClient searchWebClient = new WebClient();
         List<NameValuePair> paramsList = new ArrayList();
         paramsList.add(new NameValuePair("searchText", lastName));
-        paramsList.add(new NameValuePair("searchBy", "searchByLastName"));
+        paramsList.add(new NameValuePair("searchBy", searchBy));
 
         WebRequest searchByLastNameRequest = new WebRequest(searchUrl, HttpMethod.POST);
         searchByLastNameRequest.setRequestParameters(paramsList);
