@@ -275,20 +275,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByFullName(String fullName) {
-
         List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME, new AddressMapper(), fullName);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME_CASEINSENSITIVE, new AddressMapper(), fullName);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME_PARTS, new AddressMapper(), fullName + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME_PARTS, new AddressMapper(), "%" + fullName + "%");
-        }
 
         return result;
     }

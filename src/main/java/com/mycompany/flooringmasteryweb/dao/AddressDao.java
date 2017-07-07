@@ -37,6 +37,7 @@ public interface AddressDao {
     public List<Address> list(Integer sortBy);
     public List<Address> searchByFirstName(String firstName);
     public List<Address> searchByLastName(String lastName);
+    public List<Address> searchByFullName(String lastName);
     public List<Address> searchByCity(String city);
     public List<Address> searchByCompany(String company);
     public List<Address> searchByState(String state);
