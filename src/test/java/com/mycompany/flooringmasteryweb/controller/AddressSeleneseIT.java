@@ -1615,7 +1615,7 @@ public class AddressSeleneseIT {
                 fail("Should have been JSON.");
             }
 
-            assertTrue(Arrays.asList(returnedSuggestions).contains(searchString));
+            assertTrue(Arrays.asList(returnedSuggestions).stream().anyMatch(suggestionString -> suggestionString.contains(searchString)));
 
             assertTrue(returnedSuggestions.length < 31);
 
@@ -1703,9 +1703,6 @@ public class AddressSeleneseIT {
                 String json = jsonSingleAddressResponse.getContentAsString();
                 Gson gson = new GsonBuilder().create();
 
-                System.out.println("Json: " + json);
-                System.out.println("Search: " + searchString);
-
                 returnedSuggestions = gson.fromJson(json, String[].class);
 
                 Assert.assertNotNull(returnedSuggestions);
@@ -1713,7 +1710,7 @@ public class AddressSeleneseIT {
                 fail("Should have been JSON.");
             }
 
-            assertTrue(Arrays.asList(returnedSuggestions).contains(searchString));
+            assertTrue(Arrays.asList(returnedSuggestions).stream().anyMatch(suggestion -> suggestion.contains(searchString)));
 
             assertTrue(returnedSuggestions.length < 31);
 
@@ -1837,6 +1834,7 @@ public class AddressSeleneseIT {
 //            assertEquals(addresses.get(i), addressesFromDb.get(i));
 //        }
 //    }
+    
 //    @Test
 //    public void getSortedByNameUsingSortByParam() {
 //        List<Address> addresses = addressDao.list();
