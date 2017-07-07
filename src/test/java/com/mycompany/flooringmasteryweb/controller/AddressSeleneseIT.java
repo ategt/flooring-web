@@ -18,6 +18,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -30,6 +31,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -1807,9 +1809,9 @@ public class AddressSeleneseIT {
             message = ex.getStatusMessage();
             webResponse = ex.getResponse();
         }
-        
+
         assertEquals(statusCode, 404);
-        
+
         assertNotNull(webResponse);
         assertTrue(webResponse.getContentLength() == 0);
 
@@ -1817,54 +1819,258 @@ public class AddressSeleneseIT {
         assertEquals(json, "");
     }
 
-//    @SuppressWarnings("Since15")
-//    @Test
-//    public void getSortedByName() {
-//        List<Address> addresses = addressDao.list();
-//        List<Address> addressesFromDb = addressDao.list();
-//        
-//        addresses.sort(new Comparator<Address>() {
-//            @Override
-//            public int compare(Address address1, Address address2) {
-//                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-//            }
-//        });
-//        
-//        for (int i = 0; i < addresses.size(); i++) {
-//            assertEquals(addresses.get(i), addressesFromDb.get(i));
-//        }
-//    }
-    
-//    @Test
-//    public void getSortedByNameUsingSortByParam() {
-//        List<Address> addresses = addressDao.list();
-//        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name");
-//
-//        //noinspection Since15
-//        addresses.sort(new Comparator<Address>() {
-//            @Override
-//            public int compare(Address address1, Address address2) {
-//                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-//            }
-//        });
-//        
-//        for (int i = 0; i < addresses.size(); i++) {
-//            
-//            assertEquals(addresses.get(i), addressesFromDb.get(i));
-//            
-//        }
-//    }
-//    @Test
-//    public void getSortedByIdUsingSortByParam() {
-//        List<Address> addresses = addressDao.list(AddressDao.SORT_BY_ID);
-//        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("id");
-//        
-//        for (int i = 0; i < addresses.size(); i++) {
-//            
-//            assertEquals(addresses.get(i), addressesFromDb.get(i));
-//            
-//        }
-//    }
+    @Test
+    public void getSortedByLastName() throws IOException {
+        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .addQueryParameter("sort_by", "last_name")
+                .build();
+
+        WebClient webClient = new WebClient();
+        webClient.addRequestHeader("Accept", "application/json");
+
+        Page page = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = page.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        Address[] addressesReturned = null;
+        Address[] addressesReturned2 = null;
+
+        if (webResponse.getContentType().equals("application/json")) {
+            String json = webResponse.getContentAsString();
+            Gson gson = new GsonBuilder().create();
+            addressesReturned = gson.fromJson(json, Address[].class);
+            addressesReturned2 = gson.fromJson(json, Address[].class);
+
+            assertTrue(addressesReturned.length > 20);
+            assertTrue(addressesReturned2.length > 20);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        List<Address> addresses = Arrays.asList(addressesReturned);
+        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+
+        addresses.sort(new Comparator<Address>() {
+            @Override
+            public int compare(Address address1, Address address2) {
+                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+            }
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
+    @Test
+    public void getSortedByFirstName() throws IOException {
+        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .addQueryParameter("sort_by", "first_name")
+                .build();
+
+        WebClient webClient = new WebClient();
+        webClient.addRequestHeader("Accept", "application/json");
+
+        Page page = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = page.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        Address[] addressesReturned = null;
+        Address[] addressesReturned2 = null;
+
+        if (webResponse.getContentType().equals("application/json")) {
+            String json = webResponse.getContentAsString();
+            Gson gson = new GsonBuilder().create();
+            addressesReturned = gson.fromJson(json, Address[].class);
+            addressesReturned2 = gson.fromJson(json, Address[].class);
+
+            assertTrue(addressesReturned.length > 20);
+            assertTrue(addressesReturned2.length > 20);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        List<Address> addresses = Arrays.asList(addressesReturned);
+        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+
+        addresses.sort(new Comparator<Address>() {
+            @Override
+            public int compare(Address address1, Address address2) {
+                return address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+            }
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
+    @Test
+    public void getSortedByCompany() throws IOException {
+        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .addQueryParameter("sort_by", "company")
+                .build();
+
+        WebClient webClient = new WebClient();
+        webClient.addRequestHeader("Accept", "application/json");
+
+        Page page = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = page.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        Address[] addressesReturned = null;
+        Address[] addressesReturned2 = null;
+
+        if (webResponse.getContentType().equals("application/json")) {
+            String json = webResponse.getContentAsString();
+            Gson gson = new GsonBuilder().create();
+            addressesReturned = gson.fromJson(json, Address[].class);
+            addressesReturned2 = gson.fromJson(json, Address[].class);
+
+            assertTrue(addressesReturned.length > 20);
+            assertTrue(addressesReturned2.length > 20);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        List<Address> addresses = Arrays.asList(addressesReturned);
+        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+
+        addresses.sort(new Comparator<Address>() {
+            @Override
+            public int compare(Address address1, Address address2) {
+
+                if (Objects.isNull(address1.getCompany())
+                        && !Objects.isNull(address2.getCompany())) {
+                    return 1;
+                } else if (!Objects.isNull(address1.getCompany())
+                        && Objects.isNull(address2.getCompany())) {
+                    return -1;
+                }
+
+                int result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
+
+                if (result == 0) {
+                    result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+                }
+
+                if (result == 0) {
+                    result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
+                }
+
+                if (result == 0) {
+                    result = Integer.compare(address1.getId(), address2.getId());
+                }
+
+                return result;
+            }
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals("Made it " + i + " into the list.", addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
+    @Test
+    public void getSortedById() throws IOException {
+        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .addQueryParameter("sort_by", "id")
+                .build();
+
+        WebClient webClient = new WebClient();
+        webClient.addRequestHeader("Accept", "application/json");
+
+        Page page = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = page.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        Address[] addressesReturned = null;
+        Address[] addressesReturned2 = null;
+
+        if (webResponse.getContentType().equals("application/json")) {
+            String json = webResponse.getContentAsString();
+            Gson gson = new GsonBuilder().create();
+            addressesReturned = gson.fromJson(json, Address[].class);
+            addressesReturned2 = gson.fromJson(json, Address[].class);
+
+            assertTrue(addressesReturned.length > 20);
+            assertTrue(addressesReturned2.length > 20);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        List<Address> addresses = Arrays.asList(addressesReturned);
+        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+
+        addresses.sort(new Comparator<Address>() {
+            @Override
+            public int compare(Address address1, Address address2) {
+                return address1.getId().compareTo(address2.getId());
+            }
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
+    @Test
+    public void getSortedByDefault() throws IOException {
+        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("address")
+                .addPathSegment("")
+                .build();
+
+        WebClient webClient = new WebClient();
+        webClient.addRequestHeader("Accept", "application/json");
+
+        Page page = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = page.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        Address[] addressesReturned = null;
+        Address[] addressesReturned2 = null;
+
+        if (webResponse.getContentType().equals("application/json")) {
+            String json = webResponse.getContentAsString();
+            Gson gson = new GsonBuilder().create();
+            addressesReturned = gson.fromJson(json, Address[].class);
+            addressesReturned2 = gson.fromJson(json, Address[].class);
+
+            assertTrue(addressesReturned.length > 20);
+            assertTrue(addressesReturned2.length > 20);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        List<Address> addresses = Arrays.asList(addressesReturned);
+        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+
+        addresses.sort(new Comparator<Address>() {
+            @Override
+            public int compare(Address address1, Address address2) {
+                return address1.getId().compareTo(address2.getId());
+            }
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
     private String caseRandomizer(final Random random, String input) {
         switch (random.nextInt(6)) {
 
