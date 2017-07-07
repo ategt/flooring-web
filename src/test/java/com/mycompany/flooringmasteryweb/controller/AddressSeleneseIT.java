@@ -1527,11 +1527,198 @@ public class AddressSeleneseIT {
                 Assert.assertNotNull(specificAddress);
             } else {
                 fail("Should have been JSON.");
-            }            
+            }
 
             assertEquals(specificAddress, address);
-            
+
             Address returnedDeleteAddress = deleteAddress(resultId);
+            assertNotNull(returnedDeleteAddress);
+        }
+    }
+
+    @Test
+    public void testGetSuggestionsForAutoComplete() throws IOException {
+        System.out.println("AutoComplete Suggestions");
+        final Random random = new Random();
+
+        List<Address> addressesAdded = new ArrayList();
+
+        for (int pass = 0; pass < 25; pass++) {
+
+            Address address = addressGenerator();
+
+            Address createdAddress = createAddressUsingJson(address);
+
+            addressesAdded.add(createdAddress);
+        }
+
+        for (int pass = 0; pass < 150; pass++) {
+
+            Address address = addressGenerator();
+            address = createAddressUsingJson(address);
+            int resultId = address.getId();
+
+            addressesAdded.add(address);
+
+            int size = addressesAdded.size();
+            int randomInt = random.nextInt(size);
+
+            Address randomAddress = addressesAdded.get(randomInt);
+
+            String company = randomAddress.getCompany();
+            String firstName = randomAddress.getFirstName();
+            String lastName = randomAddress.getLastName();
+
+            String[] randomStrings = {company, firstName, lastName};
+
+            int position = new Random().nextInt(randomStrings.length);
+            String searchString = randomStrings[position];
+
+            int minimumStringLength = 10;
+            int processLength = searchString.length() - minimumStringLength;
+            int startingPostition = random.nextInt(processLength - minimumStringLength);
+            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
+
+            String modifiedSearchString = searchString.substring(startingPostition, endingPostition);
+            modifiedSearchString = caseRandomizer(random, modifiedSearchString);
+
+            // Search for Address Using Search GET Endpoint
+            HttpUrl getUrl = HttpUrl.get(uriToTest).newBuilder()
+                    .addPathSegment("address")
+                    .addPathSegment(modifiedSearchString)
+                    .addPathSegment("name_completion")
+                    .build();
+
+            WebClient showAddressWebClient = new WebClient();
+            showAddressWebClient.addRequestHeader("Accept", "application/json");
+
+            Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
+            WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
+            assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
+            assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 35);
+
+            String[] returnedSuggestions = null;
+
+            if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
+                String json = jsonSingleAddressResponse.getContentAsString();
+                Gson gson = new GsonBuilder().create();
+
+                System.out.println("Json: " + json);
+                System.out.println("Search: " + searchString);
+
+                returnedSuggestions = gson.fromJson(json, String[].class);
+
+                Assert.assertNotNull(returnedSuggestions);
+            } else {
+                fail("Should have been JSON.");
+            }
+
+            assertTrue(Arrays.asList(returnedSuggestions).contains(searchString));
+
+            assertTrue(returnedSuggestions.length < 31);
+
+        }
+
+        for (Address address : addressesAdded) {
+            Address returnedDeleteAddress = deleteAddress(address.getId());
+            assertNotNull(returnedDeleteAddress);
+        }
+    }
+
+    @Test
+    public void testGetSuggestionsForAutoCompleteWithQuery() throws IOException {
+        System.out.println("AutoComplete Suggestions 2");
+        final Random random = new Random();
+
+        List<Address> addressesAdded = new ArrayList();
+
+        for (int pass = 0; pass < 25; pass++) {
+
+            Address address = addressGenerator();
+
+            Address createdAddress = createAddressUsingJson(address);
+
+            addressesAdded.add(createdAddress);
+        }
+
+        for (int pass = 0; pass < 150; pass++) {
+
+            Address address = addressGenerator();
+            address = createAddressUsingJson(address);
+            int resultId = address.getId();
+
+            addressesAdded.add(address);
+
+            int size = addressesAdded.size();
+            int randomInt = random.nextInt(size);
+
+            Address randomAddress = addressesAdded.get(randomInt);
+
+            String company = randomAddress.getCompany();
+            String firstName = randomAddress.getFirstName();
+            String lastName = randomAddress.getLastName();
+
+            String[] randomStrings = {company, firstName, lastName};
+
+            int position = new Random().nextInt(randomStrings.length);
+            String searchString = randomStrings[position];
+
+            int minimumStringLength = 10;
+            int processLength = searchString.length() - minimumStringLength;
+            int startingPostition = random.nextInt(processLength - minimumStringLength);
+            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
+
+            String modifiedSearchString = searchString.substring(startingPostition, endingPostition);
+            modifiedSearchString = caseRandomizer(random, modifiedSearchString);
+
+            // Search for Address Using Search GET Endpoint
+            HttpUrl getUrl = null;
+            if (random.nextBoolean()) {
+                getUrl = HttpUrl.get(uriToTest).newBuilder()
+                        .addPathSegment("address")
+                        .addPathSegment("name_completion")
+                        .addQueryParameter("term", modifiedSearchString)
+                        .build();
+            } else {
+                getUrl = HttpUrl.get(uriToTest).newBuilder()
+                        .addPathSegment("address")
+                        .addPathSegment("name_completion")
+                        .addQueryParameter("query", modifiedSearchString)
+                        .build();
+            }
+
+            WebClient showAddressWebClient = new WebClient();
+            showAddressWebClient.addRequestHeader("Accept", "application/json");
+
+            Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
+            WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
+            assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
+            assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 35);
+
+            String[] returnedSuggestions = null;
+
+            if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
+                String json = jsonSingleAddressResponse.getContentAsString();
+                Gson gson = new GsonBuilder().create();
+
+                System.out.println("Json: " + json);
+                System.out.println("Search: " + searchString);
+
+                returnedSuggestions = gson.fromJson(json, String[].class);
+
+                Assert.assertNotNull(returnedSuggestions);
+            } else {
+                fail("Should have been JSON.");
+            }
+
+            assertTrue(Arrays.asList(returnedSuggestions).contains(searchString));
+
+            assertTrue(returnedSuggestions.length < 31);
+
+        }
+
+        for (Address address : addressesAdded) {
+            Address returnedDeleteAddress = deleteAddress(address.getId());
             assertNotNull(returnedDeleteAddress);
         }
     }
