@@ -20,6 +20,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -528,6 +529,9 @@ public class AddressSeleneseIT {
 
         Address addressReturned = gson.fromJson(returnedAddressJson, Address.class);
 
+        assertNotNull(addressReturned.getId());
+        assertTrue(addressReturned.getId() > 0);
+        
         // Get Database Size After Creation
         WebClient sizeWebClient2 = new WebClient();
         sizeWebClient2.addRequestHeader("Accept", "application/json");
@@ -623,14 +627,13 @@ public class AddressSeleneseIT {
         List<NameValuePair> paramsList = new ArrayList();
 
         paramsList.add(new NameValuePair("searchText", updatedCity));
-        paramsList.add(new NameValuePair("searchBy", "searchByCompany"));
+        paramsList.add(new NameValuePair("searchBy", "searchByCity"));
 
         WebRequest searchByCompanyRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
         searchByCompanyRequest.setRequestParameters(paramsList);
 
         searchByCompanyRequest.setAdditionalHeader("Accept", "application/json");
-        //searchByCompanyRequest.setAdditionalHeader("Content-type", "application/json");
-
+        
         Page companySearchPage = searchWebClient.getPage(searchByCompanyRequest);
 
         assertEquals(companySearchPage.getWebResponse().getStatusCode(), 200);
@@ -644,7 +647,39 @@ public class AddressSeleneseIT {
         Address returnedCompanySearchAddress = returnedCompanySearchAddresses[0];
 
         assertEquals(returnedUpdatedAddress, returnedCompanySearchAddress);
-        assertNotEquals(addressReturned, returnedCompanySearchAddress);
+        assertEquals(addressReturned, returnedCompanySearchAddress);
+        assertNotEquals(specificAddress, returnedCompanySearchAddress);
+
+
+        // Check search using json object.
+        WebClient jsonSearchWebClient = new WebClient();
+
+        //AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchRequest.ADDRESS_SEARCH_BY.CITY);
+        
+        //String addressSearchRequestJson = gson.toJson(addressSearchRequest);
+        String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"2b35e379-3169-4305-a537-656db13d15e3\"}";
+        
+        WebRequest searchByCityRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+        searchByCityRequest.setRequestBody(addressSearchRequestJson);
+
+        searchByCityRequest.setAdditionalHeader("Accept", "application/json");
+        searchByCityRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page citySearchPage = jsonSearchWebClient.getPage(searchByCityRequest);
+
+        assertEquals(citySearchPage.getWebResponse().getStatusCode(), 200);
+
+        String citySearchAddressJson = citySearchPage.getWebResponse().getContentAsString();
+
+        Address[] returnedCitySearchAddresses = gson.fromJson(citySearchAddressJson, Address[].class);
+
+        assertEquals(returnedCompanySearchAddresses.length, 1);
+
+        Address returnedCitySearchAddress = returnedCitySearchAddresses[0];
+
+        assertEquals(returnedUpdatedAddress, returnedCitySearchAddress);
+        assertEquals(addressReturned, returnedCitySearchAddress);
+        assertNotEquals(specificAddress, returnedCitySearchAddress);
 
         // Verify Update Did Not Increase the Size of the Database
         WebClient sizeWebClient3 = new WebClient();

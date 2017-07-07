@@ -8,11 +8,13 @@ package com.mycompany.flooringmasteryweb.controller;
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -193,29 +195,53 @@ public class AddressController {
 
         return "address\\search";
     }
-
-    @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
+    
+    @RequestMapping(value = "/search", method = RequestMethod.POST, headers = {"Content-type=application/json", "Accept=application/json"})
     @ResponseBody
-    public List<Address> search(
-            //@ModelAttribute AddressSearchRequest addressSearchRequest
-            @RequestParam("searchBy") String searchBy,
-            @RequestParam("searchText") String searchText
+    public List<Address> search2(
+            @RequestBody AddressSearchRequest addressSearchRequest
     ) {
 
-        AddressSearchRequest addressSearchRequest = new AddressSearchRequest();
-        addressSearchRequest.setSearchBy(searchBy);
-        addressSearchRequest.setSearchText(searchText);
-
-        List<Address> addresses = searchDatabase(addressSearchRequest);
+        //List<Address> addresses = searchDatabase(addressSearchRequest);
+        List<Address> addresses = null;
 
         return addresses;
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST, headers = {"Content-type=application/json", "Accept=application/json"})
+    @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Address> search(
-            @Valid @RequestBody AddressSearchRequest addressSearchRequest
+            @ModelAttribute AddressSearchRequest addressSearchRequest,
+            HttpServletResponse response,
+            HttpServletRequest request
+//            @RequestParam("searchBy") String searchBy,
+//            @RequestParam("searchText") String searchText
     ) {
+
+        //response.getHeader
+
+        String pathInfo = request.getPathInfo();
+        String requestUrl = request.getRequestURI();
+        String servletPath = request.getServletPath(); 
+        
+        System.out.println("");
+        System.out.println(" ----------------------------------------");
+        System.out.println("    Path Info: " + pathInfo);
+        System.out.println("    Request Url: " + requestUrl);
+        System.out.println("    Servlet Path: " + servletPath);
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        
+        while(headerNames.hasMoreElements()){
+            String headerName = headerNames.nextElement();
+            String value = request.getHeader(headerName);
+            System.out.println("        - " + headerName + " = " + value);
+        }
+        
+        
+        //AddressSearchRequest addressSearchRequest = new AddressSearchRequest();
+        //addressSearchRequest.setSearchBy(searchBy);
+        //addressSearchRequest.setSearchText(searchText);
 
         List<Address> addresses = searchDatabase(addressSearchRequest);
 
