@@ -807,7 +807,7 @@ public class AddressSeleneseIT {
 
         String contentType = jsonSingleAddressResponse2.getContentType();
         assertEquals(contentType, "");
-        
+
         String contentString = jsonSingleAddressResponse2.getContentAsString();
 
         assertEquals(contentString, "");
@@ -818,24 +818,22 @@ public class AddressSeleneseIT {
         List<NameValuePair> paramsList2 = new ArrayList();
 
         paramsList2.add(new NameValuePair("searchText", updatedCity));
-        paramsList2.add(new NameValuePair("searchBy", "searchByCompany"));
+        paramsList2.add(new NameValuePair("searchBy", "searchByCity"));
 
-        WebRequest searchByCompanyRequest2 = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByCompanyRequest2.setRequestParameters(paramsList2);
+        WebRequest searchByCityRequest3 = new WebRequest(searchUrl.url(), HttpMethod.POST);
+        searchByCityRequest3.setRequestParameters(paramsList2);
+        searchByCityRequest3.setAdditionalHeader("Accept", "application/json");
 
-        Page companySearchPage2 = searchWebClient2.getPage(searchByCompanyRequest2);
+        Page citySearchPage3 = searchWebClient2.getPage(searchByCityRequest3);
 
-        assertEquals(companySearchPage2.getWebResponse().getStatusCode(), 200);
+        assertEquals(citySearchPage3.getWebResponse().getStatusCode(), 200);
 
-        String companySearchAddressJson2 = companySearchPage2.getWebResponse().getContentAsString();
+        String citySearchAddressJson3 = citySearchPage3.getWebResponse().getContentAsString();
+        assertEquals(citySearchAddressJson3, "[]");
 
-        Address[] returnedCompanySearchAddresses2 = gson.fromJson(companySearchAddressJson2, Address[].class);
+        Address[] returnedCitySearchAddresses3 = gson.fromJson(citySearchAddressJson3, Address[].class);
 
-        assertEquals(returnedCompanySearchAddresses.length, 1);
-
-        Address alsoDeleted = returnedCompanySearchAddresses2[0];
-
-        assertNull(alsoDeleted);
+        assertEquals(returnedCitySearchAddresses3.length, 0);
 
         // Search for deleted Company by get Search
         HttpUrl searchUrl2 = HttpUrl.get(uriToTest).newBuilder()
@@ -850,21 +848,17 @@ public class AddressSeleneseIT {
         Page singleAddressPage3 = showAddressWebClient3.getPage(showUrl.url());
         WebResponse jsonSingleAddressResponse3 = singleAddressPage3.getWebResponse();
         assertEquals(jsonSingleAddressResponse3.getStatusCode(), 200);
-        assertTrue(jsonSingleAddressResponse3.getContentLength() > 50);
+        assertTrue(jsonSingleAddressResponse3.getContentLength() < 50);
 
-        Address alsoDeleted2 = null;
+        String contentType2 = jsonSingleAddressResponse3.getContentType();
+        assertEquals(contentType2, "");
 
-        if (jsonSingleAddressResponse3.getContentType().equals("application/json")) {
-            String json = jsonSingleAddressResponse3.getContentAsString();
-            alsoDeleted2 = gson.fromJson(json, Address.class);
+        String json = jsonSingleAddressResponse3.getContentAsString();
+        assertEquals(json, "");
 
-            Assert.assertNull(alsoDeleted2);
+        Address alsoDeleted2 = gson.fromJson(json, Address.class);
 
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        assertNull(alsoDeleted2);
+        Assert.assertNull(alsoDeleted2);
     }
 
     private Address addressBuilder(String city, String company, String firstName, String lastName, String state, String streetName, String streetNumber, String zip) {
