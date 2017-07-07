@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -81,11 +82,14 @@ public class OrdersController {
     public String showWithHtml(@PathVariable("id") Integer orderId, Map model, @RequestHeader(value = "Accept", required = true) String acceptHeader) {
         Order order = orderDao.get(orderId);
 
+        if (Objects.isNull(order)){
+            return "notFound";
+        }
+        
         OrderCommand orderCommand = orderDao.resolveOrderCommand(order);
 
         model.put("orderCommand", orderCommand);
         model.put("order", order);
-        loadTheOrdersList(model);
 
         return "order\\show";
     }
