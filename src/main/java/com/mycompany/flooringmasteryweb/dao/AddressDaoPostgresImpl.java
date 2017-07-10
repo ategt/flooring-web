@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -130,23 +131,22 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         Set<String> result = new HashSet();
 
-        result.addAll(searchByFirstName(input).stream().map(
-                address -> new StringBuffer()
-                        .append(address.getFirstName())
-                        .append(" ")
-                        .append(address.getLastName()).toString()
-        ).collect(Collectors.toSet()));
+        result.addAll(searchByFullName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
+        
+        result.addAll(searchByFirstName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
-        result.addAll(searchByLastName(input).stream().map(
-                address -> new StringBuffer()
-                        .append(address.getFirstName())
-                        .append(" ")
-                        .append(address.getLastName()).toString()
-        ).collect(Collectors.toSet()));
+        result.addAll(searchByLastName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
         result.addAll(searchByCompany(input).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
 
         return result.stream().limit(limit).collect(Collectors.toSet());
+    }
+
+    private static Function<Address, String> addressToFullName() {
+        return address -> new StringBuffer()
+                .append(address.getFirstName())
+                .append(" ")
+                .append(address.getLastName()).toString();
     }
 
     @Override
