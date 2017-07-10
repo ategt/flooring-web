@@ -212,6 +212,47 @@ public class AddressDaoPostgresImplTest {
      * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
      */
     @Test
+    public void testSearchByFullName() {
+        System.out.println("searchByFirstName");
+
+        String firstName = UUID.randomUUID().toString();
+        String lastName = UUID.randomUUID().toString();
+
+        String fullName = firstName + " " + lastName;
+        
+        Address address = addressGenerator();
+        address.setFirstName(firstName);
+        address.setLastName(lastName);
+        address = addressDao.create(address);
+
+        List<Address> result = addressDao.searchByFullName(fullName);
+        assertTrue(result.contains(address));
+        assertEquals(result.size(), 1);
+
+        result = addressDao.searchByFullName(fullName.toLowerCase());
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByFullName(fullName.toUpperCase());
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByFullName(fullName.substring(5));
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByFullName(fullName.substring(5, 20));
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByFullName(fullName.substring(5, 20).toLowerCase());
+        assertTrue(result.contains(address));
+
+        result = addressDao.searchByFullName(fullName.substring(5, 20).toUpperCase());
+        assertTrue(result.contains(address));
+
+    }
+
+    /**
+     * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
+     */
+    @Test
     public void testSearchByCompany() {
         System.out.println("searchByCompany");
 

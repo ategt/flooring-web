@@ -52,7 +52,7 @@ public class SuggestionAndAutoCompleteSeleneseIT {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void autoCompleteUsingSuggestionTest() throws Exception {
 
         final Address address = createAddressUsingJson(addressGenerator());
 
