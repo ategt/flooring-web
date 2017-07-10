@@ -213,7 +213,7 @@ public class AddressDaoPostgresImplTest {
      */
     @Test
     public void testSearchByFullName() {
-        System.out.println("searchByFirstName");
+        System.out.println("searchByFullName");
 
         String firstName = UUID.randomUUID().toString();
         String lastName = UUID.randomUUID().toString();
