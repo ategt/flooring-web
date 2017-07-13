@@ -128,7 +128,7 @@ public class AddressDaoPostgresImplTest {
         Address address = addressGenerator();
         addressDao.create(address);
 
-        List<Address> list = addressDao.list();
+        List<Address> list = addressDao.list(null, null);
 
         assertEquals(list.size(), addressDao.size());
 
@@ -219,7 +219,7 @@ public class AddressDaoPostgresImplTest {
         String lastName = UUID.randomUUID().toString();
 
         String fullName = firstName + " " + lastName;
-        
+
         Address address = addressGenerator();
         address.setFirstName(firstName);
         address.setLastName(lastName);
@@ -468,14 +468,14 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByName() {
-        List<Address> addresses = addressDao.list();
-        List<Address> addressesFromDb = addressDao.list();
+        List<Address> addresses = addressDao.list(null, null);
+        List<Address> addressesFromDb = addressDao.list(null, null);
 
         addresses.sort((Object o1, Object o2) -> {
 
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
-            
+
             return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
         });
 
@@ -485,17 +485,17 @@ public class AddressDaoPostgresImplTest {
 
         }
     }
-    
+
     @Test
     public void getSortedByNameUsingSortByParam() {
-        List<Address> addresses = addressDao.list();
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name");
+        List<Address> addresses = addressDao.list(null, null);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", null, null);
 
         addresses.sort((Object o1, Object o2) -> {
 
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
-            
+
             return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
         });
 
@@ -505,10 +505,62 @@ public class AddressDaoPostgresImplTest {
 
         }
     }
+
+    @Test
+    public void getSortedByNameUsingSortByParamAndPagination() {
+        List<Address> addresses = addressDao.list(null, null);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", 0, 20);
+
+        assertEquals(addressesFromDb.size(), 20);
+
+        addresses.sort((Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+        });
+
+        for (int i = 0; i < addressesFromDb.size(); i++) {
+
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+
+        }
+    }
+
+    @Test
+    public void getSortedByNameUsingSortByParamAndPaginationWithRandomNumbers() {
+        Random random = new Random();
+
+        for (int g = 0; g < 50; g++) {
+            int pageNumber = random.nextInt();
+            int resultsPerPage = random.nextInt();
+            
+            List<Address> addresses = addressDao.list(null, null);
+            List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", pageNumber, resultsPerPage);
+
+            assertEquals(addressesFromDb.size(), resultsPerPage);
+
+            addresses.sort((Object o1, Object o2) -> {
+
+                Address address1 = (Address) o1;
+                Address address2 = (Address) o2;
+
+                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+            });
+
+            for (int i = pageNumber * resultsPerPage; i < addressesFromDb.size(); i++) {
+
+                assertEquals(addresses.get(i), addressesFromDb.get(i));
+
+            }
+        }
+    }
+
     @Test
     public void getSortedByIdUsingSortByParam() {
-        List<Address> addresses = addressDao.list(AddressDao.SORT_BY_ID);
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("id");
+        List<Address> addresses = addressDao.list(AddressDao.SORT_BY_ID, null, null);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("id", null, null);
 
         for (int i = 0; i < addresses.size(); i++) {
 

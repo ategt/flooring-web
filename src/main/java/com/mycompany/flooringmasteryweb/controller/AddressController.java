@@ -57,9 +57,9 @@ public class AddressController {
 
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
-            addresses = addressDao.getAddressesSortedByParameter(sortBy);
+            addresses = addressDao.getAddressesSortedByParameter(sortBy, null, null);
         } else {
-            addresses = addressDao.getAddressesSortedByParameter(sortCookie);
+            addresses = addressDao.getAddressesSortedByParameter(sortCookie, null, null);
         }
 
         model.put("addresses", addresses);
@@ -79,9 +79,9 @@ public class AddressController {
 
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
-            addresses = addressDao.getAddressesSortedByParameter(sortBy);
+            addresses = addressDao.getAddressesSortedByParameter(sortBy, page, resultsPerPage);
         } else {
-            addresses = addressDao.getAddressesSortedByParameter(sortCookie);
+            addresses = addressDao.getAddressesSortedByParameter(sortCookie, page, resultsPerPage);
         }
 
         return addresses.toArray(new Address[addresses.size()]);
@@ -185,8 +185,10 @@ public class AddressController {
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
             @ModelAttribute AddressSearchRequest addressSearchRequest,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
             Map model) {
-        List<Address> addresses = searchDatabase(addressSearchRequest);
+        List<Address> addresses = searchDatabase(addressSearchRequest, page, resultsPerPage);
 
         model.put("addresses", addresses);
 
@@ -197,9 +199,11 @@ public class AddressController {
     @ResponseBody
     public List<Address> search(
             @Valid @RequestBody AddressSearchRequest addressSearchRequest,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletRequest request
     ) {
-        List<Address> addresses = searchDatabase(addressSearchRequest);
+        List<Address> addresses = searchDatabase(addressSearchRequest, page, resultsPerPage);
 
         return addresses;
     }
@@ -207,22 +211,28 @@ public class AddressController {
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Address> search(
-            @ModelAttribute AddressSearchRequest addressSearchRequest
+            @ModelAttribute AddressSearchRequest addressSearchRequest,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage
     ) {
-        List<Address> addresses = searchDatabase(addressSearchRequest);
+        List<Address> addresses = searchDatabase(addressSearchRequest, page, resultsPerPage);
 
         return addresses;
     }
 
-    private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
+    private List<Address> searchDatabase(AddressSearchRequest searchRequest, Integer page, Integer resultsPerPage) {
         return addressDao.search(searchRequest.getSearchText(),
-                AddressSearchByOptionEnum.parse(searchRequest.getSearchBy()));
+                AddressSearchByOptionEnum.parse(searchRequest.getSearchBy()),
+                page,
+                resultsPerPage);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String blankSearch(Map model) {
+    public String blankSearch(@RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            Map model) {
 
-        List<Address> addresses = addressDao.list();
+        List<Address> addresses = addressDao.list(page, resultsPerPage);
 
         model.put("addresses", addresses);
 
@@ -230,10 +240,13 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("id") Integer addressId, Map model) {
+    public String show(@PathVariable("id") Integer addressId,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            Map model) {
 
         Address address = addressDao.get(addressId);
-        List<Address> addresses = addressDao.list();
+        List<Address> addresses = addressDao.list(page, resultsPerPage);
 
         model.put("address", address);
         model.put("addresses", addresses);

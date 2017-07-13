@@ -31,10 +31,10 @@ public interface AddressDao {
 
     public int size();
     
-    public List<Address> getAddressesSortedByParameter(String sortBy);
+    public List<Address> getAddressesSortedByParameter(String sortBy, Integer page, Integer resultsPerPage);
     public Set<String> getCompletionGuesses(String input, int limit);
-    public List<Address> list();
-    public List<Address> list(Integer sortBy);
+    public List<Address> list(Integer page, Integer resultsPerPage);
+    public List<Address> list(Integer sortBy, Integer page, Integer resultsPerPage);
     public List<Address> searchByFirstName(String firstName);
     public List<Address> searchByLastName(String lastName);
     public List<Address> searchByFullName(String lastName);
@@ -42,5 +42,5 @@ public interface AddressDao {
     public List<Address> searchByCompany(String company);
     public List<Address> searchByState(String state);
     public List<Address> searchByZip(String zip);
-    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption);
+    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption, Integer page, Integer resultsPerPage);
 }

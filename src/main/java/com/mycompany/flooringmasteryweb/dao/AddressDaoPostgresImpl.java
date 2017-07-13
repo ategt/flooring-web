@@ -132,7 +132,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
         Set<String> result = new HashSet();
 
         result.addAll(searchByFullName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
-        
+
         result.addAll(searchByFirstName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
         result.addAll(searchByLastName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
@@ -197,22 +197,22 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public List<Address> list() {
-        return list(SORT_BY_LAST_NAME);
+    public List<Address> list(Integer page, Integer resultsPerPage) {
+        return list(SORT_BY_LAST_NAME, page, resultsPerPage);
     }
 
     @Override
-    public List<Address> list(Integer sortBy) {
+    public List<Address> list(Integer sortBy, Integer page, Integer resultsPerPage) {
         switch (sortBy) {
             case SORT_BY_COMPANY:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY, new AddressMapper());
+                return jdbcTemplate.query(paginateQuery(SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY, page, resultsPerPage), new AddressMapper());
             case SORT_BY_FIRST_NAME:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME, new AddressMapper());
+                return jdbcTemplate.query(paginateQuery(SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME, page, resultsPerPage), new AddressMapper());
             case SORT_BY_ID:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_ID, new AddressMapper());
+                return jdbcTemplate.query(paginateQuery(SQL_GET_ADDRESS_LIST_SORT_BY_ID, page, resultsPerPage), new AddressMapper());
             case SORT_BY_LAST_NAME:
             default:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME, new AddressMapper());
+                return jdbcTemplate.query(paginateQuery(SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME, page, resultsPerPage), new AddressMapper());
         }
     }
 
@@ -273,9 +273,9 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER(?)), "
             + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER(?)) "
             + "SELECT * FROM addresses WHERE id IN ("
-                    + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
-                        + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
-                        + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
             + ");";
 
     @Override
@@ -445,27 +445,27 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public List<Address> getAddressesSortedByParameter(String sortBy) {
+    public List<Address> getAddressesSortedByParameter(String sortBy, Integer page, Integer resultsPerPage) {
         List<Address> addresses;
         if (sortBy.equalsIgnoreCase("company")) {
-            addresses = list(AddressDao.SORT_BY_COMPANY);
+            addresses = list(AddressDao.SORT_BY_COMPANY, page, resultsPerPage);
         } else if (sortBy.equalsIgnoreCase("id")) {
-            addresses = list(AddressDao.SORT_BY_ID);
+            addresses = list(AddressDao.SORT_BY_ID, page, resultsPerPage);
         } else if (sortBy.equalsIgnoreCase("first_name")) {
-            addresses = list(AddressDao.SORT_BY_FIRST_NAME);
+            addresses = list(AddressDao.SORT_BY_FIRST_NAME, page, resultsPerPage);
         } else if (sortBy.equalsIgnoreCase("last_name")) {
-            addresses = list(AddressDao.SORT_BY_LAST_NAME);
+            addresses = list(AddressDao.SORT_BY_LAST_NAME, page, resultsPerPage);
         } else {
-            addresses = list();
+            addresses = list(page, resultsPerPage);
         }
         return addresses;
     }
 
-    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption) {
+    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption, Integer page, Integer resultsPerPage) {
         List<Address> addresses = null;
 
         if (null == searchOption) {
-            addresses = list();
+            addresses = list(page, resultsPerPage);
         } else {
             switch (searchOption) {
                 case LAST_NAME:
@@ -515,10 +515,32 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     addresses = new ArrayList(getGuesses(queryString));
                     break;
                 default:
-                    addresses = list();
+                    addresses = list(page, resultsPerPage);
                     break;
             }
         }
         return addresses;
+    }
+
+    private String paginateQuery(String query, Integer page, Integer resultsPerPage) {
+        if (page == null || resultsPerPage == null) {
+            return query;
+        }
+
+        if (query.contains(";")) {
+            throw new UnsupportedOperationException("Pagination Method can not handle semi-colons(;)");
+        }
+
+        int offset = resultsPerPage * page;
+
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append("SELECT * FROM (");
+        stringBuffer.append(query);
+        stringBuffer.append(") AS innerQuery OFFSET ");
+        stringBuffer.append(offset);
+        stringBuffer.append(" LIMIT ");
+        stringBuffer.append(resultsPerPage);
+        stringBuffer.append(";");
+        return stringBuffer.toString();
     }
 }
