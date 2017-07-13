@@ -30,16 +30,16 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id;";
+    private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id";
     private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
-    private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *;";
+    private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *";
     private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id =?";
-    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME = "SELECT * FROM addresses ORDER BY first_name ASC, last_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY = "SELECT * FROM addresses ORDER BY company ASC, last_name ASC, first_name ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_ID = "SELECT * FROM addresses ORDER BY id ASC;";
-    private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses;";
+    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC";
+    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC";
+    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME = "SELECT * FROM addresses ORDER BY first_name ASC, last_name ASC, company ASC, id ASC";
+    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY = "SELECT * FROM addresses ORDER BY company ASC, last_name ASC, first_name ASC, id ASC";
+    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_ID = "SELECT * FROM addresses ORDER BY id ASC";
+    private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses";
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
@@ -244,9 +244,9 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "SELECT * FROM addresses WHERE last_name = ?;";
-    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME_CASEINSENSITIVE = "SELECT * FROM addresses WHERE LOWER(last_name) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME_PARTS = "SELECT * FROM addresses WHERE LOWER(last_name) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "SELECT * FROM addresses WHERE last_name = ?";
+    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME_CASEINSENSITIVE = "SELECT * FROM addresses WHERE LOWER(last_name) = LOWER(?)";
+    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME_PARTS = "SELECT * FROM addresses WHERE LOWER(last_name) LIKE LOWER(?)";
 
     @Override
     public List<Address> searchByLastName(String lastName) {
@@ -276,7 +276,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
             + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
             + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
-            + ");";
+            + ")";
 
     @Override
     public List<Address> searchByFullName(String fullName) {
@@ -286,7 +286,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "SELECT * FROM addresses WHERE first_name = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(first_name) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(first_name) LIKE LOWER(?)";
 
     @Override
     public List<Address> searchByFirstName(String firstName) {
@@ -309,7 +309,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "SELECT * FROM addresses WHERE street_name = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_name) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)";
 
     public List<Address> searchByStreetName(String streetName) {
 
@@ -331,7 +331,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "SELECT * FROM addresses WHERE street_number = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_number) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_number) LIKE LOWER(?)";
 
     public List<Address> searchByStreetNumber(String streetNumber) {
 
@@ -353,8 +353,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_CITY = "SELECT * FROM addresses WHERE city = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_CITY_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(city) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_CITY_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(city) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_CITY_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(city) = LOWER(?)";
+    private static final String SQL_SEARCH_ADDRESS_BY_CITY_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(city) LIKE LOWER(?)";
 
     @Override
     public List<Address> searchByCity(String city) {
@@ -376,7 +376,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(company) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(company) LIKE LOWER(?)";
 
     @Override
     public List<Address> searchByCompany(String company) {
@@ -398,8 +398,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_STATE = "SELECT * FROM addresses WHERE state = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_STATE_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(state) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(state) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_STATE_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(state) = LOWER(?)";
+    private static final String SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(state) LIKE LOWER(?)";
 
     @Override
     public List<Address> searchByState(String state) {
@@ -421,8 +421,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE = "SELECT * FROM addresses WHERE zip = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(zip) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(zip) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(zip) = LOWER(?)";
+    private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(zip) LIKE LOWER(?)";
 
     @Override
     public List<Address> searchByZip(String zipcode) {
@@ -527,11 +527,15 @@ public class AddressDaoPostgresImpl implements AddressDao {
             return query;
         }
 
+        if (page < 0 || resultsPerPage < 0) {
+            return query;
+        }
+
         if (query.contains(";")) {
             throw new UnsupportedOperationException("Pagination Method can not handle semi-colons(;)");
         }
 
-        int offset = resultsPerPage * page;
+        long offset = (long)resultsPerPage * (long)page;
 
         StringBuilder stringBuffer = new StringBuilder();
         stringBuffer.append("SELECT * FROM (");

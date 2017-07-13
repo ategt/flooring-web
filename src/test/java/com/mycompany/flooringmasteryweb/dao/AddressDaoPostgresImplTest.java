@@ -529,17 +529,101 @@ public class AddressDaoPostgresImplTest {
     }
 
     @Test
+    public void getSortedByNameUsingSortByParamAndPagination1() {
+        List<Address> addresses = addressDao.list(null, null);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", 0, 20);
+        List<Address> addressesFromDb2 = addressDao.getAddressesSortedByParameter("last_name", 1, 20);
+
+        addressesFromDb.addAll(addressesFromDb2);
+
+        assertEquals(addressesFromDb.size(), 40);
+
+        addresses.sort((Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+        });
+
+        for (int i = 0; i < addressesFromDb.size(); i++) {
+
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+
+        }
+    }
+
+    @Test
+    public void getSortedByNameUsingSortByParamAndPaginationWithOverflow() {
+        List<Address> addresses = addressDao.list(null, null);
+
+        int size = addresses.size();
+
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", 0, size + 10);
+
+        assertEquals(addressesFromDb.size(), size);
+
+        addresses.sort((Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+        });
+
+        for (int i = 0; i < addressesFromDb.size(); i++) {
+
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+
+        }
+    }
+
+    @Test
+    public void getSortedByNameUsingSortByParamAndPaginationWithOverflow2() {
+        List<Address> addresses = addressDao.list(null, null);
+
+        int size = addresses.size();
+        int pages = size / 50;
+
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", pages + 1, 50);
+
+        assertEquals(addressesFromDb.size(), 0);
+    }
+
+    @Test
+    public void getSortedByNameUsingSortByParamAndPaginationWithUnderflow() {
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", 1, 0);
+
+        assertEquals(addressesFromDb.size(), 0);
+    }
+
+    @Test
     public void getSortedByNameUsingSortByParamAndPaginationWithRandomNumbers() {
         Random random = new Random();
 
-        for (int g = 0; g < 50; g++) {
+        for (int g = 0; g < 150; g++) {
             int pageNumber = random.nextInt();
             int resultsPerPage = random.nextInt();
-            
+
             List<Address> addresses = addressDao.list(null, null);
             List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", pageNumber, resultsPerPage);
 
-            assertEquals(addressesFromDb.size(), resultsPerPage);
+            assertTrue(addressesFromDb.size() <= addresses.size());
+
+            if ((long)pageNumber * (long)resultsPerPage > addresses.size()) {
+                if (pageNumber >= 0 && resultsPerPage >= 0){
+                    assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesFromDb.size(), 0);
+                }else{
+                    assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesFromDb.size(), addresses.size());
+                }
+            } else if (pageNumber >= 0 && resultsPerPage >= 0) {
+                assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesFromDb.size(), resultsPerPage);
+            }
+            
+            if (!(pageNumber >= 0 && resultsPerPage >= 0)) {
+                pageNumber = 0;
+                resultsPerPage = 0;
+            }
 
             addresses.sort((Object o1, Object o2) -> {
 
@@ -549,9 +633,9 @@ public class AddressDaoPostgresImplTest {
                 return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
             });
 
-            for (int i = pageNumber * resultsPerPage; i < addressesFromDb.size(); i++) {
+            for (int i = pageNumber * resultsPerPage, r = 0; r < addressesFromDb.size(); i++, r++) {
 
-                assertEquals(addresses.get(i), addressesFromDb.get(i));
+                assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addresses.get(i), addressesFromDb.get(r));
 
             }
         }
