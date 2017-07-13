@@ -7,6 +7,7 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -533,6 +534,152 @@ public class AddressDaoPostgresImplTest {
 
             result = addressDao.search(queryString.substring(5, 20).toUpperCase(), searchOption, page, resultsPerPage);
             assertTrue(result.contains(address));
+        }
+    }
+
+    /**
+     * Test of searchByZip method, of class AddressDaoPostgresImpl.
+     */
+    @Test
+    public void testSearchByEverythingParamWithRandomNumbers() {
+        System.out.println("searchByEverything By Param");
+
+        Random random = new Random();
+
+        AddressSearchByOptionEnum[] searchOptionEnum = AddressSearchByOptionEnum.values();
+        for (AddressSearchByOptionEnum searchOption : searchOptionEnum) {
+
+            Address address = addressGenerator();
+
+            String queryString = null;
+
+            switch (searchOption) {
+                case ALL:
+                    queryString = address.getFirstName();
+                    break;
+                case CITY:
+                    queryString = address.getCity();
+                    break;
+                case COMPANY:
+                    queryString = address.getCompany();
+                    break;
+                case DEFAULT:
+                    queryString = address.getFirstName();
+                    break;
+                case FIRST_NAME:
+                    queryString = address.getFirstName();
+                    break;
+                case LAST_NAME:
+                    queryString = address.getLastName();
+                    break;
+                case NAME:
+                    queryString = address.getFirstName() + " " + address.getLastName();
+                    break;
+                case NAME_OR_COMPANY:
+                    queryString = address.getCompany();
+                    break;
+                case STATE:
+                    queryString = address.getState();
+                    break;
+                case STREET:
+                    queryString = address.getStreetNumber() + " " + address.getStreetName();
+                    break;
+                case STREET_NAME:
+                    queryString = address.getStreetName();
+                    break;
+                case STREET_NUMBER:
+                    queryString = address.getStreetNumber();
+                    break;
+                case ZIP:
+                    queryString = address.getZip();
+                    break;
+            }
+
+            address = addressDao.create(address);
+
+            Integer resultsPerPage = Math.abs(random.nextInt());
+
+            List<Address> result = addressDao.search(queryString, searchOption, 0, resultsPerPage);
+
+            assertEquals(searchOption.name() + ": " + queryString + "\t "
+                    + result.stream()
+                            .map(Address::getId)
+                            .map(id -> id + ", ")
+                            .collect(StringBuffer::new, StringBuffer::append, StringBuffer::append),
+                    result.size(),
+                    1);
+
+            assertTrue(result.contains(address));
+
+            Integer page = 0;
+
+            result = addressDao.search(queryString.toLowerCase(), searchOption, page, resultsPerPage);
+
+            List<Address> additionalPages = new ArrayList();
+            while (!additionalPages.isEmpty()) {
+                page++;
+                additionalPages = addressDao.search(queryString.toLowerCase(), searchOption, page, resultsPerPage);
+                result.addAll(additionalPages);
+                assertTrue(additionalPages.size() <= resultsPerPage);
+            }
+
+            page = 0;
+
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(queryString.toUpperCase(), searchOption, page, resultsPerPage);
+
+            additionalPages.clear();
+            while (!additionalPages.isEmpty()) {
+                page++;
+                additionalPages = addressDao.search(queryString.toUpperCase(), searchOption, page, resultsPerPage);
+                result.addAll(additionalPages);
+                assertTrue(additionalPages.size() <= resultsPerPage);
+            }
+
+            page = 0;
+
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(queryString.substring(5), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+            assertTrue(result.size() <= resultsPerPage);
+
+            result = addressDao.search(queryString.substring(5, 20), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+            assertTrue(result.size() <= resultsPerPage);
+
+            result = addressDao.search(queryString.substring(5, 20).toLowerCase(), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+            assertTrue(result.size() <= resultsPerPage);
+
+            result = addressDao.search(queryString.substring(5, 20).toUpperCase(), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+            assertTrue(result.size() <= resultsPerPage);
+
+            page = 0;
+            String subQuery = queryString.substring(5, 10).toLowerCase();
+            result = addressDao.search(subQuery, searchOption, page, resultsPerPage);
+
+            additionalPages.clear();
+            do {
+                page++;
+                additionalPages = addressDao.search(subQuery, searchOption, page, resultsPerPage);
+                result.addAll(additionalPages);
+                assertTrue(additionalPages.size() <= resultsPerPage);
+            } while ((!additionalPages.isEmpty()));
+
+            //assertTrue(subQuery + ", Size:" + result.size(), result.size() > 1);
+            assertTrue(subQuery + ", Size:" + result.size() + ", " + searchOption.name()
+                            + ", ID: " + address.getId() 
+                            + ", PerPage: " + resultsPerPage
+                            + ", Pages:" + page
+                            + " - "
+                            + result.stream()
+                            .map(Address::getId)
+                            .map(id -> id + "; ")
+                            .collect(StringBuffer::new, StringBuffer::append, StringBuffer::append),
+                    result.contains(address));
         }
     }
 
