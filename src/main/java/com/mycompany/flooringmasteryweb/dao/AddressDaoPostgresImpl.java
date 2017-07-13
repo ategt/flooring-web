@@ -11,6 +11,7 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,6 +120,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
         result.addAll(searchByZip(input));
         result.addAll(searchByStreetName(input));
         result.addAll(searchByStreetNumber(input));
+        result.addAll(searchByStreetAddress(input));
 
         return result;
     }
@@ -329,6 +331,22 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return result;
     }
+    
+    private static final String SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS = "WITH firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', street_number, street_name) = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE LOWER(?)) "
+            + "SELECT * FROM addresses WHERE id IN ("
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + ")";
+    
+    public List<Address> searchByStreetAddress(String input) {
+        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS, new AddressMapper(), input, input, input + '%', '%' + input + '%');
+
+        return result;
+    }
 
     private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "SELECT * FROM addresses WHERE street_number = ?";
     private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_number) LIKE LOWER(?)";
@@ -493,6 +511,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     Set<Address> tempStreetAddresses = new HashSet();
                     tempStreetAddresses.addAll(searchByStreetNumber(queryString));
                     tempStreetAddresses.addAll(searchByStreetName(queryString));
+                    tempStreetAddresses.addAll(searchByStreetAddress(queryString));
                     addresses = new ArrayList(tempStreetAddresses);
                     break;
                 case ZIP:
@@ -502,6 +521,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     Set<Address> tempNameAddresses = new HashSet();
                     tempNameAddresses.addAll(searchByFirstName(queryString));
                     tempNameAddresses.addAll(searchByLastName(queryString));
+                    tempNameAddresses.addAll(searchByFullName(queryString));
                     addresses = new ArrayList(tempNameAddresses);
                     break;
                 case NAME_OR_COMPANY:
@@ -512,11 +532,25 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     addresses = new ArrayList(tempNameCompanyAddresses);
                     break;
                 case ALL:
+                case DEFAULT:                    
                     addresses = new ArrayList(getGuesses(queryString));
                     break;
                 default:
-                    addresses = list(page, resultsPerPage);
+                    addresses = list(null, null);
                     break;
+            }
+
+            int startIndex = page * resultsPerPage;
+            int endIndex = page * resultsPerPage + resultsPerPage;
+
+            if (addresses.size() > startIndex) {
+                if (addresses.size() < endIndex) {
+                    endIndex = addresses.size();
+                }
+
+                addresses = addresses.subList(startIndex, endIndex);
+            } else {
+                addresses.clear();
             }
         }
         return addresses;
@@ -535,7 +569,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             throw new UnsupportedOperationException("Pagination Method can not handle semi-colons(;)");
         }
 
-        long offset = (long)resultsPerPage * (long)page;
+        long offset = (long) resultsPerPage * (long) page;
 
         StringBuilder stringBuffer = new StringBuilder();
         stringBuffer.append("SELECT * FROM (");
