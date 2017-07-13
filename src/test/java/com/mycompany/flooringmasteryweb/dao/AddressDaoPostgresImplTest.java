@@ -656,30 +656,6 @@ public class AddressDaoPostgresImplTest {
             result = addressDao.search(queryString.substring(5, 20).toUpperCase(), searchOption, page, resultsPerPage);
             assertTrue(result.contains(address));
             assertTrue(result.size() <= resultsPerPage);
-
-            page = 0;
-            String subQuery = queryString.substring(5, 10).toLowerCase();
-            result = addressDao.search(subQuery, searchOption, page, resultsPerPage);
-
-            additionalPages.clear();
-            do {
-                page++;
-                additionalPages = addressDao.search(subQuery, searchOption, page, resultsPerPage);
-                result.addAll(additionalPages);
-                assertTrue(additionalPages.size() <= resultsPerPage);
-            } while ((!additionalPages.isEmpty()));
-
-            //assertTrue(subQuery + ", Size:" + result.size(), result.size() > 1);
-            assertTrue(subQuery + ", Size:" + result.size() + ", " + searchOption.name()
-                            + ", ID: " + address.getId() 
-                            + ", PerPage: " + resultsPerPage
-                            + ", Pages:" + page
-                            + " - "
-                            + result.stream()
-                            .map(Address::getId)
-                            .map(id -> id + "; ")
-                            .collect(StringBuffer::new, StringBuffer::append, StringBuffer::append),
-                    result.contains(address));
         }
     }
 
