@@ -70,6 +70,7 @@ public class Address {
             return Objects.equals(getCity(), otherAddress.getCity()) &&
                     Objects.equals(getCompany(), otherAddress.getCompany()) &&
                     Objects.equals(getFirstName(), otherAddress.getFirstName()) &&
+                    Objects.equals(getFullName(), otherAddress.getFullName()) &&
                     Objects.equals(getId(), otherAddress.getId()) &&
                     Objects.equals(getLastName(), otherAddress.getLastName()) &&
                     Objects.equals(getState(), otherAddress.getState()) &&
@@ -129,6 +130,10 @@ public class Address {
         this.lastName = lastName;
     }
 
+    public String getFullName(){
+        return getFirstName() + " " + getLastName();
+    }
+    
     /**
      * @return the streetName
      */

@@ -1205,6 +1205,10 @@ public class AddressSeleneseIT {
                 case "searchByFirstName":
                     address.setFirstName(randomString);
                     break;
+                case "searchByFullName":
+                    address.setFirstName(randomString);
+                    randomString = address.getFullName();
+                    break;
                 case "searchByCity":
                     address.setCity(randomString);
                     break;
@@ -1834,12 +1838,7 @@ public class AddressSeleneseIT {
         List<Address> addresses = Arrays.asList(addressesReturned);
         List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
 
-        addresses.sort(new Comparator<Address>() {
-            @Override
-            public int compare(Address address1, Address address2) {
-                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-            }
-        });
+        addresses.sort(sortByLastName());
 
         for (int i = 0; i < addresses.size(); i++) {
             assertEquals(addresses.get(i), addressesFromDb.get(i));
@@ -1879,12 +1878,7 @@ public class AddressSeleneseIT {
         List<Address> addresses = Arrays.asList(addressesReturned);
         List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
 
-        addresses.sort(new Comparator<Address>() {
-            @Override
-            public int compare(Address address1, Address address2) {
-                return address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
-            }
-        });
+        addresses.sort(sortByFirstName());
 
         for (int i = 0; i < addresses.size(); i++) {
             assertEquals(addresses.get(i), addressesFromDb.get(i));
@@ -1924,38 +1918,10 @@ public class AddressSeleneseIT {
         List<Address> addresses = Arrays.asList(addressesReturned);
         List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
 
-        addresses.sort(new Comparator<Address>() {
-            @Override
-            public int compare(Address address1, Address address2) {
-
-                if (Objects.isNull(address1.getCompany())
-                        && !Objects.isNull(address2.getCompany())) {
-                    return 1;
-                } else if (!Objects.isNull(address1.getCompany())
-                        && Objects.isNull(address2.getCompany())) {
-                    return -1;
-                }
-
-                int result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
-
-                if (result == 0) {
-                    result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
-                }
-
-                if (result == 0) {
-                    result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
-                }
-
-                if (result == 0) {
-                    result = Integer.compare(address1.getId(), address2.getId());
-                }
-
-                return result;
-            }
-        });
+        addresses.sort(sortByCompany());
 
         for (int i = 0; i < addresses.size(); i++) {
-            assertEquals("Made it " + i + " into the list.", addresses.get(i), addressesFromDb.get(i));
+            assertEquals("Made it " + i + " into the list. " + addresses.get(i).getId() + ", " + addressesFromDb.get(i).getId(), addresses.get(i), addressesFromDb.get(i));
         }
     }
 
@@ -2125,34 +2091,34 @@ public class AddressSeleneseIT {
         assertEquals(daveAddress, firstReturnedLastNameSearchAddress);
 
         webClient = new WebClient();
-        
+
         URL searchUrl2 = HttpUrl.get(searchByLastNameWebRequest.getUrl()).newBuilder()
                 .removeAllQueryParameters("page")
                 .addQueryParameter("page", Integer.toString(1))
                 .build()
                 .url();
-                
+
         searchByLastNameWebRequest.setUrl(searchUrl2);
         Page lastNameSearchPage2 = webClient.getPage(searchByLastNameWebRequest);
-        
+
         assertEquals(lastNameSearchPage2.getWebResponse().getStatusCode(), 200);
-        
-        Address[] returnedLastNameSearchAddresses2 = 
-                gson.fromJson(lastNameSearchPage2.getWebResponse().getContentAsString(), Address[].class);
-        
+
+        Address[] returnedLastNameSearchAddresses2
+                = gson.fromJson(lastNameSearchPage2.getWebResponse().getContentAsString(), Address[].class);
+
         assertEquals(returnedLastNameSearchAddresses2.length, 5);
 
         Set<Address> addressSet = new HashSet();
-        
+
         addressSet.addAll(Arrays.asList(returnedLastNameSearchAddresses));
         addressSet.addAll(Arrays.asList(returnedLastNameSearchAddresses2));
-        
+
         assertEquals(addressSet.size(), 10);
-        
+
         for (Address addressToCheck : createdAddresses) {
             assertTrue(addressSet.contains(addressToCheck));
         }
-        
+
         assertTrue(addressSet.containsAll(createdAddresses));
 
         for (Address addressToDelete : createdAddresses) {
@@ -2212,4 +2178,101 @@ public class AddressSeleneseIT {
         return address;
     }
 
+    private static Comparator<Object> sortByLastName() {
+        return (Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            int result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+
+            if (result == 0) {
+                result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+            }
+
+            if (result == 0) {
+                if (address1.getCompany() == null && address1.getCompany() == null) {
+                    result = 0;
+                } else if (address1.getCompany() == null) {
+                    result = 1;
+                } else if (address2.getCompany() == null) {
+                    result = -1;
+                } else {
+                    result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+                }
+            }
+
+            if (result == 0) {
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+
+            return result;
+        };
+    }
+
+    private static Comparator<Object> sortByFirstName() {
+        return (Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            int result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+
+            if (result == 0) {
+                result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+            }
+
+            if (result == 0) {
+                if (address1.getCompany() == null && address1.getCompany() == null) {
+                    result = 0;
+                } else if (address1.getCompany() == null) {
+                    result = 1;
+                } else if (address2.getCompany() == null) {
+                    result = -1;
+                } else {
+                    result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+                }
+            }
+
+            if (result == 0) {
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+
+            return result;
+        };
+    }
+
+    private static Comparator<Object> sortByCompany() {
+        return (Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            int result;
+
+            if (address1.getCompany() == null && address1.getCompany() == null) {
+                result = 0;
+            } else if (address1.getCompany() == null) {
+                result = 1;
+            } else if (address2.getCompany() == null) {
+                result = -1;
+            } else {
+                result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+            }
+
+            if (result == 0) {
+                result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+            }
+
+            if (result == 0) {
+                result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+            }
+
+            if (result == 0) {
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+
+            return result;
+        };
+    }
 }
