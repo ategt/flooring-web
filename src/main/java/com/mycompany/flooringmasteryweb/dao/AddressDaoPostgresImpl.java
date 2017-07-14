@@ -313,7 +313,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     public List<Address> searchByStreetName(String streetName, ResultProperties resultProperties) {
 
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME, new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties), new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
 
         return result;
     }
@@ -447,6 +447,24 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return result;
     }
+    
+        private static final String SQL_SEARCH_ADDRESS_BASE_QUERY = "WITH firstQuery AS (SELECT id FROM addresses WHERE street_name = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)) "
+            + "SELECT * FROM addresses WHERE id IN ("
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + ")";
+
+    public List<Address> searchBase(String streetName, ResultProperties resultProperties) {
+
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties), new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
+
+        return result;
+    }
+
 
     @Override
     public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties) {
