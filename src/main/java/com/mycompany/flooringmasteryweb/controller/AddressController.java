@@ -10,6 +10,7 @@ import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
+import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,14 +57,9 @@ public class AddressController {
             HttpServletResponse response,
             Map model) {
 
-        List<Address> addresses;
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
 
-        if (sortBy != null) {
-            response.addCookie(new Cookie("sort_cookie", sortBy));
-            addresses = addressDao.getAddressesSortedByParameter(sortBy, page, resultsPerPage);
-        } else {
-            addresses = addressDao.getAddressesSortedByParameter(sortCookie, page, resultsPerPage);
-        }
+        List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
 
         model.put("addresses", addresses);
         return "address\\index";
@@ -78,14 +74,9 @@ public class AddressController {
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response) {
 
-        List<Address> addresses;
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
 
-        if (sortBy != null) {
-            response.addCookie(new Cookie("sort_cookie", sortBy));
-            addresses = addressDao.getAddressesSortedByParameter(sortBy, page, resultsPerPage);
-        } else {
-            addresses = addressDao.getAddressesSortedByParameter(sortCookie, page, resultsPerPage);
-        }
+        List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
 
         return addresses.toArray(new Address[addresses.size()]);
     }
@@ -196,14 +187,20 @@ public class AddressController {
             Map model
     ) {
 
-        AddressSortByEnum sortEnum = updateSortCookie(sortBy, response, sortCookie);
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
 
-        List<Address> addresses = searchDatabase(addressSearchRequest, page, resultsPerPage, sortEnum);
+        List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
 
         model.put("addresses", addresses);
 
         return "address\\search";
 
+    }
+
+    private ResultProperties processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+        AddressSortByEnum sortEnum = updateSortCookie(sortBy, response, sortCookie);
+        ResultProperties resultProperties = new ResultProperties(sortEnum, page, resultsPerPage);
+        return resultProperties;
     }
 
     private AddressSortByEnum updateSortCookie(String sortBy, HttpServletResponse response, String sortCookie) {
@@ -224,9 +221,12 @@ public class AddressController {
             @Valid @RequestBody AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            HttpServletResponse response,
             HttpServletRequest request
     ) {
-        List<Address> addresses = searchDatabase(addressSearchRequest, page, resultsPerPage);
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+
+        List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
 
         return addresses;
     }
@@ -238,19 +238,25 @@ public class AddressController {
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @ModelAttribute AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            HttpServletResponse response
     ) {
-        List<Address> addresses = searchDatabase(addressSearchRequest, page, resultsPerPage);
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+
+        List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
 
         return addresses;
     }
 
     private List<Address> searchDatabase(AddressSearchRequest searchRequest, Integer page, Integer resultsPerPage, AddressSortByEnum sortBy) {
-        return addressDao.search(searchRequest.getSearchText(),
-                AddressSearchByOptionEnum.parse(searchRequest.getSearchBy()),
-                page,
+        return searchDatabase(searchRequest, new ResultProperties(page,
                 resultsPerPage,
-                sortBy);
+                sortBy));
+    }
+
+    private List<Address> searchDatabase(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
+        return addressDao.search(searchRequest,
+                resultProperties);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)

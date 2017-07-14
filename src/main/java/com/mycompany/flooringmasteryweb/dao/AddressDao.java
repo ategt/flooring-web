@@ -7,6 +7,7 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import java.util.List;
@@ -38,5 +39,5 @@ public interface AddressDao {
     public List<Address> searchByCompany(String company);
     public List<Address> searchByState(String state);
     public List<Address> searchByZip(String zip);
-    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption, ResultProperties resultProperties);
+    public List<Address> search(AddressSearchRequest addressSearchRequest, ResultProperties resultProperties);
 }
