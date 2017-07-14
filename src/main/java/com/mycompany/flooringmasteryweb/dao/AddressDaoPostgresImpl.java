@@ -110,18 +110,11 @@ public class AddressDaoPostgresImpl implements AddressDao {
             return null;
         }
 
+        List<Address> resultList = searchByAny(input, null);
+
         Set<Address> result = new HashSet();
 
-        result.addAll(searchByFirstName(input));
-        result.addAll(searchByLastName(input));
-        result.addAll(searchByFullName(input));
-        result.addAll(searchByCity(input));
-        result.addAll(searchByCompany(input));
-        result.addAll(searchByState(input));
-        result.addAll(searchByZip(input));
-        result.addAll(searchByStreetName(input));
-        result.addAll(searchByStreetNumber(input));
-        result.addAll(searchByStreetAddress(input));
+        result.addAll(resultList);
 
         return result;
     }
@@ -134,13 +127,13 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         Set<String> result = new HashSet();
 
-        result.addAll(searchByFullName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
+        result.addAll(searchByFullName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
-        result.addAll(searchByFirstName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
+        result.addAll(searchByFirstName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
-        result.addAll(searchByLastName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
+        result.addAll(searchByLastName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
-        result.addAll(searchByCompany(input).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
+        result.addAll(searchByCompany(input, null).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
 
         return result.stream().limit(limit).collect(Collectors.toSet());
     }
@@ -383,6 +376,14 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
+    private static final String SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE = "SELECT * FROM addresses WHERE id IN(SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE LOWER(?)))";
+
+    public List<Address> searchByAny(String input, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE, resultProperties), new AddressMapper(), "%" + input + "%");
+
+        return result;
+    }
+
     private static final class AddressMapper implements RowMapper<Address> {
 
         @Override
@@ -433,23 +434,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BASE_QUERY = "WITH firstQuery AS (SELECT id FROM addresses WHERE street_name = ?),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) = LOWER(?)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)) "
-            + "SELECT * FROM addresses WHERE id IN ("
-            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
-            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
-            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
-            + ")";
-
-    public List<Address> searchBase(String streetName, ResultProperties resultProperties) {
-        asdf List
-        <Address > result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties), new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
-
-        return result;
-    }
-
     @Override
     public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties) {
         return list(resultProperties);
@@ -464,63 +448,51 @@ public class AddressDaoPostgresImpl implements AddressDao {
             AddressSearchByOptionEnum searchOption,
             ResultProperties resultProperties) {
 
-        List<Address> addresses = null;
+        List<Address> addresses;
 
         if (null == searchOption) {
             addresses = list(resultProperties);
         } else {
             switch (searchOption) {
                 case LAST_NAME:
-                    addresses = searchByLastName(queryString);
+                    addresses = searchByLastName(queryString, resultProperties);
                     break;
                 case FIRST_NAME:
-                    addresses = searchByFirstName(queryString);
+                    addresses = searchByFirstName(queryString, resultProperties);
                     break;
                 case COMPANY:
-                    addresses = searchByCompany(queryString);
+                    addresses = searchByCompany(queryString, resultProperties);
                     break;
                 case CITY:
-                    addresses = searchByCity(queryString);
+                    addresses = searchByCity(queryString, resultProperties);
                     break;
                 case STATE:
-                    addresses = searchByState(queryString);
+                    addresses = searchByState(queryString, resultProperties);
                     break;
                 case STREET_NAME:
-                    addresses = searchByStreetName(queryString);
+                    addresses = searchByStreetName(queryString, resultProperties);
                     break;
                 case STREET_NUMBER:
-                    addresses = searchByStreetNumber(queryString);
+                    addresses = searchByStreetNumber(queryString, resultProperties);
                     break;
                 case STREET:
-                    Set<Address> tempStreetAddresses = new HashSet();
-                    tempStreetAddresses.addAll(searchByStreetNumber(queryString));
-                    tempStreetAddresses.addAll(searchByStreetName(queryString));
-                    tempStreetAddresses.addAll(searchByStreetAddress(queryString));
-                    addresses = new ArrayList(tempStreetAddresses);
+                    addresses = searchByStreet(queryString, resultProperties);
                     break;
                 case ZIP:
-                    addresses = searchByZip(queryString);
+                    addresses = searchByZip(queryString, resultProperties);
                     break;
                 case NAME:
-                    Set<Address> tempNameAddresses = new HashSet();
-                    tempNameAddresses.addAll(searchByFirstName(queryString));
-                    tempNameAddresses.addAll(searchByLastName(queryString));
-                    tempNameAddresses.addAll(searchByFullName(queryString));
-                    addresses = new ArrayList(tempNameAddresses);
+                    addresses = searchByName(queryString, resultProperties);
                     break;
                 case NAME_OR_COMPANY:
-                    Set<Address> tempNameCompanyAddresses = new HashSet();
-                    tempNameCompanyAddresses.addAll(searchByFirstName(queryString));
-                    tempNameCompanyAddresses.addAll(searchByLastName(queryString));
-                    tempNameCompanyAddresses.addAll(searchByCompany(queryString));
-                    addresses = new ArrayList(tempNameCompanyAddresses);
+                    addresses = searchByNameOrCompany(queryString, resultProperties);
                     break;
                 case ALL:
                 case DEFAULT:
-                    addresses = new ArrayList(getGuesses(queryString));
+                    addresses = searchByAll(queryString, resultProperties);
                     break;
                 default:
-                    addresses = list(null, null);
+                    addresses = searchByAny(queryString, resultProperties);
                     break;
             }
 
