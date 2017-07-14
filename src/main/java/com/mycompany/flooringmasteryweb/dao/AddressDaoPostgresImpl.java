@@ -35,13 +35,9 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id";
     private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
     private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *";
-    private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id =?";
-    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC";
+    private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id = ?";
+    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ?";
     private static final String SQL_GET_ADDRESS_LIST = "SELECT * FROM addresses";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME = "SELECT * FROM addresses ORDER BY first_name ASC, last_name ASC, company ASC, id ASC";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY = "SELECT * FROM addresses ORDER BY company ASC, last_name ASC, first_name ASC, id ASC";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_ID = "SELECT * FROM addresses ORDER BY id ASC";
     private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses";
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
@@ -162,6 +158,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
         }
     }
 
+    @Override
     public void update(Address address) {
 
         if (address == null) {
@@ -298,24 +295,26 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "SELECT * FROM addresses WHERE street_name = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)";
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE street_name = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)) "
+            + "SELECT * FROM addresses WHERE id IN ("
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + ")";
 
     public List<Address> searchByStreetName(String streetName) {
 
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME, new AddressMapper(), streetName);
+        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME, new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
 
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), streetName);
-        }
+        return result;
+    }
 
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), streetName + "%");
-        }
+    public List<Address> searchByStreetName(String streetName, ) {
 
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), "%" + streetName + "%");
-        }
+        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME, new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
 
         return result;
     }
@@ -451,8 +450,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public List<Address> getAddressesSortedByParameter(AddressSortByEnum sortBy, Integer page, Integer resultsPerPage) {        
-        return list(sortBy, page, resultsPerPage);        
+    public List<Address> getAddressesSortedByParameter(AddressSortByEnum sortBy, Integer page, Integer resultsPerPage) {
+        return list(sortBy, page, resultsPerPage);
     }
 
     public List<Address> search(String queryString,
