@@ -980,19 +980,19 @@ public class AddressDaoPostgresImplTest {
             int pageNumber = random.nextInt();
             int resultsPerPage = random.nextInt();
 
-            List<Address> addresses = addressDao.list(null);
-            List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), pageNumber, resultsPerPage));
+            List<Address> addressesSortedWithComparator = addressDao.list(null);
+            List<Address> addressesSortedWithDatabase = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), pageNumber, resultsPerPage));
 
-            assertTrue(addressesFromDb.size() <= addresses.size());
+            assertTrue(addressesSortedWithDatabase.size() <= addressesSortedWithComparator.size());
 
-            if ((long) pageNumber * (long) resultsPerPage > addresses.size()) {
+            if ((long) pageNumber * (long) resultsPerPage > addressesSortedWithComparator.size()) {
                 if (pageNumber >= 0 && resultsPerPage >= 0) {
-                    assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesFromDb.size(), 0);
+                    assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), 0);
                 } else {
-                    assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesFromDb.size(), addresses.size());
+                    assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), addressesSortedWithComparator.size());
                 }
             } else if (pageNumber >= 0 && resultsPerPage >= 0) {
-                assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesFromDb.size(), resultsPerPage);
+                assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), resultsPerPage);
             }
 
             if (!(pageNumber >= 0 && resultsPerPage >= 0)) {
@@ -1000,17 +1000,39 @@ public class AddressDaoPostgresImplTest {
                 resultsPerPage = 0;
             }
 
-            addresses.sort((Object o1, Object o2) -> {
+            addressesSortedWithComparator.sort((Object o1, Object o2) -> {
 
                 Address address1 = (Address) o1;
                 Address address2 = (Address) o2;
 
-                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+                int result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+
+                if (result == 0) {
+                    result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+                }
+
+                if (result == 0) {
+                    if (address1.getCompany() == null && address1.getCompany() == null) {
+                        result = 0;
+                    } else if (address1.getCompany() == null) {
+                        result = 1;
+                    } else if (address2.getCompany() == null) {
+                        result = -1;
+                    } else {
+                        result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+                    }
+                }
+
+                if (result == 0){
+                    result = Integer.compare(address1.getId(), address2.getId());
+                }
+
+                return result;
             });
 
-            for (int i = pageNumber * resultsPerPage, r = 0; r < addressesFromDb.size(); i++, r++) {
+            for (int i = pageNumber * resultsPerPage, r = 0; r < addressesSortedWithDatabase.size(); i++, r++) {
 
-                assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addresses.get(i), addressesFromDb.get(r));
+                assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage + " - ComparedId: " + addressesSortedWithComparator.get(i).getId() + ", DatabaseId: " + addressesSortedWithDatabase.get(r).getId(), addressesSortedWithComparator.get(i), addressesSortedWithDatabase.get(r));
 
             }
         }
