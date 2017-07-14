@@ -7,6 +7,9 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
+import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -130,7 +133,7 @@ public class AddressDaoPostgresImplTest {
         Address address = addressGenerator();
         addressDao.create(address);
 
-        List<Address> list = addressDao.list(null, null);
+        List<Address> list = addressDao.list(null);
 
         assertEquals(list.size(), addressDao.size());
 
@@ -149,26 +152,26 @@ public class AddressDaoPostgresImplTest {
         address.setLastName(lastName);
         addressDao.create(address);
 
-        List<Address> result = addressDao.searchByLastName(lastName);
+        List<Address> result = addressDao.searchByLastName(lastName, null);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
 
-        result = addressDao.searchByLastName(lastName.toLowerCase());
+        result = addressDao.searchByLastName(lastName.toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByLastName(lastName.toUpperCase());
+        result = addressDao.searchByLastName(lastName.toUpperCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByLastName(lastName.substring(5));
+        result = addressDao.searchByLastName(lastName.substring(5), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByLastName(lastName.substring(5, 20));
+        result = addressDao.searchByLastName(lastName.substring(5, 20), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByLastName(lastName.substring(5, 20).toLowerCase());
+        result = addressDao.searchByLastName(lastName.substring(5, 20).toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByLastName(lastName.substring(5, 20).toUpperCase());
+        result = addressDao.searchByLastName(lastName.substring(5, 20).toUpperCase(), null);
         assertTrue(result.contains(address));
 
     }
@@ -186,26 +189,26 @@ public class AddressDaoPostgresImplTest {
         address.setFirstName(firstName);
         addressDao.create(address);
 
-        List<Address> result = addressDao.searchByFirstName(firstName);
+        List<Address> result = addressDao.searchByFirstName(firstName, null);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
 
-        result = addressDao.searchByFirstName(firstName.toLowerCase());
+        result = addressDao.searchByFirstName(firstName.toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFirstName(firstName.toUpperCase());
+        result = addressDao.searchByFirstName(firstName.toUpperCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFirstName(firstName.substring(5));
+        result = addressDao.searchByFirstName(firstName.substring(5), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFirstName(firstName.substring(5, 20));
+        result = addressDao.searchByFirstName(firstName.substring(5, 20), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFirstName(firstName.substring(5, 20).toLowerCase());
+        result = addressDao.searchByFirstName(firstName.substring(5, 20).toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFirstName(firstName.substring(5, 20).toUpperCase());
+        result = addressDao.searchByFirstName(firstName.substring(5, 20).toUpperCase(), null);
         assertTrue(result.contains(address));
 
     }
@@ -227,26 +230,26 @@ public class AddressDaoPostgresImplTest {
         address.setLastName(lastName);
         address = addressDao.create(address);
 
-        List<Address> result = addressDao.searchByFullName(fullName);
+        List<Address> result = addressDao.searchByFullName(fullName, null);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
 
-        result = addressDao.searchByFullName(fullName.toLowerCase());
+        result = addressDao.searchByFullName(fullName.toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFullName(fullName.toUpperCase());
+        result = addressDao.searchByFullName(fullName.toUpperCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFullName(fullName.substring(5));
+        result = addressDao.searchByFullName(fullName.substring(5), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFullName(fullName.substring(5, 20));
+        result = addressDao.searchByFullName(fullName.substring(5, 20), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFullName(fullName.substring(5, 20).toLowerCase());
+        result = addressDao.searchByFullName(fullName.substring(5, 20).toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByFullName(fullName.substring(5, 20).toUpperCase());
+        result = addressDao.searchByFullName(fullName.substring(5, 20).toUpperCase(), null);
         assertTrue(result.contains(address));
 
     }
@@ -264,26 +267,26 @@ public class AddressDaoPostgresImplTest {
         address.setCompany(company);
         addressDao.create(address);
 
-        List<Address> result = addressDao.searchByCompany(company);
+        List<Address> result = addressDao.searchByCompany(company, null);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
 
-        result = addressDao.searchByCompany(company.toLowerCase());
+        result = addressDao.searchByCompany(company.toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCompany(company.toUpperCase());
+        result = addressDao.searchByCompany(company.toUpperCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCompany(company.substring(5));
+        result = addressDao.searchByCompany(company.substring(5), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCompany(company.substring(5, 20));
+        result = addressDao.searchByCompany(company.substring(5, 20), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCompany(company.substring(5, 20).toLowerCase());
+        result = addressDao.searchByCompany(company.substring(5, 20).toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCompany(company.substring(5, 20).toUpperCase());
+        result = addressDao.searchByCompany(company.substring(5, 20).toUpperCase(), null);
         assertTrue(result.contains(address));
 
     }
@@ -300,26 +303,26 @@ public class AddressDaoPostgresImplTest {
         address.setCity(city);
         addressDao.create(address);
 
-        List<Address> result = addressDao.searchByCity(city);
+        List<Address> result = addressDao.searchByCity(city, null);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
 
-        result = addressDao.searchByCity(city.toLowerCase());
+        result = addressDao.searchByCity(city.toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCity(city.toUpperCase());
+        result = addressDao.searchByCity(city.toUpperCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCity(city.substring(5));
+        result = addressDao.searchByCity(city.substring(5), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCity(city.substring(5, 20));
+        result = addressDao.searchByCity(city.substring(5, 20), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCity(city.substring(5, 20).toLowerCase());
+        result = addressDao.searchByCity(city.substring(5, 20).toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByCity(city.substring(5, 20).toUpperCase());
+        result = addressDao.searchByCity(city.substring(5, 20).toUpperCase(), null);
         assertTrue(result.contains(address));
 
     }
@@ -337,26 +340,26 @@ public class AddressDaoPostgresImplTest {
         address.setState(state);
         addressDao.create(address);
 
-        List<Address> result = addressDao.searchByState(state);
+        List<Address> result = addressDao.searchByState(state, null);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
 
-        result = addressDao.searchByState(state.toLowerCase());
+        result = addressDao.searchByState(state.toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByState(state.toUpperCase());
+        result = addressDao.searchByState(state.toUpperCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByState(state.substring(5));
+        result = addressDao.searchByState(state.substring(5), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByState(state.substring(5, 20));
+        result = addressDao.searchByState(state.substring(5, 20), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByState(state.substring(5, 20).toLowerCase());
+        result = addressDao.searchByState(state.substring(5, 20).toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByState(state.substring(5, 20).toUpperCase());
+        result = addressDao.searchByState(state.substring(5, 20).toUpperCase(), null);
         assertTrue(result.contains(address));
     }
 
@@ -373,26 +376,26 @@ public class AddressDaoPostgresImplTest {
         address.setZip(zip);
         addressDao.create(address);
 
-        List<Address> result = addressDao.searchByZip(zip);
+        List<Address> result = addressDao.searchByZip(zip, null);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
 
-        result = addressDao.searchByZip(zip.toLowerCase());
+        result = addressDao.searchByZip(zip.toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByZip(zip.toUpperCase());
+        result = addressDao.searchByZip(zip.toUpperCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByZip(zip.substring(5));
+        result = addressDao.searchByZip(zip.substring(5), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByZip(zip.substring(5, 20));
+        result = addressDao.searchByZip(zip.substring(5, 20), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByZip(zip.substring(5, 20).toLowerCase());
+        result = addressDao.searchByZip(zip.substring(5, 20).toLowerCase(), null);
         assertTrue(result.contains(address));
 
-        result = addressDao.searchByZip(zip.substring(5, 20).toUpperCase());
+        result = addressDao.searchByZip(zip.substring(5, 20).toUpperCase(), null);
         assertTrue(result.contains(address));
 
     }
@@ -415,31 +418,39 @@ public class AddressDaoPostgresImplTest {
         Integer page = 0;
         Integer resultsPerPage = 20;
 
-        List<Address> result = addressDao.search(queryString, searchOption, page, resultsPerPage);
+        List<Address> result = addressDao.search(new AddressSearchRequest(queryString, searchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID, page, resultsPerPage));
 
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
 
-        List<Address> resultEmpty = addressDao.search(queryString, wrongSearchOption, page, resultsPerPage);
+        List<Address> resultEmpty = addressDao.search(new AddressSearchRequest(queryString, wrongSearchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID, page, resultsPerPage));
         assertTrue(resultEmpty.isEmpty());
         assertEquals(resultEmpty.size(), 0);
 
-        result = addressDao.search(queryString.toLowerCase(), searchOption, page, resultsPerPage);
+        result = addressDao.search(new AddressSearchRequest(queryString.toLowerCase(), searchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID, page, resultsPerPage));
         assertTrue(result.contains(address));
 
-        result = addressDao.search(queryString.toUpperCase(), searchOption, page, resultsPerPage);
+        result = addressDao.search(new AddressSearchRequest(queryString.toUpperCase(), searchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID,  page, resultsPerPage));
         assertTrue(result.contains(address));
 
-        result = addressDao.search(queryString.substring(5), searchOption, page, resultsPerPage);
+        result = addressDao.search(new AddressSearchRequest(queryString.substring(5), searchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID,  page, resultsPerPage));
         assertTrue(result.contains(address));
 
-        result = addressDao.search(queryString.substring(5, 20), searchOption, page, resultsPerPage);
+        result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20), searchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID,  page, resultsPerPage));
         assertTrue(result.contains(address));
 
-        result = addressDao.search(queryString.substring(5, 20).toLowerCase(), searchOption, page, resultsPerPage);
+        result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20).toLowerCase(), searchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID,  page, resultsPerPage));
         assertTrue(result.contains(address));
 
-        result = addressDao.search(queryString.substring(5, 20).toUpperCase(), searchOption, page, resultsPerPage);
+        result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20).toUpperCase(), searchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID,  page, resultsPerPage));
         assertTrue(result.contains(address));
 
     }
@@ -498,6 +509,7 @@ public class AddressDaoPostgresImplTest {
                 case ZIP:
                     queryString = address.getZip();
                     break;
+                
             }
 
             address = addressDao.create(address);
@@ -505,7 +517,8 @@ public class AddressDaoPostgresImplTest {
             Integer page = 0;
             Integer resultsPerPage = 20;
 
-            List<Address> result = addressDao.search(queryString, searchOption, page, resultsPerPage);
+            List<Address> result = addressDao.search(new AddressSearchRequest(queryString, searchOption),
+                                                    new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
 
             assertEquals(searchOption.name() + ": " + queryString + "\t "
                     + result.stream()
@@ -517,22 +530,22 @@ public class AddressDaoPostgresImplTest {
 
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.toLowerCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.toLowerCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.toUpperCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.toUpperCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5, 20), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5, 20).toLowerCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20).toLowerCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5, 20).toUpperCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20).toUpperCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
         }
     }
@@ -599,7 +612,7 @@ public class AddressDaoPostgresImplTest {
 
             Integer resultsPerPage = Math.abs(random.nextInt());
 
-            List<Address> result = addressDao.search(queryString, searchOption, 0, resultsPerPage);
+            List<Address> result = addressDao.search(new AddressSearchRequest(queryString, searchOption), new ResultProperties(null, 0, resultsPerPage));
 
             assertEquals(searchOption.name() + ": " + queryString + "\t "
                     + result.stream()
@@ -613,12 +626,12 @@ public class AddressDaoPostgresImplTest {
 
             Integer page = 0;
 
-            result = addressDao.search(queryString.toLowerCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.toLowerCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
 
             List<Address> additionalPages = new ArrayList();
             while (!additionalPages.isEmpty()) {
                 page++;
-                additionalPages = addressDao.search(queryString.toLowerCase(), searchOption, page, resultsPerPage);
+                additionalPages = addressDao.search(new AddressSearchRequest(queryString.toLowerCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
                 result.addAll(additionalPages);
                 assertTrue(additionalPages.size() <= resultsPerPage);
             }
@@ -627,12 +640,12 @@ public class AddressDaoPostgresImplTest {
 
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.toUpperCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.toUpperCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
 
             additionalPages.clear();
             while (!additionalPages.isEmpty()) {
                 page++;
-                additionalPages = addressDao.search(queryString.toUpperCase(), searchOption, page, resultsPerPage);
+                additionalPages = addressDao.search(new AddressSearchRequest(queryString.toUpperCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
                 result.addAll(additionalPages);
                 assertTrue(additionalPages.size() <= resultsPerPage);
             }
@@ -641,19 +654,19 @@ public class AddressDaoPostgresImplTest {
 
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
             assertTrue(result.size() <= resultsPerPage);
 
-            result = addressDao.search(queryString.substring(5, 20), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
             assertTrue(result.size() <= resultsPerPage);
 
-            result = addressDao.search(queryString.substring(5, 20).toLowerCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20).toLowerCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
             assertTrue(result.size() <= resultsPerPage);
 
-            result = addressDao.search(queryString.substring(5, 20).toUpperCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20).toUpperCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
             assertTrue(result.size() <= resultsPerPage);
         }
@@ -721,7 +734,7 @@ public class AddressDaoPostgresImplTest {
             Integer resultsPerPage = null;
             Integer page = null;
 
-            List<Address> result = addressDao.search(queryString, searchOption, page, resultsPerPage);
+            List<Address> result = addressDao.search(new AddressSearchRequest(queryString, searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
 
             assertEquals(searchOption.name() + ": " + queryString + "\t "
                     + result.stream()
@@ -733,22 +746,22 @@ public class AddressDaoPostgresImplTest {
 
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.toLowerCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.toLowerCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.toUpperCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.toUpperCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5, 20), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5, 20).toLowerCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20).toLowerCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
 
-            result = addressDao.search(queryString.substring(5, 20).toUpperCase(), searchOption, page, resultsPerPage);
+            result = addressDao.search(new AddressSearchRequest(queryString.substring(5, 20).toUpperCase(), searchOption), new ResultProperties(AddressSortByEnum.SORT_BY_ID,   page, resultsPerPage));
             assertTrue(result.contains(address));
         }
     }
@@ -826,8 +839,8 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByName() {
-        List<Address> addresses = addressDao.list(null, null);
-        List<Address> addressesFromDb = addressDao.list(null, null);
+        List<Address> addresses = addressDao.list(null);
+        List<Address> addressesFromDb = addressDao.list(null);
 
         addresses.sort((Object o1, Object o2) -> {
 
@@ -846,8 +859,8 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByNameUsingSortByParam() {
-        List<Address> addresses = addressDao.list(null, null);
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", null, null);
+        List<Address> addresses = addressDao.list(null);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), null, null));
 
         addresses.sort((Object o1, Object o2) -> {
 
@@ -866,8 +879,8 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByNameUsingSortByParamAndPagination() {
-        List<Address> addresses = addressDao.list(null, null);
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", 0, 20);
+        List<Address> addresses = addressDao.list(null);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), 0, 20));
 
         assertEquals(addressesFromDb.size(), 20);
 
@@ -888,9 +901,9 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByNameUsingSortByParamAndPagination1() {
-        List<Address> addresses = addressDao.list(null, null);
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", 0, 20);
-        List<Address> addressesFromDb2 = addressDao.getAddressesSortedByParameter("last_name", 1, 20);
+        List<Address> addresses = addressDao.list(null);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), 0, 20));
+        List<Address> addressesFromDb2 = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), 1, 20));
 
         addressesFromDb.addAll(addressesFromDb2);
 
@@ -913,11 +926,11 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByNameUsingSortByParamAndPaginationWithOverflow() {
-        List<Address> addresses = addressDao.list(null, null);
+        List<Address> addresses = addressDao.list(null);
 
         int size = addresses.size();
 
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", 0, size + 10);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), 0, size + 10));
 
         assertEquals(addressesFromDb.size(), size);
 
@@ -938,19 +951,19 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByNameUsingSortByParamAndPaginationWithOverflow2() {
-        List<Address> addresses = addressDao.list(null, null);
+        List<Address> addresses = addressDao.list(null);
 
         int size = addresses.size();
         int pages = size / 50;
 
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", pages + 1, 50);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), pages + 1, 50));
 
         assertEquals(addressesFromDb.size(), 0);
     }
 
     @Test
     public void getSortedByNameUsingSortByParamAndPaginationWithUnderflow() {
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", 1, 0);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), 1, 0));
 
         assertEquals(addressesFromDb.size(), 0);
     }
@@ -963,8 +976,8 @@ public class AddressDaoPostgresImplTest {
             int pageNumber = random.nextInt();
             int resultsPerPage = random.nextInt();
 
-            List<Address> addresses = addressDao.list(null, null);
-            List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name", pageNumber, resultsPerPage);
+            List<Address> addresses = addressDao.list(null);
+            List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), pageNumber, resultsPerPage));
 
             assertTrue(addressesFromDb.size() <= addresses.size());
 
@@ -1001,8 +1014,8 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByIdUsingSortByParam() {
-        List<Address> addresses = addressDao.list(AddressDao.SORT_BY_ID, null, null);
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("id", null, null);
+        List<Address> addresses = addressDao.list(new ResultProperties(AddressSortByEnum.SORT_BY_ID, null, null));
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("id"), null, null));
 
         for (int i = 0; i < addresses.size(); i++) {
 
