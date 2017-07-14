@@ -496,22 +496,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     break;
             }
 
-            if (resultProperties != null) {
-                if (resultProperties.getPageNumber() != null && resultProperties.getResultsPerPage() != null) {
-                    int startIndex = resultProperties.getPageNumber() * resultProperties.getResultsPerPage();
-                    int endIndex = startIndex + resultProperties.getResultsPerPage();
-
-                    if (addresses.size() > startIndex) {
-                        if (addresses.size() < endIndex) {
-                            endIndex = addresses.size();
-                        }
-
-                        addresses = addresses.subList(startIndex, endIndex);
-                    } else {
-                        addresses.clear();
-                    }
-                }
-            }
         }
         return addresses;
     }
