@@ -11,6 +11,7 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -930,25 +931,19 @@ public class AddressDaoPostgresImplTest {
 
     @Test
     public void getSortedByNameUsingSortByParamAndPaginationWithOverflow() {
-        List<Address> addresses = addressDao.list(null);
+        List<Address> addressesSortedWithComparator = addressDao.list(null);
 
-        int size = addresses.size();
+        int size = addressesSortedWithComparator.size();
 
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), 0, size + 10));
+        List<Address> addressesSortedWithDatabase = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), 0, size + 10));
 
-        assertEquals(addressesFromDb.size(), size);
+        assertEquals(addressesSortedWithDatabase.size(), size);
 
-        addresses.sort((Object o1, Object o2) -> {
+        addressesSortedWithComparator.sort(sortByLastName());
 
-            Address address1 = (Address) o1;
-            Address address2 = (Address) o2;
+        for (int i = 0; i < addressesSortedWithDatabase.size(); i++) {
 
-            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-        });
-
-        for (int i = 0; i < addressesFromDb.size(); i++) {
-
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
+            assertEquals("One Page, Oversized Result Param - ComparedId: " + addressesSortedWithComparator.get(i).getId() + ", DatabaseId: " + addressesSortedWithDatabase.get(i).getId(), addressesSortedWithComparator.get(i), addressesSortedWithDatabase.get(i));
 
         }
     }
@@ -1000,35 +995,7 @@ public class AddressDaoPostgresImplTest {
                 resultsPerPage = 0;
             }
 
-            addressesSortedWithComparator.sort((Object o1, Object o2) -> {
-
-                Address address1 = (Address) o1;
-                Address address2 = (Address) o2;
-
-                int result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-
-                if (result == 0) {
-                    result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
-                }
-
-                if (result == 0) {
-                    if (address1.getCompany() == null && address1.getCompany() == null) {
-                        result = 0;
-                    } else if (address1.getCompany() == null) {
-                        result = 1;
-                    } else if (address2.getCompany() == null) {
-                        result = -1;
-                    } else {
-                        result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
-                    }
-                }
-
-                if (result == 0){
-                    result = Integer.compare(address1.getId(), address2.getId());
-                }
-
-                return result;
-            });
+            addressesSortedWithComparator.sort(sortByLastName());
 
             for (int i = pageNumber * resultsPerPage, r = 0; r < addressesSortedWithDatabase.size(); i++, r++) {
 
@@ -1036,6 +1003,38 @@ public class AddressDaoPostgresImplTest {
 
             }
         }
+    }
+
+    private static Comparator<Object> sortByLastName() {
+        return (Object o1, Object o2) -> {
+            
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+            
+            int result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+            
+            if (result == 0) {
+                result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+            }
+            
+            if (result == 0) {
+                if (address1.getCompany() == null && address1.getCompany() == null) {
+                    result = 0;
+                } else if (address1.getCompany() == null) {
+                    result = 1;
+                } else if (address2.getCompany() == null) {
+                    result = -1;
+                } else {
+                    result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+                }
+            }
+            
+            if (result == 0){
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+            
+            return result;
+        };
     }
 
     @Test
