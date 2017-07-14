@@ -213,6 +213,176 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_COUNT, Integer.class);
     }
 
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE first_name = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByFirstName(String firstName, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_FIRST_NAME, resultProperties), new AddressMapper(), firstName, firstName, firstName + "%", "%" + firstName + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE last_name = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByLastName(String lastName, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_LAST_NAME, resultProperties), new AddressMapper(), lastName, lastName, lastName + "%", "%" + lastName + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_CITY_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE city = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(city) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(city) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(city) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByCity(String city, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_CITY_NAME, resultProperties), new AddressMapper(), city, city, city + "%", "%" + city + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE company = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(company) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(company) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(company) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByCompany(String company, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_COMPANY_NAME, resultProperties), new AddressMapper(), company, company, company + "%", "%" + company + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STATE_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE state = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(state) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(state) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(state) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByState(String state, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STATE_NAME, resultProperties), new AddressMapper(), state, state, state + "%", "%" + state + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_ZIP_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE zip = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(zip) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(zip) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(zip) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByZip(String zip, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_ZIP_NAME, resultProperties), new AddressMapper(), zip, zip, zip + "%", "%" + zip + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS = "WITH firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', street_number, street_name) = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByStreetAddress(String streetAddress, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS, resultProperties), new AddressMapper(), streetAddress, streetAddress, streetAddress + "%", "%" + streetAddress + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "WITH firstQuery AS (SELECT id FROM addresses WHERE street_number = ?),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByStreetNumber(String streetNumber, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, resultProperties), new AddressMapper(), streetNumber, streetNumber, streetNumber + "%", "%" + streetNumber + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_NAME = "WITH firstQueryInput AS (SELECT ?),"
+            + " firstQueryInputLower AS (SELECT LOWER(firstQueryInput)),"
+            + " secondQueryInput AS (SELECT LOWER(?)),"
+            + " thirdQueryInput AS (SELECT LOWER(?)),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE firstQueryInput = first_name OR firstQueryInput = last_name OR firstQueryInput = CONCAT_WS(' ', first_name, last_name)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE firstQueryInputLower = LOWER(first_name) OR firstQueryInputLower = LOWER(last_name) OR firstQueryInputLower = LOWER(CONCAT_WS(' ', first_name, last_name))),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE secondQueryInput LIKE LOWER(first_name) OR secondQueryInput LIKE LOWER(last_name) OR secondQueryInput LIKE LOWER(CONCAT_WS(' ', first_name, last_name))), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE thirdQueryInput LIKE LOWER(first_name) OR thirdQueryInput LIKE LOWER(last_name) OR thirdQueryInput LIKE LOWER(CONCAT_WS(' ', first_name, last_name))) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByName(String name, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_NAME, resultProperties), new AddressMapper(), name, name + "%", "%" + name + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET = "WITH firstQueryInput AS (SELECT ?),"
+            + " firstQueryInputLower AS (SELECT LOWER(firstQueryInput)),"
+            + " secondQueryInput AS (SELECT LOWER(?)),"
+            + " thirdQueryInput AS (SELECT LOWER(?)),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE firstQueryInput = street_number OR firstQueryInput = street_name OR firstQueryInput = CONCAT_WS(' ', street_number, street_name)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE firstQueryInputLower = LOWER(street_number) OR firstQueryInputLower = LOWER(street_name) OR firstQueryInputLower = LOWER(CONCAT_WS(' ', street_number, street_name))),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE secondQueryInput LIKE LOWER(street_number) OR secondQueryInput LIKE LOWER(street_name) OR secondQueryInput LIKE LOWER(CONCAT_WS(' ', street_number, street_name))), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE thirdQueryInput LIKE LOWER(street_number) OR thirdQueryInput LIKE LOWER(street_name) OR thirdQueryInput LIKE LOWER(CONCAT_WS(' ', street_number, street_name))) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByStreet(String street, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET, resultProperties), new AddressMapper(), street, street + "%", "%" + street + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY = "WITH firstQueryInput AS (SELECT ?),"
+            + " firstQueryInputLower AS (SELECT LOWER(firstQueryInput)),"
+            + " secondQueryInput AS (SELECT LOWER(?)),"
+            + " thirdQueryInput AS (SELECT LOWER(?)),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE firstQueryInput = first_name OR firstQueryInput = last_name OR firstQueryInput = CONCAT_WS(' ', first_name, last_name) OR firstQueryInput = company),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE firstQueryInputLower = LOWER(first_name) OR firstQueryInputLower = LOWER(last_name) OR firstQueryInputLower = LOWER(CONCAT_WS(' ', first_name, last_name)) OR firstQueryInputLower = LOWER(company)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE secondQueryInput LIKE LOWER(first_name) OR secondQueryInput LIKE LOWER(last_name) OR secondQueryInput LIKE LOWER(CONCAT_WS(' ', first_name, last_name)) OR secondQueryInput LIKE LOWER(company)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE thirdQueryInput LIKE LOWER(first_name) OR thirdQueryInput LIKE LOWER(last_name) OR thirdQueryInput LIKE LOWER(CONCAT_WS(' ', first_name, last_name))) OR thirdQueryInput LIKE LOWER(company) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByNameOrCompany(String input, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY, resultProperties), new AddressMapper(), input, input + "%", "%" + input + "%");
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_ALL = "WITH firstQueryInput AS (SELECT ?),"
+            + " firstQueryInputLower AS (SELECT LOWER(firstQueryInput)),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE firstQueryInput IN (last_name, first_name, company, street_number, street_name, city, state, zip, CONCAT_WS(' ', first_name, last_name), CONCAT_WS(' ', street_number, street_name))),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE firstQueryInputLower IN (LOWER(last_name), LOWER(first_name), LOWER(company), LOWER(street_number), LOWER(street_name), LOWER(city), LOWER(state), LOWER(zip), LOWER(CONCAT_WS(' ', first_name, last_name)), LOWER(CONCAT_WS(' ', street_number, street_name)))),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE LOWER(?)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByAll(String input, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_ALL, resultProperties), new AddressMapper(), input, input + "%", "%" + input + "%");
+
+        return result;
+    }
+
     private static final class AddressMapper implements RowMapper<Address> {
 
         @Override
@@ -263,22 +433,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS = "WITH firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', street_number, street_name) = ?),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) = LOWER(?)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE LOWER(?)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE LOWER(?)) "
-            + "SELECT * FROM addresses WHERE id IN ("
-            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
-            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
-            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
-            + ")";
-
-    public List<Address> searchByStreetAddress(String input) {
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS, new AddressMapper(), input, input, input + '%', '%' + input + '%');
-
-        return result;
-    }
-
     private static final String SQL_SEARCH_ADDRESS_BASE_QUERY = "WITH firstQuery AS (SELECT id FROM addresses WHERE street_name = ?),"
             + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) = LOWER(?)),"
             + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE LOWER(?)), "
@@ -290,8 +444,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + ")";
 
     public List<Address> searchBase(String streetName, ResultProperties resultProperties) {
-
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties), new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
+        asdf List
+        <Address > result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties), new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
 
         return result;
     }
