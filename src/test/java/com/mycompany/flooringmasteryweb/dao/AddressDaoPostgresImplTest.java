@@ -848,20 +848,6 @@ public class AddressDaoPostgresImplTest {
     }
 
     @Test
-    public void getSortedByName() {
-        List<Address> addresses = addressDao.list(null);
-        List<Address> addressesFromDb = addressDao.list(null);
-
-        addresses.sort(sortByLastName());
-
-        for (int i = 0; i < addresses.size(); i++) {
-
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
-
-        }
-    }
-
-    @Test
     public void getSortedByNameUsingSortByParam() {
         List<Address> addresses = addressDao.list(null);
         List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), null, null));
@@ -906,6 +892,22 @@ public class AddressDaoPostgresImplTest {
         for (int i = 0; i < addressesFromDb.size(); i++) {
 
             assertEquals(addresses.get(i), addressesFromDb.get(i));
+
+        }
+    }
+
+    @Test
+    public void getSortedByNameUsingSortByParamAndPaginationUsingOffset() {
+        List<Address> addresses = addressDao.list(null);
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), 1, 30));
+
+        assertEquals(addressesFromDb.size(), 30);
+
+        addresses.sort(sortByLastName());
+
+        for (int i = 0, r = 30; i < addressesFromDb.size(); i++, r++) {
+
+            assertEquals(addresses.get(r), addressesFromDb.get(i));
 
         }
     }
