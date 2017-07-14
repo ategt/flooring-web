@@ -564,6 +564,9 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     private String sortAndPaginateQuery(String query, ResultProperties resultProperties) {
+        if (resultProperties == null) {
+            return query;
+        }
         return sortAndPaginateQuery(query, resultProperties.getSortByEnum(), resultProperties.getPageNumber(), resultProperties.getResultsPerPage());
     }
 }
