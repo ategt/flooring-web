@@ -455,6 +455,11 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return list(resultProperties);
     }
 
+    @Override
+    public List<Address> search(AddressSearchRequest searchRequest, ResultProperties resultProperties){
+        return search(searchRequest.getSearchText(), searchRequest.searchBy(), resultProperties);
+    }
+    
     public List<Address> search(String queryString,
             AddressSearchByOptionEnum searchOption,
             ResultProperties resultProperties) {
