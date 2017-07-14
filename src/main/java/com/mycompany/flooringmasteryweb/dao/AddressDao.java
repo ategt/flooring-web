@@ -8,6 +8,7 @@ package com.mycompany.flooringmasteryweb.dao;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
+import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import java.util.List;
 import java.util.Set;
 
@@ -26,10 +27,10 @@ public interface AddressDao {
 
     public int size();
     
-    public List<Address> getAddressesSortedByParameter(AddressSortByEnum sortBy, Integer page, Integer resultsPerPage);
+    public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties);
     public Set<String> getCompletionGuesses(String input, int limit);
     public List<Address> list(Integer page, Integer resultsPerPage);
-    public List<Address> list(AddressSortByEnum sortBy, Integer page, Integer resultsPerPage);
+    public List<Address> list(ResultProperties resultProperties);
     public List<Address> searchByFirstName(String firstName);
     public List<Address> searchByLastName(String lastName);
     public List<Address> searchByFullName(String lastName);
@@ -37,5 +38,5 @@ public interface AddressDao {
     public List<Address> searchByCompany(String company);
     public List<Address> searchByState(String state);
     public List<Address> searchByZip(String zip);
-    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption, Integer page, Integer resultsPerPage, AddressSortByEnum sortByEnum);
+    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption, ResultProperties resultProperties);
 }
