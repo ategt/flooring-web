@@ -15,6 +15,7 @@ import java.util.Optional;
 public enum AddressSearchByOptionEnum {
     LAST_NAME("searchByLastName"),
     FIRST_NAME("searchByFirstName"),
+    FULL_NAME("searchByFullName"),
     CITY("searchByCity"),
     STATE("searchByState"),
     ZIP("searchByZip"),

@@ -31,12 +31,19 @@ public interface AddressDao {
     public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties);
     public Set<String> getCompletionGuesses(String input, int limit);    
     public List<Address> list(ResultProperties resultProperties);
-    public List<Address> searchByFirstName(String firstName);
-    public List<Address> searchByLastName(String lastName);
-    public List<Address> searchByFullName(String lastName);
-    public List<Address> searchByCity(String city);
-    public List<Address> searchByCompany(String company);
-    public List<Address> searchByState(String state);
-    public List<Address> searchByZip(String zip);
+    public List<Address> searchByFirstName(String firstName, ResultProperties resultProperties);
+    public List<Address> searchByLastName(String lastName, ResultProperties resultProperties);
+    public List<Address> searchByFullName(String fullName, ResultProperties resultProperties);
+    public List<Address> searchByCity(String city, ResultProperties resultProperties);
+    public List<Address> searchByCompany(String company, ResultProperties resultProperties);
+    public List<Address> searchByState(String state, ResultProperties resultProperties);
+    public List<Address> searchByZip(String zip, ResultProperties resultProperties);
+    public List<Address> searchByStreetAddress(String streetAddress, ResultProperties resultProperties);
+    public List<Address> searchByStreet(String street, ResultProperties resultProperties);
+    public List<Address> searchByStreetName(String streetName, ResultProperties resultProperties);
+    public List<Address> searchByStreetNumber(String streetNumber, ResultProperties resultProperties);
+    public List<Address> searchByName(String name, ResultProperties resultProperties);
+    public List<Address> searchByNameOrCompany(String input, ResultProperties resultProperties);
+    public List<Address> searchByAll(String input, ResultProperties resultProperties);
     public List<Address> search(AddressSearchRequest addressSearchRequest, ResultProperties resultProperties);
 }
