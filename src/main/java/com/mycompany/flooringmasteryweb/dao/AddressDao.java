@@ -7,7 +7,7 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import java.util.List;
 import java.util.Set;
 
@@ -16,11 +16,6 @@ import java.util.Set;
  * @author ATeg
  */
 public interface AddressDao {
-    
-    public static final int SORT_BY_LAST_NAME = 0;
-    public static final int SORT_BY_FIRST_NAME = 1;
-    public static final int SORT_BY_COMPANY = 2;
-    public static final int SORT_BY_ID = 3;
     
     public Address create(Address address);
     public void update(Address address);
@@ -31,10 +26,10 @@ public interface AddressDao {
 
     public int size();
     
-    public List<Address> getAddressesSortedByParameter(String sortBy, Integer page, Integer resultsPerPage);
+    public List<Address> getAddressesSortedByParameter(AddressSortByEnum sortBy, Integer page, Integer resultsPerPage);
     public Set<String> getCompletionGuesses(String input, int limit);
     public List<Address> list(Integer page, Integer resultsPerPage);
-    public List<Address> list(Integer sortBy, Integer page, Integer resultsPerPage);
+    public List<Address> list(AddressSortByEnum sortBy, Integer page, Integer resultsPerPage);
     public List<Address> searchByFirstName(String firstName);
     public List<Address> searchByLastName(String lastName);
     public List<Address> searchByFullName(String lastName);
@@ -42,5 +37,5 @@ public interface AddressDao {
     public List<Address> searchByCompany(String company);
     public List<Address> searchByState(String state);
     public List<Address> searchByZip(String zip);
-    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption, Integer page, Integer resultsPerPage);
+    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption, Integer page, Integer resultsPerPage, AddressSortByEnum sortByEnum);
 }

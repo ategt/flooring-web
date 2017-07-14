@@ -658,6 +658,100 @@ public class AddressDaoPostgresImplTest {
             assertTrue(result.size() <= resultsPerPage);
         }
     }
+    /**
+     * Test of searchByZip method, of class AddressDaoPostgresImpl.
+     */
+    @Test
+    public void testSearchByEverythingParamWithNullNumbers() {
+        System.out.println("searchByEverything By Param");
+
+        Random random = new Random();
+
+        AddressSearchByOptionEnum[] searchOptionEnum = AddressSearchByOptionEnum.values();
+        for (AddressSearchByOptionEnum searchOption : searchOptionEnum) {
+
+            Address address = addressGenerator();
+
+            String queryString = null;
+
+            switch (searchOption) {
+                case ALL:
+                    queryString = address.getFirstName();
+                    break;
+                case CITY:
+                    queryString = address.getCity();
+                    break;
+                case COMPANY:
+                    queryString = address.getCompany();
+                    break;
+                case DEFAULT:
+                    queryString = address.getFirstName();
+                    break;
+                case FIRST_NAME:
+                    queryString = address.getFirstName();
+                    break;
+                case LAST_NAME:
+                    queryString = address.getLastName();
+                    break;
+                case NAME:
+                    queryString = address.getFirstName() + " " + address.getLastName();
+                    break;
+                case NAME_OR_COMPANY:
+                    queryString = address.getCompany();
+                    break;
+                case STATE:
+                    queryString = address.getState();
+                    break;
+                case STREET:
+                    queryString = address.getStreetNumber() + " " + address.getStreetName();
+                    break;
+                case STREET_NAME:
+                    queryString = address.getStreetName();
+                    break;
+                case STREET_NUMBER:
+                    queryString = address.getStreetNumber();
+                    break;
+                case ZIP:
+                    queryString = address.getZip();
+                    break;
+            }
+
+            address = addressDao.create(address);
+
+            Integer resultsPerPage = null;
+            Integer page = null;
+
+            List<Address> result = addressDao.search(queryString, searchOption, page, resultsPerPage);
+
+            assertEquals(searchOption.name() + ": " + queryString + "\t "
+                    + result.stream()
+                            .map(Address::getId)
+                            .map(id -> id + ", ")
+                            .collect(StringBuffer::new, StringBuffer::append, StringBuffer::append),
+                    result.size(),
+                    1);
+
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(queryString.toLowerCase(), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(queryString.toUpperCase(), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(queryString.substring(5), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(queryString.substring(5, 20), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(queryString.substring(5, 20).toLowerCase(), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(queryString.substring(5, 20).toUpperCase(), searchOption, page, resultsPerPage);
+            assertTrue(result.contains(address));
+        }
+    }
 
     @Test
     public void testGetWithString() {

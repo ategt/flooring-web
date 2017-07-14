@@ -8,6 +8,7 @@ package com.mycompany.flooringmasteryweb.dao;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *";
     private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id =?";
     private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC";
+    private static final String SQL_GET_ADDRESS_LIST = "SELECT * FROM addresses";
     private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC";
     private static final String SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME = "SELECT * FROM addresses ORDER BY first_name ASC, last_name ASC, company ASC, id ASC";
     private static final String SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY = "SELECT * FROM addresses ORDER BY company ASC, last_name ASC, first_name ASC, id ASC";
@@ -44,11 +46,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
-    public static final int SORT_BY_LAST_NAME = 0;
-    public static final int SORT_BY_FIRST_NAME = 1;
-    public static final int SORT_BY_COMPANY = 2;
-    public static final int SORT_BY_ID = 3;
-
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -56,6 +53,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
+    @Override
     public Address create(Address address) {
 
         if (address == null) {
@@ -200,22 +198,12 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> list(Integer page, Integer resultsPerPage) {
-        return list(SORT_BY_LAST_NAME, page, resultsPerPage);
+        return list(AddressSortByEnum.SORT_BY_LAST_NAME, page, resultsPerPage);
     }
 
     @Override
-    public List<Address> list(Integer sortBy, Integer page, Integer resultsPerPage) {
-        switch (sortBy) {
-            case SORT_BY_COMPANY:
-                return jdbcTemplate.query(paginateQuery(SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY, page, resultsPerPage), new AddressMapper());
-            case SORT_BY_FIRST_NAME:
-                return jdbcTemplate.query(paginateQuery(SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME, page, resultsPerPage), new AddressMapper());
-            case SORT_BY_ID:
-                return jdbcTemplate.query(paginateQuery(SQL_GET_ADDRESS_LIST_SORT_BY_ID, page, resultsPerPage), new AddressMapper());
-            case SORT_BY_LAST_NAME:
-            default:
-                return jdbcTemplate.query(paginateQuery(SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME, page, resultsPerPage), new AddressMapper());
-        }
+    public List<Address> list(AddressSortByEnum sortByEnum, Integer page, Integer resultsPerPage) {
+        return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ADDRESS_LIST, sortByEnum, page, resultsPerPage), new AddressMapper());
     }
 
     @Override
@@ -331,7 +319,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return result;
     }
-    
+
     private static final String SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS = "WITH firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', street_number, street_name) = ?),"
             + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) = LOWER(?)),"
             + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE LOWER(?)), "
@@ -341,7 +329,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
             + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
             + ")";
-    
+
     public List<Address> searchByStreetAddress(String input) {
         List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS, new AddressMapper(), input, input, input + '%', '%' + input + '%');
 
@@ -463,27 +451,20 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public List<Address> getAddressesSortedByParameter(String sortBy, Integer page, Integer resultsPerPage) {
-        List<Address> addresses;
-        if (sortBy.equalsIgnoreCase("company")) {
-            addresses = list(AddressDao.SORT_BY_COMPANY, page, resultsPerPage);
-        } else if (sortBy.equalsIgnoreCase("id")) {
-            addresses = list(AddressDao.SORT_BY_ID, page, resultsPerPage);
-        } else if (sortBy.equalsIgnoreCase("first_name")) {
-            addresses = list(AddressDao.SORT_BY_FIRST_NAME, page, resultsPerPage);
-        } else if (sortBy.equalsIgnoreCase("last_name")) {
-            addresses = list(AddressDao.SORT_BY_LAST_NAME, page, resultsPerPage);
-        } else {
-            addresses = list(page, resultsPerPage);
-        }
-        return addresses;
+    public List<Address> getAddressesSortedByParameter(AddressSortByEnum sortBy, Integer page, Integer resultsPerPage) {        
+        return list(sortBy, page, resultsPerPage);        
     }
 
-    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption, Integer page, Integer resultsPerPage) {
+    public List<Address> search(String queryString,
+            AddressSearchByOptionEnum searchOption,
+            Integer page,
+            Integer resultsPerPage,
+            AddressSortByEnum sortByEnum) {
+
         List<Address> addresses = null;
 
         if (null == searchOption) {
-            addresses = list(page, resultsPerPage);
+            addresses = list(sortByEnum, page, resultsPerPage);
         } else {
             switch (searchOption) {
                 case LAST_NAME:
@@ -532,7 +513,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     addresses = new ArrayList(tempNameCompanyAddresses);
                     break;
                 case ALL:
-                case DEFAULT:                    
+                case DEFAULT:
                     addresses = new ArrayList(getGuesses(queryString));
                     break;
                 default:
@@ -540,17 +521,19 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     break;
             }
 
-            int startIndex = page * resultsPerPage;
-            int endIndex = page * resultsPerPage + resultsPerPage;
+            if (page != null && resultsPerPage != null) {
+                int startIndex = page * resultsPerPage;
+                int endIndex = startIndex + resultsPerPage;
 
-            if (addresses.size() > startIndex) {
-                if (addresses.size() < endIndex) {
-                    endIndex = addresses.size();
+                if (addresses.size() > startIndex) {
+                    if (addresses.size() < endIndex) {
+                        endIndex = addresses.size();
+                    }
+
+                    addresses = addresses.subList(startIndex, endIndex);
+                } else {
+                    addresses.clear();
                 }
-
-                addresses = addresses.subList(startIndex, endIndex);
-            } else {
-                addresses.clear();
             }
         }
         return addresses;
@@ -578,7 +561,44 @@ public class AddressDaoPostgresImpl implements AddressDao {
         stringBuffer.append(offset);
         stringBuffer.append(" LIMIT ");
         stringBuffer.append(resultsPerPage);
-        stringBuffer.append(";");
+
         return stringBuffer.toString();
+    }
+
+    private String sortQuery(String query, AddressSortByEnum sortByEnum) {
+        if (sortByEnum == null) {
+            return query;
+        }
+
+        if (query.contains(";")) {
+            throw new UnsupportedOperationException("Sorting Method can not handle semi-colons(;)");
+        }
+
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append("SELECT * FROM (");
+        stringBuffer.append(query);
+        stringBuffer.append(") AS preSortedQuery");
+
+        switch (sortByEnum) {
+            case SORT_BY_LAST_NAME:
+                stringBuffer.append(" ORDER BY last_name ASC, first_name ASC, company ASC, id ASC");
+                break;
+            case SORT_BY_FIRST_NAME:
+                stringBuffer.append(" ORDER BY first_name ASC, last_name ASC, company ASC, id ASC");
+                break;
+            case SORT_BY_COMPANY:
+                stringBuffer.append(" ORDER BY company ASC, last_name ASC, first_name ASC, id ASC");
+                break;
+            case SORT_BY_ID:
+            default:
+                stringBuffer.append(" ORDER BY id ASC");
+                break;
+        }
+
+        return stringBuffer.toString();
+    }
+
+    private String sortAndPaginateQuery(String query, AddressSortByEnum sortByEnum, Integer page, Integer resultsPerPage) {
+        return paginateQuery(sortQuery(query, sortByEnum), page, resultsPerPage);
     }
 }
