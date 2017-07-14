@@ -852,13 +852,7 @@ public class AddressDaoPostgresImplTest {
         List<Address> addresses = addressDao.list(null);
         List<Address> addressesFromDb = addressDao.list(null);
 
-        addresses.sort((Object o1, Object o2) -> {
-
-            Address address1 = (Address) o1;
-            Address address2 = (Address) o2;
-
-            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-        });
+        addresses.sort(sortByLastName());
 
         for (int i = 0; i < addresses.size(); i++) {
 
@@ -872,13 +866,7 @@ public class AddressDaoPostgresImplTest {
         List<Address> addresses = addressDao.list(null);
         List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), null, null));
 
-        addresses.sort((Object o1, Object o2) -> {
-
-            Address address1 = (Address) o1;
-            Address address2 = (Address) o2;
-
-            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-        });
+        addresses.sort(sortByLastName());
 
         for (int i = 0; i < addresses.size(); i++) {
 
@@ -894,13 +882,7 @@ public class AddressDaoPostgresImplTest {
 
         assertEquals(addressesFromDb.size(), 20);
 
-        addresses.sort((Object o1, Object o2) -> {
-
-            Address address1 = (Address) o1;
-            Address address2 = (Address) o2;
-
-            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-        });
+        addresses.sort(sortByLastName());
 
         for (int i = 0; i < addressesFromDb.size(); i++) {
 
@@ -919,13 +901,7 @@ public class AddressDaoPostgresImplTest {
 
         assertEquals(addressesFromDb.size(), 40);
 
-        addresses.sort((Object o1, Object o2) -> {
-
-            Address address1 = (Address) o1;
-            Address address2 = (Address) o2;
-
-            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-        });
+        addresses.sort(sortByLastName());
 
         for (int i = 0; i < addressesFromDb.size(); i++) {
 
