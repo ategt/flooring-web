@@ -256,9 +256,14 @@ public class AddressController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String blankSearch(@RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            HttpServletResponse response,
             Map model) {
 
-        List<Address> addresses = addressDao.list(page, resultsPerPage);
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+
+        List<Address> addresses = addressDao.list(resultProperties);
 
         model.put("addresses", addresses);
 
@@ -269,10 +274,15 @@ public class AddressController {
     public String show(@PathVariable("id") Integer addressId,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            HttpServletResponse response,
             Map model) {
 
         Address address = addressDao.get(addressId);
-        List<Address> addresses = addressDao.list(page, resultsPerPage);
+
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        List<Address> addresses = addressDao.list(resultProperties);
 
         model.put("address", address);
         model.put("addresses", addresses);

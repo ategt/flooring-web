@@ -27,7 +27,7 @@ public enum AddressSearchByOptionEnum {
     ALL("searchByAll"),
     DEFAULT("searchByAll");
 
-    private String searchString;
+    private String searchString;    
 
     private AddressSearchByOptionEnum(String searchString) {
         this.searchString = searchString;
