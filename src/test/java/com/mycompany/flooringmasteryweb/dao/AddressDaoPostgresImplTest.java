@@ -732,6 +732,9 @@ public class AddressDaoPostgresImplTest {
                 case ZIP:
                     queryString = address.getZip();
                     break;
+                case FULL_NAME:
+                    queryString = address.getFirstName() + " " + address.getLastName();
+                    break;
             }
 
             address = addressDao.create(address);
@@ -1007,16 +1010,16 @@ public class AddressDaoPostgresImplTest {
 
     private static Comparator<Object> sortByLastName() {
         return (Object o1, Object o2) -> {
-            
+
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
-            
+
             int result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-            
+
             if (result == 0) {
                 result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
             }
-            
+
             if (result == 0) {
                 if (address1.getCompany() == null && address1.getCompany() == null) {
                     result = 0;
@@ -1028,11 +1031,11 @@ public class AddressDaoPostgresImplTest {
                     result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
                 }
             }
-            
-            if (result == 0){
+
+            if (result == 0) {
                 result = Integer.compare(address1.getId(), address2.getId());
             }
-            
+
             return result;
         };
     }
