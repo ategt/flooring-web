@@ -43,6 +43,13 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
+    private enum AddressTableColumn {
+        FIRST_NAME("first_name"),
+        LAST_NAME("last_name"),
+        COMPAMY("company"),
+        STREET_NUMBER("street_number")
+    }
+    
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
