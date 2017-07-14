@@ -1835,13 +1835,13 @@ public class AddressSeleneseIT {
             fail("Should have been JSON.");
         }
 
-        List<Address> addresses = Arrays.asList(addressesReturned);
-        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+        List<Address> addressesSortedByComparator = Arrays.asList(addressesReturned);
+        List<Address> addressesSortedByDatabase = Arrays.asList(addressesReturned2);
 
-        addresses.sort(sortByLastName());
+        addressesSortedByComparator.sort(sortByLastName());
 
-        for (int i = 0; i < addresses.size(); i++) {
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        for (int i = 0; i < addressesSortedByComparator.size(); i++) {
+            assertEquals("IDs: " + addressesSortedByComparator.get(i).getId() + ", " + addressesSortedByDatabase.get(i).getId(), addressesSortedByComparator.get(i), addressesSortedByDatabase.get(i));
         }
     }
 

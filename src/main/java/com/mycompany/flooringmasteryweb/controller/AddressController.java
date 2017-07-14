@@ -206,10 +206,10 @@ public class AddressController {
     private AddressSortByEnum updateSortCookie(String sortBy, HttpServletResponse response, String sortCookie) {
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
-        }
-        if (sortCookie != null) {
+        } else if (sortCookie != null) {
             sortBy = sortCookie;
         }
+
         return AddressSortByEnum.parse(sortBy);
     }
 
