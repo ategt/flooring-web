@@ -351,7 +351,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + " firstQuery AS (SELECT id FROM addresses WHERE firstQueryInput = first_name OR firstQueryInput = last_name OR firstQueryInput = CONCAT_WS(' ', first_name, last_name) OR firstQueryInput = company),"
             + " secondQuery AS (SELECT id FROM addresses WHERE firstQueryInputLower = LOWER(first_name) OR firstQueryInputLower = LOWER(last_name) OR firstQueryInputLower = LOWER(CONCAT_WS(' ', first_name, last_name)) OR firstQueryInputLower = LOWER(company)),"
             + " thirdQuery AS (SELECT id FROM addresses WHERE secondQueryInput LIKE LOWER(first_name) OR secondQueryInput LIKE LOWER(last_name) OR secondQueryInput LIKE LOWER(CONCAT_WS(' ', first_name, last_name)) OR secondQueryInput LIKE LOWER(company)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE thirdQueryInput LIKE LOWER(first_name) OR thirdQueryInput LIKE LOWER(last_name) OR thirdQueryInput LIKE LOWER(CONCAT_WS(' ', first_name, last_name))) OR thirdQueryInput LIKE LOWER(company) "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE thirdQueryInput LIKE LOWER(first_name) OR thirdQueryInput LIKE LOWER(last_name) OR thirdQueryInput LIKE LOWER(CONCAT_WS(' ', first_name, last_name)) OR thirdQueryInput LIKE LOWER(company)) "
             + SQL_BASE_SEARCH_QUERY;
 
     @Override
