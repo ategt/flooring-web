@@ -248,12 +248,6 @@ public class AddressController {
         return addresses;
     }
 
-    private List<Address> searchDatabase(AddressSearchRequest searchRequest, Integer page, Integer resultsPerPage, AddressSortByEnum sortBy) {
-        return searchDatabase(searchRequest, new ResultProperties(page,
-                resultsPerPage,
-                sortBy));
-    }
-
     private List<Address> searchDatabase(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
         return addressDao.search(searchRequest,
                 resultProperties);
