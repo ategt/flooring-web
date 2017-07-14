@@ -510,7 +510,9 @@ public class AddressDaoPostgresImplTest {
                 case ZIP:
                     queryString = address.getZip();
                     break;
-
+                case FULL_NAME:
+                    queryString = address.getFirstName() + " " + address.getLastName();
+                    break;
             }
 
             address = addressDao.create(address);
