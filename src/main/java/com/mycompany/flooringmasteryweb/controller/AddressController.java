@@ -11,10 +11,14 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -81,23 +85,27 @@ public class AddressController {
         int totalAddresses = addressDao.size();
         int totalPages = totalAddresses / resultsPerPage;
 
+        String query = request.getQueryString();
+        System.out.println("Old query: " + query);
+        uriComponentsBuilder.query(query);
+        String uri = request.getRequestURI();
+        System.out.println("URI String: " + uri);
+
         boolean displayFirstPage = page > 0;
+        System.out.println("First Page: " + displayFirstPage);
         if (displayFirstPage) {
-            String query = request.getQueryString();
-            System.out.println("Old query: " + query);
-            String firstQuery = uriComponentsBuilder.query(query)
+            String firstQuery = uri + "?" + uriComponentsBuilder
                     .replaceQueryParam("page", 0)
                     .build()
                     .getQuery();
             System.out.println(firstQuery);
             model.put("first_link", firstQuery);
         }
-        
+
         boolean displayPreviousPage = page > 0;
+        System.out.println("Previous Page: " + displayPreviousPage);
         if (displayPreviousPage) {
-            String query = request.getQueryString();
-            System.out.println("Old query: " + query);
-            String prevQuery = uriComponentsBuilder.query(query)
+            String prevQuery = uri + "?" + uriComponentsBuilder
                     .replaceQueryParam("page", page - 1)
                     .build()
                     .getQuery();
@@ -106,10 +114,9 @@ public class AddressController {
         }
 
         boolean displayNextPage = page < totalPages;
+        System.out.println("Next Page: " + displayNextPage);
         if (displayNextPage) {
-            String query = request.getQueryString();
-            System.out.println("Old query: " + query);
-            String nextQuery = uriComponentsBuilder.query(query)
+            String nextQuery = uri + "?" + uriComponentsBuilder
                     .replaceQueryParam("page", page + 1)
                     .build()
                     .getQuery();
@@ -118,16 +125,18 @@ public class AddressController {
         }
 
         boolean displayLastPage = page < totalPages;
+        System.out.println("Last Page: " + displayLastPage);
         if (displayLastPage) {
-            String query = request.getQueryString();
-            System.out.println("Old query: " + query);
-            String lastQuery = uriComponentsBuilder.query(query)
+            String lastQuery = uri + "?" + uriComponentsBuilder
                     .replaceQueryParam("page", totalPages)
                     .build()
                     .getQuery();
             System.out.println(lastQuery);
             model.put("last_link", lastQuery);
         }
+
+        System.out.println("------------------------");
+        System.out.println();
 
         model.put("addresses", addresses);
         return "address\\index";

@@ -247,6 +247,8 @@ public class AddressSeleneseIT {
     public void verifyJsonAndHtmlIndexHaveSameAddresses() throws IOException {
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
+                .addQueryParameter("page", Integer.toString(0))
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
 
         WebRequest jsonRequest = new WebRequest(httpUrl.url());
@@ -297,7 +299,6 @@ public class AddressSeleneseIT {
                     int id = address.getId();
                     assertTrue(htmlText.contains(Integer.toString(id)));
                 });
-
     }
 
     @Test
