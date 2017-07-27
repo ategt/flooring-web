@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
+import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
@@ -982,7 +983,7 @@ public class AddressDaoPostgresImplTest {
 
             for (int i = pageNumber * resultsPerPage, r = 0; r < addressesSortedWithDatabase.size(); i++, r++) {
 
-                assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage + " - ComparedId: " + addressesSortedWithComparator.get(i).getId() + ", DatabaseId: " + addressesSortedWithDatabase.get(r).getId(), addressesSortedWithComparator.get(i), addressesSortedWithDatabase.get(r));
+                assertEquals("g:" + g + ", i:" + i + ", r:" + r + " - PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage + " - ComparedId: " + addressesSortedWithComparator.get(i).getId() + ", DatabaseId: " + addressesSortedWithDatabase.get(r).getId(), addressesSortedWithComparator.get(i), addressesSortedWithDatabase.get(r));
 
             }
         }
@@ -993,23 +994,25 @@ public class AddressDaoPostgresImplTest {
 
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
-
-            int result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+            
+            int result = Strings.nullToEmpty(address1.getLastName().toLowerCase()).compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
 
             if (result == 0) {
-                result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+                result = Strings.nullToEmpty(address1.getFirstName().toLowerCase()).compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
             }
 
             if (result == 0) {
-                if (address1.getCompany() == null && address1.getCompany() == null) {
-                    result = 0;
-                } else if (address1.getCompany() == null) {
-                    result = 1;
-                } else if (address2.getCompany() == null) {
-                    result = -1;
-                } else {
-                    result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+                if (Strings.isNullOrEmpty(address1.getCompany())
+                        && !Strings.isNullOrEmpty(address2.getCompany())) {
+                    return 1;
+                } else if (!Strings.isNullOrEmpty(address1.getCompany())
+                        && Strings.isNullOrEmpty(address2.getCompany())) {
+                    return -1;
                 }
+            }
+
+            if (result == 0) {
+                result = Strings.nullToEmpty(address1.getCompany().toLowerCase()).compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
             }
 
             if (result == 0) {

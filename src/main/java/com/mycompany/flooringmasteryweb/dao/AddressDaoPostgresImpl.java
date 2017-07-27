@@ -47,7 +47,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
             + ")";
 
-    private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL = " ORDER BY last_name ASC, first_name ASC, company ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL = " ORDER BY LOWER(last_name) ASC, LOWER(first_name) ASC, LOWER(company) ASC, id ASC";
     private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_PARTIAL = " ORDER BY first_name ASC, last_name ASC, company ASC, id ASC";
     private static final String SQL_SORT_ADDRESSES_BY_COMPANY_PARTIAL = " ORDER BY company ASC, last_name ASC, first_name ASC, id ASC";
     private static final String SQL_SORT_ADDRESSES_BY_ID_PARTIAL = " ORDER BY id ASC";
