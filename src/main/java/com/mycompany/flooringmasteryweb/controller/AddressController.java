@@ -272,16 +272,29 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String blankSearch(@RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+    public String blankSearch(
             @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @Valid @ModelAttribute AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            UriComponentsBuilder uriComponentsBuilder,
             HttpServletResponse response,
+            HttpServletRequest request,
             Map model) {
 
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, page, sortBy, response, sortCookie);
 
-        List<Address> addresses = addressDao.list(resultProperties);
+        List<Address> addresses;
+
+        if (addressSearchRequest == null) {
+            addresses = addressDao.list(resultProperties);
+        } else {
+            addresses = searchDatabase(addressSearchRequest, resultProperties);
+        }
+
+        //generatePagingLinks(resultProperties, request, uriComponentsBuilder, model);
+        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 
@@ -328,7 +341,7 @@ public class AddressController {
         }
     }
 
-        private Integer loadDefaultPageNumber(Integer page) throws BeansException {
+    private Integer loadDefaultPageNumber(Integer page) throws BeansException {
         if (page == null) {
             int defaultStartingPage = ctx.getBean("defaultStartingPage", Integer.class);
             page = defaultStartingPage;
@@ -345,10 +358,13 @@ public class AddressController {
     }
 
     private void generatePagingLinks(ResultProperties resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
-        int totalAddresses = addressDao.size();
+        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model, null);
+    }
+
+    private void generatePagingLinks(ResultProperties resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model, AddressSearchRequest addressSearchRequest) {
+        int totalAddresses = addressDao.size(addressSearchRequest);
         int totalPages = totalAddresses / resultProperties.getResultsPerPage();
         int page = resultProperties.getPageNumber();
-        
 
         String query = request.getQueryString();
         uriComponentsBuilder.query(query);
@@ -389,8 +405,8 @@ public class AddressController {
                     .getQuery();
             model.put("last_link", lastQuery);
         }
-        
-        if (displayNextPage && displayPreviousPage){
+
+        if (displayNextPage && displayPreviousPage) {
             model.put("current_page", page);
         }
     }

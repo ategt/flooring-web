@@ -24,13 +24,13 @@
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-6">
                                     <select name="searchBy" class="form-control">
+                                        <option value="searchByAll" >Search By Everything</option>
                                         <option value="searchByFirstName" >Search By First Name</option>
                                         <option value="searchByLastName" >Search By Last Name</option>
                                         <option value="searchByCompany" >Search By Company</option>
                                         <option value="searchByCity" >Search By City</option>
                                         <option value="searchByState" >Search By State</option>
                                         <option value="searchByZip" >Search By Zip Code</option>
-                                        <option value="searchByAll" >Search By Everything</option>
                                     </select>
                                 </div>
                             </div>

@@ -407,6 +407,11 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
+    @Override
+    public int size(AddressSearchRequest addressSearchRequest) {
+        return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_COUNT, Integer.class);
+    }
+
     private static final class AddressMapper implements RowMapper<Address> {
 
         @Override
@@ -548,7 +553,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return stringBuffer.toString();
     }
-    
+
     private String sortQuery(String query, AddressSortByEnum sortByEnum) {
         if (sortByEnum == null) {
             return query;

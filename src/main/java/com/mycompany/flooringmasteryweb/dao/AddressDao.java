@@ -27,6 +27,7 @@ public interface AddressDao {
     public Address delete(Integer id);
 
     public int size();
+    public int size(AddressSearchRequest addressSearchRequest);
     
     public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties);
     public Set<String> getCompletionGuesses(String input, int limit);    
