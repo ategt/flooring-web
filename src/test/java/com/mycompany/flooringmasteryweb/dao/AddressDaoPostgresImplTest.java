@@ -798,6 +798,12 @@ public class AddressDaoPostgresImplTest {
             assertTrue(result.contains(address));
         }
     }
+    
+    @Test
+    public void testSizeWithNull(){
+        Integer size = addressDao.size(null);       
+        assertTrue("It just had to get to here.", true);
+    }
 
     @Test
     public void testGetWithString() {

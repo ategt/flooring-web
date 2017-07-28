@@ -422,16 +422,20 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return result;
     }
-    
+
     @Override
     public int size(AddressSearchRequest addressSearchRequest) {
+        if (addressSearchRequest == null) {
+            return size();
+        }
+
         String sqlQuery = determineSqlSearchQuery(addressSearchRequest.searchBy());
-        
+
         final String SQL_ADDRESS_SEARCH_COUNT = new StringBuffer().append("SELECT COUNT(*) FROM (")
                 .append(sqlQuery)
                 .append(") AS countingQuery")
                 .toString();
-        
+
         return jdbcTemplate.queryForObject(SQL_ADDRESS_SEARCH_COUNT, Integer.class, addressSearchRequest.getSearchText());
     }
 
