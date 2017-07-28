@@ -48,7 +48,7 @@ function buildAddressRow(data) {
             "<td>" + data.id + "</td>" +
             "<td><a data-address-id=\"" + data.id + "\" data-toggle=\"modal\" data-target=\"#showDetailModal\">" + data.firstName + "</a></td>" +
             "<td><a href=\"" + data.id + "\">" + data.lastName + "</a></td>" +
-            "<td><a data-address-id=\"" + data.id + "\" data-toggle=\"modal\" data-target=\"#editDetailModal\">Edit</a></td>" +    
+            "<td><a data-address-id=\"" + data.id + "\" data-toggle=\"modal\" data-target=\"#editDetailModal\">Edit</a></td>" +
             "<td><a data-address-id=\"" + data.id + "\" class=\"delete-link\">Delete</a></td>" +
             "</tr>";
     return result;

@@ -62,14 +62,11 @@ public class AddressController {
             HttpServletRequest request,
             Map model) {
 
-        resultsPerPage = loadDefaultResults(resultsPerPage);
-        page = loadDefaultPageNumber(page);
-
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, page, sortBy, response, sortCookie);
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
 
-        generatePagingLinks(resultsPerPage, request, uriComponentsBuilder, page, model);
+        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model);
 
         model.put("addresses", addresses);
         return "address\\index";
@@ -199,19 +196,23 @@ public class AddressController {
             Map model
     ) {
 
-        resultsPerPage = loadDefaultResults(resultsPerPage);
-        page = loadDefaultPageNumber(page);
-
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, page, sortBy, response, sortCookie);
 
         List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
 
-        generatePagingLinks(resultsPerPage, request, uriComponentsBuilder, page, model);
+        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model);
 
         model.put("addresses", addresses);
 
         return "address\\search";
 
+    }
+
+    private ResultProperties processResultPropertiesWithContextDefaults(Integer resultsPerPage, Integer page, String sortBy, HttpServletResponse response, String sortCookie) throws BeansException {
+        resultsPerPage = loadDefaultResults(resultsPerPage);
+        page = loadDefaultPageNumber(page);
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return resultProperties;
     }
 
     private ResultProperties processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
@@ -343,9 +344,11 @@ public class AddressController {
         return resultsPerPage;
     }
 
-    private void generatePagingLinks(Integer resultsPerPage, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Integer page, Map model) {
+    private void generatePagingLinks(ResultProperties resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
         int totalAddresses = addressDao.size();
-        int totalPages = totalAddresses / resultsPerPage;
+        int totalPages = totalAddresses / resultProperties.getResultsPerPage();
+        int page = resultProperties.getPageNumber();
+        
 
         String query = request.getQueryString();
         uriComponentsBuilder.query(query);

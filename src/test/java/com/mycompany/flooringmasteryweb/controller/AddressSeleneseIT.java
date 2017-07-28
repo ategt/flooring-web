@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.controller;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.Page;
@@ -139,6 +140,7 @@ public class AddressSeleneseIT {
                 .build();
 
         WebClient webClient = new WebClient();
+        webClient.getOptions().setJavaScriptEnabled(false);
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
         WebResponse webResponse = htmlPage.getWebResponse();
@@ -219,6 +221,7 @@ public class AddressSeleneseIT {
                 .build();
 
         WebClient webClient = new WebClient();
+        webClient.getOptions().setJavaScriptEnabled(false);
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
         WebResponse webResponse = htmlPage.getWebResponse();
@@ -236,8 +239,32 @@ public class AddressSeleneseIT {
         DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
 
         assertTrue(addressRows.size() < 200);
-        
-        htmlPage.get
+
+        HtmlAnchor nextPageLink = htmlPage.getAnchorByText("Next Page >");
+        String nextHref = nextPageLink.getHrefAttribute();
+
+        assertTrue(nextHref.contains("page=1"));
+
+        HtmlAnchor lastPageLink = htmlPage.getAnchorByText("Last Page");
+        String lastHref = lastPageLink.getHrefAttribute();
+
+        assertTrue(lastHref.contains("page="));
+
+        try {
+            HtmlAnchor prevPageLink = htmlPage.getAnchorByText("< Prev Page");
+            fail("This was supposed to throw an error.");
+        } catch (ElementNotFoundException ex) {
+            // This what supposed to happen.
+        }
+
+        try {
+            HtmlAnchor firstPageLink = htmlPage.getAnchorByText("First Page");
+            fail("This was supposed to throw an error.");
+        } catch (ElementNotFoundException ex) {
+            // This what supposed to happen.
+        }
+
+        assertTrue(lastHref.contains("page="));
 
         HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=first_name");
         String linkText = sortByFirstName.getTextContent();
@@ -248,10 +275,16 @@ public class AddressSeleneseIT {
         assertEquals(classValue, "mask-link");
 
         List<HtmlAnchor> allLinks = htmlPage.getAnchors();
+        URL baseUrl = htmlPage.getUrl();
         for (HtmlAnchor link : allLinks) {
             String href = link.getHrefAttribute();
+            //String baseUri = link.getBaseURI();
+            URL createdUrl = HttpUrl.get(baseUrl).newBuilder().removePathSegment(1).removePathSegment(0).addPathSegments(href).build().url();
             if (!Strings.isNullOrEmpty(href)) {
-                int statusCode = new WebClient().getPage(href).getWebResponse().getStatusCode();
+                WebClient nonJavaScriptClient = new WebClient();
+                nonJavaScriptClient.getOptions().setJavaScriptEnabled(false);
+
+                int statusCode = nonJavaScriptClient.getPage(createdUrl).getWebResponse().getStatusCode();
                 assertEquals("HREF=" + href + " responds with " + statusCode, statusCode, 200);
             }
         }
