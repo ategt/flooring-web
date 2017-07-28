@@ -7,6 +7,7 @@ package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
@@ -183,31 +184,6 @@ public class AddressController {
         }
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String search(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
-            @ModelAttribute AddressSearchRequest addressSearchRequest,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
-            HttpServletResponse response,
-            HttpServletRequest request,
-            UriComponentsBuilder uriComponentsBuilder,
-            Map model
-    ) {
-
-        ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, page, sortBy, response, sortCookie);
-
-        List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
-
-        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model);
-
-        model.put("addresses", addresses);
-
-        return "address\\search";
-
-    }
-
     private ResultProperties processResultPropertiesWithContextDefaults(Integer resultsPerPage, Integer page, String sortBy, HttpServletResponse response, String sortCookie) throws BeansException {
         resultsPerPage = loadDefaultResults(resultsPerPage);
         page = loadDefaultPageNumber(page);
@@ -266,13 +242,33 @@ public class AddressController {
         return addresses;
     }
 
-    private List<Address> searchDatabase(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
-        return addressDao.search(searchRequest,
-                resultProperties);
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public String search(
+            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @ModelAttribute AddressSearchRequest addressSearchRequest,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            HttpServletResponse response,
+            HttpServletRequest request,
+            UriComponentsBuilder uriComponentsBuilder,
+            Map model
+    ) {
+
+        ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, page, sortBy, response, sortCookie);
+
+        List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
+
+        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+
+        model.put("addresses", addresses);
+
+        return "address\\search";
+
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String blankSearch(
+    public String search(
             @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
             @Valid @ModelAttribute AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "sort_by", required = false) String sortBy,
@@ -299,6 +295,11 @@ public class AddressController {
         model.put("addresses", addresses);
 
         return "address\\search";
+    }
+
+    private List<Address> searchDatabase(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
+        return addressDao.search(searchRequest,
+                resultProperties);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -361,7 +362,13 @@ public class AddressController {
         generatePagingLinks(resultProperties, request, uriComponentsBuilder, model, null);
     }
 
-    private void generatePagingLinks(ResultProperties resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model, AddressSearchRequest addressSearchRequest) {
+    private void generatePagingLinks(
+            ResultProperties resultProperties,
+            HttpServletRequest request,
+            UriComponentsBuilder uriComponentsBuilder,
+            Map model,
+            AddressSearchRequest addressSearchRequest) {
+
         int totalAddresses = addressDao.size(addressSearchRequest);
         int totalPages = totalAddresses / resultProperties.getResultsPerPage();
         int page = resultProperties.getPageNumber();
@@ -369,6 +376,16 @@ public class AddressController {
         String query = request.getQueryString();
         uriComponentsBuilder.query(query);
         String uri = request.getRequestURI();
+
+        if (addressSearchRequest != null) {            
+            AddressSearchByOptionEnum addressSearchByOptionEnum = addressSearchRequest.searchBy();
+            uriComponentsBuilder
+                    .replaceQueryParam("searchBy", addressSearchByOptionEnum.value());
+            
+            String searchQuery = addressSearchRequest.getSearchText();            
+            uriComponentsBuilder
+                    .replaceQueryParam("searchText", searchQuery);
+        }
 
         boolean displayFirstPage = page > 0;
         if (displayFirstPage) {

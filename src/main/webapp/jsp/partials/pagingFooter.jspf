@@ -15,7 +15,7 @@
     </c:if>
 
     <c:if test="${not empty current_page}">            
-        <div class="current-page-number col-2">${current_page}</div>            
+        <div id="current-page-number" class="current-page-number col-2">${current_page}</div>            
     </c:if>
 
     <c:if test="${not empty next_link}">
