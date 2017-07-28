@@ -422,10 +422,17 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return result;
     }
-
+    
     @Override
     public int size(AddressSearchRequest addressSearchRequest) {
-        return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_COUNT, Integer.class);
+        String sqlQuery = determineSqlSearchQuery(addressSearchRequest.searchBy());
+        
+        final String SQL_ADDRESS_SEARCH_COUNT = new StringBuffer().append("SELECT COUNT(*) FROM (")
+                .append(sqlQuery)
+                .append(") AS countingQuery")
+                .toString();
+        
+        return jdbcTemplate.queryForObject(SQL_ADDRESS_SEARCH_COUNT, Integer.class, addressSearchRequest.getSearchText());
     }
 
     private static final class AddressMapper implements RowMapper<Address> {
@@ -499,65 +506,58 @@ public class AddressDaoPostgresImpl implements AddressDao {
         if (null == searchOption) {
             addresses = list(resultProperties);
         } else {
-            switch (searchOption) {
-                case LAST_NAME:
-                    addresses = searchByLastName(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_LAST_NAME;
-                    break;
-                case FIRST_NAME:
-                    addresses = searchByFirstName(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_FIRST_NAME;
-                    break;
-                case COMPANY:
-                    addresses = searchByCompany(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_COMPANY_NAME;
-                    break;
-                case CITY:
-                    addresses = searchByCity(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_CITY_NAME;
-                    break;
-                case STATE:
-                    addresses = searchByState(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STATE_NAME;
-                    break;
-                case STREET_NAME:
-                    addresses = searchByStreetName(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET_NAME;
-                    break;
-                case STREET_NUMBER:
-                    addresses = searchByStreetNumber(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET_NUMBER;
-                    break;
-                case STREET:
-                    addresses = searchByStreet(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET;
-                    break;
-                case ZIP:
-                    addresses = searchByZip(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ZIP_NAME;
-                    break;
-                case NAME:
-                    addresses = searchByName(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME;
-                    break;
-                case NAME_OR_COMPANY:
-                    addresses = searchByNameOrCompany(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY;
-                    break;
-                case ALL:
-                case DEFAULT:
-                    addresses = searchByAll(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ALL;
-                    break;
-                default:
-                    addresses = searchByAny(queryString, resultProperties);
-                    sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE;
-                    break;
-            }
+            sqlSearchQuery = determineSqlSearchQuery(searchOption);
             addresses = search(queryString, sqlSearchQuery, resultProperties);
 
         }
         return addresses;
+    }
+
+    private String determineSqlSearchQuery(AddressSearchByOptionEnum searchOption) {
+        String sqlSearchQuery;
+        switch (searchOption) {
+            case LAST_NAME:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_LAST_NAME;
+                break;
+            case FIRST_NAME:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_FIRST_NAME;
+                break;
+            case COMPANY:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_COMPANY_NAME;
+                break;
+            case CITY:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_CITY_NAME;
+                break;
+            case STATE:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STATE_NAME;
+                break;
+            case STREET_NAME:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET_NAME;
+                break;
+            case STREET_NUMBER:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET_NUMBER;
+                break;
+            case STREET:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET;
+                break;
+            case ZIP:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ZIP_NAME;
+                break;
+            case NAME:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME;
+                break;
+            case NAME_OR_COMPANY:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY;
+                break;
+            case ALL:
+            case DEFAULT:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ALL;
+                break;
+            default:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE;
+                break;
+        }
+        return sqlSearchQuery;
     }
 
     private String paginateQuery(String query, Integer page, Integer resultsPerPage) {

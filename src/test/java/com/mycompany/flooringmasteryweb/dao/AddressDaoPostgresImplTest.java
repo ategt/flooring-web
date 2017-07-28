@@ -264,33 +264,55 @@ public class AddressDaoPostgresImplTest {
         System.out.println("searchByCompany");
 
         String company = UUID.randomUUID().toString();
-
+        AddressSearchByOptionEnum searchEnum = AddressSearchByOptionEnum.COMPANY;
+        AddressSearchRequest addressSearchRequest;
+        
         Address address = addressGenerator();
         address.setCompany(company);
         addressDao.create(address);
 
+        addressSearchRequest = new AddressSearchRequest(company, searchEnum);
+
         List<Address> result = addressDao.searchByCompany(company, null);
         assertTrue(result.contains(address));
         assertEquals(result.size(), 1);
+        assertEquals(result.size(), addressDao.size(addressSearchRequest));
 
         result = addressDao.searchByCompany(company.toLowerCase(), null);
         assertTrue(result.contains(address));
 
+        addressSearchRequest = new AddressSearchRequest(company.toLowerCase(), searchEnum);
+        assertEquals(result.size(), addressDao.size(addressSearchRequest));
+
         result = addressDao.searchByCompany(company.toUpperCase(), null);
         assertTrue(result.contains(address));
+
+        addressSearchRequest = new AddressSearchRequest(company.toUpperCase(), searchEnum);
+        assertEquals(result.size(), addressDao.size(addressSearchRequest));
 
         result = addressDao.searchByCompany(company.substring(5), null);
         assertTrue(result.contains(address));
 
+        addressSearchRequest = new AddressSearchRequest(company.substring(5), searchEnum);
+        assertEquals(result.size(), addressDao.size(addressSearchRequest));
+
         result = addressDao.searchByCompany(company.substring(5, 20), null);
         assertTrue(result.contains(address));
+
+        addressSearchRequest = new AddressSearchRequest(company.substring(5, 20), searchEnum);
+        assertEquals(result.size(), addressDao.size(addressSearchRequest));
 
         result = addressDao.searchByCompany(company.substring(5, 20).toLowerCase(), null);
         assertTrue(result.contains(address));
 
+        addressSearchRequest = new AddressSearchRequest(company.substring(5, 20).toLowerCase(), searchEnum);
+        assertEquals(result.size(), addressDao.size(addressSearchRequest));
+
         result = addressDao.searchByCompany(company.substring(5, 20).toUpperCase(), null);
         assertTrue(result.contains(address));
 
+        addressSearchRequest = new AddressSearchRequest(company.substring(5, 20).toUpperCase(), searchEnum);
+        assertEquals(result.size(), addressDao.size(addressSearchRequest));
     }
 
     /**
