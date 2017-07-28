@@ -208,16 +208,23 @@ public class AddressDaoPostgresImpl implements AddressDao {
     public int size() {
         return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_COUNT, Integer.class);
     }
+   
+    private List<Address> search(String stringToSearchFor, String sqlQueryToUse, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, resultProperties), new AddressMapper(), stringToSearchFor);
 
-    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE first_name = ?),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) = LOWER(?)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE LOWER(?)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE LOWER(?)) "
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + "firstQuery AS (SELECT id FROM addresses WHERE first_name = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT LOWER(CONCAT(n,'%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT LOWER(CONCAT('%',n,'%')) FROM sourceQuery)) "
             + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByFirstName(String firstName, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_FIRST_NAME, resultProperties), new AddressMapper(), firstName, firstName, firstName + "%", "%" + firstName + "%");
+        List<Address> result = search(firstName, SQL_SEARCH_ADDRESS_BY_FIRST_NAME, resultProperties);
 
         return result;
     }
@@ -230,7 +237,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByLastName(String lastName, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_LAST_NAME, resultProperties), new AddressMapper(), lastName, lastName, lastName + "%", "%" + lastName + "%");
+        List<Address> result = search(lastName, SQL_SEARCH_ADDRESS_BY_LAST_NAME, resultProperties);
 
         return result;
     }
@@ -243,7 +250,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByCity(String city, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_CITY_NAME, resultProperties), new AddressMapper(), city, city, city + "%", "%" + city + "%");
+        List<Address> result = search(city, SQL_SEARCH_ADDRESS_BY_CITY_NAME, resultProperties);
 
         return result;
     }
@@ -256,7 +263,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByCompany(String company, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_COMPANY_NAME, resultProperties), new AddressMapper(), company, company, company + "%", "%" + company + "%");
+        List<Address> result = search(company, SQL_SEARCH_ADDRESS_BY_COMPANY_NAME, resultProperties);
 
         return result;
     }
@@ -269,7 +276,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByState(String state, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STATE_NAME, resultProperties), new AddressMapper(), state, state, state + "%", "%" + state + "%");
+        List<Address> result = search(state, SQL_SEARCH_ADDRESS_BY_STATE_NAME, resultProperties);
 
         return result;
     }
@@ -282,7 +289,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByZip(String zip, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_ZIP_NAME, resultProperties), new AddressMapper(), zip, zip, zip + "%", "%" + zip + "%");
+        List<Address> result = search(zip, SQL_SEARCH_ADDRESS_BY_ZIP_NAME, resultProperties);
 
         return result;
     }
@@ -295,7 +302,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByStreetAddress(String streetAddress, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS, resultProperties), new AddressMapper(), streetAddress, streetAddress, streetAddress + "%", "%" + streetAddress + "%");
+        List<Address> result = search(streetAddress, SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS, resultProperties);
 
         return result;
     }
@@ -308,7 +315,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByStreetNumber(String streetNumber, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, resultProperties), new AddressMapper(), streetNumber, streetNumber, streetNumber + "%", "%" + streetNumber + "%");
+        List<Address> result = search(streetNumber, SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, resultProperties);
 
         return result;
     }
@@ -325,7 +332,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByName(String name, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_NAME, resultProperties), new AddressMapper(), name, name + "%", "%" + name + "%");
+        List<Address> result = search(name, SQL_SEARCH_ADDRESS_BY_NAME, resultProperties);
 
         return result;
     }
@@ -342,7 +349,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByStreet(String street, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET, resultProperties), new AddressMapper(), street, street + "%", "%" + street + "%");
+        List<Address> result = search(street, SQL_SEARCH_ADDRESS_BY_STREET, resultProperties);
 
         return result;
     }
@@ -379,7 +386,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByNameOrCompany(String input, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY, resultProperties), new AddressMapper(), input, input + "%", "%" + input + "%");
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY, resultProperties);
 
         return result;
     }
@@ -394,15 +401,15 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByAll(String input, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_ALL, resultProperties), new AddressMapper(), input, input + "%", "%" + input + "%");
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_ALL, resultProperties);
 
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE = "SELECT * FROM addresses WHERE id IN(SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE LOWER(?))";
+    private static final String SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE = "SELECT * FROM addresses WHERE id IN(SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE LOWER('%'||?||'%'))";
 
     public List<Address> searchByAny(String input, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE, resultProperties), new AddressMapper(), "%" + input + "%");
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE, resultProperties);
 
         return result;
     }
@@ -443,7 +450,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByFullName(String fullName, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_FULL_NAME, resultProperties), new AddressMapper(), fullName, fullName, fullName + '%', '%' + fullName + '%');
+        List<Address> result = search(fullName, SQL_SEARCH_ADDRESS_BY_FULL_NAME, resultProperties);
 
         return result;
     }
@@ -456,8 +463,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByStreetName(String streetName, ResultProperties resultProperties) {
-
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties), new AddressMapper(), streetName, streetName, streetName + "%", "%" + streetName + "%");
+        List<Address> result = search(streetName, SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties);
 
         return result;
     }
