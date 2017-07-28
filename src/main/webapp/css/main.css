@@ -28,6 +28,17 @@
     text-align: left;
 }
 
+.current-page-number {
+    padding: 6px 12px;
+    display: inline-block;   
+}
+
+.paging-header {
+    display: inline-block;
+    font-size: xx-small;
+    padding: 1px 6px;
+}
+
 @media (max-width: 992px) {
     .timing-label {
         text-align: left;

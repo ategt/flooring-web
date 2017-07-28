@@ -20,7 +20,7 @@
                     <%@ include file="_createAddressForm.jspf" %>                    
                 </div>
                 <div class="col-md-6 col-md-pull-6">
-                    <%@ include file="_addressList.jspf" %>                    
+                    <%@ include file="_addressList.jspf" %>                      
                 </div>
             </div>
         </div>
