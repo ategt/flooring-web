@@ -15,7 +15,7 @@
             <%@ include file="../partials/banner.jspf" %>
 
             <div class="row">
-                <div class="col-md-6 col-md-push-6">
+                <div class="col-md-6 col-md-push-6 text-center">
                     <form method="POST" action="./search" class="form-horizontal">
                         <div class="form-group">
                             <div class="col-md-offset-2 col-md-6">
