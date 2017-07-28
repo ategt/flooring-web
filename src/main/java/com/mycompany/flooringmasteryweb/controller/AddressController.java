@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -41,7 +42,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping(value = "/address")
 public class AddressController {
 
-    public final String URL = "/address";
     private final AddressDao addressDao;
     private ApplicationContext ctx;
 
@@ -62,79 +62,14 @@ public class AddressController {
             HttpServletRequest request,
             Map model) {
 
-        if (resultsPerPage == null) {
-            int defaultResultsPerPage = ctx.getBean("defaultResultsPerPage", Integer.class);
-            resultsPerPage = defaultResultsPerPage;
-        }
-
-        if (page == null) {
-            int defaultStartingPage = ctx.getBean("defaultStartingPage", Integer.class);
-            page = defaultStartingPage;
-        }
+        resultsPerPage = loadDefaultResults(resultsPerPage);
+        page = loadDefaultPageNumber(page);
 
         ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
 
-        int totalAddresses = addressDao.size();
-        int totalPages = totalAddresses / resultsPerPage;
-
-        String query = request.getQueryString();
-        System.out.println("Old query: " + query);
-        uriComponentsBuilder.query(query);
-        String uri = request.getRequestURI();
-        System.out.println("URI String: " + uri);
-
-        boolean displayFirstPage = page > 0;
-        System.out.println("First Page: " + displayFirstPage);
-        if (displayFirstPage) {
-            String firstQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", 0)
-                    .build()
-                    .getQuery();
-            System.out.println(firstQuery);
-            model.put("first_link", firstQuery);
-        }
-
-        boolean displayPreviousPage = page > 0;
-        System.out.println("Previous Page: " + displayPreviousPage);
-        if (displayPreviousPage) {
-            String prevQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", page - 1)
-                    .build()
-                    .getQuery();
-            System.out.println(prevQuery);
-            model.put("prev_link", prevQuery);
-        }
-
-        boolean displayNextPage = page < totalPages;
-        System.out.println("Next Page: " + displayNextPage);
-        if (displayNextPage) {
-            String nextQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", page + 1)
-                    .build()
-                    .getQuery();
-            System.out.println(nextQuery);
-            model.put("next_link", nextQuery);
-        }
-
-        boolean displayLastPage = page < totalPages;
-        System.out.println("Last Page: " + displayLastPage);
-        if (displayLastPage) {
-            String lastQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", totalPages)
-                    .build()
-                    .getQuery();
-            System.out.println(lastQuery);
-            model.put("last_link", lastQuery);
-        }
-        
-        if (displayNextPage && displayPreviousPage){
-            model.put("current_page", page);
-        }
-
-        System.out.println("------------------------");
-        System.out.println();
+        generatePagingLinks(resultsPerPage, request, uriComponentsBuilder, page, model);
 
         model.put("addresses", addresses);
         return "address\\index";
@@ -259,12 +194,19 @@ public class AddressController {
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response,
+            HttpServletRequest request,
+            UriComponentsBuilder uriComponentsBuilder,
             Map model
     ) {
+
+        resultsPerPage = loadDefaultResults(resultsPerPage);
+        page = loadDefaultPageNumber(page);
 
         ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
 
         List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
+
+        generatePagingLinks(resultsPerPage, request, uriComponentsBuilder, page, model);
 
         model.put("addresses", addresses);
 
@@ -382,6 +324,71 @@ public class AddressController {
         } else {
             response.setStatus(404);
             return null;
+        }
+    }
+
+        private Integer loadDefaultPageNumber(Integer page) throws BeansException {
+        if (page == null) {
+            int defaultStartingPage = ctx.getBean("defaultStartingPage", Integer.class);
+            page = defaultStartingPage;
+        }
+        return page;
+    }
+
+    private Integer loadDefaultResults(Integer resultsPerPage) throws BeansException {
+        if (resultsPerPage == null) {
+            int defaultResultsPerPage = ctx.getBean("defaultResultsPerPage", Integer.class);
+            resultsPerPage = defaultResultsPerPage;
+        }
+        return resultsPerPage;
+    }
+
+    private void generatePagingLinks(Integer resultsPerPage, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Integer page, Map model) {
+        int totalAddresses = addressDao.size();
+        int totalPages = totalAddresses / resultsPerPage;
+
+        String query = request.getQueryString();
+        uriComponentsBuilder.query(query);
+        String uri = request.getRequestURI();
+
+        boolean displayFirstPage = page > 0;
+        if (displayFirstPage) {
+            String firstQuery = uri + "?" + uriComponentsBuilder
+                    .replaceQueryParam("page", 0)
+                    .build()
+                    .getQuery();
+            model.put("first_link", firstQuery);
+        }
+
+        boolean displayPreviousPage = page > 0;
+        if (displayPreviousPage) {
+            String prevQuery = uri + "?" + uriComponentsBuilder
+                    .replaceQueryParam("page", page - 1)
+                    .build()
+                    .getQuery();
+            model.put("prev_link", prevQuery);
+        }
+
+        boolean displayNextPage = page < totalPages;
+        if (displayNextPage) {
+            String nextQuery = uri + "?" + uriComponentsBuilder
+                    .replaceQueryParam("page", page + 1)
+                    .build()
+                    .getQuery();
+            model.put("next_link", nextQuery);
+        }
+
+        boolean displayLastPage = page < totalPages;
+        if (displayLastPage) {
+            String lastQuery = uri + "?" + uriComponentsBuilder
+                    .replaceQueryParam("page", totalPages)
+                    .build()
+                    .getQuery();
+            model.put("last_link", lastQuery);
+        }
+        
+        if (displayNextPage && displayPreviousPage){
+            model.put("current_page", page);
         }
     }
 }
