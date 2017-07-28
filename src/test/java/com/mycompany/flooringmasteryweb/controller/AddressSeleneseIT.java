@@ -134,6 +134,8 @@ public class AddressSeleneseIT {
     public void loadIndexPage() throws IOException {
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
+                .addQueryParameter("page", Integer.toString(0))
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
 
         WebClient webClient = new WebClient();
@@ -207,6 +209,51 @@ public class AddressSeleneseIT {
 
         } else {
             fail("Sort Cookie Could Not Be Found.");
+        }
+    }
+
+    @Test
+    public void loadIndexPageWithPagination() throws IOException {
+        HttpUrl httpUrl = getAddressUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient webClient = new WebClient();
+
+        HtmlPage htmlPage = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = htmlPage.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        if (webResponse.getContentType().equals("application/json")) {
+            fail("Should have been HTML.");
+        }
+
+        String title = htmlPage.getTitleText();
+        assertEquals(title, "Address Book");
+        DomElement addressTable = htmlPage.getElementById("address-table");
+
+        DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
+
+        assertTrue(addressRows.size() < 200);
+        
+        htmlPage.get
+
+        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=first_name");
+        String linkText = sortByFirstName.getTextContent();
+        assertEquals(linkText, "First Name");
+
+        Node classNode = sortByFirstName.getAttributes().getNamedItem("class");
+        String classValue = classNode.getNodeValue();
+        assertEquals(classValue, "mask-link");
+
+        List<HtmlAnchor> allLinks = htmlPage.getAnchors();
+        for (HtmlAnchor link : allLinks) {
+            String href = link.getHrefAttribute();
+            if (!Strings.isNullOrEmpty(href)) {
+                int statusCode = new WebClient().getPage(href).getWebResponse().getStatusCode();
+                assertEquals("HREF=" + href + " responds with " + statusCode, statusCode, 200);
+            }
         }
     }
 
