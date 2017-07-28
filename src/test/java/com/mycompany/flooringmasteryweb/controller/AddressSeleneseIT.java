@@ -272,22 +272,7 @@ public class AddressSeleneseIT {
 
         Node classNode = sortByFirstName.getAttributes().getNamedItem("class");
         String classValue = classNode.getNodeValue();
-        assertEquals(classValue, "mask-link");
-
-        List<HtmlAnchor> allLinks = htmlPage.getAnchors();
-        URL baseUrl = htmlPage.getUrl();
-        for (HtmlAnchor link : allLinks) {
-            String href = link.getHrefAttribute();
-            //String baseUri = link.getBaseURI();
-            URL createdUrl = HttpUrl.get(baseUrl).newBuilder().removePathSegment(1).removePathSegment(0).addPathSegments(href).build().url();
-            if (!Strings.isNullOrEmpty(href)) {
-                WebClient nonJavaScriptClient = new WebClient();
-                nonJavaScriptClient.getOptions().setJavaScriptEnabled(false);
-
-                int statusCode = nonJavaScriptClient.getPage(createdUrl).getWebResponse().getStatusCode();
-                assertEquals("HREF=" + href + " responds with " + statusCode, statusCode, 200);
-            }
-        }
+        assertEquals(classValue, "mask-link");      
     }
 
     @Test
@@ -338,6 +323,7 @@ public class AddressSeleneseIT {
 
         WebClient webClient = new WebClient();
         WebClient jsonClient = new WebClient();
+        webClient.getOptions().setJavaScriptEnabled(false);
 
         Page jsonPage = jsonClient.getPage(jsonRequest);
         WebResponse jsonResponse = jsonPage.getWebResponse();
