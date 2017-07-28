@@ -19,7 +19,7 @@
     <tx:annotation-driven />
     
     <bean id="defaultResultsPerPage" class="java.lang.Integer" > 
-        <constructor-arg value="100"/>
+        <constructor-arg value="50"/>
     </bean>    
 
     <bean id="defaultStartingPage" class="java.lang.Integer" > 
