@@ -38,6 +38,13 @@
                             </div>
                         </div>          
                         <div class="form-group">
+
+                            <label for="company" class="col-sm-2 control-label" >Last:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="company" value="${address.company}" id="company" placeholder="Company" />
+                            </div>
+                        </div>          
+                        <div class="form-group">
                             <label for="streetNumber" class="col-sm-2 control-label" >Street Number:</label>
                             <div class="col-sm-10">
                                 <input class="form-control" type="text" name="streetNumber" value="${address.streetNumber} " id="streetNumber" placeholder="Street Number" />
