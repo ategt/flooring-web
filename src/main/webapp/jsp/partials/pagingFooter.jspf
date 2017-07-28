@@ -28,5 +28,4 @@
             <div class="btn btn-default col-2 paging-footer">Last Page</div>
         </a>
     </c:if>
-
 </div>

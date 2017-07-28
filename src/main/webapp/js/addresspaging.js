@@ -1,4 +1,4 @@
-var currentPageOfAddresses = 0;
+var currentPageOfAddresses = 1;
 var currentlyLoadingNextPageOfAddresses = false;
 
 $(document).ready(function () {
@@ -18,9 +18,9 @@ function considerLoadingMoreAddresses() {
     }
 }
 
-function loadMoreAddresses(page, items = 50) {
+function loadMoreAddresses(page) {
     $.ajax({
-        url: addressPath + "?page=" + page + "&results=" + items,
+        url: addressPath + "?page=" + page,
         type: "GET",
         dataType: 'json',
         beforeSend: function (xhr) {

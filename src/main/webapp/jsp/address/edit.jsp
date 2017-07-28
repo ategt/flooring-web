@@ -39,7 +39,7 @@
                         </div>          
                         <div class="form-group">
 
-                            <label for="company" class="col-sm-2 control-label" >Last:</label>
+                            <label for="company" class="col-sm-2 control-label" >Company:</label>
                             <div class="col-sm-10">
                                 <input class="form-control" type="text" name="company" value="${address.company}" id="company" placeholder="Company" />
                             </div>

@@ -18,8 +18,8 @@
                 <div class="col-md-6 col-md-push-6">
                     <form method="POST" action="./search" class="form-horizontal">
                         <div class="form-group">
-                            <div class="col-md-4">
-                                <select name="searchBy">
+                            <div class="col-md-offset-2 col-md-6">
+                                <select name="searchBy" class="form-control">
                                     <option value="searchByFirstName" >Search By First Name</option>
                                     <option value="searchByLastName" >Search By Last Name</option>
                                     <option value="searchByCity" />Search By City</option>
@@ -31,7 +31,8 @@
                                 <input class="form-control" type="text" name="searchText" id="searchText" placeholder="Type Search Criteria Here" />
                             </div>
                             <div class="form-group">
-                                <div class="col-md-10 pull-right">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-6 text-center">
                                     <input type="submit" class="btn btn-default" />
                                 </div>
                             </div>
