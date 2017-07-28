@@ -1,24 +1,24 @@
-var currentPage = 0;
-var currentlyLoadingNextPage = false;
+var currentPageOfAddresses = 0;
+var currentlyLoadingNextPageOfAddresses = false;
 
 $(document).ready(function () {
-    considerLoadingMoreItems();
-    $(window).scroll(considerLoadingMoreItems);
+    considerLoadingMoreAddresses();
+    $(window).scroll(considerLoadingMoreAddresses);
 });
 
-function considerLoadingMoreItems() {
+function considerLoadingMoreAddresses() {
     if (($(document).height() - $(window).height()) < $(window).scrollTop() + $(window).height() + 200)
     {
-        if (!currentlyLoadingNextPage) {
-            currentlyLoadingNextPage = true;
-            console.log("Scroll to Page " + currentPage + "...");
-            loadMoreItems(currentPage);
-            currentPage++;
+        if (!currentlyLoadingNextPageOfAddresses) {
+            currentlyLoadingNextPageOfAddresses = true;
+            console.log("Scroll to Page " + currentPageOfAddresses + "...");
+            loadMoreAddresses(currentPageOfAddresses);
+            currentPageOfAddresses++;
         }
     }
 }
 
-function loadMoreItems(page, items = 50) {
+function loadMoreAddresses(page, items = 50) {
     $.ajax({
         url: addressPath + "?page=" + page + "&results=" + items,
         type: "GET",
@@ -31,14 +31,14 @@ function loadMoreItems(page, items = 50) {
                 $("#loading-animation").hide();
                 console.log("All pages loaded.");
             } else {
-                currentlyLoadingNextPage = false;
+                currentlyLoadingNextPageOfAddresses = false;
             }
             $.each(data, function (index, item) {
                 $('#address-table > tbody:last-child').append(buildAddressRow(item));
             });
         },
         error: function (data, status) {
-            currentlyLoadingNextPage = false;
+            currentlyLoadingNextPageOfAddresses = false;
         }
     });
 }
