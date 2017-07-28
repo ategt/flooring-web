@@ -134,6 +134,10 @@
             <aop:around method="logStartAndStopTimeForMethod"
                         pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.searchByZip(..))"
             />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AddressDao.search(..))"
+            />
             
             <aop:around method="logStartAndStopTimeForMethod"
                         pointcut="execution(* com.mycompany.flooringmasteryweb.dao.AuditDao.create(..))"
@@ -289,6 +293,22 @@
                         
             <aop:around method="logStartAndStopTimeForMethod"
                         pointcut="execution(* com.mycompany.flooringmasteryweb.dao.StateDao.sortByStateTaxRev(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.search(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.update(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.edit(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.create(..))"
             />
         </aop:aspect>
                 
