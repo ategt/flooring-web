@@ -48,14 +48,14 @@
                             </td>
                         </tr>
                         <c:if test="${not empty address.company}">
-                        <tr>
-                            <td>
-                                Company: 
-                            </td>
-                            <td>
-                                ${address.company}
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    Company: 
+                                </td>
+                                <td>
+                                    ${address.company}
+                                </td>
+                            </tr>
                         </c:if>
                         <tr>
                             <td>
@@ -94,16 +94,10 @@
                 </div>
             </div>
 
-
-
-
-
-
         </div>
     </div>
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+
+    <%@ include file="../partials/commonScript.jspf" %>        
 
 </body>
 </html>

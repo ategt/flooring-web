@@ -18,9 +18,9 @@ function considerLoadingMoreAddresses() {
     }
 }
 
-function loadMoreAddresses(page) {
+function loadMoreAddresses(page, items = 50) {
     $.ajax({
-        url: addressPath + "?page=" + page,
+        url: addressPath + "?page=" + page + "&results=" + items,
         type: "GET",
         dataType: 'json',
         beforeSend: function (xhr) {
@@ -28,7 +28,7 @@ function loadMoreAddresses(page) {
         },
         success: function (data, status) {
             if (data.length < items) {
-                $("#loading-animation").hide();
+                $(".paging-footer-parent").hide();
                 console.log("All pages loaded.");
             } else {
                 currentlyLoadingNextPageOfAddresses = false;

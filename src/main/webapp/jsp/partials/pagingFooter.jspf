@@ -1,5 +1,5 @@
 <%@ page pageEncoding="windows-1252" %>
-<div class="row text-center">
+<div class="row text-center paging-footer-parent">
 
     <c:if test="${not empty first_link}">
         <a href="${pageContext.request.contextPath}${first_link}">
