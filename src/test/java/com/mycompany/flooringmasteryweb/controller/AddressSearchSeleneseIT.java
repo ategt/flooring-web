@@ -79,9 +79,6 @@ public class AddressSearchSeleneseIT {
 
         WebRequest webRequest = new WebRequest(url, HttpMethod.POST);
 
-        Gson gson = new GsonBuilder().create();
-        String addressString = gson.toJson(address);
-
         webRequest.setRequestBody("searchBy=searchByCompany&searchText=" + address.getCompany());
 
         HtmlPage htmlPage = webClient.getPage(webRequest);
