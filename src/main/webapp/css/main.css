@@ -29,8 +29,12 @@
 }
 
 .current-page-number {
-    padding: 6px 12px;
-    display: inline-block;   
+    display: inline-block;
+    padding: 2px 25px;    
+}
+
+.paging-footer {
+    margin: 0px 10px;
 }
 
 .paging-header {

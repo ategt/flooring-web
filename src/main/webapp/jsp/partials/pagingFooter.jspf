@@ -3,13 +3,13 @@
 
     <c:if test="${not empty first_link}">
         <a href="${pageContext.request.contextPath}${first_link}">
-            <div class="btn btn-default col-2">First Page</div>
+            <div class="btn btn-default col-2 paging-footer">First Page</div>
         </a>
     </c:if>
 
     <c:if test="${not empty prev_link}">
         <a href="${pageContext.request.contextPath}${prev_link}">
-            <div class="btn btn-default col-2">&lt; Prev Page</div>
+            <div class="btn btn-default col-2 paging-footer">&lt; Prev Page</div>
         </a>
     </c:if>
 
@@ -19,13 +19,13 @@
 
     <c:if test="${not empty next_link}">
         <a href="${pageContext.request.contextPath}${next_link}">
-            <div class="btn btn-default col-2">Next Page &gt;</div>
+            <div class="btn btn-default col-2 paging-footer">Next Page &gt;</div>
         </a>
     </c:if>
 
     <c:if test="${not empty last_link}">
         <a href="${pageContext.request.contextPath}${last_link}">
-            <div class="btn btn-default col-2">Last Page</div>
+            <div class="btn btn-default col-2 paging-footer">Last Page</div>
         </a>
     </c:if>
 

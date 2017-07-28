@@ -2,39 +2,39 @@ var currentPage = 0;
 var currentlyLoadingNextPage = false;
 
 $(document).ready(function () {
-    considerLoadingMoreAudits();
-    $(window).scroll(considerLoadingMoreAudits);
+    considerLoadingMoreItems();
+    $(window).scroll(considerLoadingMoreItems);
 });
 
-function considerLoadingMoreAudits() {
+function considerLoadingMoreItems() {
     if (($(document).height() - $(window).height()) < $(window).scrollTop() + $(window).height() + 200)
     {
         if (!currentlyLoadingNextPage) {
             currentlyLoadingNextPage = true;
             console.log("Scroll to Page " + currentPage + "...");
-            loadMoreAudits(currentPage);
+            loadMoreItems(currentPage);
             currentPage++;
         }
     }
 }
 
-function loadMoreAudits(page, audits = 50) {
+function loadMoreItems(page, items = 50) {
     $.ajax({
-        url: auditPath + "?page=" + page + "&audits_per_page=" + audits,
+        url: addressPath + "?page=" + page + "&results=" + items,
         type: "GET",
         dataType: 'json',
         beforeSend: function (xhr) {
             xhr.setRequestHeader("Accept", "application/json");
         },
         success: function (data, status) {
-            if (data.length < audits) {
+            if (data.length < items) {
                 $("#loading-animation").hide();
                 console.log("All pages loaded.");
             } else {
                 currentlyLoadingNextPage = false;
             }
             $.each(data, function (index, item) {
-                $('#audit-table > tbody:last-child').append(buildAuditRow(sanitizeAudit(item)));
+                $('#address-table > tbody:last-child').append(buildAddressRow(item));
             });
         },
         error: function (data, status) {
@@ -43,52 +43,13 @@ function loadMoreAudits(page, audits = 50) {
     });
 }
 
-function buildAuditRow(data) {
-    var result = "<tr id=\"audit-row-" + data.id + "\">" +
+function buildAddressRow(data) {
+    var result = "<tr id=\"address-row-" + data.id + "\">" +
             "<td>" + data.id + "</td>" +
-            "<td><a href=\"" + flooringPath + data.orderid + "\">" + data.orderid + "</a></td>" +
-            "<td>" + data.actionPerformed + "</td>" +
-            "<td>" + data.date + "</td>" +
-            "<td>" + data.logDate + "</td>" +
-            "<td>" + data.orderName + "</td>" +
-            "<td>" + data.orderTotal + "</td>" +
-            "</td>";
+            "<td><a data-address-id=\"" + addressPath + data.id + "\" data-toggle=\"modal\" data-target=\"#showDetailModal\">" + data.firstName + "</a></td>" +
+            "<td><a href=\"" + data.id + "\">" + data.lastName + "</a></td>" +
+            "<td><a data-address-id=\"" + data.id + "\" data-toggle=\"modal\" data-target=\"#editDetailModal\">Edit</a></td>" +    
+            "<td><a data-address-id=\"" + data.id + "\" class=\"delete-link\">Delete</a></td>" +
+            "</tr>";
     return result;
-}
-
-function formatDate(date) {
-    var monthNames = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    return monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
-}
-
-function sanitizeAudit(audit) {
-    if (audit.id == null) {
-        audit.id = "";
-    }
-    if (audit.orderid == null) {
-        audit.orderid = "";
-    }
-    if (audit.actionPerformed == null) {
-        audit.actionPerformed = "";
-    }
-    if (audit.date == null) {
-        audit.date = "";
-    } else {
-        audit.date = new Date(audit.date);
-        audit.date = formatDate(audit.date);
-    }
-    if (audit.logDate == null) {
-        audit.logDate = "";
-    } else {
-        audit.logDate = new Date(audit.logDate);
-        audit.logDate = formatDate(audit.logDate);
-    }
-    if (audit.orderName == null) {
-        audit.orderName = "";
-    }
-    if (audit.orderTotal == null) {
-        audit.orderTotal = "";
-    }
-    return audit;
 }
