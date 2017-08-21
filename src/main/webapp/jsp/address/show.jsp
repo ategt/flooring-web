@@ -19,6 +19,9 @@
                 <div class="col-md-6 text-center">
                     <h2>
                         ${address.firstName} ${address.lastName}<br />
+                        <c:if test="${not empty address.company}">
+                            ${address.company}
+                        </c:if>
                         ${address.streetNumber} ${address.streetName}<br />
                         ${address.city}, ${address.state} ${address.zip}<br />
                     </h2>
@@ -44,6 +47,18 @@
                                 ${address.lastName}
                             </td>
                         </tr>
+
+                        <c:if test="${not empty address.company}">
+                            <tr>
+                                <td>
+                                    Company: 
+                                </td>
+                                <td>
+                                    ${address.company}
+                                </td>
+                            </tr>
+                        </c:if>
+
                         <tr>
                             <td>
                                 Address: 

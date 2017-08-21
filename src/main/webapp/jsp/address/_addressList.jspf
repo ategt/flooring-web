@@ -10,7 +10,7 @@
         <tr id="address-row-${address.id}" >
             <td>${address.id}</td>
             <td><a data-address-id="${address.id}" data-toggle="modal" data-target="#showDetailModal">${address.firstName}</a></td>
-            <td><a href="show/${address.id}">${address.lastName}</a></td>
+            <td><a href="${address.id}">${address.lastName}</a></td>
             <td><a data-address-id="${address.id}" data-toggle="modal" data-target="#editDetailModal">Edit</a></td>
             <td><a data-address-id="${address.id}" class="delete-link">Delete</a></td>
         </tr>

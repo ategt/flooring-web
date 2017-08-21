@@ -18,6 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -40,10 +41,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class AddressController {
 
     private final AddressDao addressDao;
+    private ApplicationContext ctx;
 
     @Inject
     public AddressController(AddressDao addressDao) {
         this.addressDao = addressDao;
+        ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();        
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -58,6 +61,7 @@ public class AddressController {
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
             addresses = addressDao.getAddressesSortedByParameter(sortBy);
+            addressDao.
         } else {
             addresses = addressDao.getAddressesSortedByParameter(sortCookie);
         }

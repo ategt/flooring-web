@@ -38,4 +38,8 @@
         
         <property name="basename" value="/WEB-INF/messages" /> 
     </bean>    
+    
+    <bean id="defaultItemsPerPage" class="java.lang.Integer">
+        <constructor-arg value="30" />
+    </bean>
 </beans>
