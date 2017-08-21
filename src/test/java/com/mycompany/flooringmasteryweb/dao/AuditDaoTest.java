@@ -110,9 +110,12 @@ public class AuditDaoTest {
     @Test
     public void testPagination() {
         
-        if (instance.getSize() < 25) {
+        int minimumAudits = 40;
+        int currentAudits = instance.getSize();
+        
+        if (currentAudits < minimumAudits) {
             List<Audit> createdAudits = new ArrayList();
-            for (int i = 0; i < 25; i++) {
+            for (int i = currentAudits; i < minimumAudits; i++) {
                 createdAudits.add(instance.create(auditGenerator()));
             }
         }

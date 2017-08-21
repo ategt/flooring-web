@@ -131,6 +131,56 @@ public class AddressSeleneseIT {
 
     @Test
     public void loadIndexPage() throws IOException {
+
+        int minimumAddresses = 200;
+        Gson gson = new GsonBuilder().create();
+
+        // Get Size of Database before creation.
+        HttpUrl sizeUrl = getAddressUrlBuilder()
+                .addPathSegment("size")
+                .build();
+
+        WebClient sizeWebClient = new WebClient();
+        sizeWebClient.addRequestHeader("Accept", "application/json");
+
+        Page sizePage = sizeWebClient.getPage(sizeUrl.url());
+        WebResponse sizeResponse = sizePage.getWebResponse();
+        assertEquals(sizeResponse.getStatusCode(), 200);
+        assertTrue(sizeResponse.getContentLength() < 50);
+
+        Integer currentSize = null;
+
+        if (sizeResponse.getContentType().equals("application/json")) {
+            String json = sizeResponse.getContentAsString();
+            currentSize = gson.fromJson(json, Integer.class);
+
+            Assert.assertNotNull(currentSize);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        for (int i = currentSize; i < minimumAddresses; i++) {
+            Address address = addressGenerator();
+            Assert.assertNotNull(address);
+            Assert.assertNull(address.getId());
+
+            HttpUrl createUrl = getAddressUrlBuilder()
+                    .addPathSegment("")
+                    .build();
+
+            WebClient createAddressWebClient = new WebClient();
+
+            //Gson gson = new GsonBuilder().create();
+            String addressJson = gson.toJson(address);
+
+            WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
+            createRequest.setRequestBody(addressJson);
+            createRequest.setAdditionalHeader("Content-type", "application/json");
+
+            Page createPage = createAddressWebClient.getPage(createRequest);
+
+        }
+
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
@@ -152,7 +202,7 @@ public class AddressSeleneseIT {
 
         DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
 
-        assertTrue(addressRows.size() > 200);
+        assertTrue(addressRows.size() > minimumAddresses);
 
         if (addressCountFromIndex == null) {
             addressCountFromIndex = addressRows.size();
@@ -236,7 +286,7 @@ public class AddressSeleneseIT {
                 assertEquals(addressCountFromIndex.intValue(), addresses.length);
             }
 
-            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == 3));
+            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == 4 || address.getId() == 3));
         } else {
             fail("Should have been JSON.");
         }
