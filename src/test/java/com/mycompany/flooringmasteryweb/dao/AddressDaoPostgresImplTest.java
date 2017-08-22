@@ -6,6 +6,9 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -84,7 +87,8 @@ public class AddressDaoPostgresImplTest {
 
         addressDao.update(retrivedAddress);
 
-        Address companyAddress = addressDao.getByCompany(retrivedAddress.getCompany());
+        List<Address> companyAddresses = addressDao.search(new AddressSearchRequest(retrivedAddress.getCompany(), AddressSearchByOptionEnum.COMPANY), null);
+        Address companyAddress = companyAddresses.get(0);
 
         assertEquals(companyAddress, retrivedAddress);
         assertNotEquals(result, companyAddress);
@@ -98,7 +102,7 @@ public class AddressDaoPostgresImplTest {
         Address deletedAddress = addressDao.get(companyAddress.getId());
         assertNull(deletedAddress);
 
-        Address alsoDeleted = addressDao.getByCompany(company);
+        Address alsoDeleted = addressDao.search(new AddressSearchRequest(company, AddressSearchByOptionEnum.COMPANY), null).get(0);
         assertNull(alsoDeleted);
 
         Address alsoDeleted2 = addressDao.get(company);
@@ -505,9 +509,10 @@ public class AddressDaoPostgresImplTest {
 
         }
     }
+    
     @Test
     public void getSortedByIdUsingSortByParam() {
-        List<Address> addresses = addressDao.list(AddressDao.SORT_BY_ID);
+        List<Address> addresses = addressDao.list(AddressSortByEnum.ID);
         List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("id");
 
         for (int i = 0; i < addresses.size(); i++) {

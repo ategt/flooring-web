@@ -258,19 +258,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
                 .append(address.getLastName()).toString();
     }
 
-    @Override
-    public Address getByCompany(String company
-    ) {
-        if (company == null) {
-            return null;
-        }
-        try {
-            return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_BY_COMPANY, new AddressMapper(), company);
-        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
-            return null;
-        }
-    }
-
     public void update(Address address) {
 
         if (address == null) {
