@@ -102,8 +102,8 @@ public class AddressDaoPostgresImplTest {
         Address deletedAddress = addressDao.get(companyAddress.getId());
         assertNull(deletedAddress);
 
-        Address alsoDeleted = addressDao.search(new AddressSearchRequest(company, AddressSearchByOptionEnum.COMPANY), null).get(0);
-        assertNull(alsoDeleted);
+        List<Address> alsoDeleted = addressDao.search(new AddressSearchRequest(company, AddressSearchByOptionEnum.COMPANY), null);
+        assertTrue(alsoDeleted.isEmpty());
 
         Address alsoDeleted2 = addressDao.get(company);
         assertNull(alsoDeleted2);
