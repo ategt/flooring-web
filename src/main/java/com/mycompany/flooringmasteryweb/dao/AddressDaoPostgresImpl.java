@@ -155,7 +155,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + SQL_SEARCH_ADDRESS_BASE_QUERY;
 
     private static final String SQL_SEARCH_ADDRESS_BY_ANY = "SELECT DISTINCT * FROM addresses WHERE"
-            + " (LOWER(CONCAT_WS(' ', first_name, last_name))||CONCAT_WS(' ', street_number, street_name)||"
+            + " LOWER(CONCAT_WS(' ', first_name, last_name)||CONCAT_WS(' ', street_number, street_name)||"
             + "first_name||last_name||company||city||state||zip||street_number||street_name)"
             + " LIKE (SELECT LOWER(CONCAT('%', ?, '%')))";
 
