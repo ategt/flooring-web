@@ -568,7 +568,15 @@ public class AddressDaoPostgresImplTest {
             AddressResultSegment resultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.LAST_NAME);
             List<Address> addresses = addressDao.list(resultSegment);
 
-            assertEquals(addresses.size(), resultsPerPage);
+            if (page == (size / resultsPerPage)) {
+                // This is the last page, it may contain a fraction of the expected results.
+                assertTrue("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size() <= resultsPerPage);
+                assertTrue("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size() > 0);
+                assertFalse(addresses.isEmpty());
+            } else {
+                // This page should contain exactly the expected number of results.
+                assertEquals("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size(), resultsPerPage);
+            }
 
             for (Address address : addresses) {
                 assertFalse(cumulativeAddress.contains(address));
@@ -632,12 +640,12 @@ public class AddressDaoPostgresImplTest {
             }
 
             int lastIndex = (page + 1) * resultsPerPage;
-            if (lastIndex > size){
+            if (lastIndex > size) {
                 lastIndex = size;
             }
-            
+
             System.out.println("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", - From " + (resultsPerPage * page) + " to " + lastIndex + " while size is " + size);
-            
+
             List<Address> matchingList = addressDao.list(AddressSortByEnum.LAST_NAME).subList(resultsPerPage * page, lastIndex);
 
             assertEquals("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", MatchingList:" + matchingList.size(), addresses.size(), matchingList.size());
@@ -661,6 +669,15 @@ public class AddressDaoPostgresImplTest {
         for (int i = 0; i < allAddresses.size(); i++) {
             assertEquals(allAddresses.get(i), cumulativeAddress.get(i));
         }
+    }
+    
+    @Test
+    public void emptyPageShouldBeEmpty(){
+        int size = addressDao.size();
+        
+        List<Address> emptyResults = addressDao.list(new AddressResultSegment(1, size, AddressSortByEnum.COMPANY));
+        
+        assertTrue(emptyResults.isEmpty());
     }
 
     private String caseRandomizer(final Random random, String input) {
