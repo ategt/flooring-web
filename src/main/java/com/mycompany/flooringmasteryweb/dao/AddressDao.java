@@ -19,16 +19,10 @@ import java.util.Set;
  */
 public interface AddressDao {
     
-    public static final int SORT_BY_LAST_NAME = 0;
-    public static final int SORT_BY_FIRST_NAME = 1;
-    public static final int SORT_BY_COMPANY = 2;
-    public static final int SORT_BY_ID = 3;
-    
     public Address create(Address address);
     public void update(Address address);
     public Address get(Integer id);
     public Address get(String input);
-    public Address getByCompany(String company);
     public Address delete(Integer id);
 
     public int size();
