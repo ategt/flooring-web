@@ -290,7 +290,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> list(AddressResultSegment resultSegment) {
-        return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ADDRESS_ALL, resultSegment), new AddressMapper());
+        String query = sortAndPaginateQuery(SQL_GET_ADDRESS_ALL, resultSegment);
+        return jdbcTemplate.query(query, new AddressMapper());
     }
 
     @Override
@@ -421,14 +422,14 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private final String SORT_BY_COMPANY = "company ASC, first_name ASC, last_name ASC, id desc";
-    private final String SORT_BY_FIRST_NAME = "first_name ASC, last_name ASC, company ASC, id desc";
-    private final String SORT_BY_LAST_NAME = "last_name ASC, first_name ASC, company ASC, id desc";
-    private final String SORT_BY_ID = "id desc";
-    private final String SORT_BY_COMPANY_INVERSE = "company ASC, first_name ASC, last_name ASC, id desc";
-    private final String SORT_BY_FIRST_NAME_INVERSE = "first_name ASC, last_name ASC, company ASC, id desc";
-    private final String SORT_BY_LAST_NAME_INVERSE = "last_name ASC, first_name ASC, company ASC, id desc";
-    private final String SORT_BY_ID_INVERSE = "id desc";
+    private final String SORT_BY_COMPANY = "company ASC, first_name ASC, last_name ASC, id DESC";
+    private final String SORT_BY_FIRST_NAME = "first_name ASC, last_name ASC, company ASC, id DESC";
+    private final String SORT_BY_LAST_NAME = "last_name ASC, first_name ASC, company ASC, id DESC";
+    private final String SORT_BY_ID = "id DESC";
+    private final String SORT_BY_COMPANY_INVERSE = "company ASC, first_name ASC, last_name ASC, id DESC";
+    private final String SORT_BY_FIRST_NAME_INVERSE = "first_name ASC, last_name ASC, company ASC, id DESC";
+    private final String SORT_BY_LAST_NAME_INVERSE = "last_name ASC, first_name ASC, company ASC, id DESC";
+    private final String SORT_BY_ID_INVERSE = "id DESC";
 
     private String sortQuery(final String query, final AddressResultSegment resultSegment) {
         String sortByString = null;
@@ -497,6 +498,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
             return query;
         }
 
-        return sortQuery(paginateQuery(query, resultSegment), resultSegment);
+        return paginateQuery(sortQuery(query, resultSegment), resultSegment);
     }
 }

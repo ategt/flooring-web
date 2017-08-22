@@ -6,9 +6,13 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -223,7 +227,7 @@ public class AddressDaoPostgresImplTest {
         String lastName = UUID.randomUUID().toString();
 
         String fullName = firstName + " " + lastName;
-        
+
         Address address = addressGenerator();
         address.setFirstName(firstName);
         address.setLastName(lastName);
@@ -479,7 +483,7 @@ public class AddressDaoPostgresImplTest {
 
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
-            
+
             return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
         });
 
@@ -489,7 +493,7 @@ public class AddressDaoPostgresImplTest {
 
         }
     }
-    
+
     @Test
     public void getSortedByNameUsingSortByParam() {
         List<Address> addresses = addressDao.list();
@@ -499,7 +503,7 @@ public class AddressDaoPostgresImplTest {
 
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
-            
+
             return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
         });
 
@@ -509,7 +513,7 @@ public class AddressDaoPostgresImplTest {
 
         }
     }
-    
+
     @Test
     public void getSortedByIdUsingSortByParam() {
         List<Address> addresses = addressDao.list(AddressSortByEnum.ID);
@@ -519,6 +523,143 @@ public class AddressDaoPostgresImplTest {
 
             assertEquals(addresses.get(i), addressesFromDb.get(i));
 
+        }
+    }
+
+    @Test
+    public void getFirstPage() {
+        AddressResultSegment resultSegment = new AddressResultSegment(0, 50, AddressSortByEnum.LAST_NAME);
+        List<Address> addresses = addressDao.list(resultSegment);
+
+        assertNotNull(addresses);
+        assertEquals(addresses.size(), 50);
+    }
+
+    @Test
+    public void getLargeList() {
+        AddressResultSegment resultSegment = new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.LAST_NAME);
+        List<Address> addresses = addressDao.list(resultSegment);
+
+        List<Address> allAddresses = addressDao.list();
+
+        assertEquals(allAddresses.size(), addresses.size());
+        assertEquals(addressDao.size(), addresses.size());
+
+        allAddresses.sort((Address o1, Address o2) -> Integer.compare(o1.getId(), o2.getId()));
+        addresses.sort((Address o1, Address o2) -> Integer.compare(o1.getId(), o2.getId()));
+
+        assertArrayEquals(addresses.toArray(), allAddresses.toArray());
+
+        for (int i = 0; i < allAddresses.size(); i++) {
+            assertEquals(allAddresses.get(i), addresses.get(i));
+        }
+    }
+
+    @Test
+    public void getSeveralSegments() {
+
+        int size = addressDao.size();
+
+        int resultsPerPage = 50;
+
+        List<Address> cumulativeAddress = new ArrayList<>();
+
+        for (int page = 0; page < (size / resultsPerPage) + 1; page++) {
+            AddressResultSegment resultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.LAST_NAME);
+            List<Address> addresses = addressDao.list(resultSegment);
+
+            assertEquals(addresses.size(), resultsPerPage);
+
+            for (Address address : addresses) {
+                assertFalse(cumulativeAddress.contains(address));
+            }
+
+            cumulativeAddress.addAll(addresses);
+        }
+
+        List<Address> allAddresses = addressDao.list();
+
+        assertEquals(allAddresses.size(), cumulativeAddress.size());
+
+        allAddresses.sort((Address o1, Address o2) -> Integer.compare(o1.getId(), o2.getId()));
+        cumulativeAddress.sort((Address o1, Address o2) -> Integer.compare(o1.getId(), o2.getId()));
+
+        assertArrayEquals(cumulativeAddress.toArray(), allAddresses.toArray());
+
+        for (int i = 0; i < allAddresses.size(); i++) {
+            assertEquals(allAddresses.get(i), cumulativeAddress.get(i));
+        }
+    }
+
+    @Test
+    public void getSeveralSegmentsRandomly() {
+        Random random = new Random();
+        int size = addressDao.size();
+
+        int resultsPerPage = random.nextInt(size);
+        int totalPages = (size / resultsPerPage) + 1;
+
+        List<Address> cumulativeAddress = new ArrayList<>();
+
+        List<Integer> pages = new ArrayList<>();
+
+        for (int page = 0; page < totalPages; page++) {
+            pages.add(page);
+        }
+
+        Collections.shuffle(pages);
+
+        for (Integer page : pages) {
+
+            AddressResultSegment resultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.LAST_NAME);
+            List<Address> addresses = addressDao.list(resultSegment);
+
+            if (totalPages < page + 1) {
+                // This page is greater than the total and should be empty.
+                assertTrue("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size(), addresses.isEmpty());
+            } else if (totalPages == page + 1) {
+                // This is the last page, it may contain a fraction of the expected results.
+                assertTrue("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size() <= resultsPerPage);
+                assertTrue("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size() > 0);
+                assertFalse(addresses.isEmpty());
+            } else {
+                // This page should contain exactly the expected number of results.
+                assertEquals("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size(), resultsPerPage);
+            }
+
+            for (Address address : addresses) {
+                assertFalse("Address id " + address.getId() + " appears twice.", cumulativeAddress.contains(address));
+            }
+
+            int lastIndex = (page + 1) * resultsPerPage;
+            if (lastIndex > size){
+                lastIndex = size;
+            }
+            
+            System.out.println("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", - From " + (resultsPerPage * page) + " to " + lastIndex + " while size is " + size);
+            
+            List<Address> matchingList = addressDao.list(AddressSortByEnum.LAST_NAME).subList(resultsPerPage * page, lastIndex);
+
+            assertEquals("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", MatchingList:" + matchingList.size(), addresses.size(), matchingList.size());
+
+            for (int i = 0; i < matchingList.size(); i++) {
+                assertEquals(matchingList.get(i), addresses.get(i));
+            }
+
+            cumulativeAddress.addAll(addresses);
+        }
+
+        List<Address> allAddresses = addressDao.list();
+
+        assertEquals(allAddresses.size(), cumulativeAddress.size());
+
+        allAddresses.sort((Address o1, Address o2) -> Integer.compare(o1.getId(), o2.getId()));
+        cumulativeAddress.sort((Address o1, Address o2) -> Integer.compare(o1.getId(), o2.getId()));
+
+        assertArrayEquals(cumulativeAddress.toArray(), allAddresses.toArray());
+
+        for (int i = 0; i < allAddresses.size(); i++) {
+            assertEquals(allAddresses.get(i), cumulativeAddress.get(i));
         }
     }
 
