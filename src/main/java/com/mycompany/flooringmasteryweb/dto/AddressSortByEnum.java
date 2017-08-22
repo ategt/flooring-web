@@ -17,6 +17,5 @@ public enum AddressSortByEnum {
     LAST_NAME_INVERSE,
     FIRST_NAME_INVERSE,
     COMPANY_INVERSE,
-    ID_INVERSE,
-    DEFAULT;
+    ID_INVERSE;
 }

@@ -25,6 +25,7 @@ public enum AddressSearchByOptionEnum {
     NAME("searchByName"),
     NAME_OR_COMPANY("searchByNameOrCompany"),
     ALL("searchByAll"),
+    ANY("searchByAny"),
     DEFAULT("searchByAll");
 
     private String searchString;
