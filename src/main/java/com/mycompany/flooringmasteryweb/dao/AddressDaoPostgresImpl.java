@@ -286,17 +286,16 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH inputQuery(n) AS (SELECT n FROM ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM inputQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE (SELECT LOWER(n) FROM inputQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
-            + " fourthQuery AS (SELECT id FROM addresses WHERE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)) "
-            + "SELECT * FROM addresses WHERE id IN ("
-            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
-            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
-            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
-            + ")";
-
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH inputQuery(n) AS (SELECT ?)," +
+              " firstQuery(id) AS (SELECT id FROM addresses WHERE first_name = (SELECT n FROM inputQuery))," +
+              " secondQuery(id) AS (SELECT id FROM addresses WHERE first_name = (SELECT LOWER(n) FROM inputQuery))," +
+              " thirdQuery(id) AS (SELECT id FROM addresses WHERE first_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery))," +
+              " fourthQuery(id) AS (SELECT id FROM addresses WHERE first_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) " +
+              "SELECT * FROM addresses WHERE id IN (" +
+              "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) " +
+              "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)" +
+              "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)" +
+              ")";
 
     @Override
     public List<Address> searchByFirstName(String firstName) {
