@@ -400,7 +400,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> getAddressesSortedByParameter(String sortBy) {
-        return list(AddressSortByEnum.valueOf(sortBy));
+        return list(AddressSortByEnum.parse(sortBy));
     }
 
     public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption) {

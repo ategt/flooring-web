@@ -19,7 +19,7 @@ public enum AddressSortByEnum {
     COMPANY_INVERSE,
     ID_INVERSE;
 
-    public AddressSortByEnum parse(String input) {
+    public static AddressSortByEnum parse(String input) {
         if (input == null) {
             return null;
         }
@@ -44,7 +44,7 @@ public enum AddressSortByEnum {
         return currentEnum;
     }
 
-    public AddressSortByEnum reverse(AddressSortByEnum currentEnum) {
+    public static AddressSortByEnum reverse(AddressSortByEnum currentEnum) {
         switch (currentEnum) {
             case COMPANY:
                 return COMPANY_INVERSE;
