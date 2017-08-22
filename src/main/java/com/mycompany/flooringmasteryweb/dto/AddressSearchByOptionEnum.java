@@ -23,7 +23,7 @@ public enum AddressSearchByOptionEnum {
     STREET_NAME("searchByStreetName"),
     STREET("searchByStreet"),
     NAME("searchByName"),
-    FULLNAME("searchByFullName"),
+    FULL_NAME("searchByFullName"),
     NAME_OR_COMPANY("searchByNameOrCompany"),
     ALL("searchByAll"),
     ANY("searchByAny"),

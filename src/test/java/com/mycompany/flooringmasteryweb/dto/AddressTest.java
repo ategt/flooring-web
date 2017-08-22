@@ -174,4 +174,17 @@ public class AddressTest {
         
         assertTrue(instance.hashCode() > -1);
     }
+    
+    @Test
+    public void testFullName(){
+        System.out.println("Full Name");
+                
+        Address instance = new Address();
+        instance.setFirstName(UUID.randomUUID().toString());
+        instance.setLastName(UUID.randomUUID().toString());
+        
+        assertEquals("Full name should be first name, a space, and then last name.",
+                instance.getFullName(),
+                instance.getFirstName() + " " + instance.getLastName());        
+    }
 }

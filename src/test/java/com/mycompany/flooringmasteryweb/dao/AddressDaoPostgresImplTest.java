@@ -180,6 +180,41 @@ public class AddressDaoPostgresImplTest {
     }
 
     /**
+     * Test of searchByLastName method, of class AddressDaoPostgresImpl.
+     */
+    @Test
+    public void testSearchByLastNameUsingNewMethod() {
+        System.out.println("search By Last Name Using New Way");
+        String lastName = UUID.randomUUID().toString();
+
+        Address address = addressGenerator();
+        address.setLastName(lastName);
+        addressDao.create(address);
+
+        List<Address> result = addressDao.search(new AddressSearchRequest(lastName, AddressSearchByOptionEnum.LAST_NAME), null);
+        assertTrue(result.contains(address));
+        assertEquals(result.size(), 1);
+
+        result = addressDao.search(new AddressSearchRequest(lastName.toLowerCase(), AddressSearchByOptionEnum.LAST_NAME), null);
+        assertTrue(result.contains(address));
+
+        result = addressDao.search(new AddressSearchRequest(lastName.toUpperCase(), AddressSearchByOptionEnum.LAST_NAME), null);
+        assertTrue(result.contains(address));
+
+        result = addressDao.search(new AddressSearchRequest(lastName.substring(5), AddressSearchByOptionEnum.LAST_NAME), null);
+        assertTrue(result.contains(address));
+
+        result = addressDao.search(new AddressSearchRequest(lastName.substring(5, 20), AddressSearchByOptionEnum.LAST_NAME), null);
+        assertTrue(result.contains(address));
+
+        result = addressDao.search(new AddressSearchRequest(lastName.substring(5, 20).toLowerCase(), AddressSearchByOptionEnum.LAST_NAME), null);
+        assertTrue(result.contains(address));
+
+        result = addressDao.search(new AddressSearchRequest(lastName.substring(5, 20).toUpperCase(), AddressSearchByOptionEnum.LAST_NAME), null);
+        assertTrue(result.contains(address));
+    }
+
+    /**
      * Test of searchByFirstName method, of class AddressDaoPostgresImpl.
      */
     @Test
@@ -401,6 +436,99 @@ public class AddressDaoPostgresImplTest {
         result = addressDao.searchByZip(zip.substring(5, 20).toUpperCase());
         assertTrue(result.contains(address));
 
+    }
+
+    @Test
+    public void testSearchByEverything() {
+        System.out.println("search By Everything");
+
+        for (AddressSearchByOptionEnum addressSearchByOptionEnum : AddressSearchByOptionEnum.values()) {
+
+            String searchString = null;
+
+            Address address = addressGenerator();
+
+            switch (addressSearchByOptionEnum) {
+                case FIRST_NAME:
+                    searchString = address.getFirstName();
+                    break;
+                case LAST_NAME:
+                    searchString = address.getLastName();
+                    break;
+                case FULL_NAME:
+                    searchString = address.getFullName();
+                    break;
+                case COMPANY:
+                    searchString = address.getCompany();
+                    break;
+                case NAME:
+                    String[] nameOptions = {address.getFirstName(), address.getLastName(), address.getFullName()};
+                    searchString = nameOptions[new Random().nextInt(nameOptions.length)];
+                    break;
+                case NAME_OR_COMPANY:
+                    String[] nameOrCompanyOptions = {address.getFirstName(), address.getLastName(), address.getFullName(), address.getCompany()};
+                    searchString = nameOrCompanyOptions[new Random().nextInt(nameOrCompanyOptions.length)];
+                    break;
+                case STREET_NUMBER:
+                    searchString = address.getStreetNumber();
+                    break;
+                case STREET_NAME:
+                    searchString = address.getStreetName();
+                    break;
+                case STREET:
+                    searchString = address.getStreetNumber() + " " + address.getStreetName();
+                    break;
+                case CITY:
+                    searchString = address.getCity();
+                    break;
+                case STATE:
+                    searchString = address.getState();
+                    break;
+                case ZIP:
+                    searchString = address.getZip();
+                    break;
+                case ALL:
+                case ANY:
+                case DEFAULT:
+                    String[] allOptions = {address.getFirstName(),
+                        address.getLastName(),
+                        address.getFullName(),
+                        address.getCompany(),
+                        address.getCity(),
+                        address.getState(),
+                        address.getStreetName(),
+                        address.getStreetNumber(),
+                        address.getZip()};
+                    searchString = allOptions[new Random().nextInt(allOptions.length)];
+                    break;
+                default:
+                    throw new ArrayIndexOutOfBoundsException();
+            }
+
+            addressDao.create(address);
+
+            List<Address> result = addressDao.search(new AddressSearchRequest(searchString, addressSearchByOptionEnum), null);
+            assertTrue("Search String: " + searchString + ", Search Option: " + addressSearchByOptionEnum.value(), result.contains(address));
+            assertEquals(result.size(), 1);
+
+            result = addressDao.search(new AddressSearchRequest(searchString.toLowerCase(), addressSearchByOptionEnum), null);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(new AddressSearchRequest(searchString.toUpperCase(), addressSearchByOptionEnum), null);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(new AddressSearchRequest(searchString.substring(5), addressSearchByOptionEnum), null);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(new AddressSearchRequest(searchString.substring(5, 20), addressSearchByOptionEnum), null);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(new AddressSearchRequest(searchString.substring(5, 20).toLowerCase(), addressSearchByOptionEnum), null);
+            assertTrue(result.contains(address));
+
+            result = addressDao.search(new AddressSearchRequest(searchString.substring(5, 20).toUpperCase(), addressSearchByOptionEnum), null);
+            assertTrue(result.contains(address));
+        }
     }
 
     @Test
@@ -670,13 +798,13 @@ public class AddressDaoPostgresImplTest {
             assertEquals(allAddresses.get(i), cumulativeAddress.get(i));
         }
     }
-    
+
     @Test
-    public void emptyPageShouldBeEmpty(){
+    public void emptyPageShouldBeEmpty() {
         int size = addressDao.size();
-        
+
         List<Address> emptyResults = addressDao.list(new AddressResultSegment(1, size, AddressSortByEnum.COMPANY));
-        
+
         assertTrue(emptyResults.isEmpty());
     }
 

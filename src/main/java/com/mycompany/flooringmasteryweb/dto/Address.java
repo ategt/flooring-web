@@ -136,6 +136,10 @@ public class Address {
         return streetName;
     }
 
+    public String getFullName(){
+        return getFirstName() + " " + getLastName();
+    }
+    
     /**
      * @param streetName the streetName to set
      */

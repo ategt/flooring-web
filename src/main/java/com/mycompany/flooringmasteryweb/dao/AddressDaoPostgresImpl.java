@@ -145,13 +145,13 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_SEARCH_ADDRESS_BY_ALL = "WITH inputQuery(n) AS (SELECT ?),"
             + " firstQuery(id) AS (SELECT id FROM addresses WHERE "
-            + "       ((CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) = (SELECT n FROM inputQuery)), "
+            + "       (CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) = (SELECT n FROM inputQuery)), "
             + " secondQuery(id) AS (SELECT id FROM addresses WHERE "
-            + "       LOWER((CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) = (SELECT LOWER(n) FROM inputQuery)), "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) = (SELECT LOWER(n) FROM inputQuery)), "
             + " thirdQuery(id) AS (SELECT id FROM addresses WHERE "
-            + "       LOWER((CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)), "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)), "
             + " fourthQuery(id) AS (SELECT id FROM addresses WHERE "
-            + "       LOWER((CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
             + SQL_SEARCH_ADDRESS_BASE_QUERY;
 
     private static final String SQL_SEARCH_ADDRESS_BY_ANY = "SELECT DISTINCT * FROM addresses WHERE"
@@ -307,7 +307,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                 return SQL_SEARCH_ADDRESS_BY_LAST_NAME;
             case NAME:
                 return SQL_SEARCH_ADDRESS_BY_NAME;
-            case FULLNAME:
+            case FULL_NAME:
                 return SQL_SEARCH_ADDRESS_BY_FULL_NAME;
             case STREET_NUMBER:
                 return SQL_SEARCH_ADDRESS_BY_STREET_NUMBER;
@@ -363,7 +363,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByFullName(String fullName) {
-        return search(new AddressSearchRequest(fullName, AddressSearchByOptionEnum.FULLNAME), null);
+        return search(new AddressSearchRequest(fullName, AddressSearchByOptionEnum.FULL_NAME), null);
     }
 
     @Override
