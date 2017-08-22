@@ -35,19 +35,29 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
     private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *;";
     private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id = ?";
-    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME = "SELECT * FROM addresses ORDER BY first_name ASC, last_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY = "SELECT * FROM addresses ORDER BY company ASC, last_name ASC, first_name ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_ID = "SELECT * FROM addresses ORDER BY id ASC;";
     private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses;";
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
-    //public static final int SORT_BY_LAST_NAME = 0;
-    //public static final int SORT_BY_FIRST_NAME = 1;
-    //public static final int SORT_BY_COMPANY = 2;
-    //public static final int SORT_BY_ID = 3;
+    private static final String SQL_SEARCH_ADDRESS_BASE_QUERY = "SELECT * FROM addresses WHERE id IN ("
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + ")";
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE first_name = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE first_name = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE first_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE first_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE last_name = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE last_name = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE last_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE last_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -285,17 +295,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH inputQuery(n) AS (SELECT ?)," +
-              " firstQuery(id) AS (SELECT id FROM addresses WHERE first_name = (SELECT n FROM inputQuery))," +
-              " secondQuery(id) AS (SELECT id FROM addresses WHERE first_name = (SELECT LOWER(n) FROM inputQuery))," +
-              " thirdQuery(id) AS (SELECT id FROM addresses WHERE first_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery))," +
-              " fourthQuery(id) AS (SELECT id FROM addresses WHERE first_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) " +
-              "SELECT * FROM addresses WHERE id IN (" +
-              "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) " +
-              "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)" +
-              "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)" +
-              ")";
 
     @Override
     public List<Address> searchByFirstName(String firstName) {
@@ -535,11 +534,11 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private final String SORT_BY_FIRST_NAME_INVERSE = "first_name ASC, last_name ASC, company ASC, id desc";
     private final String SORT_BY_LAST_NAME_INVERSE = "last_name ASC, first_name ASC, company ASC, id desc";
     private final String SORT_BY_ID_INVERSE = "id desc";
-    
-    private String sortQuery(final String query, final AddressResultSegment resultSegment){
+
+    private String sortQuery(final String query, final AddressResultSegment resultSegment) {
         String sortByString = null;
-        
-        switch(resultSegment.getSortBy()){
+
+        switch (resultSegment.getSortBy()) {
             case COMPANY:
                 sortByString = SORT_BY_COMPANY;
                 break;
@@ -567,16 +566,16 @@ public class AddressDaoPostgresImpl implements AddressDao {
             default:
                 sortByString = SORT_BY_ID;
         }
-        
+
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("SELECT * FROM (");
         stringBuilder.append(query);
         stringBuilder.append(") AS presortedQuery ORDER BY ");
         stringBuilder.append(sortByString);
 
-        return stringBuilder.toString();       
+        return stringBuilder.toString();
     }
-    
+
     private String paginateQuery(final String query, final AddressResultSegment resultSegment) {
         if (resultSegment == null
                 || resultSegment.getPage() == null
@@ -597,11 +596,12 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         return stringBuilder.toString();
     }
-    
-    private String sortAndPaginateQuery(final String query, final AddressResultSegment resultSegment){
-        if (resultSegment == null) 
+
+    private String sortAndPaginateQuery(final String query, final AddressResultSegment resultSegment) {
+        if (resultSegment == null) {
             return query;
-        
+        }
+
         return sortQuery(paginateQuery(query, resultSegment), resultSegment);
     }
 }
