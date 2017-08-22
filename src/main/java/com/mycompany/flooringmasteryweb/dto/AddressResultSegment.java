@@ -15,6 +15,12 @@ public class AddressResultSegment {
     
     private AddressSortByEnum sortBy;
 
+    public AddressResultSegment(Integer page, Integer resultsPerPage, AddressSortByEnum sortBy){
+        this.page = page;
+        this.resultsPerPage = resultsPerPage;
+        this.sortBy = sortBy;
+    }
+    
     /**
      * @return the page
      */

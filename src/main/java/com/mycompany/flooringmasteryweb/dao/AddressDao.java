@@ -31,6 +31,7 @@ public interface AddressDao {
     public Set<String> getCompletionGuesses(String input, int limit);
     public List<Address> list();
     public List<Address> list(AddressSortByEnum sortByEnum);
+    public List<Address> list(AddressResultSegment resultSegment);
     public List<Address> searchByFirstName(String firstName);
     public List<Address> searchByLastName(String lastName);
     public List<Address> searchByFullName(String lastName);

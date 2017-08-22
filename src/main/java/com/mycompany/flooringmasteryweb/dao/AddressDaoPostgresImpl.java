@@ -9,6 +9,7 @@ import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
     private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *;";
     private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id = ?";
+    private static final String SQL_GET_ADDRESS_ALL = "SELECT * FROM addresses";
     private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses;";
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
@@ -294,22 +296,17 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> list() {
-        return list(SORT_BY_LAST_NAME);
+        return list(AddressSortByEnum.LAST_NAME);
     }
 
     @Override
-    public List<Address> list(Integer sortBy) {
-        switch (sortBy) {
-            case SORT_BY_COMPANY:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY, new AddressMapper());
-            case SORT_BY_FIRST_NAME:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME, new AddressMapper());
-            case SORT_BY_ID:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_ID, new AddressMapper());
-            case SORT_BY_LAST_NAME:
-            default:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME, new AddressMapper());
-        }
+    public List<Address> list(AddressSortByEnum sortBy) {
+        return list(new AddressResultSegment(null, null, sortBy));
+    }
+
+    @Override
+    public List<Address> list(AddressResultSegment resultSegment) {
+        return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ADDRESS_ALL, resultSegment), new AddressMapper());
     }
 
     @Override
