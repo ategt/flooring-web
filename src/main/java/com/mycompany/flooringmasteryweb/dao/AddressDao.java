@@ -6,8 +6,10 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import java.util.List;
 import java.util.Set;
 
@@ -43,4 +45,5 @@ public interface AddressDao {
     public List<Address> searchByState(String state);
     public List<Address> searchByZip(String zip);
     public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption);
+    public List<Address> search(AddressSearchRequest searchRequest, AddressResultSegment resultSegment);
 }
