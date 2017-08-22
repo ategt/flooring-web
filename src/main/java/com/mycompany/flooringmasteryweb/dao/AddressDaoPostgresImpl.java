@@ -215,23 +215,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     public Set<Address> getGuesses(String input) {
-        if (input == null) {
-            return null;
-        }
-
-        Set<Address> result = new HashSet();
-
-        result.addAll(searchByFirstName(input));
-        result.addAll(searchByLastName(input));
-        result.addAll(searchByFullName(input));
-        result.addAll(searchByCity(input));
-        result.addAll(searchByCompany(input));
-        result.addAll(searchByState(input));
-        result.addAll(searchByZip(input));
-        result.addAll(searchByStreetName(input));
-        result.addAll(searchByStreetNumber(input));
-
-        return result;
+        return new HashSet<>(search(new AddressSearchRequest(input, AddressSearchByOptionEnum.ANY), null));
     }
 
     @Override
@@ -415,7 +399,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public List<Address> getAddressesSortedByParameter(String sortBy) {        
+    public List<Address> getAddressesSortedByParameter(String sortBy) {
         return list(AddressSortByEnum.valueOf(sortBy));
     }
 
