@@ -415,20 +415,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public List<Address> getAddressesSortedByParameter(String sortBy) {
-        List<Address> addresses;
-        if (sortBy.equalsIgnoreCase("company")) {
-            addresses = list(AddressDao.SORT_BY_COMPANY);
-        } else if (sortBy.equalsIgnoreCase("id")) {
-            addresses = list(AddressDao.SORT_BY_ID);
-        } else if (sortBy.equalsIgnoreCase("first_name")) {
-            addresses = list(AddressDao.SORT_BY_FIRST_NAME);
-        } else if (sortBy.equalsIgnoreCase("last_name")) {
-            addresses = list(AddressDao.SORT_BY_LAST_NAME);
-        } else {
-            addresses = list();
-        }
-        return addresses;
+    public List<Address> getAddressesSortedByParameter(String sortBy) {        
+        return list(AddressSortByEnum.valueOf(sortBy));
     }
 
     public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption) {

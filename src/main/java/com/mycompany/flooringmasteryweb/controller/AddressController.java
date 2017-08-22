@@ -61,7 +61,7 @@ public class AddressController {
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
             addresses = addressDao.getAddressesSortedByParameter(sortBy);
-            addressDao.
+            //addressDao.
         } else {
             addresses = addressDao.getAddressesSortedByParameter(sortCookie);
         }
