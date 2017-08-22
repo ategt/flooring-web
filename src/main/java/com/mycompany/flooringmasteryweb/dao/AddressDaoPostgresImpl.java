@@ -448,64 +448,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption) {
-        List<Address> addresses = null;
-
-        if (null == searchOption) {
-            addresses = list();
-        } else {
-            switch (searchOption) {
-                case LAST_NAME:
-                    addresses = searchByLastName(queryString);
-                    break;
-                case FIRST_NAME:
-                    addresses = searchByFirstName(queryString);
-                    break;
-                case COMPANY:
-                    addresses = searchByCompany(queryString);
-                    break;
-                case CITY:
-                    addresses = searchByCity(queryString);
-                    break;
-                case STATE:
-                    addresses = searchByState(queryString);
-                    break;
-                case STREET_NAME:
-                    addresses = searchByStreetName(queryString);
-                    break;
-                case STREET_NUMBER:
-                    addresses = searchByStreetNumber(queryString);
-                    break;
-                case STREET:
-                    Set<Address> tempStreetAddresses = new HashSet();
-                    tempStreetAddresses.addAll(searchByStreetNumber(queryString));
-                    tempStreetAddresses.addAll(searchByStreetName(queryString));
-                    addresses = new ArrayList(tempStreetAddresses);
-                    break;
-                case ZIP:
-                    addresses = searchByZip(queryString);
-                    break;
-                case NAME:
-                    Set<Address> tempNameAddresses = new HashSet();
-                    tempNameAddresses.addAll(searchByFirstName(queryString));
-                    tempNameAddresses.addAll(searchByLastName(queryString));
-                    addresses = new ArrayList(tempNameAddresses);
-                    break;
-                case NAME_OR_COMPANY:
-                    Set<Address> tempNameCompanyAddresses = new HashSet();
-                    tempNameCompanyAddresses.addAll(searchByFirstName(queryString));
-                    tempNameCompanyAddresses.addAll(searchByLastName(queryString));
-                    tempNameCompanyAddresses.addAll(searchByCompany(queryString));
-                    addresses = new ArrayList(tempNameCompanyAddresses);
-                    break;
-                case ALL:
-                    addresses = new ArrayList(getGuesses(queryString));
-                    break;
-                default:
-                    addresses = list();
-                    break;
-            }
-        }
-        return addresses;
+        return search(new AddressSearchRequest(queryString, searchOption), null);
     }
 
     @Override
@@ -515,7 +458,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
         }
 
         String searchQuery = getSearchQuery(searchRequest.searchBy());
-
         String improvedQuery = sortAndPaginateQuery(searchQuery, resultSegment);
 
         List<Address> result = jdbcTemplate.query(improvedQuery, new AddressMapper(), searchRequest.getSearchText());
