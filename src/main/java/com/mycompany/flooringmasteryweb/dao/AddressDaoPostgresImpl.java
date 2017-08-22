@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import java.sql.ResultSet;
@@ -33,7 +34,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id;";
     private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
     private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *;";
-    private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id =?";
+    private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id = ?";
     private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
     private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
     private static final String SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME = "SELECT * FROM addresses ORDER BY first_name ASC, last_name ASC, company ASC, id ASC;";
@@ -43,10 +44,10 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
-    public static final int SORT_BY_LAST_NAME = 0;
-    public static final int SORT_BY_FIRST_NAME = 1;
-    public static final int SORT_BY_COMPANY = 2;
-    public static final int SORT_BY_ID = 3;
+    //public static final int SORT_BY_LAST_NAME = 0;
+    //public static final int SORT_BY_FIRST_NAME = 1;
+    //public static final int SORT_BY_COMPANY = 2;
+    //public static final int SORT_BY_ID = 3;
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -132,7 +133,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
         Set<String> result = new HashSet();
 
         result.addAll(searchByFullName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
-        
+
         result.addAll(searchByFirstName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
         result.addAll(searchByLastName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
@@ -273,9 +274,9 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER(?)), "
             + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER(?)) "
             + "SELECT * FROM addresses WHERE id IN ("
-                    + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
-                        + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
-                        + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
             + ");";
 
     @Override
@@ -287,6 +288,18 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "SELECT * FROM addresses WHERE first_name = ?";
     private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(first_name) LIKE LOWER(?);";
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH inputQuery(n) AS (SELECT n FROM ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM inputQuery),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) = LOWER(?)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER(?)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER(?)) "
+            + "SELECT * FROM addresses WHERE id IN ("
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + ");";
+
 
     @Override
     public List<Address> searchByFirstName(String firstName) {
@@ -520,5 +533,91 @@ public class AddressDaoPostgresImpl implements AddressDao {
             }
         }
         return addresses;
+    }
+
+    @Override
+    public List<Address> search(AddressSearchRequest searchRequest, AddressResultSegment resultSegment) {
+        if (searchRequest == null) {
+            return new ArrayList<>();
+        }
+
+    }
+
+    private final String SORT_BY_COMPANY = "company ASC, first_name ASC, last_name ASC, id desc";
+    private final String SORT_BY_FIRST_NAME = "first_name ASC, last_name ASC, company ASC, id desc";
+    private final String SORT_BY_LAST_NAME = "last_name ASC, first_name ASC, company ASC, id desc";
+    private final String SORT_BY_ID = "id desc";
+    private final String SORT_BY_COMPANY_INVERSE = "company ASC, first_name ASC, last_name ASC, id desc";
+    private final String SORT_BY_FIRST_NAME_INVERSE = "first_name ASC, last_name ASC, company ASC, id desc";
+    private final String SORT_BY_LAST_NAME_INVERSE = "last_name ASC, first_name ASC, company ASC, id desc";
+    private final String SORT_BY_ID_INVERSE = "id desc";
+    
+    private String sortQuery(final String query, final AddressResultSegment resultSegment){
+        String sortByString = null;
+        
+        switch(resultSegment.getSortBy()){
+            case COMPANY:
+                sortByString = SORT_BY_COMPANY;
+                break;
+            case FIRST_NAME:
+                sortByString = SORT_BY_FIRST_NAME;
+                break;
+            case LAST_NAME:
+                sortByString = SORT_BY_LAST_NAME;
+                break;
+            case ID:
+                sortByString = SORT_BY_ID;
+                break;
+            case COMPANY_INVERSE:
+                sortByString = SORT_BY_COMPANY_INVERSE;
+                break;
+            case FIRST_NAME_INVERSE:
+                sortByString = SORT_BY_FIRST_NAME_INVERSE;
+                break;
+            case LAST_NAME_INVERSE:
+                sortByString = SORT_BY_LAST_NAME_INVERSE;
+                break;
+            case ID_INVERSE:
+                sortByString = SORT_BY_ID_INVERSE;
+                break;
+            default:
+                sortByString = SORT_BY_ID;
+        }
+        
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("SELECT * FROM (");
+        stringBuilder.append(query);
+        stringBuilder.append(") AS presortedQuery ORDER BY ");
+        stringBuilder.append(sortByString);
+
+        return stringBuilder.toString();       
+    }
+    
+    private String paginateQuery(final String query, final AddressResultSegment resultSegment) {
+        if (resultSegment == null
+                || resultSegment.getPage() == null
+                || resultSegment.getPage() < 0
+                || resultSegment.getResultsPerPage() == null
+                || resultSegment.getResultsPerPage() < 0) {
+
+            return query;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("SELECT * FROM (");
+        stringBuilder.append(query);
+        stringBuilder.append(") AS prepaginatedQuery LIMIT ");
+        stringBuilder.append(resultSegment.getResultsPerPage());
+        stringBuilder.append(" OFFSET ");
+        stringBuilder.append(resultSegment.getPage() * resultSegment.getResultsPerPage());
+
+        return stringBuilder.toString();
+    }
+    
+    private String sortAndPaginateQuery(final String query, final AddressResultSegment resultSegment){
+        if (resultSegment == null) 
+            return query;
+        
+        return sortQuery(paginateQuery(query, resultSegment), resultSegment);
     }
 }
