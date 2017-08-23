@@ -422,8 +422,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private final String SORT_BY_FIRST_NAME = "LOWER(first_name) ASC, LOWER(last_name) ASC, LOWER(company) ASC, id ASC";
-    private final String SORT_BY_FIRST_NAME_INVERSE = "LOWER(first_name) DESC, LOWER(last_name) DESC, LOWER(company) DESC, id DESC";
+    private final String SORT_BY_FIRST_NAME = "first_name ASC, last_name ASC, company ASC, id ASC";
+    private final String SORT_BY_FIRST_NAME_INVERSE = "first_name DESC, last_name DESC, company DESC, id DESC";
     private final String SORT_BY_LAST_NAME = "last_name ASC, first_name ASC, company ASC, id ASC";
     private final String SORT_BY_ID = "id ASC";
     private final String SORT_BY_COMPANY = "company ASC, first_name ASC, last_name ASC, id ASC";
