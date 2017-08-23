@@ -778,17 +778,20 @@ public class AddressDaoPostgresImplTest {
                     result = 1;
                 } else if (address2.getFirstName() == null) {
                     result = -1;
-                } else if (address1.getFirstName().equals(address2.getFirstName())) {
+                } else {
+                    result = address1.getFirstName().compareTo(address2.getFirstName());
+                }
+            } else {
+
+                if (address1.getFirstName().equals(address2.getFirstName())) {
                     result = 0;
                 } else if (address1.getFirstName().trim().isEmpty()) {
                     result = -1;
                 } else if (address2.getFirstName().trim().isEmpty()) {
                     result = 1;
                 } else {
-                    result = address1.getFirstName().compareTo(address2.getFirstName());
+                    result = -(address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase()));
                 }
-            } else {
-                result = -(address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase()));
             }
 
             if (result == 0) {
@@ -806,6 +809,7 @@ public class AddressDaoPostgresImplTest {
     }
 
     @Test
+
     public void getSortedByLastName() {
         List<Address> addresses = addressDao.list();
         List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.LAST_NAME));
