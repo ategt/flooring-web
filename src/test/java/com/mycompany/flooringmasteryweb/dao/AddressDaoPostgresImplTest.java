@@ -699,7 +699,7 @@ public class AddressDaoPostgresImplTest {
             Address address2 = (Address) o2;
 
             int result = 0;
-            
+
             if (Strings.isNullOrEmpty(address1.getFirstName())
                     || Strings.isNullOrEmpty(address2.getFirstName())) {
 
@@ -713,9 +713,13 @@ public class AddressDaoPostgresImplTest {
                     result = address1.getFirstName().compareTo(address2.getFirstName());
                 }
             } else {
-                    result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+                result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
             }
-            
+
+            if (result == 0) {
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+
             return result;
         });
 
@@ -726,7 +730,76 @@ public class AddressDaoPostgresImplTest {
     }
 
     @Test
+    public void getSortedByFirstNameReverse() {
 
+        Address testAddress = addressGenerator();
+
+        for (int i = 0; i < 10; i++) {
+            testAddress.setFirstName(UUID.randomUUID().toString());
+            addressDao.create(testAddress);
+        }
+
+        addressDao.create(testAddress);
+
+        Address nullTestAddress = new Address();
+        nullTestAddress.setFirstName("A");
+        addressDao.create(nullTestAddress);
+
+        nullTestAddress = new Address();
+        nullTestAddress.setFirstName("a");
+        addressDao.create(nullTestAddress);
+
+        nullTestAddress = new Address();
+        addressDao.create(nullTestAddress);
+
+        nullTestAddress = new Address();
+        nullTestAddress.setFirstName("");
+        addressDao.create(nullTestAddress);
+
+        nullTestAddress = new Address();
+        nullTestAddress.setFirstName(" ");
+        addressDao.create(nullTestAddress);
+
+        List<Address> addresses = addressDao.list();
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.FIRST_NAME_INVERSE));
+
+        addresses.sort((Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            int result = 0;
+
+            if (Strings.isNullOrEmpty(address1.getFirstName())
+                    || Strings.isNullOrEmpty(address2.getFirstName())) {
+
+                if (address1.getFirstName() == null && address2.getFirstName() == null) {
+                    result = 0;
+                } else if (address1.getFirstName() == null) {
+                    result = 1;
+                } else if (address2.getFirstName() == null) {
+                    result = -1;
+                } else {
+                    result = address1.getFirstName().compareTo(address2.getFirstName());
+                }
+            } else {
+                result = (address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase()));
+            }
+
+            if (result == 0) {
+                result = -(Integer.compare(address1.getId(), address2.getId()));
+            }
+
+            return result;
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals(i + ", Java-" + addresses.get(i).getId() + ":" + addresses.get(i).getFullName() + ", DB-" + addressesFromDb.get(i).getId() + ":" + addressesFromDb.get(i).getFullName(),
+                    addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
+    @Test
     public void getSortedByLastName() {
         List<Address> addresses = addressDao.list();
         List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.LAST_NAME));
