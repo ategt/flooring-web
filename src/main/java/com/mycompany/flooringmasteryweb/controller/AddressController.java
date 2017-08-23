@@ -73,20 +73,24 @@ public class AddressController {
     }
 
     private void paginatePage(AddressResultSegment addressResultSegment, Map model) {
+        paginatePage(addressResultSegment, model, "");
+    }
+
+    private void paginatePage(AddressResultSegment addressResultSegment, Map model, String extraQuery) {
         int lastPageNumber = addressDao.size() / addressResultSegment.getResultsPerPage();
         int nextPage = addressResultSegment.getPage() + 1;
         int prevPage = addressResultSegment.getPage() - 1;
         boolean showingNext = false, showingPrev = false;
         if (addressResultSegment.getPage() != lastPageNumber) {
-            model.put("lastPageNumber", lastPageNumber);
+            model.put("lastQuery", "page=" + lastPageNumber + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery);
         }
         if (nextPage <= lastPageNumber) {
-            model.put("nextPage", nextPage);
+            model.put("nextQuery", "page=" + nextPage + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery);
             showingNext = true;
         }
         if (prevPage >= 0) {
-            model.put("prevPage", prevPage);
-            model.put("firstPage", 0);
+            model.put("previousQuery", "page=" + prevPage + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery);
+            model.put("firstQuery", "page=" + 0 + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery);
             showingPrev = true;
         }
         if (showingNext && showingPrev) {
