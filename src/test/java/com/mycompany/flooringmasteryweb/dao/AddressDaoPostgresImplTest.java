@@ -713,6 +713,14 @@ public class AddressDaoPostgresImplTest {
                     result = address1.getFirstName().compareTo(address2.getFirstName());
                 }
             } else {
+                
+                
+                
+                //address1.getFirstName().toLowerCase()
+                
+                //result = address1.getFirstName().compareTo(address2.getFirstName());
+                //result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+                
                 result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
             }
 
@@ -724,7 +732,7 @@ public class AddressDaoPostgresImplTest {
         });
 
         for (int i = 0; i < addresses.size(); i++) {
-            assertEquals("Java-" + addresses.get(i).getId() + ":" + addresses.get(i).getFullName() + ", DB-" + addressesFromDb.get(i).getId() + ":" + addressesFromDb.get(i).getFullName(),
+            assertEquals("Pass:" + i + ", Java-" + addresses.get(i).getId() + ":" + addresses.get(i).getFullName() + ", DB-" + addressesFromDb.get(i).getId() + ":" + addressesFromDb.get(i).getFullName(),
                     addresses.get(i), addressesFromDb.get(i));
         }
     }
@@ -783,7 +791,9 @@ public class AddressDaoPostgresImplTest {
                     result = address1.getFirstName().compareTo(address2.getFirstName());
                 }
             } else {
-                result = (address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase()));
+                
+                //address1.getFirstName().
+                result = (address1.getFirstName().compareTo(address2.getFirstName()));
             }
 
             if (result == 0) {
