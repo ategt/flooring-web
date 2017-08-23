@@ -16,3 +16,21 @@
         </tr>
     </c:forEach>
 </table>
+
+<div class="pagination-nav-footer page-nav-footer">
+    <c:if test="${not empty firstPage}">
+        <div class="first-page-link"><a href="?page=${firstPage}">First Page</a></div>
+    </c:if>
+    <c:if test="${not empty prevPage}">
+        <div class="prev-page-link"><a href="?page=${prevPage}">Previous Page</a></div>
+    </c:if>
+    <c:if test="${not empty currentPage}">
+        <div class="current-page-number">${currentPage}</div>
+    </c:if>
+    <c:if test="${not empty nextPage}">
+        <div class="next-page-link"><a href="?page=${nextPage}">Next Page</a></div>
+    </c:if>
+    <c:if test="${not empty lastPageNumber}">
+        <div class="last-page-link"><a href="?page=${lastPageNumber}">Last Page</a></div>
+    </c:if>
+</div>

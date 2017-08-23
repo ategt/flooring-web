@@ -25,6 +25,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -60,6 +61,7 @@ public class AddressSeleneseIT {
 
     ApplicationContext ctx;
     URI uriToTest;
+    Gson gson;
 
     Integer addressCountFromIndex = null;
 
@@ -70,6 +72,7 @@ public class AddressSeleneseIT {
     @Before
     public void setUp() {
         uriToTest = ctx.getBean("baseUrlToTest", URI.class);
+        gson = new GsonBuilder().create();
     }
 
     @After
@@ -508,6 +511,53 @@ public class AddressSeleneseIT {
 
         assertNotNull(storedAddress);
         Assert.assertEquals(storedAddress, addressReturned);
+    }
+
+    @Test
+
+    public void createAndGetMethodsTest() throws IOException {
+
+        Address address = addressGenerator();
+
+        Address addressReturned = createAddressUsingJson(address);
+
+        Assert.assertNotNull(addressReturned);
+        Integer returnedAddressId = addressReturned.getId();
+
+        Assert.assertTrue(returnedAddressId > 0);
+
+        address.setId(returnedAddressId);
+
+        Assert.assertEquals(addressReturned, address);
+
+        int addressId = addressReturned.getId();
+
+        Address specificAddress = getAddressWithJson(addressId);
+
+        Assert.assertNotNull(specificAddress);
+        Assert.assertEquals(specificAddress, addressReturned);
+    }
+
+    private Address getAddressWithJson(int addressId) throws JsonSyntaxException, FailingHttpStatusCodeException, IOException {
+        HttpUrl showUrl = getAddressUrlBuilder()
+                .addPathSegment(Integer.toString(addressId))
+                .build();
+        WebClient showAddressWebClient = new WebClient();
+        showAddressWebClient.addRequestHeader("Accept", "application/json");
+        Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
+        WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
+        assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
+        assertTrue(jsonSingleAddressResponse.getContentLength() > 50);
+        Address specificAddress = null;
+        if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
+            String json = jsonSingleAddressResponse.getContentAsString();
+            specificAddress = gson.fromJson(json, Address.class);
+
+            Assert.assertNotNull(specificAddress);
+        } else {
+            fail("Should have been JSON.");
+        }
+        return specificAddress;
     }
 
     /**
@@ -2095,6 +2145,50 @@ public class AddressSeleneseIT {
         for (int i = 0; i < addresses.size(); i++) {
             assertEquals(addresses.get(i), addressesFromDb.get(i));
         }
+    }
+
+    @Test
+    public void getIndexJsonPages() throws IOException {
+        Address createdAddress = createAddressUsingJson(addressGenerator());
+
+        int results = 50;
+
+        int totalExpectedResults = getDatabaseSize();
+        int totalExpectedPages = (totalExpectedResults / results) + 1;
+
+        List<Address> cumulativeAddresses = new ArrayList<>();
+
+        for (int pageNum = 0; pageNum < totalExpectedPages; pageNum++) {
+
+            HttpUrl httpUrl = getAddressUrlBuilder()
+                    .addPathSegment("")
+                    .addQueryParameter("page", Integer.toString(pageNum))
+                    .addQueryParameter("results", Integer.toString(results))
+                    .build();
+
+            WebClient webClient = new WebClient();
+            webClient.addRequestHeader("Accept", "application/json");
+
+            Page page = webClient.getPage(httpUrl.url());
+            WebResponse webResponse = page.getWebResponse();
+            assertEquals(webResponse.getStatusCode(), 200);
+            assertTrue(webResponse.getContentLength() > 100);
+
+            Address[] addressesReturned = null;
+
+            if (webResponse.getContentType().equals("application/json")) {
+                String json = webResponse.getContentAsString();
+                addressesReturned = gson.fromJson(json, Address[].class);
+            } else {
+                fail("Should have been JSON.");
+            }
+
+            List<Address> addresses = Arrays.asList(addressesReturned);
+            cumulativeAddresses.addAll(addresses);
+        }
+
+        assertEquals(cumulativeAddresses.size(), totalExpectedResults);
+        assertTrue(cumulativeAddresses.contains(createdAddress));
     }
 
     private String caseRandomizer(final Random random, String input) {

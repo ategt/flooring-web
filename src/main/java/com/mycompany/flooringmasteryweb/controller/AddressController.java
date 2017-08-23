@@ -20,6 +20,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -54,13 +55,41 @@ public class AddressController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(
             @CookieValue(value = "sort_cookie", defaultValue = "last_name") String sortCookie,
-            @CookieValue(value = "results_per_page_cookie") Integer resultsPerPageCookie,
+            @CookieValue(value = "results_per_page_cookie", required = false) Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
-            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
             HttpServletResponse response,
             Map model) {
 
+        AddressResultSegment addressResultSegment = buildAddressResultSegment(resultsPerPage, response, resultsPerPageCookie, sortBy, sortCookie, page);
+
+        int lastPageNumber = (addressDao.size() / addressResultSegment.getResultsPerPage()) - 1;
+
+        int nextPage = addressResultSegment.getPage() + 1;
+        int prevPage = addressResultSegment.getPage() - 1;
+
+        if (nextPage <= lastPageNumber && prevPage >= 0) {
+            if (nextPage <= lastPageNumber) {
+                model.put("lastPageNumber", lastPageNumber);
+                model.put("nextPage", nextPage);
+            }
+
+            if (prevPage >= 0) {
+                model.put("prevPage", prevPage);
+                model.put("firstPage", 0);
+            }
+
+            model.put("currentPage", addressResultSegment.getPage());
+        }
+
+        List<Address> addresses = addressDao.list(addressResultSegment);
+
+        model.put("addresses", addresses);
+        return "address\\index";
+    }
+
+    private AddressResultSegment buildAddressResultSegment(Integer resultsPerPage, HttpServletResponse response, Integer resultsPerPageCookie, String sortBy, String sortCookie, Integer page) throws BeansException {
         if (resultsPerPage != null) {
             response.addCookie(new Cookie("results_per_page_cookie", resultsPerPage.toString()));
         } else if (resultsPerPageCookie != null) {
@@ -68,19 +97,13 @@ public class AddressController {
         } else {
             resultsPerPage = ctx.getBean("defaultItemsPerPage", Integer.class);
         }
-
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
         } else {
             sortBy = sortCookie;
         }
-        
-        AddressResultSegment addressResultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.parse(sortBy));        
-        
-        List<Address> addresses = addressDao.list(addressResultSegment);
-
-        model.put("addresses", addresses);
-        return "address\\index";
+        AddressResultSegment addressResultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.parse(sortBy));
+        return addressResultSegment;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
@@ -88,16 +111,14 @@ public class AddressController {
     public Address[] index(
             @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
+            @CookieValue(value = "results_per_page_cookie", required = false) Integer resultsPerPageCookie,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
             HttpServletResponse response) {
 
-        List<Address> addresses;
+        AddressResultSegment addressResultSegment = buildAddressResultSegment(resultsPerPage, response, resultsPerPageCookie, sortBy, sortCookie, page);
 
-        if (sortBy != null) {
-            response.addCookie(new Cookie("sort_cookie", sortBy));
-            addresses = addressDao.getAddressesSortedByParameter(sortBy);
-        } else {
-            addresses = addressDao.getAddressesSortedByParameter(sortCookie);
-        }
+        List<Address> addresses = addressDao.list(addressResultSegment);
 
         return addresses.toArray(new Address[addresses.size()]);
     }
