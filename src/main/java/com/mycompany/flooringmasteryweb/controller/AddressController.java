@@ -64,15 +64,18 @@ public class AddressController {
 
         AddressResultSegment addressResultSegment = buildAddressResultSegment(resultsPerPage, response, resultsPerPageCookie, sortBy, sortCookie, page);
 
-        int lastPageNumber = (addressDao.size() / addressResultSegment.getResultsPerPage()) - 1;
+        int lastPageNumber = addressDao.size() / addressResultSegment.getResultsPerPage();
 
         int nextPage = addressResultSegment.getPage() + 1;
         int prevPage = addressResultSegment.getPage() - 1;
 
         boolean showingNext = false, showingPrev = false;
 
-        if (nextPage <= lastPageNumber) {
+        if (addressResultSegment.getPage() != lastPageNumber) {
             model.put("lastPageNumber", lastPageNumber);
+        }
+
+        if (nextPage <= lastPageNumber) {
             model.put("nextPage", nextPage);
             showingNext = true;
         }
@@ -84,7 +87,7 @@ public class AddressController {
         }
 
         if (showingNext && showingPrev) {
-            model.put("currentPage", addressResultSegment.getPage());
+            model.put("currentPage", addressResultSegment.getPage() + 1);
         }
 
         List<Address> addresses = addressDao.list(addressResultSegment);
