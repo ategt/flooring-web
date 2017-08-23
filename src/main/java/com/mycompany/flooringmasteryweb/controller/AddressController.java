@@ -7,8 +7,10 @@ package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.Address;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,25 +48,36 @@ public class AddressController {
     @Inject
     public AddressController(AddressDao addressDao) {
         this.addressDao = addressDao;
-        ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();        
+        ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @CookieValue(value = "sort_cookie", defaultValue = "last_name") String sortCookie,
+            @CookieValue(value = "results_per_page_cookie") Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @RequestParam(name = "page", required = false) Integer page,
             HttpServletResponse response,
             Map model) {
 
-        List<Address> addresses;
+        if (resultsPerPage != null) {
+            response.addCookie(new Cookie("results_per_page_cookie", resultsPerPage.toString()));
+        } else if (resultsPerPageCookie != null) {
+            resultsPerPage = resultsPerPageCookie;
+        } else {
+            resultsPerPage = ctx.getBean("defaultItemsPerPage", Integer.class);
+        }
 
         if (sortBy != null) {
             response.addCookie(new Cookie("sort_cookie", sortBy));
-            addresses = addressDao.getAddressesSortedByParameter(sortBy);
-            //addressDao.
         } else {
-            addresses = addressDao.getAddressesSortedByParameter(sortCookie);
+            sortBy = sortCookie;
         }
+        
+        AddressResultSegment addressResultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.parse(sortBy));        
+        
+        List<Address> addresses = addressDao.list(addressResultSegment);
 
         model.put("addresses", addresses);
         return "address\\index";

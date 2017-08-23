@@ -38,7 +38,7 @@ public enum AddressSortByEnum {
             currentEnum = ID;
         }
 
-        if (input.toLowerCase().contains("inverse") || input.toLowerCase().contains("reverse")) {
+        if (input.toLowerCase().contains("inv") || input.toLowerCase().contains("rev")) {
             currentEnum = reverse(currentEnum);
         }
         return currentEnum;
