@@ -422,14 +422,14 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
+    private final String SORT_BY_ID = "id ASC";
+    private final String SORT_BY_ID_INVERSE = "id DESC";
     private final String SORT_BY_FIRST_NAME = "first_name ASC, last_name ASC, company ASC, id ASC";
     private final String SORT_BY_FIRST_NAME_INVERSE = "first_name DESC, last_name DESC, company DESC, id DESC";
     private final String SORT_BY_LAST_NAME = "last_name ASC, first_name ASC, company ASC, id ASC";
-    private final String SORT_BY_ID = "id ASC";
+    private final String SORT_BY_LAST_NAME_INVERSE = "last_name DESC, first_name DESC, company DESC, id DESC";
     private final String SORT_BY_COMPANY = "company ASC, first_name ASC, last_name ASC, id ASC";
-    private final String SORT_BY_COMPANY_INVERSE = "company ASC, first_name ASC, last_name ASC, id DESC";
-    private final String SORT_BY_LAST_NAME_INVERSE = "last_name ASC, first_name ASC, company ASC, id DESC";
-    private final String SORT_BY_ID_INVERSE = "id DESC";
+    private final String SORT_BY_COMPANY_INVERSE = "company DESC, first_name DESC, last_name DESC, id DESC";
 
     private String sortQuery(final String query, final AddressResultSegment resultSegment) {
         String sortByString = null;
