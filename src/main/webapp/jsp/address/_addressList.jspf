@@ -17,20 +17,38 @@
     </c:forEach>
 </table>
 
-<div class="pagination-nav-footer page-nav-footer">
+<div class="pagination-nav-footer page-nav-footer text-center">
     <c:if test="${not empty firstPage}">
-        <div class="first-page-link"><a href="?page=${firstPage}">First Page</a></div>
+        <a href="?page=${firstPage}">
+            <div class="first-page-link btn btn-default">
+                First Page
+            </div>
+        </a>
     </c:if>
     <c:if test="${not empty prevPage}">
-        <div class="prev-page-link"><a href="?page=${prevPage}">Previous Page</a></div>
+        <a href="?page=${prevPage}">
+            <div class="prev-page-link btn btn-default">
+                Previous Page
+            </div>
+        </a>
     </c:if>
     <c:if test="${not empty currentPage}">
-        <div class="current-page-number">${currentPage}</div>
+        <div class="current-page-number btn">
+            ${currentPage}
+        </div>
     </c:if>
     <c:if test="${not empty nextPage}">
-        <div class="next-page-link"><a href="?page=${nextPage}">Next Page</a></div>
+        <a href="?page=${nextPage}">
+            <div class="next-page-link btn btn-default">
+                Next Page
+            </div>
+        </a>
     </c:if>
     <c:if test="${not empty lastPageNumber}">
-        <div class="last-page-link"><a href="?page=${lastPageNumber}">Last Page</a></div>
+        <a href="?page=${lastPageNumber}">
+            <div class="last-page-link btn btn-default">
+                Last Page
+            </div>
+        </a>
     </c:if>
 </div>

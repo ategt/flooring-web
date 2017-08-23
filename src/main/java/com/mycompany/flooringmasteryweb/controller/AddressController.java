@@ -69,17 +69,21 @@ public class AddressController {
         int nextPage = addressResultSegment.getPage() + 1;
         int prevPage = addressResultSegment.getPage() - 1;
 
-        if (nextPage <= lastPageNumber && prevPage >= 0) {
-            if (nextPage <= lastPageNumber) {
-                model.put("lastPageNumber", lastPageNumber);
-                model.put("nextPage", nextPage);
-            }
+        boolean showingNext = false, showingPrev = false;
 
-            if (prevPage >= 0) {
-                model.put("prevPage", prevPage);
-                model.put("firstPage", 0);
-            }
+        if (nextPage <= lastPageNumber) {
+            model.put("lastPageNumber", lastPageNumber);
+            model.put("nextPage", nextPage);
+            showingNext = true;
+        }
 
+        if (prevPage >= 0) {
+            model.put("prevPage", prevPage);
+            model.put("firstPage", 0);
+            showingPrev = true;
+        }
+
+        if (showingNext && showingPrev) {
             model.put("currentPage", addressResultSegment.getPage());
         }
 
