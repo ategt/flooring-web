@@ -11,6 +11,7 @@ import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -82,20 +83,24 @@ public class AddressController {
         int prevPage = addressResultSegment.getPage() - 1;
         boolean showingNext = false, showingPrev = false;
         if (addressResultSegment.getPage() != lastPageNumber) {
-            model.put("lastQuery", "page=" + lastPageNumber + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery);
+            model.put("lastQuery", buildQuery(lastPageNumber, addressResultSegment, extraQuery));
         }
         if (nextPage <= lastPageNumber) {
-            model.put("nextQuery", "page=" + nextPage + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery);
+            model.put("nextQuery", buildQuery(nextPage, addressResultSegment, extraQuery));
             showingNext = true;
         }
         if (prevPage >= 0) {
-            model.put("previousQuery", "page=" + prevPage + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery);
-            model.put("firstQuery", "page=" + 0 + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery);
+            model.put("previousQuery", buildQuery(prevPage, addressResultSegment, extraQuery));
+            model.put("firstQuery", buildQuery(0, addressResultSegment, extraQuery));
             showingPrev = true;
         }
         if (showingNext && showingPrev) {
             model.put("currentPage", addressResultSegment.getPage() + 1);
         }
+    }
+
+    private static String buildQuery(int lastPageNumber, AddressResultSegment addressResultSegment, String extraQuery) {
+        return "page=" + lastPageNumber + "&results=" + addressResultSegment.getResultsPerPage() + "&sort_by=" + addressResultSegment.getSortBy().name() + ((extraQuery == null || extraQuery.trim().isEmpty()) ? "&" : "") + extraQuery;
     }
 
     private AddressResultSegment buildAddressResultSegment(Integer resultsPerPage, HttpServletResponse response, Integer resultsPerPageCookie, String sortBy, String sortCookie, Integer page) throws BeansException {
@@ -231,9 +236,9 @@ public class AddressController {
     public String search(
             @ModelAttribute AddressSearchRequest addressSearchRequest,
             Map model) {
-        List<Address> addresses = searchDatabase(addressSearchRequest);
 
-        model.put("addresses", addresses);
+        List<Address> addresses = searchDatabase(addressSearchRequest);
+        model.put("addresses", addresses);        
 
         return "address\\search";
     }
@@ -260,8 +265,8 @@ public class AddressController {
     }
 
     private List<Address> searchDatabase(AddressSearchRequest searchRequest) {
-        return addressDao.search(searchRequest.getSearchText(),
-                AddressSearchByOptionEnum.parse(searchRequest.getSearchBy()));
+        return addressDao.search(searchRequest,
+                new AddressResultSegment(0, ctx.getBean("defaultItemsPerPage", Integer.class), AddressSortByEnum.ID_INVERSE));
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -281,7 +286,7 @@ public class AddressController {
 
         List<Address> addresses = (query != null && searchBy != null)
                 ? searchDatabase(new AddressSearchRequest(query, AddressSearchByOptionEnum.parse(searchBy)))
-                : addressDao.list(addressResultSegment);
+                : new ArrayList();
 
         model.put("addresses", addresses);
 

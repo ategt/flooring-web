@@ -17,6 +17,13 @@
     </c:forEach>
 </table>
 
+<c:if test="${empty addresses}">
+    <div class="no-results">
+        No Results Found
+    </div>
+</c:if>
+
+
 <div class="pagination-nav-footer page-nav-footer text-center">
     <c:if test="${not empty firstQuery}">
         <a href="?${firstQuery}">
