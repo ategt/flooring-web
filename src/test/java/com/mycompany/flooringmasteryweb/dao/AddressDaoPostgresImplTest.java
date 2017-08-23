@@ -757,6 +757,68 @@ public class AddressDaoPostgresImplTest {
     }
 
     @Test
+    public void getSortedByLastName() {
+        List<Address> addresses = addressDao.list();
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.LAST_NAME));
+
+        List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
+
+        addressesFromDb.removeAll(removables);
+        addresses.removeAll(removables);
+
+        addresses.sort((Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
+    @Test
+    public void getSortedByLastNameReverse() {
+        List<Address> addresses = addressDao.list();
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.LAST_NAME_INVERSE));
+
+        List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
+
+        addressesFromDb.removeAll(removables);
+        addresses.removeAll(removables);
+
+        addresses.sort((Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            int result = 0;
+             result = -(address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase()));
+             
+             if (result == 0){
+                 result = -(address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase()));
+             }
+
+             if (result == 0){
+                 result = -(address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase()));
+             }
+
+             if (result == 0){
+                 result = -(address1.getId().compareTo(address2.getId()));
+             }
+             
+             return result;
+        });
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals("Pass:" + i + ", Java-" + addresses.get(i).getId() + ":" + addresses.get(i).getFullName() + ", DB-" + addressesFromDb.get(i).getId() + ":" + addressesFromDb.get(i).getFullName(),
+                    addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
+    @Test
     public void getFirstPage() {
         AddressResultSegment resultSegment = new AddressResultSegment(0, 50, AddressSortByEnum.LAST_NAME);
         List<Address> addresses = addressDao.list(resultSegment);
