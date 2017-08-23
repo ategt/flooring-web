@@ -64,36 +64,34 @@ public class AddressController {
 
         AddressResultSegment addressResultSegment = buildAddressResultSegment(resultsPerPage, response, resultsPerPageCookie, sortBy, sortCookie, page);
 
-        int lastPageNumber = addressDao.size() / addressResultSegment.getResultsPerPage();
-
-        int nextPage = addressResultSegment.getPage() + 1;
-        int prevPage = addressResultSegment.getPage() - 1;
-
-        boolean showingNext = false, showingPrev = false;
-
-        if (addressResultSegment.getPage() != lastPageNumber) {
-            model.put("lastPageNumber", lastPageNumber);
-        }
-
-        if (nextPage <= lastPageNumber) {
-            model.put("nextPage", nextPage);
-            showingNext = true;
-        }
-
-        if (prevPage >= 0) {
-            model.put("prevPage", prevPage);
-            model.put("firstPage", 0);
-            showingPrev = true;
-        }
-
-        if (showingNext && showingPrev) {
-            model.put("currentPage", addressResultSegment.getPage() + 1);
-        }
+        paginatePage(addressResultSegment, model);
 
         List<Address> addresses = addressDao.list(addressResultSegment);
 
         model.put("addresses", addresses);
         return "address\\index";
+    }
+
+    private void paginatePage(AddressResultSegment addressResultSegment, Map model) {
+        int lastPageNumber = addressDao.size() / addressResultSegment.getResultsPerPage();
+        int nextPage = addressResultSegment.getPage() + 1;
+        int prevPage = addressResultSegment.getPage() - 1;
+        boolean showingNext = false, showingPrev = false;
+        if (addressResultSegment.getPage() != lastPageNumber) {
+            model.put("lastPageNumber", lastPageNumber);
+        }
+        if (nextPage <= lastPageNumber) {
+            model.put("nextPage", nextPage);
+            showingNext = true;
+        }
+        if (prevPage >= 0) {
+            model.put("prevPage", prevPage);
+            model.put("firstPage", 0);
+            showingPrev = true;
+        }
+        if (showingNext && showingPrev) {
+            model.put("currentPage", addressResultSegment.getPage() + 1);
+        }
     }
 
     private AddressResultSegment buildAddressResultSegment(Integer resultsPerPage, HttpServletResponse response, Integer resultsPerPageCookie, String sortBy, String sortCookie, Integer page) throws BeansException {
@@ -263,9 +261,23 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String blankSearch(Map model) {
+    public String search(
+            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @CookieValue(value = "results_per_page_cookie", required = false) Integer resultsPerPageCookie,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "query", required = false) String query,
+            @RequestParam(name = "search_by", required = false) String searchBy,
+            HttpServletResponse response,
+            Map model) {
 
-        List<Address> addresses = addressDao.list();
+        AddressResultSegment addressResultSegment = buildAddressResultSegment(resultsPerPage, response, resultsPerPageCookie, sortBy, sortCookie, page);
+        paginatePage(addressResultSegment, model);
+
+        List<Address> addresses = (query != null && searchBy != null)
+                ? searchDatabase(new AddressSearchRequest(query, AddressSearchByOptionEnum.parse(searchBy)))
+                : addressDao.list(addressResultSegment);
 
         model.put("addresses", addresses);
 
