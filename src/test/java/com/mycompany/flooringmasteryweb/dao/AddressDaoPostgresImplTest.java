@@ -632,6 +632,11 @@ public class AddressDaoPostgresImplTest {
         List<Address> addresses = addressDao.list();
         List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter("last_name");
 
+        for (Address address: addressesFromDb){
+        //for (int j = 0; j < addressesFromDb.size(); j++) {
+            if (address.getLastName()
+        }
+        
         addresses.sort((Object o1, Object o2) -> {
 
             Address address1 = (Address) o1;
@@ -641,9 +646,7 @@ public class AddressDaoPostgresImplTest {
         });
 
         for (int i = 0; i < addresses.size(); i++) {
-
             assertEquals(addresses.get(i), addressesFromDb.get(i));
-
         }
     }
 
@@ -656,6 +659,47 @@ public class AddressDaoPostgresImplTest {
 
             assertEquals(addresses.get(i), addressesFromDb.get(i));
 
+        }
+    }
+
+    @Test
+    public void getSortDoesNotReturnErrors() {
+
+        Address testAddress = addressGenerator();
+
+        for (int i = 0; i < 10; i++) {
+            testAddress.setFirstName(UUID.randomUUID().toString());
+            addressDao.create(testAddress);
+        }
+
+        addressDao.create(testAddress);
+
+        Address nullTestAddress = new Address();
+        nullTestAddress.setFirstName("A");
+        addressDao.create(nullTestAddress);
+
+        nullTestAddress = new Address();
+        nullTestAddress.setFirstName("a");
+        addressDao.create(nullTestAddress);
+
+        nullTestAddress = new Address();
+        addressDao.create(nullTestAddress);
+
+        nullTestAddress = new Address();
+        nullTestAddress.setFirstName("");
+        addressDao.create(nullTestAddress);
+
+        nullTestAddress = new Address();
+        nullTestAddress.setFirstName(" ");
+        addressDao.create(nullTestAddress);
+        
+        int size = addressDao.size();
+
+        for (AddressSortByEnum addressSortByEnum : AddressSortByEnum.values()) {
+            List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, addressSortByEnum));
+
+            assertNotNull(addressesFromDb);
+            assertEquals(addressesFromDb.size(), size);            
         }
     }
 
