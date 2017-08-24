@@ -2088,7 +2088,6 @@ public class AddressSeleneseIT {
     }
 
     @Test
-    @Ignore
     public void getPaginatedList() throws IOException {
         System.out.println("list by pagination");
 
