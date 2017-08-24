@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.naming.OperationNotSupportedException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -1048,7 +1049,7 @@ public class AddressDaoPostgresImplTest {
         assertEquals(addressesFromDb.size(), 0);
     }
 
-    @Test
+    @Test    
     public void getSortedByNameUsingSortByParamAndPaginationWithRandomNumbers() {
         Random random = new Random();
 
@@ -1077,7 +1078,21 @@ public class AddressDaoPostgresImplTest {
             }
 
             addressesSortedWithComparator.sort(sortByLastName());
-
+                        
+            List<Address> removableObjects = addressesSortedWithComparator.stream()
+                    .filter(address -> Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
+                    .filter(address -> Strings.nullToEmpty(address.getLastName()).trim().isEmpty())
+                    .filter(address -> Strings.nullToEmpty(address.getCompany()).trim().isEmpty())
+                    .filter(address -> Strings.nullToEmpty(address.getState()).trim().isEmpty())
+                    .filter(address -> Strings.nullToEmpty(address.getCity()).trim().isEmpty())
+                    .filter(address -> Strings.nullToEmpty(address.getStreetName()).trim().isEmpty())
+                    .filter(address -> Strings.nullToEmpty(address.getStreetNumber()).trim().isEmpty())
+                    .filter(address -> Strings.nullToEmpty(address.getZip()).trim().isEmpty())
+                    .collect(Collectors.toList());
+            
+            addressesSortedWithComparator.removeAll(removableObjects);
+            addressesSortedWithDatabase.removeAll(removableObjects);
+            
             for (int resultIdFromComparator = pageNumber * resultsPerPage, resultIdFromDatabase = 0; resultIdFromDatabase < addressesSortedWithDatabase.size(); resultIdFromComparator++, resultIdFromDatabase++) {
 
                 assertEquals("TestPass:" + testPass + ", ComparatorPos:" + resultIdFromComparator + ", DbId:" + resultIdFromDatabase + " - PageNum: " + pageNumber
