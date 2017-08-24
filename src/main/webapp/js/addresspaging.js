@@ -27,7 +27,7 @@ function loadMoreAddresses(page, items) {
             xhr.setRequestHeader("Accept", "application/json");
         },
         success: function (data, status) {
-            if (data.length < items) {
+            if (data.length < (items ? items : 1)) {
                 $(".paging-footer-parent").hide();
                 console.log("All pages loaded.");
             } else {
