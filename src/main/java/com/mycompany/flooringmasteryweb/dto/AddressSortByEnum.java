@@ -17,6 +17,8 @@ public enum AddressSortByEnum {
 
     private final String sortString;
     private final Integer sortByInt;
+    
+    private static final AddressSortByEnum DEFAULT = AddressSortByEnum.SORT_BY_ID;
 
     private AddressSortByEnum(String sortString, Integer sortByInt) {
         this.sortString = sortString;
@@ -37,7 +39,7 @@ public enum AddressSortByEnum {
                 return addressesSortBy;
             }
         }
-        return AddressSortByEnum.SORT_BY_ID;
+        return DEFAULT;
     }
 
     public static AddressSortByEnum parse(String input) {
@@ -62,6 +64,6 @@ public enum AddressSortByEnum {
             }
         }
 
-        return AddressSortByEnum.SORT_BY_ID;
+        return DEFAULT;
     }
 }
