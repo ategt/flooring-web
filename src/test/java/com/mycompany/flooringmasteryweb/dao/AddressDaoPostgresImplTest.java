@@ -1091,10 +1091,10 @@ public class AddressDaoPostgresImplTest {
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
 
-            int result = Strings.nullToEmpty(address1.getLastName().toLowerCase()).compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+            int result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
 
             if (result == 0) {
-                result = Strings.nullToEmpty(address1.getFirstName().toLowerCase()).compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
+                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
             }
 
             if (result == 0) {
@@ -1108,7 +1108,7 @@ public class AddressDaoPostgresImplTest {
             }
 
             if (result == 0) {
-                result = Strings.nullToEmpty(address1.getCompany().toLowerCase()).compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
+                result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
             }
 
             if (result == 0) {
