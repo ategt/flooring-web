@@ -1049,7 +1049,7 @@ public class AddressDaoPostgresImplTest {
         assertEquals(addressesFromDb.size(), 0);
     }
 
-    @Test    
+    @Test
     public void getSortedByNameUsingSortByParamAndPaginationWithRandomNumbers() {
         Random random = new Random();
 
@@ -1064,12 +1064,12 @@ public class AddressDaoPostgresImplTest {
 
             if ((long) pageNumber * (long) resultsPerPage > addressesSortedWithComparator.size()) {
                 if (pageNumber >= 0 && resultsPerPage >= 0) {
-                    assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), 0);
+                    assertEquals("Page Number Is Beyond Result Range.\n PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), 0);
                 } else {
-                    assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), addressesSortedWithComparator.size());
+                    assertEquals("One Page Containing All The Results Is Expected.\n PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), addressesSortedWithComparator.size());
                 }
             } else if (pageNumber >= 0 && resultsPerPage >= 0) {
-                assertEquals("PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), resultsPerPage);
+                assertEquals("A Typical Page Within The Expected Range.\n PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage, addressesSortedWithDatabase.size(), resultsPerPage);
             }
 
             if (!(pageNumber >= 0 && resultsPerPage >= 0)) {
@@ -1077,22 +1077,18 @@ public class AddressDaoPostgresImplTest {
                 resultsPerPage = 0;
             }
 
+            removeAddressesWithNullOrEmptyFields(addressesSortedWithComparator, addressesSortedWithComparator, addressesSortedWithDatabase);
+
+            if ((long) pageNumber * (long) resultsPerPage > addressesSortedWithComparator.size() && (pageNumber >= 0 && resultsPerPage >= 0)) {
+                assertTrue(addressesSortedWithDatabase.isEmpty());
+            } else {
+                assertTrue(addressesSortedWithDatabase.size() > 50);
+            }
+
+            assertTrue(addressesSortedWithComparator.size() > 50);
+
             addressesSortedWithComparator.sort(sortByLastName());
-                        
-            List<Address> removableObjects = addressesSortedWithComparator.stream()
-                    .filter(address -> Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
-                    .filter(address -> Strings.nullToEmpty(address.getLastName()).trim().isEmpty())
-                    .filter(address -> Strings.nullToEmpty(address.getCompany()).trim().isEmpty())
-                    .filter(address -> Strings.nullToEmpty(address.getState()).trim().isEmpty())
-                    .filter(address -> Strings.nullToEmpty(address.getCity()).trim().isEmpty())
-                    .filter(address -> Strings.nullToEmpty(address.getStreetName()).trim().isEmpty())
-                    .filter(address -> Strings.nullToEmpty(address.getStreetNumber()).trim().isEmpty())
-                    .filter(address -> Strings.nullToEmpty(address.getZip()).trim().isEmpty())
-                    .collect(Collectors.toList());
-            
-            addressesSortedWithComparator.removeAll(removableObjects);
-            addressesSortedWithDatabase.removeAll(removableObjects);
-            
+
             for (int resultIdFromComparator = pageNumber * resultsPerPage, resultIdFromDatabase = 0; resultIdFromDatabase < addressesSortedWithDatabase.size(); resultIdFromComparator++, resultIdFromDatabase++) {
 
                 assertEquals("TestPass:" + testPass + ", ComparatorPos:" + resultIdFromComparator + ", DbId:" + resultIdFromDatabase + " - PageNum: " + pageNumber
@@ -1103,6 +1099,24 @@ public class AddressDaoPostgresImplTest {
 
             }
         }
+    }
+
+    private void removeAddressesWithNullOrEmptyFields(List<Address> processAddressList, List<Address>... clearableAddressList) {
+        List<Address> removableObjects = processAddressList.stream()
+                .filter(address -> Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
+                .filter(address -> Strings.nullToEmpty(address.getLastName()).trim().isEmpty())
+                .filter(address -> Strings.nullToEmpty(address.getCompany()).trim().isEmpty())
+                .filter(address -> Strings.nullToEmpty(address.getState()).trim().isEmpty())
+                .filter(address -> Strings.nullToEmpty(address.getCity()).trim().isEmpty())
+                .filter(address -> Strings.nullToEmpty(address.getStreetName()).trim().isEmpty())
+                .filter(address -> Strings.nullToEmpty(address.getStreetNumber()).trim().isEmpty())
+                .filter(address -> Strings.nullToEmpty(address.getZip()).trim().isEmpty())
+                .collect(Collectors.toList());
+
+        for (List<Address> clearingList : clearableAddressList) {
+            clearingList.removeAll(removableObjects);
+        }
+
     }
 
     private static Comparator<Object> sortByLastName() {
