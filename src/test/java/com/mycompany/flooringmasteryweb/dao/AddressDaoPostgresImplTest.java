@@ -1107,7 +1107,6 @@ public class AddressDaoPostgresImplTest {
     }
 
     private void removeAddressesWithNullOrEmptyFields(List<Address> processAddressList, List<Address>... clearableAddressList) {
-
         List<Address> removableObjects = processAddressList.stream()
                 .filter(address -> Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
                 .filter(address -> Strings.nullToEmpty(address.getLastName()).trim().isEmpty())
@@ -1122,7 +1121,6 @@ public class AddressDaoPostgresImplTest {
         for (List<Address> clearingList : clearableAddressList) {
             clearingList.removeAll(removableObjects);
         }
-
     }
 
     private static Comparator<Object> sortByLastName() {
