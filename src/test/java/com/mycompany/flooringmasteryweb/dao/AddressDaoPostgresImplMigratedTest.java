@@ -363,9 +363,9 @@ public class AddressDaoPostgresImplMigratedTest {
         });
 
         for (int i = 0; i < addresses.size(); i++) {
-         //   assertEquals(addresses.get(i), addressesFromDb.get(i));
+            //   assertEquals(addresses.get(i), addressesFromDb.get(i));
         }
-        
+
         fail("This was supposed to skip.");
     }
 
@@ -522,7 +522,7 @@ public class AddressDaoPostgresImplMigratedTest {
         //List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.COMPANY_INVERSE));
         List<Address> addressesFromDb = null;
         fail();
-        
+
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
         addressesFromDb.removeAll(removables);
@@ -706,7 +706,7 @@ public class AddressDaoPostgresImplMigratedTest {
     public void emptyPageShouldBeEmpty() {
         int size = addressDao.size();
 
-        List<Address> emptyResults = addressDao.list(new ResultProperties(1, size, AddressSortByEnum.COMPANY));
+        List<Address> emptyResults = addressDao.list(new ResultProperties(1, size, AddressSortByEnum.SORT_BY_COMPANY));
 
         assertTrue(emptyResults.isEmpty());
     }
