@@ -20,7 +20,7 @@
                     <%@ include file="_createAddressForm.jspf" %>                    
                 </div>
                 <div class="col-md-6 col-md-pull-6">
-                    <%@ include file="_addressList.jspf" %>                    
+                    <%@ include file="_addressList.jspf" %>                      
                 </div>
             </div>
         </div>
@@ -28,9 +28,10 @@
         <%@ include file="_showModal.jspf" %>
         <%@ include file="_editModal.jspf" %>
 
-        <%@ include file="../partials/commonScript.jspf" %>
+        <%@ include file="../partials/commonScript.jspf" %>        
 
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="${pageContext.request.contextPath}/js/addressapp.js"></script>
+        <script src="${pageContext.request.contextPath}/js/addresspaging.js"></script>
     </body>
 </html>

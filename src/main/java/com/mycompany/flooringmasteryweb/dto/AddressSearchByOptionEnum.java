@@ -15,6 +15,7 @@ import java.util.Optional;
 public enum AddressSearchByOptionEnum {
     LAST_NAME("searchByLastName"),
     FIRST_NAME("searchByFirstName"),
+    FULL_NAME("searchByFullName"),
     CITY("searchByCity"),
     STATE("searchByState"),
     ZIP("searchByZip"),
@@ -27,7 +28,7 @@ public enum AddressSearchByOptionEnum {
     ALL("searchByAll"),
     DEFAULT("searchByAll");
 
-    private String searchString;
+    private String searchString;    
 
     private AddressSearchByOptionEnum(String searchString) {
         this.searchString = searchString;

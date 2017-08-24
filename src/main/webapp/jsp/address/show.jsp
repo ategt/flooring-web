@@ -19,6 +19,9 @@
                 <div class="col-md-6 text-center">
                     <h2>
                         ${address.firstName} ${address.lastName}<br />
+                        <c:if test="${not empty address.company}">
+                            ${address.company}<br />
+                        </c:if>
                         ${address.streetNumber} ${address.streetName}<br />
                         ${address.city}, ${address.state} ${address.zip}<br />
                     </h2>
@@ -44,6 +47,16 @@
                                 ${address.lastName}
                             </td>
                         </tr>
+                        <c:if test="${not empty address.company}">
+                            <tr>
+                                <td>
+                                    Company: 
+                                </td>
+                                <td>
+                                    ${address.company}
+                                </td>
+                            </tr>
+                        </c:if>
                         <tr>
                             <td>
                                 Address: 
@@ -81,16 +94,10 @@
                 </div>
             </div>
 
-
-
-
-
-
         </div>
     </div>
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="${pageContext.request.contextPath}/js/jquery-1.11.1.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+
+    <%@ include file="../partials/commonScript.jspf" %>        
 
 </body>
 </html>

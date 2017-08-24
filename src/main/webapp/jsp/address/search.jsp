@@ -15,28 +15,42 @@
             <%@ include file="../partials/banner.jspf" %>
 
             <div class="row">
-                <div class="col-md-6 col-md-push-6">
-                    <form method="POST" action="./search" class="form-horizontal">
+                <div class="col-md-6 col-md-push-6 text-center">
+                    <form method="POST" action="${pageContext.request.contextPath}/address/search" class="form-horizontal">
+
+                        <div class="form-group"></div>
                         <div class="form-group">
-                            <div class="col-md-4">
-                                <select name="searchBy">
-                                    <option value="searchByFirstName" >Search By First Name</option>
-                                    <option value="searchByLastName" >Search By Last Name</option>
-                                    <option value="searchByCity" />Search By City</option>
-                                    <option value="searchByState" />Search By State</option>
-                                    <option value="searchByZip" />Search By Zip Code</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <input class="form-control" type="text" name="searchText" id="searchText" placeholder="Type Search Criteria Here" />
-                            </div>
+
                             <div class="form-group">
-                                <div class="col-md-10 pull-right">
+                                <div class="col-md-offset-2 col-md-6">
+                                    <select name="searchBy" class="form-control">
+                                        <option value="searchByAll" >Search By Everything</option>
+                                        <option value="searchByFirstName" >Search By First Name</option>
+                                        <option value="searchByLastName" >Search By Last Name</option>
+                                        <option value="searchByCompany" >Search By Company</option>
+                                        <option value="searchByCity" >Search By City</option>
+                                        <option value="searchByState" >Search By State</option>
+                                        <option value="searchByZip" >Search By Zip Code</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-6">
+                                    <input class="form-control" type="text" name="searchText" id="searchText" placeholder="Type Search Criteria Here" />
+                                </div>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-6 text-center">
                                     <input type="submit" class="btn btn-default" />
                                 </div>
                             </div>
                         </div>
                     </form>
+
                 </div>
                 <div class="col-md-6 col-md-pull-6">
                     <%@ include file="_addressList.jspf" %>                    

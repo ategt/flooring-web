@@ -8,9 +8,10 @@ package com.mycompany.flooringmasteryweb.dao;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
+import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,23 +31,26 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id;";
+    private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id";
     private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
-    private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *;";
-    private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id =?";
-    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ? ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME = "SELECT * FROM addresses ORDER BY last_name ASC, first_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME = "SELECT * FROM addresses ORDER BY first_name ASC, last_name ASC, company ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY = "SELECT * FROM addresses ORDER BY company ASC, last_name ASC, first_name ASC, id ASC;";
-    private static final String SQL_GET_ADDRESS_LIST_SORT_BY_ID = "SELECT * FROM addresses ORDER BY id ASC;";
-    private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses;";
+    private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *";
+    private static final String SQL_GET_ADDRESS = "SELECT * FROM addresses WHERE id = ?";
+    private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ?";
+    private static final String SQL_GET_ADDRESS_LIST = "SELECT * FROM addresses";
+    private static final String SQL_GET_ADDRESS_COUNT = "SELECT COUNT(*) FROM addresses";
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
-    public static final int SORT_BY_LAST_NAME = 0;
-    public static final int SORT_BY_FIRST_NAME = 1;
-    public static final int SORT_BY_COMPANY = 2;
-    public static final int SORT_BY_ID = 3;
+    private static final String SQL_BASE_SEARCH_QUERY = "SELECT * FROM addresses WHERE id IN ("
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + ")";
+
+    private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL = " ORDER BY LOWER(last_name) ASC, LOWER(first_name) ASC, LOWER(company) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_PARTIAL = " ORDER BY LOWER(first_name) ASC, LOWER(last_name) ASC, LOWER(company) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_COMPANY_PARTIAL = " ORDER BY LOWER(company) ASC, LOWER(last_name) ASC, LOWER(first_name) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_ID_PARTIAL = " ORDER BY id ASC";
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -55,6 +59,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
+    @Override
     public Address create(Address address) {
 
         if (address == null) {
@@ -108,17 +113,11 @@ public class AddressDaoPostgresImpl implements AddressDao {
             return null;
         }
 
+        List<Address> resultList = searchByAny(input, null);
+
         Set<Address> result = new HashSet();
 
-        result.addAll(searchByFirstName(input));
-        result.addAll(searchByLastName(input));
-        result.addAll(searchByFullName(input));
-        result.addAll(searchByCity(input));
-        result.addAll(searchByCompany(input));
-        result.addAll(searchByState(input));
-        result.addAll(searchByZip(input));
-        result.addAll(searchByStreetName(input));
-        result.addAll(searchByStreetNumber(input));
+        result.addAll(resultList);
 
         return result;
     }
@@ -131,13 +130,13 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
         Set<String> result = new HashSet();
 
-        result.addAll(searchByFullName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
-        
-        result.addAll(searchByFirstName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
+        result.addAll(searchByFullName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
-        result.addAll(searchByLastName(input).stream().map(addressToFullName()).collect(Collectors.toSet()));
+        result.addAll(searchByFirstName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
 
-        result.addAll(searchByCompany(input).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
+        result.addAll(searchByLastName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
+
+        result.addAll(searchByCompany(input, null).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
 
         return result.stream().limit(limit).collect(Collectors.toSet());
     }
@@ -150,8 +149,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public Address getByCompany(String company
-    ) {
+    public Address getByCompany(String company) {
         if (company == null) {
             return null;
         }
@@ -162,6 +160,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
         }
     }
 
+    @Override
     public void update(Address address) {
 
         if (address == null) {
@@ -196,29 +195,248 @@ public class AddressDaoPostgresImpl implements AddressDao {
         }
     }
 
-    @Override
-    public List<Address> list() {
-        return list(SORT_BY_LAST_NAME);
+    public List<Address> list(Integer page, Integer resultsPerPage) {
+        return list(new ResultProperties(AddressSortByEnum.SORT_BY_LAST_NAME, page, resultsPerPage));
     }
 
     @Override
-    public List<Address> list(Integer sortBy) {
-        switch (sortBy) {
-            case SORT_BY_COMPANY:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_COMPANY, new AddressMapper());
-            case SORT_BY_FIRST_NAME:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_FIRST_NAME, new AddressMapper());
-            case SORT_BY_ID:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_ID, new AddressMapper());
-            case SORT_BY_LAST_NAME:
-            default:
-                return jdbcTemplate.query(SQL_GET_ADDRESS_LIST_SORT_BY_LAST_NAME, new AddressMapper());
-        }
+    public List<Address> list(ResultProperties resultProperties) {
+        return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ADDRESS_LIST, resultProperties), new AddressMapper());
     }
 
     @Override
     public int size() {
         return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_COUNT, Integer.class);
+    }
+
+    private List<Address> search(String stringToSearchFor, String sqlQueryToUse, ResultProperties resultProperties) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, resultProperties), new AddressMapper(), stringToSearchFor);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + "firstQuery AS (SELECT id FROM addresses WHERE first_name = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT LOWER(CONCAT(n,'%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT LOWER(CONCAT('%',n,'%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByFirstName(String firstName, ResultProperties resultProperties) {
+        List<Address> result = search(firstName, SQL_SEARCH_ADDRESS_BY_FIRST_NAME, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE last_name = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByLastName(String lastName, ResultProperties resultProperties) {
+        List<Address> result = search(lastName, SQL_SEARCH_ADDRESS_BY_LAST_NAME, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_CITY_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE city = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(city) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(city) LIKE (SELECT LOWER(CONCAT(n,'%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(city) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByCity(String city, ResultProperties resultProperties) {
+        List<Address> result = search(city, SQL_SEARCH_ADDRESS_BY_CITY_NAME, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE company = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(company) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(company) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(company) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByCompany(String company, ResultProperties resultProperties) {
+        List<Address> result = search(company, SQL_SEARCH_ADDRESS_BY_COMPANY_NAME, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STATE_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE state = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(state) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(state) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(state) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByState(String state, ResultProperties resultProperties) {
+        List<Address> result = search(state, SQL_SEARCH_ADDRESS_BY_STATE_NAME, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_ZIP_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE zip = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(zip) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(zip) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(zip) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByZip(String zip, ResultProperties resultProperties) {
+        List<Address> result = search(zip, SQL_SEARCH_ADDRESS_BY_ZIP_NAME, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', street_number, street_name) = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByStreetAddress(String streetAddress, ResultProperties resultProperties) {
+        List<Address> result = search(streetAddress, SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE street_number = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByStreetNumber(String streetNumber, ResultProperties resultProperties) {
+        List<Address> result = search(streetNumber, SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQueryInput(n) AS (SELECT n FROM sourceQuery),"
+            + " firstQueryInputLower(n) AS (SELECT LOWER(n) FROM firstQueryInput),"
+            + " secondQueryInput(n) AS (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery),"
+            + " thirdQueryInput(n) AS (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInput) IN (first_name||last_name||CONCAT_WS(' ', first_name, last_name))),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInputLower) IN (first_name||last_name||CONCAT_WS(' ', first_name, last_name))),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT n FROM secondQueryInput) OR LOWER(last_name) LIKE (SELECT n FROM secondQueryInput) OR LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT n FROM secondQueryInput)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT n FROM thirdQueryInput) OR LOWER(last_name) LIKE (SELECT n FROM thirdQueryInput) OR LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT n FROM thirdQueryInput)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByName(String name, ResultProperties resultProperties) {
+        List<Address> result = search(name, SQL_SEARCH_ADDRESS_BY_NAME, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQueryInput(n) AS (SELECT n FROM sourceQuery),"
+            + " firstQueryInputLower(n) AS (SELECT LOWER(n) FROM firstQueryInput),"
+            + " secondQueryInput(n) AS (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery),"
+            + " thirdQueryInput(n) AS (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInput) = street_number OR (SELECT n FROM firstQueryInput) = street_name OR (SELECT n FROM firstQueryInput) = CONCAT_WS(' ', street_number, street_name)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInputLower) = LOWER(street_number) OR (SELECT n FROM firstQueryInputLower) = LOWER(street_name) OR (SELECT n FROM firstQueryInputLower) = LOWER(CONCAT_WS(' ', street_number, street_name))),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE (SELECT n FROM secondQueryInput) OR LOWER(street_name) LIKE (SELECT n FROM secondQueryInput) OR LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE (SELECT n FROM secondQueryInput)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE (SELECT n FROM thirdQueryInput) OR LOWER(street_name) LIKE (SELECT n FROM thirdQueryInput) OR LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE (SELECT n FROM thirdQueryInput)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByStreet(String street, ResultProperties resultProperties) {
+        List<Address> result = search(street, SQL_SEARCH_ADDRESS_BY_STREET, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY = "WITH firstQueryInput(n) AS (SELECT ?),"
+            + "		firstQueryInputLower(n) AS (SELECT LOWER(n) FROM firstQueryInput),"
+            + "		 secondQueryInput(n) AS (SELECT LOWER(CONCAT(n, '%')) FROM firstQueryInput),"
+            + "		  thirdQueryInput(n) AS (SELECT LOWER(CONCAT('%', n, '%')) FROM firstQueryInput),"
+            + "		 firstQuery AS ("
+            + "		 SELECT id FROM addresses "
+            + "		 WHERE first_name = (SELECT n FROM firstQueryInput)"
+            + "		  OR (SELECT n FROM firstQueryInput) = last_name "
+            + "		  OR (SELECT n FROM firstQueryInput) = CONCAT_WS(' ', first_name, last_name)"
+            + "		   OR (SELECT n FROM firstQueryInput) = company),"
+            + "			 secondQuery AS ("
+            + "			 SELECT id FROM addresses "
+            + "			 WHERE (SELECT n FROM firstQueryInputLower) = LOWER(first_name) "
+            + "			 OR (SELECT n FROM firstQueryInputLower) = LOWER(last_name) "
+            + "			 OR (SELECT n FROM firstQueryInputLower) = LOWER(CONCAT_WS(' ', first_name, last_name)) "
+            + "			 OR (SELECT n FROM firstQueryInputLower) = LOWER(company)),"
+            + "			  thirdQuery AS ("
+            + "			  SELECT id FROM addresses "
+            + "			  WHERE LOWER(first_name) LIKE (SELECT n FROM secondQueryInput)"
+            + "			  OR LOWER(last_name) LIKE (SELECT n FROM secondQueryInput) "
+            + "			  OR LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT n FROM secondQueryInput)"
+            + "			  OR LOWER(company) LIKE (SELECT n FROM secondQueryInput)),"
+            + "			    fourthQuery AS ("
+            + "				 SELECT id FROM addresses "
+            + "				 WHERE LOWER(first_name) LIKE (SELECT n FROM thirdQueryInput)"
+            + "				 OR LOWER(last_name) LIKE (SELECT n FROM thirdQueryInput)"
+            + "				 OR LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT n FROM thirdQueryInput)"
+            + "				 OR LOWER(company) LIKE (SELECT n FROM thirdQueryInput))"
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByNameOrCompany(String input, ResultProperties resultProperties) {
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_ALL = "WITH firstQueryInput(n) AS (SELECT ?),"
+            + " firstQueryInputLower(n) AS (SELECT LOWER(n) FROM firstQueryInput),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInput) IN (last_name, first_name, company, street_number, street_name, city, state, zip, CONCAT_WS(' ', first_name, last_name), CONCAT_WS(' ', street_number, street_name))),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInputLower) IN (LOWER(last_name), LOWER(first_name), LOWER(company), LOWER(street_number), LOWER(street_name), LOWER(city), LOWER(state), LOWER(zip), LOWER(CONCAT_WS(' ', first_name, last_name)), LOWER(CONCAT_WS(' ', street_number, street_name)))),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM firstQueryInput)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM firstQueryInput)) "
+            + SQL_BASE_SEARCH_QUERY;
+
+    @Override
+    public List<Address> searchByAll(String input, ResultProperties resultProperties) {
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_ALL, resultProperties);
+
+        return result;
+    }
+
+    private static final String SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE = "SELECT * FROM addresses WHERE id IN(SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE LOWER('%'||?||'%'))";
+
+    public List<Address> searchByAny(String input, ResultProperties resultProperties) {
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE, resultProperties);
+
+        return result;
+    }
+
+    @Override
+    public int size(AddressSearchRequest addressSearchRequest) {
+        if (addressSearchRequest == null) {
+            return size();
+        }
+
+        String sqlQuery = determineSqlSearchQuery(addressSearchRequest.searchBy());
+
+        final String SQL_ADDRESS_SEARCH_COUNT = new StringBuffer().append("SELECT COUNT(*) FROM (")
+                .append(sqlQuery)
+                .append(") AS countingQuery")
+                .toString();
+
+        return jdbcTemplate.queryForObject(SQL_ADDRESS_SEARCH_COUNT, Integer.class, addressSearchRequest.getSearchText());
     }
 
     private static final class AddressMapper implements RowMapper<Address> {
@@ -244,281 +462,175 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "SELECT * FROM addresses WHERE last_name = ?;";
-    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME_CASEINSENSITIVE = "SELECT * FROM addresses WHERE LOWER(last_name) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME_PARTS = "SELECT * FROM addresses WHERE LOWER(last_name) LIKE LOWER(?);";
+    private static final String SQL_SEARCH_ADDRESS_BY_FULL_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', first_name, last_name) = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
 
     @Override
-    public List<Address> searchByLastName(String lastName) {
-
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_LAST_NAME, new AddressMapper(), lastName);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_LAST_NAME_CASEINSENSITIVE, new AddressMapper(), lastName);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_LAST_NAME_PARTS, new AddressMapper(), lastName + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_LAST_NAME_PARTS, new AddressMapper(), "%" + lastName + "%");
-        }
+    public List<Address> searchByFullName(String fullName, ResultProperties resultProperties) {
+        List<Address> result = search(fullName, SQL_SEARCH_ADDRESS_BY_FULL_NAME, resultProperties);
 
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_FULL_NAME = "WITH firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', first_name, last_name) = ?),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) = LOWER(?)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER(?)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE LOWER(?)) "
-            + "SELECT * FROM addresses WHERE id IN ("
-                    + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
-                        + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
-                        + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
-            + ");";
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
+            + " firstQuery AS (SELECT id FROM addresses WHERE street_name = (SELECT n FROM sourceQuery)),"
+            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) = (SELECT LOWER(n) FROM sourceQuery)),"
+            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
+            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
+            + SQL_BASE_SEARCH_QUERY;
 
     @Override
-    public List<Address> searchByFullName(String fullName) {
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FULL_NAME, new AddressMapper(), fullName, fullName, fullName + '%', '%' + fullName + '%');
-
-        return result;
-    }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "SELECT * FROM addresses WHERE first_name = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(first_name) LIKE LOWER(?);";
-
-    @Override
-    public List<Address> searchByFirstName(String firstName) {
-
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FIRST_NAME, new AddressMapper(), firstName);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL, new AddressMapper(), firstName);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL, new AddressMapper(), firstName + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_FIRST_NAME_PARTIAL, new AddressMapper(), "%" + firstName + "%");
-        }
-
-        return result;
-    }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "SELECT * FROM addresses WHERE street_name = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_name) LIKE LOWER(?);";
-
-    public List<Address> searchByStreetName(String streetName) {
-
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME, new AddressMapper(), streetName);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), streetName);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), streetName + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NAME_PARTIAL, new AddressMapper(), "%" + streetName + "%");
-        }
-
-        return result;
-    }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "SELECT * FROM addresses WHERE street_number = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL = "SELECT * FROM addresses WHERE LOWER(street_number) LIKE LOWER(?);";
-
-    public List<Address> searchByStreetNumber(String streetNumber) {
-
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, new AddressMapper(), streetNumber);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL, new AddressMapper(), streetNumber);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL, new AddressMapper(), streetNumber + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STREET_NUMBER_PARTIAL, new AddressMapper(), "%" + streetNumber + "%");
-        }
-
-        return result;
-    }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_CITY = "SELECT * FROM addresses WHERE city = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_CITY_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(city) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_CITY_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(city) LIKE LOWER(?);";
-
-    @Override
-    public List<Address> searchByCity(String city) {
-
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY, new AddressMapper(), city);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY_CASE_INSENSITIVE, new AddressMapper(), city);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY_WITH_LIKE, new AddressMapper(), city + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_CITY_WITH_LIKE, new AddressMapper(), "%" + city + "%");
-        }
-        return result;
-    }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY = "SELECT * FROM addresses WHERE company = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(company) LIKE LOWER(?);";
-
-    @Override
-    public List<Address> searchByCompany(String company) {
-
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_COMPANY, new AddressMapper(), company);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE, new AddressMapper(), company);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE, new AddressMapper(), company + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_COMPANY_WITH_LIKE, new AddressMapper(), "%" + company + "%");
-        }
-        return result;
-    }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_STATE = "SELECT * FROM addresses WHERE state = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_STATE_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(state) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(state) LIKE LOWER(?);";
-
-    @Override
-    public List<Address> searchByState(String state) {
-
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE, new AddressMapper(), state);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE_CASE_INSENSITIVE, new AddressMapper(), state);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE, new AddressMapper(), state + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_STATE_WITH_LIKE, new AddressMapper(), "%" + state + "%");
-        }
-        return result;
-    }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE = "SELECT * FROM addresses WHERE zip = ?";
-    private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE_CASE_INSENSITIVE = "SELECT * FROM addresses WHERE LOWER(zip) = LOWER(?);";
-    private static final String SQL_SEARCH_ADDRESS_BY_ZIPCODE_WITH_LIKE = "SELECT * FROM addresses WHERE LOWER(zip) LIKE LOWER(?);";
-
-    @Override
-    public List<Address> searchByZip(String zipcode) {
-
-        List<Address> result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_ZIPCODE, new AddressMapper(), zipcode);
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_ZIPCODE_CASE_INSENSITIVE, new AddressMapper(), zipcode);
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_ZIPCODE_WITH_LIKE, new AddressMapper(), zipcode + "%");
-        }
-
-        if (result.isEmpty()) {
-            result = jdbcTemplate.query(SQL_SEARCH_ADDRESS_BY_ZIPCODE_WITH_LIKE, new AddressMapper(), "%" + zipcode + "%");
-        }
+    public List<Address> searchByStreetName(String streetName, ResultProperties resultProperties) {
+        List<Address> result = search(streetName, SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties);
 
         return result;
     }
 
     @Override
-    public List<Address> getAddressesSortedByParameter(String sortBy) {
+    public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties) {
+        return list(resultProperties);
+    }
+
+    @Override
+    public List<Address> search(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
+        return search(searchRequest.getSearchText(), searchRequest.searchBy(), resultProperties);
+    }
+
+    public List<Address> search(String queryString,
+            AddressSearchByOptionEnum searchOption,
+            ResultProperties resultProperties) {
+
         List<Address> addresses;
-        if (sortBy.equalsIgnoreCase("company")) {
-            addresses = list(AddressDao.SORT_BY_COMPANY);
-        } else if (sortBy.equalsIgnoreCase("id")) {
-            addresses = list(AddressDao.SORT_BY_ID);
-        } else if (sortBy.equalsIgnoreCase("first_name")) {
-            addresses = list(AddressDao.SORT_BY_FIRST_NAME);
-        } else if (sortBy.equalsIgnoreCase("last_name")) {
-            addresses = list(AddressDao.SORT_BY_LAST_NAME);
-        } else {
-            addresses = list();
-        }
-        return addresses;
-    }
-
-    public List<Address> search(String queryString, AddressSearchByOptionEnum searchOption) {
-        List<Address> addresses = null;
+        String sqlSearchQuery;
 
         if (null == searchOption) {
-            addresses = list();
+            addresses = list(resultProperties);
         } else {
-            switch (searchOption) {
-                case LAST_NAME:
-                    addresses = searchByLastName(queryString);
-                    break;
-                case FIRST_NAME:
-                    addresses = searchByFirstName(queryString);
-                    break;
-                case COMPANY:
-                    addresses = searchByCompany(queryString);
-                    break;
-                case CITY:
-                    addresses = searchByCity(queryString);
-                    break;
-                case STATE:
-                    addresses = searchByState(queryString);
-                    break;
-                case STREET_NAME:
-                    addresses = searchByStreetName(queryString);
-                    break;
-                case STREET_NUMBER:
-                    addresses = searchByStreetNumber(queryString);
-                    break;
-                case STREET:
-                    Set<Address> tempStreetAddresses = new HashSet();
-                    tempStreetAddresses.addAll(searchByStreetNumber(queryString));
-                    tempStreetAddresses.addAll(searchByStreetName(queryString));
-                    addresses = new ArrayList(tempStreetAddresses);
-                    break;
-                case ZIP:
-                    addresses = searchByZip(queryString);
-                    break;
-                case NAME:
-                    Set<Address> tempNameAddresses = new HashSet();
-                    tempNameAddresses.addAll(searchByFirstName(queryString));
-                    tempNameAddresses.addAll(searchByLastName(queryString));
-                    addresses = new ArrayList(tempNameAddresses);
-                    break;
-                case NAME_OR_COMPANY:
-                    Set<Address> tempNameCompanyAddresses = new HashSet();
-                    tempNameCompanyAddresses.addAll(searchByFirstName(queryString));
-                    tempNameCompanyAddresses.addAll(searchByLastName(queryString));
-                    tempNameCompanyAddresses.addAll(searchByCompany(queryString));
-                    addresses = new ArrayList(tempNameCompanyAddresses);
-                    break;
-                case ALL:
-                    addresses = new ArrayList(getGuesses(queryString));
-                    break;
-                default:
-                    addresses = list();
-                    break;
-            }
+            sqlSearchQuery = determineSqlSearchQuery(searchOption);
+            addresses = search(queryString, sqlSearchQuery, resultProperties);
+
         }
         return addresses;
+    }
+
+    private String determineSqlSearchQuery(AddressSearchByOptionEnum searchOption) {
+        String sqlSearchQuery;
+        switch (searchOption) {
+            case LAST_NAME:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_LAST_NAME;
+                break;
+            case FIRST_NAME:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_FIRST_NAME;
+                break;
+            case COMPANY:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_COMPANY_NAME;
+                break;
+            case CITY:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_CITY_NAME;
+                break;
+            case STATE:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STATE_NAME;
+                break;
+            case STREET_NAME:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET_NAME;
+                break;
+            case STREET_NUMBER:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET_NUMBER;
+                break;
+            case STREET:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET;
+                break;
+            case ZIP:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ZIP_NAME;
+                break;
+            case NAME:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME;
+                break;
+            case NAME_OR_COMPANY:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY;
+                break;
+            case ALL:
+            case DEFAULT:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ALL;
+                break;
+            default:
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE;
+                break;
+        }
+        return sqlSearchQuery;
+    }
+
+    private String paginateQuery(String query, Integer page, Integer resultsPerPage) {
+        if (page == null || resultsPerPage == null) {
+            return query;
+        }
+
+        if (page < 0 || resultsPerPage < 0) {
+            return query;
+        }
+
+        if (query.contains(";")) {
+            throw new UnsupportedOperationException("Pagination Method can not handle semi-colons(;)");
+        }
+
+        long offset = (long) resultsPerPage * (long) page;
+
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append("SELECT * FROM (");
+        stringBuffer.append(query);
+        stringBuffer.append(") AS innerQuery OFFSET ");
+        stringBuffer.append(offset);
+        stringBuffer.append(" LIMIT ");
+        stringBuffer.append(resultsPerPage);
+
+        return stringBuffer.toString();
+    }
+
+    private String sortQuery(String query, AddressSortByEnum sortByEnum) {
+        if (sortByEnum == null) {
+            return query;
+        }
+
+        if (query.contains(";")) {
+            throw new UnsupportedOperationException("Sorting Method can not handle semi-colons(;)");
+        }
+
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append("SELECT * FROM (");
+        stringBuffer.append(query);
+        stringBuffer.append(") AS preSortedQuery");
+
+        switch (sortByEnum) {
+            case SORT_BY_LAST_NAME:
+                stringBuffer.append(SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL);
+                break;
+            case SORT_BY_FIRST_NAME:
+                stringBuffer.append(SQL_SORT_ADDRESSES_BY_FIRST_NAME_PARTIAL);
+                break;
+            case SORT_BY_COMPANY:
+                stringBuffer.append(SQL_SORT_ADDRESSES_BY_COMPANY_PARTIAL);
+                break;
+            case SORT_BY_ID:
+            default:
+                stringBuffer.append(SQL_SORT_ADDRESSES_BY_ID_PARTIAL);
+                break;
+        }
+
+        return stringBuffer.toString();
+    }
+
+    private String sortAndPaginateQuery(String query, AddressSortByEnum sortByEnum, Integer page, Integer resultsPerPage) {
+        return paginateQuery(sortQuery(query, sortByEnum), page, resultsPerPage);
+    }
+
+    private String sortAndPaginateQuery(String query, ResultProperties resultProperties) {
+        if (resultProperties == null) {
+            return query;
+        }
+        return sortAndPaginateQuery(query, resultProperties.getSortByEnum(), resultProperties.getPageNumber(), resultProperties.getResultsPerPage());
     }
 }

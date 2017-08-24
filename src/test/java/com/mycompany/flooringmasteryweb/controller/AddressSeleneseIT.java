@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.controller;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.Page;
@@ -32,6 +33,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -47,6 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -183,9 +186,12 @@ public class AddressSeleneseIT {
 
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
+                .addQueryParameter("page", Integer.toString(0))
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
 
         WebClient webClient = new WebClient();
+        webClient.getOptions().setJavaScriptEnabled(false);
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
         WebResponse webResponse = htmlPage.getWebResponse();
@@ -260,6 +266,67 @@ public class AddressSeleneseIT {
     }
 
     @Test
+    public void loadIndexPageWithPagination() throws IOException {
+        HttpUrl httpUrl = getAddressUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient webClient = new WebClient();
+        webClient.getOptions().setJavaScriptEnabled(false);
+
+        HtmlPage htmlPage = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = htmlPage.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        if (webResponse.getContentType().equals("application/json")) {
+            fail("Should have been HTML.");
+        }
+
+        String title = htmlPage.getTitleText();
+        assertEquals(title, "Address Book");
+        DomElement addressTable = htmlPage.getElementById("address-table");
+
+        DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
+
+        assertTrue(addressRows.size() < 200);
+
+        HtmlAnchor nextPageLink = htmlPage.getAnchorByText("Next Page >");
+        String nextHref = nextPageLink.getHrefAttribute();
+
+        assertTrue(nextHref.contains("page=1"));
+
+        HtmlAnchor lastPageLink = htmlPage.getAnchorByText("Last Page");
+        String lastHref = lastPageLink.getHrefAttribute();
+
+        assertTrue(lastHref.contains("page="));
+
+        try {
+            HtmlAnchor prevPageLink = htmlPage.getAnchorByText("< Prev Page");
+            fail("This was supposed to throw an error.");
+        } catch (ElementNotFoundException ex) {
+            // This what supposed to happen.
+        }
+
+        try {
+            HtmlAnchor firstPageLink = htmlPage.getAnchorByText("First Page");
+            fail("This was supposed to throw an error.");
+        } catch (ElementNotFoundException ex) {
+            // This what supposed to happen.
+        }
+
+        assertTrue(lastHref.contains("page="));
+
+        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=first_name");
+        String linkText = sortByFirstName.getTextContent();
+        assertEquals(linkText, "First Name");
+
+        Node classNode = sortByFirstName.getAttributes().getNamedItem("class");
+        String classValue = classNode.getNodeValue();
+        assertEquals(classValue, "mask-link");
+    }
+
+    @Test
     public void loadIndexJson() throws IOException {
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
@@ -286,7 +353,7 @@ public class AddressSeleneseIT {
                 assertEquals(addressCountFromIndex.intValue(), addresses.length);
             }
 
-            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == 4 || address.getId() == 3));
+            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == 4));
         } else {
             fail("Should have been JSON.");
         }
@@ -296,6 +363,8 @@ public class AddressSeleneseIT {
     public void verifyJsonAndHtmlIndexHaveSameAddresses() throws IOException {
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
+                .addQueryParameter("page", Integer.toString(0))
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
 
         WebRequest jsonRequest = new WebRequest(httpUrl.url());
@@ -305,6 +374,7 @@ public class AddressSeleneseIT {
 
         WebClient webClient = new WebClient();
         WebClient jsonClient = new WebClient();
+        webClient.getOptions().setJavaScriptEnabled(false);
 
         Page jsonPage = jsonClient.getPage(jsonRequest);
         WebResponse jsonResponse = jsonPage.getWebResponse();
@@ -333,20 +403,23 @@ public class AddressSeleneseIT {
         assertNotNull(addresses);
         assertEquals(addressRows.size(), addresses.length + 1);
 
-        String htmlText = htmlPage.asText();
+        final String htmlText = htmlPage.asText();
 
         Arrays.stream(addresses)
                 .forEach((address) -> {
                     String firstName = address.getFirstName();
-                    assertTrue(htmlText.contains(firstName));
+                    if (Objects.nonNull(firstName)) {
+                        assertTrue(htmlText.contains(firstName));
+                    }
 
                     String lastName = address.getLastName();
-                    assertTrue(htmlText.contains(lastName));
+                    if (Objects.nonNull(lastName)) {
+                        assertTrue(htmlText.contains(lastName));
+                    }
 
                     int id = address.getId();
                     assertTrue(htmlText.contains(Integer.toString(id)));
                 });
-
     }
 
     @Test
@@ -959,6 +1032,7 @@ public class AddressSeleneseIT {
         // Get The List Of Addresses
         HttpUrl getListUrl = getAddressUrlBuilder()
                 .addPathSegment("")
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
 
         WebClient getListWebClient = new WebClient();
@@ -1253,6 +1327,10 @@ public class AddressSeleneseIT {
                     break;
                 case "searchByFirstName":
                     address.setFirstName(randomString);
+                    break;
+                case "searchByFullName":
+                    address.setFirstName(randomString);
+                    randomString = address.getFullName();
                     break;
                 case "searchByCity":
                     address.setCity(randomString);
@@ -1880,18 +1958,13 @@ public class AddressSeleneseIT {
             fail("Should have been JSON.");
         }
 
-        List<Address> addresses = Arrays.asList(addressesReturned);
-        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+        List<Address> addressesSortedByComparator = Arrays.asList(addressesReturned);
+        List<Address> addressesSortedByDatabase = Arrays.asList(addressesReturned2);
 
-        addresses.sort(new Comparator<Address>() {
-            @Override
-            public int compare(Address address1, Address address2) {
-                return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-            }
-        });
+        addressesSortedByComparator.sort(sortByLastName());
 
-        for (int i = 0; i < addresses.size(); i++) {
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        for (int i = 0; i < addressesSortedByComparator.size(); i++) {
+            assertEquals("IDs: " + addressesSortedByComparator.get(i).getId() + ", " + addressesSortedByDatabase.get(i).getId(), addressesSortedByComparator.get(i), addressesSortedByDatabase.get(i));
         }
     }
 
@@ -1928,12 +2001,7 @@ public class AddressSeleneseIT {
         List<Address> addresses = Arrays.asList(addressesReturned);
         List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
 
-        addresses.sort(new Comparator<Address>() {
-            @Override
-            public int compare(Address address1, Address address2) {
-                return address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
-            }
-        });
+        addresses.sort(sortByFirstName());
 
         for (int i = 0; i < addresses.size(); i++) {
             assertEquals(addresses.get(i), addressesFromDb.get(i));
@@ -1973,38 +2041,10 @@ public class AddressSeleneseIT {
         List<Address> addresses = Arrays.asList(addressesReturned);
         List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
 
-        addresses.sort(new Comparator<Address>() {
-            @Override
-            public int compare(Address address1, Address address2) {
-
-                if (Objects.isNull(address1.getCompany())
-                        && !Objects.isNull(address2.getCompany())) {
-                    return 1;
-                } else if (!Objects.isNull(address1.getCompany())
-                        && Objects.isNull(address2.getCompany())) {
-                    return -1;
-                }
-
-                int result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
-
-                if (result == 0) {
-                    result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
-                }
-
-                if (result == 0) {
-                    result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
-                }
-
-                if (result == 0) {
-                    result = Integer.compare(address1.getId(), address2.getId());
-                }
-
-                return result;
-            }
-        });
+        addresses.sort(sortByCompany());
 
         for (int i = 0; i < addresses.size(); i++) {
-            assertEquals("Made it " + i + " into the list.", addresses.get(i), addressesFromDb.get(i));
+            assertEquals("Made it " + i + " into the list. " + addresses.get(i).getId() + ", " + addressesFromDb.get(i).getId(), addresses.get(i), addressesFromDb.get(i));
         }
     }
 
@@ -2097,6 +2137,119 @@ public class AddressSeleneseIT {
         }
     }
 
+    @Test
+    public void getPaginatedList() throws IOException {
+        System.out.println("list by pagination");
+
+        List<Address> createdAddresses = new ArrayList();
+
+        Gson gson = new GsonBuilder().create();
+
+        Address address = addressGenerator();
+
+        address.setFirstName("Doug");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        address.setFirstName("Doug Jr.");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        address.setFirstName("Doug III");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        address.setFirstName("Other Doug");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        address.setFirstName("Steve");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        address.setFirstName("Dave");
+        Address daveAddress = this.createAddressUsingJson(address);
+        createdAddresses.add(daveAddress);
+
+        address.setFirstName("Phil");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        address.setFirstName("Stephen");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        address.setFirstName("Steven");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        address.setFirstName("Steven");
+        createdAddresses.add(this.createAddressUsingJson(address));
+
+        // Check search using json object built with my purspective api.
+        // Get The List Of Addresses
+        HttpUrl searchUrl = getAddressUrlBuilder()
+                .addPathSegment("search")
+                .addQueryParameter("sort_by", "last_name")
+                .addQueryParameter("page", Integer.toString(0))
+                .addQueryParameter("results", Integer.toString(5))
+                .build();
+
+        WebClient webClient = new WebClient();
+
+        AddressSearchRequest addressSearchRequest = new AddressSearchRequest(address.getLastName(), AddressSearchByOptionEnum.LAST_NAME);
+
+        String addressSearchRequestJson2 = gson.toJson(addressSearchRequest);
+
+        WebRequest searchByLastNameWebRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+        searchByLastNameWebRequest.setRequestBody(addressSearchRequestJson2);
+
+        searchByLastNameWebRequest.setAdditionalHeader("Accept", "application/json");
+        searchByLastNameWebRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page lastNameSearchPage = webClient.getPage(searchByLastNameWebRequest);
+
+        assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
+
+        String searchAddressJson = lastNameSearchPage.getWebResponse().getContentAsString();
+
+        Address[] returnedLastNameSearchAddresses = gson.fromJson(searchAddressJson, Address[].class);
+
+        assertEquals(returnedLastNameSearchAddresses.length, 5);
+
+        Address firstReturnedLastNameSearchAddress = returnedLastNameSearchAddresses[0];
+
+        assertEquals(daveAddress, firstReturnedLastNameSearchAddress);
+
+        webClient = new WebClient();
+
+        URL searchUrl2 = HttpUrl.get(searchByLastNameWebRequest.getUrl()).newBuilder()
+                .removeAllQueryParameters("page")
+                .addQueryParameter("page", Integer.toString(1))
+                .build()
+                .url();
+
+        searchByLastNameWebRequest.setUrl(searchUrl2);
+        Page lastNameSearchPage2 = webClient.getPage(searchByLastNameWebRequest);
+
+        assertEquals(lastNameSearchPage2.getWebResponse().getStatusCode(), 200);
+
+        Address[] returnedLastNameSearchAddresses2
+                = gson.fromJson(lastNameSearchPage2.getWebResponse().getContentAsString(), Address[].class);
+
+        assertEquals(returnedLastNameSearchAddresses2.length, 5);
+
+        Set<Address> addressSet = new HashSet();
+
+        addressSet.addAll(Arrays.asList(returnedLastNameSearchAddresses));
+        addressSet.addAll(Arrays.asList(returnedLastNameSearchAddresses2));
+
+        assertEquals(addressSet.size(), 10);
+
+        for (Address addressToCheck : createdAddresses) {
+            assertTrue(addressSet.contains(addressToCheck));
+        }
+
+        assertTrue(addressSet.containsAll(createdAddresses));
+
+        for (Address addressToDelete : createdAddresses) {
+            deleteAddress(addressToDelete.getId());
+        }
+
+    }
+
     private String caseRandomizer(final Random random, String input) {
         switch (random.nextInt(6)) {
 
@@ -2148,4 +2301,101 @@ public class AddressSeleneseIT {
         return address;
     }
 
+    private static Comparator<Object> sortByLastName() {
+        return (Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            int result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+
+            if (result == 0) {
+                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
+            }
+
+            if (result == 0) {
+                if (address1.getCompany() == null && address1.getCompany() == null) {
+                    result = 0;
+                } else if (address1.getCompany() == null) {
+                    result = 1;
+                } else if (address2.getCompany() == null) {
+                    result = -1;
+                } else {
+                    result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
+                }
+            }
+
+            if (result == 0) {
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+
+            return result;
+        };
+    }
+
+    private static Comparator<Object> sortByFirstName() {
+        return (Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            int result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
+
+            if (result == 0) {
+                result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+            }
+
+            if (result == 0) {
+                if (address1.getCompany() == null && address1.getCompany() == null) {
+                    result = 0;
+                } else if (address1.getCompany() == null) {
+                    result = 1;
+                } else if (address2.getCompany() == null) {
+                    result = -1;
+                } else {
+                    result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
+                }
+            }
+
+            if (result == 0) {
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+
+            return result;
+        };
+    }
+
+    private static Comparator<Object> sortByCompany() {
+        return (Object o1, Object o2) -> {
+
+            Address address1 = (Address) o1;
+            Address address2 = (Address) o2;
+
+            int result;
+
+            if (address1.getCompany() == null && address1.getCompany() == null) {
+                result = 0;
+            } else if (address1.getCompany() == null) {
+                result = 1;
+            } else if (address2.getCompany() == null) {
+                result = -1;
+            } else {
+                result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
+            }
+
+            if (result == 0) {
+                result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+            }
+
+            if (result == 0) {
+                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
+            }
+
+            if (result == 0) {
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+
+            return result;
+        };
+    }
 }
