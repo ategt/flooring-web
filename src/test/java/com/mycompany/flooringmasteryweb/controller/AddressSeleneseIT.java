@@ -272,7 +272,7 @@ public class AddressSeleneseIT {
 
         Node classNode = sortByFirstName.getAttributes().getNamedItem("class");
         String classValue = classNode.getNodeValue();
-        assertEquals(classValue, "mask-link");      
+        assertEquals(classValue, "mask-link");
     }
 
     @Test
@@ -352,17 +352,20 @@ public class AddressSeleneseIT {
         assertNotNull(addresses);
         assertEquals(addressRows.size(), addresses.length + 1);
 
-        String htmlText = htmlPage.asText();
+        final String htmlText = htmlPage.asText();
 
         Arrays.stream(addresses)
                 .forEach((address) -> {
                     String firstName = address.getFirstName();
+                    assertNotNull(htmlText);
                     assertTrue(htmlText.contains(firstName));
 
                     String lastName = address.getLastName();
+                    assertNotNull(htmlText);
                     assertTrue(htmlText.contains(lastName));
 
                     int id = address.getId();
+                    assertNotNull(htmlText);
                     assertTrue(htmlText.contains(Integer.toString(id)));
                 });
     }
