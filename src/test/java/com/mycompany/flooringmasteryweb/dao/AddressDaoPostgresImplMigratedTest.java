@@ -379,17 +379,69 @@ public class AddressDaoPostgresImplMigratedTest {
         addressesFromDb.removeAll(removables);
         addresses.removeAll(removables);
 
-        addresses.sort((Object o1, Object o2) -> {
+        addresses.sort(sortByLastName());
+
+        for (int i = 0; i < addresses.size(); i++) {
+            assertEquals("", addresses.get(i), addressesFromDb.get(i));
+        }
+    }
+
+    private static Comparator<Object> sortByLastName() {
+        return (Object o1, Object o2) -> {
 
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
 
-            return address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
-        });
+            if (address1.getLastName() == null && address2.getLastName() == null) {
+                return 0;
+            } else if (address1.getLastName() == null || address2.getLastName() == null) {
+                if (address1.getLastName() == null) {
+                    return 1;
+                } else if (address2.getLastName() == null) {
+                    return -1;
+                } else {
+                    throw new IllegalStateException("This should not be possible.");
+                }
+            }
 
-        for (int i = 0; i < addresses.size(); i++) {
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
-        }
+            int result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+
+            if (result == 0) {
+                if (address1.getFirstName() == null && address2.getFirstName() == null) {
+                    result = 0;
+                } else if (address1.getFirstName() == null || address2.getFirstName() == null) {
+                    if (address1.getFirstName() == null) {
+                        result = 1;
+                    } else if (address2.getFirstName() == null) {
+                        result = -1;
+                    } else {
+                        throw new IllegalStateException("This should not be possible.");
+                    }
+                } else {
+                    result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
+                }
+            }
+
+            if (result == 0) {
+                if (Strings.isNullOrEmpty(address1.getCompany())
+                        && !Strings.isNullOrEmpty(address2.getCompany())) {
+                    return 1;
+                } else if (!Strings.isNullOrEmpty(address1.getCompany())
+                        && Strings.isNullOrEmpty(address2.getCompany())) {
+                    return -1;
+                }
+            }
+
+            if (result == 0) {
+                result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
+            }
+
+            if (result == 0) {
+                result = Integer.compare(address1.getId(), address2.getId());
+            }
+
+            return result;
+        };
     }
 
     @Test
