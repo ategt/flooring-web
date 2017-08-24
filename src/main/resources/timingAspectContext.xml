@@ -296,19 +296,31 @@
             />
 
             <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.search(..))"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.search(..))"
             />
 
             <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.update(..))"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.update(..))"
             />
 
             <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.edit(..))"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.index(..))"
             />
 
             <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.create(..))"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.show(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.size(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.edit(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.create(..))"
             />
         </aop:aspect>
                 
