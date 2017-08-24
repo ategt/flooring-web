@@ -1,7 +1,7 @@
-var id = 16440;
-for(var i = 0 ; i < 15 ; i++ ){
+var id = 15341;
+for(var i = id ; i > 15000 ; i-- ){
 	$.ajax({
-		url: "http://localhost:8084/FlooringMasteryWeb/timing/" + (id + i),	
+		url: "http://localhost:8080/timing/" + i,	
 		beforeSend: function (xhr) {
 	            xhr.setRequestHeader("Accept", "application/json");
 	    },
