@@ -11,11 +11,16 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.naming.OperationNotSupportedException;
 import org.junit.After;
@@ -1102,6 +1107,33 @@ public class AddressDaoPostgresImplTest {
     }
 
     private void removeAddressesWithNullOrEmptyFields(List<Address> processAddressList, List<Address>... clearableAddressList) {
+        //List<Address> removableObjects = processAddressList.stream()
+
+        Address testAddress = new Address();
+        testAddress.setState("billy");
+
+        Method[] methods = testAddress.getClass().getMethods();
+        for (Method method : methods) {
+            Object resultObj = null;
+            try {
+                if (method.getReturnType().equals(String.class) && method.getParameterCount() == 0) {
+                    resultObj = method.invoke(testAddress);
+                    String result = (String) resultObj;
+                }
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                Logger.getLogger(AddressDaoPostgresImplTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+//        Arrays.stream(address.getClass().getMethods())
+//                .filter((Method) method - > Strings.nullToEmpty(method.invoke()).trim().isEmpty())
+//                        .
+//                
+//                .
+//        filter(address -> Arrays.stream(address.getClass().getMethods())
+//                .filter((Method) method - > Strings.nullToEmpty(method.invoke()).trim().isEmpty()).Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
+//        Strings.nullToEmpty(address.getFirstName()).trim().isEmpty()
+//        )
         List<Address> removableObjects = processAddressList.stream()
                 .filter(address -> Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
                 .filter(address -> Strings.nullToEmpty(address.getLastName()).trim().isEmpty())
