@@ -49,6 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -302,7 +303,7 @@ public class AddressSeleneseIT {
                 assertEquals(addressCountFromIndex.intValue(), addresses.length);
             }
 
-            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == 3));
+            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == 4));
         } else {
             fail("Should have been JSON.");
         }
@@ -981,6 +982,7 @@ public class AddressSeleneseIT {
         // Get The List Of Addresses
         HttpUrl getListUrl = getAddressUrlBuilder()
                 .addPathSegment("")
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
 
         WebClient getListWebClient = new WebClient();
@@ -2085,7 +2087,8 @@ public class AddressSeleneseIT {
         }
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void getPaginatedList() throws IOException {
         System.out.println("list by pagination");
 
