@@ -956,6 +956,8 @@ public class AddressDaoPostgresImplTest {
         List<Address> addresses = addressDao.list(null);
         List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), null, null));
 
+        removeAddressesWithNullOrEmptyFields(addresses, addresses, addressesFromDb);
+        
         addresses.sort(sortByLastName());
 
         for (int i = 0; i < addresses.size(); i++) {
