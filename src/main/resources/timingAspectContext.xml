@@ -21,25 +21,9 @@
     
     <aop:config>
         <aop:aspect ref="timingAspect">
-                        
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.index(..))"
-            />
 
             <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.search(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.show(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.size(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
+                                                pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
             />
     
             <aop:around method="logStartAndStopTimeForMethod"

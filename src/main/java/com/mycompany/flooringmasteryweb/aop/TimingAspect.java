@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
  *
  * @author apprentice
  */
-@ControllerAdvice
 public class TimingAspect {
 
     private ApplicationContext ctx;
