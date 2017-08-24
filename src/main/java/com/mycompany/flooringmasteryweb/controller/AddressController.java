@@ -47,6 +47,7 @@ public class AddressController {
     private ApplicationContext ctx;
 
     private final String RESULTS_COOKIE_NAME = "results_cookie";
+    private final String SORT_COOKIE_NAME = "sort_cookie";
 
     @Inject
     public AddressController(AddressDao addressDao) {
@@ -56,7 +57,7 @@ public class AddressController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @RequestParam(name = "page", required = false) Integer page,
@@ -79,7 +80,7 @@ public class AddressController {
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public Address[] index(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @RequestParam(name = "page", required = false) Integer page,
@@ -234,7 +235,7 @@ public class AddressController {
 
     private AddressSortByEnum updateSortCookie(String sortBy, HttpServletResponse response, String sortCookie) {
         if (sortBy != null) {
-            response.addCookie(new Cookie("sort_cookie", sortBy));
+            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
         } else if (sortCookie != null) {
             sortBy = sortCookie;
         }
@@ -252,7 +253,7 @@ public class AddressController {
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = {"Content-type=application/json", "Accept=application/json"})
     @ResponseBody
     public List<Address> search(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @Valid @RequestBody AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "page", required = false) Integer page,
@@ -270,7 +271,7 @@ public class AddressController {
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Address> search(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @ModelAttribute AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "page", required = false) Integer page,
@@ -286,7 +287,7 @@ public class AddressController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @ModelAttribute AddressSearchRequest addressSearchRequest,
@@ -312,7 +313,7 @@ public class AddressController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @Valid @ModelAttribute AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "sort_by", required = false) String sortBy,
@@ -350,7 +351,7 @@ public class AddressController {
     public String show(@PathVariable("id") Integer addressId,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
-            @CookieValue(value = "sort_cookie", defaultValue = "id") String sortCookie,
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             HttpServletResponse response,
             Map model) {
