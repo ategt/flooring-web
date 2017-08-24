@@ -2251,10 +2251,10 @@ public class AddressSeleneseIT {
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
 
-            int result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+            int result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
 
             if (result == 0) {
-                result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
             }
 
             if (result == 0) {
@@ -2265,7 +2265,7 @@ public class AddressSeleneseIT {
                 } else if (address2.getCompany() == null) {
                     result = -1;
                 } else {
-                    result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+                    result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
                 }
             }
 
@@ -2283,10 +2283,10 @@ public class AddressSeleneseIT {
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
 
-            int result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+            int result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
 
             if (result == 0) {
-                result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+                result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
             }
 
             if (result == 0) {
@@ -2297,7 +2297,7 @@ public class AddressSeleneseIT {
                 } else if (address2.getCompany() == null) {
                     result = -1;
                 } else {
-                    result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+                    result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
                 }
             }
 
@@ -2324,15 +2324,15 @@ public class AddressSeleneseIT {
             } else if (address2.getCompany() == null) {
                 result = -1;
             } else {
-                result = address1.getCompany().toLowerCase().compareTo(address2.getCompany().toLowerCase());
+                result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
             }
 
             if (result == 0) {
-                result = address1.getLastName().toLowerCase().compareTo(address2.getLastName().toLowerCase());
+                result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
             }
 
             if (result == 0) {
-                result = address1.getFirstName().toLowerCase().compareTo(address2.getFirstName().toLowerCase());
+                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
             }
 
             if (result == 0) {
