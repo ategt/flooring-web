@@ -131,7 +131,7 @@ public class AddressSearchSeleneseIT {
 
         WebRequest webRequest = new WebRequest(url, HttpMethod.POST);
 
-        webRequest.setRequestBody("searchBy=searchByAll&searchText=a");
+        webRequest.setRequestBody("searchBy=searchByAll&searchText=b");
 
         HtmlPage htmlPage = webClient.getPage(webRequest);
 
