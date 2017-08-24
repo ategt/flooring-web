@@ -10,60 +10,60 @@ package com.mycompany.flooringmasteryweb.dto;
  * @author ATeg
  */
 public enum AddressSortByEnum {
-    SORT_BY_COMPANY("company", 2),
-    SORT_BY_ID("id", 3),
-    SORT_BY_FIRST_NAME("first_name", 1),
-    SORT_BY_LAST_NAME("last_name", 0);
-
-    private final String sortString;
-    private final Integer sortByInt;
-    
-    private static final AddressSortByEnum DEFAULT = AddressSortByEnum.SORT_BY_ID;
-
-    private AddressSortByEnum(String sortString, Integer sortByInt) {
-        this.sortString = sortString;
-        this.sortByInt = sortByInt;
-    }
-
-    public String value() {
-        return sortString;
-    }
-
-    public int intValue() {
-        return sortByInt;
-    }
-
-    public static AddressSortByEnum parse(Integer input) {
-        for (AddressSortByEnum addressesSortBy : AddressSortByEnum.values()) {
-            if (addressesSortBy.intValue() == input) {
-                return addressesSortBy;
-            }
-        }
-        return DEFAULT;
-    }
+    SORT_BY_LAST_NAME,
+    SORT_BY_FIRST_NAME,
+    SORT_BY_COMPANY,
+    SORT_BY_ID,
+    SORT_BY_LAST_NAME_INVERSE,
+    SORT_BY_FIRST_NAME_INVERSE,
+    SORT_BY_COMPANY_INVERSE,
+    SORT_BY_ID_INVERSE;
 
     public static AddressSortByEnum parse(String input) {
-        for (AddressSortByEnum addressesSortBy : AddressSortByEnum.values()) {
-            if (addressesSortBy.value().equalsIgnoreCase(input)) {
-                return addressesSortBy;
-            }
+        if (input == null) {
+            return null;
         }
 
-        for (AddressSortByEnum addressesSortBy : AddressSortByEnum.values()) {
-            if (addressesSortBy.name().equalsIgnoreCase(input)) {
-                return addressesSortBy;
-            }
+        AddressSortByEnum currentEnum = null;
+
+        if (input.toLowerCase().contains("id")) {
+            currentEnum = SORT_BY_ID;
+        } else if (input.toLowerCase().contains("last")) {
+            currentEnum = SORT_BY_LAST_NAME;
+        } else if (input.toLowerCase().contains("first")) {
+            currentEnum = SORT_BY_FIRST_NAME;
+        } else if (input.toLowerCase().contains("company")) {
+            currentEnum = SORT_BY_COMPANY;
+        } else {
+            currentEnum = SORT_BY_ID;
         }
 
-        for (AddressSortByEnum addressesSortBy : AddressSortByEnum.values()) {
-            try {
-                if (addressesSortBy.ordinal() == Integer.parseInt(input)) {
-                    return addressesSortBy;
-                }
-            } catch (NumberFormatException ex) {
-            }
+        if (input.toLowerCase().contains("inv") || input.toLowerCase().contains("rev")) {
+            currentEnum = reverse(currentEnum);
         }
+        return currentEnum;
+    }
 
-        return DEFAULT;
+    public static AddressSortByEnum reverse(AddressSortByEnum currentEnum) {
+        switch (currentEnum) {
+            case SORT_BY_COMPANY:
+                return SORT_BY_COMPANY_INVERSE;
+            case SORT_BY_COMPANY_INVERSE:
+                return SORT_BY_COMPANY;
+            case SORT_BY_FIRST_NAME:
+                return SORT_BY_FIRST_NAME_INVERSE;
+            case SORT_BY_FIRST_NAME_INVERSE:
+                return SORT_BY_FIRST_NAME;
+            case SORT_BY_ID:
+                return SORT_BY_ID_INVERSE;
+            case SORT_BY_ID_INVERSE:
+                return SORT_BY_ID;
+            case SORT_BY_LAST_NAME:
+                return SORT_BY_LAST_NAME_INVERSE;
+            case SORT_BY_LAST_NAME_INVERSE:
+                return SORT_BY_LAST_NAME;
+            default:
+                throw new IndexOutOfBoundsException("No Possible Reverse Found.");
+        }
     }
 }
