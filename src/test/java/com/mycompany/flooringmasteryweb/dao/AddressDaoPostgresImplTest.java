@@ -1026,6 +1026,11 @@ public class AddressDaoPostgresImplTest {
 
         assertEquals(addressesSortedWithDatabase.size(), size);
 
+        removeAddressesWithNullOrEmptyFields(addressesSortedWithComparator, addressesSortedWithComparator, addressesSortedWithDatabase);
+
+        assertTrue(addressesSortedWithDatabase.size() > 50);
+        assertTrue(addressesSortedWithComparator.size() > 50);
+
         addressesSortedWithComparator.sort(sortByLastName());
 
         for (int i = 0; i < addressesSortedWithDatabase.size(); i++) {
