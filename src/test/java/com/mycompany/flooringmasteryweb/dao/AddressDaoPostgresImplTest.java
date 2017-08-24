@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import javax.naming.OperationNotSupportedException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -1051,7 +1052,7 @@ public class AddressDaoPostgresImplTest {
     public void getSortedByNameUsingSortByParamAndPaginationWithRandomNumbers() {
         Random random = new Random();
 
-        for (int g = 0; g < 150; g++) {
+        for (int testPass = 0; testPass < 150; testPass++) {
             int pageNumber = random.nextInt();
             int resultsPerPage = random.nextInt();
 
@@ -1077,9 +1078,13 @@ public class AddressDaoPostgresImplTest {
 
             addressesSortedWithComparator.sort(sortByLastName());
 
-            for (int i = pageNumber * resultsPerPage, r = 0; r < addressesSortedWithDatabase.size(); i++, r++) {
+            for (int resultIdFromComparator = pageNumber * resultsPerPage, resultIdFromDatabase = 0; resultIdFromDatabase < addressesSortedWithDatabase.size(); resultIdFromComparator++, resultIdFromDatabase++) {
 
-                assertEquals("g:" + g + ", i:" + i + ", r:" + r + " - PageNum: " + pageNumber + " ResultsPerPage: " + resultsPerPage + " - ComparedId: " + addressesSortedWithComparator.get(i).getId() + ", DatabaseId: " + addressesSortedWithDatabase.get(r).getId(), addressesSortedWithComparator.get(i), addressesSortedWithDatabase.get(r));
+                assertEquals("TestPass:" + testPass + ", ComparatorPos:" + resultIdFromComparator + ", DbId:" + resultIdFromDatabase + " - PageNum: " + pageNumber
+                        + " ResultsPerPage: " + resultsPerPage
+                        + " - ComparedId: " + addressesSortedWithComparator.get(resultIdFromComparator).getId() + ", DatabaseId: " + addressesSortedWithDatabase.get(resultIdFromDatabase).getId(),
+                        addressesSortedWithComparator.get(resultIdFromComparator),
+                        addressesSortedWithDatabase.get(resultIdFromDatabase));
 
             }
         }
@@ -1091,10 +1096,34 @@ public class AddressDaoPostgresImplTest {
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
 
+            if (address1.getLastName() == null && address2.getLastName() == null) {
+                return 0;
+            } else if (address1.getLastName() == null || address2.getLastName() == null) {
+                if (address1.getLastName() == null) {
+                    return 1;
+                } else if (address2.getLastName() == null) {
+                    return -1;
+                } else {
+                    throw new IllegalStateException("This should not be possible.");
+                }
+            }
+
             int result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
 
             if (result == 0) {
-                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
+                if (address1.getFirstName() == null && address2.getFirstName() == null) {
+                    result = 0;
+                } else if (address1.getFirstName() == null || address2.getFirstName() == null) {
+                    if (address1.getFirstName() == null) {
+                        result = 1;
+                    } else if (address2.getFirstName() == null) {
+                        result = -1;
+                    } else {
+                        throw new IllegalStateException("This should not be possible.");
+                    }
+                } else {
+                    result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
+                }
             }
 
             if (result == 0) {
