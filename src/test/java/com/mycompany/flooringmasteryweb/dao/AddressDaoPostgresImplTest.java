@@ -1125,34 +1125,10 @@ public class AddressDaoPostgresImplTest {
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
 
-            if (address1.getLastName() == null && address2.getLastName() == null) {
-                return 0;
-            } else if (address1.getLastName() == null || address2.getLastName() == null) {
-                if (address1.getLastName() == null) {
-                    return 1;
-                } else if (address2.getLastName() == null) {
-                    return -1;
-                } else {
-                    throw new IllegalStateException("This should not be possible.");
-                }
-            }
-
             int result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
 
             if (result == 0) {
-                if (address1.getFirstName() == null && address2.getFirstName() == null) {
-                    result = 0;
-                } else if (address1.getFirstName() == null || address2.getFirstName() == null) {
-                    if (address1.getFirstName() == null) {
-                        result = 1;
-                    } else if (address2.getFirstName() == null) {
-                        result = -1;
-                    } else {
-                        throw new IllegalStateException("This should not be possible.");
-                    }
-                } else {
-                    result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
-                }
+                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
             }
 
             if (result == 0) {
