@@ -18,9 +18,9 @@ function considerLoadingMoreAddresses() {
     }
 }
 
-function loadMoreAddresses(page, items = 50) {
+function loadMoreAddresses(page, items) {
     $.ajax({
-        url: addressPath + "?page=" + page + "&results=" + items,
+        url: addressPath + "?page=" + page + (items ? "&results=" + items : ""),
         type: "GET",
         dataType: 'json',
         beforeSend: function (xhr) {
