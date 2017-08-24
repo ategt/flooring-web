@@ -16,13 +16,28 @@
  http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
  
         
-    <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />
-    
+    <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />    
     <bean id="timingAspect" class="com.mycompany.flooringmasteryweb.aop.TimingAspect" />
     
     <aop:config>
         <aop:aspect ref="timingAspect">
-            
+                        
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.index(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.search(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.show(..))"
+            />
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.size(..))"
+            />
+
             <aop:around method="logStartAndStopTimeForMethod"
                         pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
             />
@@ -294,38 +309,8 @@
             <aop:around method="logStartAndStopTimeForMethod"
                         pointcut="execution(* com.mycompany.flooringmasteryweb.dao.StateDao.sortByStateTaxRev(..))"
             />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.search(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.update(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.index(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.show(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.size(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.edit(..))"
-            />
-
-            <aop:around method="logStartAndStopTimeForMethod"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.controller.AddressController.create(..))"
-            />
         </aop:aspect>
                 
     </aop:config>
 
-    <!--This is the main project context file.-->
-            
 </beans>
