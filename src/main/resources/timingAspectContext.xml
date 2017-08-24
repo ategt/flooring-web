@@ -14,8 +14,7 @@
  http://www.springframework.org/schema/context/spring-context.xsd
  http://www.springframework.org/schema/aop
  http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
- 
-        
+       
     <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />    
     <bean id="timingAspect" class="com.mycompany.flooringmasteryweb.aop.TimingAspect" />
     
