@@ -1109,21 +1109,31 @@ public class AddressDaoPostgresImplTest {
     private void removeAddressesWithNullOrEmptyFields(List<Address> processAddressList, List<Address>... clearableAddressList) {
         //List<Address> removableObjects = processAddressList.stream()
 
-        Address testAddress = new Address();
-        testAddress.setState("billy");
+        //Address testAddress = new Address();
+        //testAddress.setState("billy");
+        List<Address> removableObjects = processAddressList.stream()
+                .filter(testAddress -> {
 
-        Method[] methods = testAddress.getClass().getMethods();
-        for (Method method : methods) {
-            Object resultObj = null;
-            try {
-                if (method.getReturnType().equals(String.class) && method.getParameterCount() == 0) {
-                    resultObj = method.invoke(testAddress);
-                    String result = (String) resultObj;
-                }
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                Logger.getLogger(AddressDaoPostgresImplTest.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+                    Method[] methods = testAddress.getClass().getMethods();
+                    for (Method method : methods) {
+                        Object resultObj = null;
+                        try {
+                            if (method.getReturnType().equals(String.class) && method.getParameterCount() == 0) {
+                                resultObj = method.invoke(testAddress);
+                                String result = (String) resultObj;
+                                boolean isNothing = Strings.nullToEmpty(result).trim().isEmpty();
+                                if (isNothing) {
+                                    return true;
+                                }
+                            }
+                        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                            Logger.getLogger(AddressDaoPostgresImplTest.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                    return false;
+                })
+                .collect(Collectors.toList());
 
 //        Arrays.stream(address.getClass().getMethods())
 //                .filter((Method) method - > Strings.nullToEmpty(method.invoke()).trim().isEmpty())
@@ -1134,16 +1144,17 @@ public class AddressDaoPostgresImplTest {
 //                .filter((Method) method - > Strings.nullToEmpty(method.invoke()).trim().isEmpty()).Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
 //        Strings.nullToEmpty(address.getFirstName()).trim().isEmpty()
 //        )
-        List<Address> removableObjects = processAddressList.stream()
-                .filter(address -> Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
-                .filter(address -> Strings.nullToEmpty(address.getLastName()).trim().isEmpty())
-                .filter(address -> Strings.nullToEmpty(address.getCompany()).trim().isEmpty())
-                .filter(address -> Strings.nullToEmpty(address.getState()).trim().isEmpty())
-                .filter(address -> Strings.nullToEmpty(address.getCity()).trim().isEmpty())
-                .filter(address -> Strings.nullToEmpty(address.getStreetName()).trim().isEmpty())
-                .filter(address -> Strings.nullToEmpty(address.getStreetNumber()).trim().isEmpty())
-                .filter(address -> Strings.nullToEmpty(address.getZip()).trim().isEmpty())
-                .collect(Collectors.toList());
+
+//        List<Address> removableObjects = processAddressList.stream()
+//                .filter(address -> Strings.nullToEmpty(address.getFirstName()).trim().isEmpty())
+//                .filter(address -> Strings.nullToEmpty(address.getLastName()).trim().isEmpty())
+//                .filter(address -> Strings.nullToEmpty(address.getCompany()).trim().isEmpty())
+//                .filter(address -> Strings.nullToEmpty(address.getState()).trim().isEmpty())
+//                .filter(address -> Strings.nullToEmpty(address.getCity()).trim().isEmpty())
+//                .filter(address -> Strings.nullToEmpty(address.getStreetName()).trim().isEmpty())
+//                .filter(address -> Strings.nullToEmpty(address.getStreetNumber()).trim().isEmpty())
+//                .filter(address -> Strings.nullToEmpty(address.getZip()).trim().isEmpty())
+//                .collect(Collectors.toList());
 
         for (List<Address> clearingList : clearableAddressList) {
             clearingList.removeAll(removableObjects);
