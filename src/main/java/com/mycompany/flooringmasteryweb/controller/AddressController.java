@@ -67,6 +67,8 @@ public class AddressController {
             HttpServletRequest request,
             Map model) {
 
+        //if (Objects.equals(sortCookie, 
+        
         ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);

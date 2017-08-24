@@ -545,6 +545,20 @@ public class AddressDaoPostgresImplTest {
                 case FULL_NAME:
                     queryString = address.getFirstName() + " " + address.getLastName();
                     break;
+                case ANY:
+                    String[] allOptions = {address.getFirstName(),
+                        address.getLastName(),
+                        address.getFullName(),
+                        address.getCompany(),
+                        address.getCity(),
+                        address.getState(),
+                        address.getStreetName(),
+                        address.getStreetNumber(),
+                        address.getZip()};
+                    queryString = allOptions[new Random().nextInt(allOptions.length)];
+                    break;
+                default:
+                    throw new IndexOutOfBoundsException("Test Execution should not get here.");
             }
 
             address = addressDao.create(address);
@@ -673,6 +687,20 @@ public class AddressDaoPostgresImplTest {
                 case FULL_NAME:
                     queryString = address.getFirstName() + " " + address.getLastName();
                     break;
+                case ANY:
+                    String[] allOptions = {address.getFirstName(),
+                        address.getLastName(),
+                        address.getFullName(),
+                        address.getCompany(),
+                        address.getCity(),
+                        address.getState(),
+                        address.getStreetName(),
+                        address.getStreetNumber(),
+                        address.getZip()};
+                    queryString = allOptions[new Random().nextInt(allOptions.length)];
+                    break;
+                default:
+                    throw new IndexOutOfBoundsException("Test Execution should not get here.");
             }
 
             address = addressDao.create(address);
@@ -807,6 +835,20 @@ public class AddressDaoPostgresImplTest {
                 case FULL_NAME:
                     queryString = address.getFirstName() + " " + address.getLastName();
                     break;
+                case ANY:
+                    String[] allOptions = {address.getFirstName(),
+                        address.getLastName(),
+                        address.getFullName(),
+                        address.getCompany(),
+                        address.getCity(),
+                        address.getState(),
+                        address.getStreetName(),
+                        address.getStreetNumber(),
+                        address.getZip()};
+                    queryString = allOptions[new Random().nextInt(allOptions.length)];
+                    break;
+                default:
+                    throw new IndexOutOfBoundsException("Test Execution should not get here.");
             }
 
             address = addressDao.create(address);
@@ -961,9 +1003,7 @@ public class AddressDaoPostgresImplTest {
         addresses.sort(sortByLastName());
 
         for (int i = 0; i < addresses.size(); i++) {
-
             assertEquals(addresses.get(i), addressesFromDb.get(i));
-
         }
     }
 
@@ -977,9 +1017,7 @@ public class AddressDaoPostgresImplTest {
         addresses.sort(sortByLastName());
 
         for (int i = 0; i < addressesFromDb.size(); i++) {
-
             assertEquals(addresses.get(i), addressesFromDb.get(i));
-
         }
     }
 
@@ -996,9 +1034,7 @@ public class AddressDaoPostgresImplTest {
         addresses.sort(sortByLastName());
 
         for (int i = 0; i < addressesFromDb.size(); i++) {
-
             assertEquals(addresses.get(i), addressesFromDb.get(i));
-
         }
     }
 
@@ -1012,9 +1048,7 @@ public class AddressDaoPostgresImplTest {
         addresses.sort(sortByLastName());
 
         for (int i = 0, r = 30; i < addressesFromDb.size(); i++, r++) {
-
             assertEquals(addresses.get(r), addressesFromDb.get(i));
-
         }
     }
 

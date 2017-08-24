@@ -151,6 +151,7 @@ public class AddressDaoPostgresImplMigratedTest {
                         searchString = address.getZip();
                         break;
                     case ALL:
+                    case ANY:
                     case DEFAULT:
                         String[] allOptions = {address.getFirstName(),
                             address.getLastName(),
