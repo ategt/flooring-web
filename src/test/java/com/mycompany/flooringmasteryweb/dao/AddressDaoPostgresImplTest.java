@@ -957,7 +957,7 @@ public class AddressDaoPostgresImplTest {
         List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.parse("last_name"), null, null));
 
         removeAddressesWithNullOrEmptyFields(addresses, addresses, addressesFromDb);
-        
+
         addresses.sort(sortByLastName());
 
         for (int i = 0; i < addresses.size(); i++) {
@@ -1136,8 +1136,10 @@ public class AddressDaoPostgresImplTest {
             Address address1 = (Address) o1;
             Address address2 = (Address) o2;
 
+            int result = 0;
+
             if (address1.getLastName() == null && address2.getLastName() == null) {
-                return 0;
+                result = 0;
             } else if (address1.getLastName() == null || address2.getLastName() == null) {
                 if (address1.getLastName() == null) {
                     return 1;
@@ -1148,7 +1150,9 @@ public class AddressDaoPostgresImplTest {
                 }
             }
 
-            int result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+            if (result == 0) {
+                result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+            }
 
             if (result == 0) {
                 if (address1.getFirstName() == null && address2.getFirstName() == null) {
