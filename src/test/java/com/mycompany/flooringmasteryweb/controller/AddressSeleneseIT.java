@@ -357,15 +357,16 @@ public class AddressSeleneseIT {
         Arrays.stream(addresses)
                 .forEach((address) -> {
                     String firstName = address.getFirstName();
-                    assertNotNull(htmlText);
-                    assertTrue(htmlText.contains(firstName));
+                    if (Objects.nonNull(firstName)) {
+                        assertTrue(htmlText.contains(firstName));
+                    }
 
                     String lastName = address.getLastName();
-                    assertNotNull(htmlText);
-                    assertTrue(htmlText.contains(lastName));
+                    if (Objects.nonNull(lastName)) {
+                        assertTrue(htmlText.contains(lastName));
+                    }
 
                     int id = address.getId();
-                    assertNotNull(htmlText);
                     assertTrue(htmlText.contains(Integer.toString(id)));
                 });
     }
