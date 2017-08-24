@@ -23,7 +23,7 @@
         <aop:aspect ref="timingAspect">
 
             <aop:around method="logStartAndStopTimeForMethod"
-                                                pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.create(..))"
             />
     
             <aop:around method="logStartAndStopTimeForMethod"
@@ -293,8 +293,6 @@
             <aop:around method="logStartAndStopTimeForMethod"
                         pointcut="execution(* com.mycompany.flooringmasteryweb.dao.StateDao.sortByStateTaxRev(..))"
             />
-        </aop:aspect>
-                
+        </aop:aspect>                
     </aop:config>
-
 </beans>
