@@ -59,7 +59,7 @@ public class AddressController {
     public String index(
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "sort_by", required = false) AddressSortByEnum sortBy,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             UriComponentsBuilder uriComponentsBuilder,
@@ -67,8 +67,15 @@ public class AddressController {
             HttpServletRequest request,
             Map model) {
 
-        //if (Objects.equals(sortCookie, 
-        
+        if (Objects.nonNull(sortBy)) {
+             AddressSortByEnum sortOld = AddressSortByEnum.parse(sortCookie);
+             AddressSortByEnum sortNew = sortBy;
+
+             if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)){
+                 sortBy = sortOld.reverse();
+             }
+        }
+
         ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
@@ -84,17 +91,17 @@ public class AddressController {
     public Address[] index(
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "sort_by", required = false) AddressSortByEnum sortBy,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response) {
 
         ResultProperties resultProperties = processResultPropertiesWithAllAsDefault(
-                sortBy, 
-                response, 
-                sortCookie, 
-                page, 
-                resultsPerPage, 
+                sortBy,
+                response,
+                sortCookie,
+                page,
+                resultsPerPage,
                 resultsPerPageCookie);
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
@@ -198,14 +205,14 @@ public class AddressController {
     }
 
     private ResultProperties processResultPropertiesWithContextDefaults(
-            Integer resultsPerPage, 
-            Integer resultsPerPageCookie, 
-            Integer page, 
-            String sortBy, 
-            HttpServletResponse response, 
+            Integer resultsPerPage,
+            Integer resultsPerPageCookie,
+            Integer page,
+            AddressSortByEnum sortBy,
+            HttpServletResponse response,
             String sortCookie
     ) throws BeansException {
-        
+
         resultsPerPage = loadDefaultResults(resultsPerPage, resultsPerPageCookie);
         page = loadDefaultPageNumber(page);
         ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
@@ -213,7 +220,7 @@ public class AddressController {
     }
 
     private ResultProperties processResultPropertiesWithAllAsDefault(
-            String sortBy,
+            AddressSortByEnum sortBy,
             HttpServletResponse response,
             String sortCookie,
             Integer page,
@@ -226,7 +233,7 @@ public class AddressController {
         return resultProperties;
     }
 
-    private ResultProperties processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+    private ResultProperties processResultProperties(AddressSortByEnum sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
         AddressSortByEnum sortEnum = updateSortCookie(sortBy, response, sortCookie);
 
         ResultProperties resultProperties = new ResultProperties(sortEnum, page, resultsPerPage);
@@ -235,14 +242,14 @@ public class AddressController {
         return resultProperties;
     }
 
-    private AddressSortByEnum updateSortCookie(String sortBy, HttpServletResponse response, String sortCookie) {
+    private AddressSortByEnum updateSortCookie(AddressSortByEnum sortBy, HttpServletResponse response, String sortCookie) {
         if (sortBy != null) {
-            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
+            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy.name()));
         } else if (sortCookie != null) {
-            sortBy = sortCookie;
+            sortBy = AddressSortByEnum.parse(sortCookie);
         }
 
-        return AddressSortByEnum.parse(sortBy);
+        return sortBy;
     }
 
     private Integer updateResultsCookie(Integer resultsPerPage, HttpServletResponse response) {
@@ -256,7 +263,7 @@ public class AddressController {
     @ResponseBody
     public List<Address> search(
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "sort_by", required = false) AddressSortByEnum sortBy,
             @Valid @RequestBody AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
@@ -274,7 +281,7 @@ public class AddressController {
     @ResponseBody
     public List<Address> search(
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "sort_by", required = false) AddressSortByEnum sortBy,
             @ModelAttribute AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
@@ -291,7 +298,7 @@ public class AddressController {
     public String search(
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "sort_by", required = false) AddressSortByEnum sortBy,
             @ModelAttribute AddressSearchRequest addressSearchRequest,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
@@ -318,7 +325,7 @@ public class AddressController {
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @Valid @ModelAttribute AddressSearchRequest addressSearchRequest,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "sort_by", required = false) AddressSortByEnum sortBy,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             UriComponentsBuilder uriComponentsBuilder,
@@ -354,7 +361,7 @@ public class AddressController {
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "sort_by", required = false) AddressSortByEnum sortBy,
             HttpServletResponse response,
             Map model) {
 

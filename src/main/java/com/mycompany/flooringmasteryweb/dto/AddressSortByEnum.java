@@ -44,6 +44,10 @@ public enum AddressSortByEnum {
         return currentEnum;
     }
 
+    public AddressSortByEnum reverse() {
+        return reverse(this);
+    }
+
     public static AddressSortByEnum reverse(AddressSortByEnum currentEnum) {
         switch (currentEnum) {
             case SORT_BY_COMPANY:
