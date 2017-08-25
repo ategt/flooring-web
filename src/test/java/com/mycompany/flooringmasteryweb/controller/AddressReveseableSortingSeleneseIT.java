@@ -101,8 +101,8 @@ public class AddressReveseableSortingSeleneseIT {
             }
             return null;
         })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         List<Integer> clonedIds = new ArrayList<>(ids);
 
@@ -116,25 +116,15 @@ public class AddressReveseableSortingSeleneseIT {
         for (Integer clonedId : clonedIds) {
             sb.append(Integer.toString(clonedId));
         }
-        
+
         String sortedIdString = sb.toString();
-        
+
         sb = new StringBuilder();
         for (Integer id : ids) {
             sb.append(Integer.toString(id));
         }
-        
-        String rawIdString = sb.toString();
-        
-//        String rawIdString = ids.stream()
-//                .map(i -> Integer.toString(i))
-//                .collect(StringBuilder::new,
-//                StringBuilder::append,
-//                StringBuilder::append).toString();
 
-//        String sortedIdString = clonedIds.stream().collect(StringBuilder::new,
-//                StringBuilder::append,
-//                StringBuilder::append).toString();
+        String rawIdString = sb.toString();
 
         assertEquals(sortedIdString, rawIdString);
 
@@ -177,16 +167,18 @@ public class AddressReveseableSortingSeleneseIT {
 
         assertTrue(tableRows.size() > 5);
 
-        for (HtmlElement tableRow : tableRows) {
-            String idString = tableRow.getFirstChild().asText();
-            Integer id = Integer.parseInt(idString);
-        }
-
         List<Integer> ids = tableRows.stream().map((tableRow) -> {
-            String idString = tableRow.getFirstChild().asText();
-            Integer id = Integer.parseInt(idString);
-            return id;
-        }).collect(Collectors.toList());
+            try {
+                DomElement domElement = tableRow.getFirstElementChild();
+                String idString = domElement.asText();
+                Integer id = Integer.parseInt(idString);
+                return id;
+            } catch (NumberFormatException ex) {
+            }
+            return null;
+        })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         List<Integer> clonedIds = new ArrayList<>(ids);
 
@@ -257,16 +249,18 @@ public class AddressReveseableSortingSeleneseIT {
 
         assertTrue(tableRows.size() > 5);
 
-        for (HtmlElement tableRow : tableRows) {
-            String idString = tableRow.getFirstChild().asText();
-            Integer id = Integer.parseInt(idString);
-        }
-
         List<Integer> ids = tableRows.stream().map((tableRow) -> {
-            String idString = tableRow.getFirstChild().asText();
-            Integer id = Integer.parseInt(idString);
-            return id;
-        }).collect(Collectors.toList());
+            try {
+                DomElement domElement = tableRow.getFirstElementChild();
+                String idString = domElement.asText();
+                Integer id = Integer.parseInt(idString);
+                return id;
+            } catch (NumberFormatException ex) {
+            }
+            return null;
+        })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         List<Integer> clonedIds = new ArrayList<>(ids);
 
