@@ -82,7 +82,7 @@ public class AddressSeleneseIT {
     @Test
     public void listTest() throws MalformedURLException, IOException {
         System.out.println("List Test");
-        
+
         WebClient webClient = new WebClient();
 
         HttpUrl httpUrl = getAddressUrlBuilder()
@@ -98,7 +98,7 @@ public class AddressSeleneseIT {
     @Test
     public void testSearch() throws IOException {
         System.out.println("Search Test");
-        
+
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("search")
                 .build();
@@ -137,7 +137,7 @@ public class AddressSeleneseIT {
     @Test
     public void loadIndexPage() throws IOException {
         System.out.println("Load Index Page");
-        
+
         int minimumAddresses = 200;
         Gson gson = new GsonBuilder().create();
 
@@ -365,7 +365,7 @@ public class AddressSeleneseIT {
     @Test
     public void verifyJsonAndHtmlIndexHaveSameAddresses() throws IOException {
         System.out.println("Verify Json And Html Have Same Addresses");
-        
+
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("page", Integer.toString(0))
@@ -430,7 +430,7 @@ public class AddressSeleneseIT {
     @Test
     public void getTest() throws IOException {
         System.out.println("Get Test");
-        
+
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
@@ -502,7 +502,7 @@ public class AddressSeleneseIT {
     @Test
     public void createTest() throws IOException {
         System.out.println("Create Test");
-        
+
         Address address = addressGenerator();
         Assert.assertNotNull(address);
         Assert.assertNull(address.getId());
@@ -1369,8 +1369,39 @@ public class AddressSeleneseIT {
                 case "searchByAll":
                     address.setStreetName(randomString);
                     break;
+                case "searchByAny":
+
+                    switch (new Random().nextInt(8)) {
+                        case 0:
+                            address.setZip(randomString);
+                            break;
+                        case 1:
+                            address.setCity(randomString);
+                            break;
+                        case 2:
+                            address.setCompany(randomString);
+                            break;
+                        case 3:
+                            address.setFirstName(randomString);
+                            break;
+                        case 4:
+                            address.setLastName(randomString);
+                            break;
+                        case 5:
+                            address.setState(randomString);
+                            break;
+                        case 6:
+                            address.setStreetName(randomString);
+                            break;
+                        case 7:
+                            address.setStreetNumber(randomString);
+                            break;
+                        default:
+                            fail("Wrong random number generated.");
+                    }
+                    break;
                 default:
-                    fail("This should never happen.");
+                    fail("This should never happen.\n" + searchingBy + " is not checked.");
             }
 
             // Create a Address Using the POST endpoint
@@ -1886,7 +1917,7 @@ public class AddressSeleneseIT {
     @Test
     public void databaseSizeIsNotAccessibleFromABrowser() throws IOException {
         System.out.println("Database size can not be accessed for browser");
-        
+
         HttpUrl sizeUrl = getAddressUrlBuilder()
                 .addPathSegment("size")
                 .build();
@@ -1976,7 +2007,7 @@ public class AddressSeleneseIT {
     @Test
     public void getSortedByFirstName() throws IOException {
         System.out.println("Sort By First Name");
-        
+
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "first_name")
@@ -2018,7 +2049,7 @@ public class AddressSeleneseIT {
     @Test
     public void getSortedByCompany() throws IOException {
         System.out.println("Sort by Company");
-        
+
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "company")
@@ -2060,7 +2091,7 @@ public class AddressSeleneseIT {
     @Test
     public void getSortedById() throws IOException {
         System.out.println("Sorted By ID");
-        
+
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "id")
@@ -2107,7 +2138,7 @@ public class AddressSeleneseIT {
     @Test
     public void getSortedByDefault() throws IOException {
         System.out.println("Sort by Default");
-        
+
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
