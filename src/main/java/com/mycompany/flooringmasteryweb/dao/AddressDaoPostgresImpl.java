@@ -48,9 +48,13 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + ")";
 
     private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL = " ORDER BY LOWER(last_name) ASC, LOWER(first_name) ASC, LOWER(company) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_INVERSE_PARTIAL = " ORDER BY LOWER(last_name) DESC, LOWER(first_name) DESC, LOWER(company) DESC, id DESC";
     private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_PARTIAL = " ORDER BY LOWER(first_name) ASC, LOWER(last_name) ASC, LOWER(company) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_INVERSE_PARTIAL = " ORDER BY LOWER(first_name) DESC, LOWER(last_name) DESC, LOWER(company) DESC, id DESC";
     private static final String SQL_SORT_ADDRESSES_BY_COMPANY_PARTIAL = " ORDER BY LOWER(company) ASC, LOWER(last_name) ASC, LOWER(first_name) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_COMPANY_INVERSE_PARTIAL = " ORDER BY LOWER(company) DESC, LOWER(last_name) DESC, LOWER(first_name) DESC, id DESC";
     private static final String SQL_SORT_ADDRESSES_BY_ID_PARTIAL = " ORDER BY id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_ID_INVERSE_PARTIAL = " ORDER BY id DESC";
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -608,12 +612,24 @@ public class AddressDaoPostgresImpl implements AddressDao {
             case SORT_BY_LAST_NAME:
                 stringBuffer.append(SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL);
                 break;
+            case SORT_BY_LAST_NAME_INVERSE:
+                stringBuffer.append(SQL_SORT_ADDRESSES_BY_LAST_NAME_INVERSE_PARTIAL);
+                break;
             case SORT_BY_FIRST_NAME:
                 stringBuffer.append(SQL_SORT_ADDRESSES_BY_FIRST_NAME_PARTIAL);
+                break;
+            case SORT_BY_FIRST_NAME_INVERSE:
+                stringBuffer.append(SQL_SORT_ADDRESSES_BY_FIRST_NAME_INVERSE_PARTIAL);
                 break;
             case SORT_BY_COMPANY:
                 stringBuffer.append(SQL_SORT_ADDRESSES_BY_COMPANY_PARTIAL);
                 break;
+            case SORT_BY_COMPANY_INVERSE:
+                stringBuffer.append(SQL_SORT_ADDRESSES_BY_COMPANY_INVERSE_PARTIAL);
+                break;            
+            case SORT_BY_ID_INVERSE:
+                stringBuffer.append(SQL_SORT_ADDRESSES_BY_ID_INVERSE_PARTIAL);
+                break;            
             case SORT_BY_ID:
             default:
                 stringBuffer.append(SQL_SORT_ADDRESSES_BY_ID_PARTIAL);
