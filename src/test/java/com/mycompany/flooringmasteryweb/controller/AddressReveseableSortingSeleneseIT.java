@@ -106,7 +106,7 @@ public class AddressReveseableSortingSeleneseIT {
 
         List<Integer> clonedIds = new ArrayList<>(ids);
 
-        clonedIds.sort((Integer o1, Integer o2) -> o1.compareTo(o2));
+        clonedIds.sort(sortByIdAscending());
 
         for (int i = 0; i < ids.size(); i++) {
             assertEquals(ids.get(i), clonedIds.get(i));
@@ -128,13 +128,17 @@ public class AddressReveseableSortingSeleneseIT {
 
         assertEquals(sortedIdString, rawIdString);
 
-        clonedIds.sort((Integer o1, Integer o2) -> o2.compareTo(o1));
+        clonedIds.sort(sortByIdDesc());
 
         sortedIdString = clonedIds.stream().collect(StringBuilder::new,
                 StringBuilder::append,
                 StringBuilder::append).toString();
 
         assertTrue(!sortedIdString.equals(rawIdString));
+    }
+
+    private static Comparator<Integer> sortByIdDesc() {
+        return (Integer o1, Integer o2) -> o2.compareTo(o1);
     }
 
     @Test
@@ -182,7 +186,7 @@ public class AddressReveseableSortingSeleneseIT {
 
         List<Integer> clonedIds = new ArrayList<>(ids);
 
-        clonedIds.sort((Integer o1, Integer o2) -> o1.compareTo(o2));
+        clonedIds.sort(sortByIdDesc());
 
         for (int i = 0; i < ids.size(); i++) {
             assertEquals(ids.get(i), clonedIds.get(i));
@@ -198,13 +202,17 @@ public class AddressReveseableSortingSeleneseIT {
 
         assertEquals(sortedIdString, rawIdString);
 
-        clonedIds.sort((Integer o1, Integer o2) -> o2.compareTo(o1));
+        clonedIds.sort(sortByIdAscending());
 
         sortedIdString = clonedIds.stream().collect(StringBuilder::new,
                 StringBuilder::append,
                 StringBuilder::append).toString();
 
         assertTrue(!sortedIdString.equals(rawIdString));
+    }
+
+    private static Comparator<Integer> sortByIdAscending() {
+        return (Integer o1, Integer o2) -> o1.compareTo(o2);
     }
 
     @Test
@@ -264,7 +272,7 @@ public class AddressReveseableSortingSeleneseIT {
 
         List<Integer> clonedIds = new ArrayList<>(ids);
 
-        clonedIds.sort((Integer o1, Integer o2) -> o2.compareTo(o1));
+        clonedIds.sort(sortByIdAscending());
 
         for (int i = 0; i < ids.size(); i++) {
             assertEquals(ids.get(i), clonedIds.get(i));
@@ -280,7 +288,7 @@ public class AddressReveseableSortingSeleneseIT {
 
         assertEquals(sortedIdString, rawIdString);
 
-        clonedIds.sort((Integer o1, Integer o2) -> o1.compareTo(o2));
+        clonedIds.sort(sortByIdDesc());
 
         sortedIdString = clonedIds.stream().collect(StringBuilder::new,
                 StringBuilder::append,
