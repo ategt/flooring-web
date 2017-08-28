@@ -81,7 +81,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void listTest() throws MalformedURLException, IOException {
-
+        System.out.println("List Test");
+        
         WebClient webClient = new WebClient();
 
         HttpUrl httpUrl = getAddressUrlBuilder()
@@ -96,7 +97,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void testSearch() throws IOException {
-
+        System.out.println("Search Test");
+        
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("search")
                 .build();
@@ -134,7 +136,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void loadIndexPage() throws IOException {
-
+        System.out.println("Load Index Page");
+        
         int minimumAddresses = 200;
         Gson gson = new GsonBuilder().create();
 
@@ -361,6 +364,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void verifyJsonAndHtmlIndexHaveSameAddresses() throws IOException {
+        System.out.println("Verify Json And Html Have Same Addresses");
+        
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("page", Integer.toString(0))
@@ -424,7 +429,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void getTest() throws IOException {
-
+        System.out.println("Get Test");
+        
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
@@ -495,7 +501,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void createTest() throws IOException {
-
+        System.out.println("Create Test");
+        
         Address address = addressGenerator();
         Assert.assertNotNull(address);
         Assert.assertNull(address.getId());
@@ -1717,9 +1724,6 @@ public class AddressSeleneseIT {
                 String json = jsonSingleAddressResponse.getContentAsString();
                 Gson gson = new GsonBuilder().create();
 
-                System.out.println("Json: " + json);
-                System.out.println("Search: " + searchString);
-
                 returnedSuggestions = gson.fromJson(json, String[].class);
 
                 Assert.assertNotNull(returnedSuggestions);
@@ -1881,7 +1885,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void databaseSizeIsNotAccessibleFromABrowser() throws IOException {
-
+        System.out.println("Database size can not be accessed for browser");
+        
         HttpUrl sizeUrl = getAddressUrlBuilder()
                 .addPathSegment("size")
                 .build();
@@ -1970,6 +1975,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedByFirstName() throws IOException {
+        System.out.println("Sort By First Name");
+        
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "first_name")
@@ -2010,6 +2017,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedByCompany() throws IOException {
+        System.out.println("Sort by Company");
+        
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "company")
@@ -2050,6 +2059,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedById() throws IOException {
+        System.out.println("Sorted By ID");
+        
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "id")
@@ -2095,6 +2106,8 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedByDefault() throws IOException {
+        System.out.println("Sort by Default");
+        
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
