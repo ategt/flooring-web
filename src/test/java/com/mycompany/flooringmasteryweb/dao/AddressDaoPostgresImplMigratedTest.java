@@ -11,26 +11,18 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javax.naming.OperationNotSupportedException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -350,10 +342,9 @@ public class AddressDaoPostgresImplMigratedTest {
     }
 
     @Test
-    @Ignore
     public void getSortedByIdReverse() {
         List<Address> addresses = addressDao.list(null);
-        //List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.ID_INVERSE));
+        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_ID_INVERSE));
 
         addresses.sort((Object o1, Object o2) -> {
 
@@ -364,10 +355,8 @@ public class AddressDaoPostgresImplMigratedTest {
         });
 
         for (int i = 0; i < addresses.size(); i++) {
-            //   assertEquals(addresses.get(i), addressesFromDb.get(i));
+            assertEquals(addresses.get(i), addressesFromDb.get(i));
         }
-
-        fail("This was supposed to skip.");
     }
 
     @Test
@@ -446,12 +435,9 @@ public class AddressDaoPostgresImplMigratedTest {
     }
 
     @Test
-    @Ignore
     public void getSortedByLastNameReverse() {
         List<Address> addresses = addressDao.list(null);
-        //List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.LAST_NAME_INVERSE));
-        List<Address> addressesFromDb = null;
-        fail();
+        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_LAST_NAME_INVERSE));
 
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
@@ -488,12 +474,9 @@ public class AddressDaoPostgresImplMigratedTest {
     }
 
     @Test
-    @Ignore
     public void getSortedByFirstNameReverse() {
         List<Address> addresses = addressDao.list(null);
-        //List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.FIRST_NAME_INVERSE));
-        List<Address> addressesFromDb = null;
-        fail();
+        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_FIRST_NAME_INVERSE));
 
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
@@ -569,12 +552,9 @@ public class AddressDaoPostgresImplMigratedTest {
     }
 
     @Test
-    @Ignore
     public void getSortedByCompanyReverse() {
         List<Address> addresses = addressDao.list(null);
-        //List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.COMPANY_INVERSE));
-        List<Address> addressesFromDb = null;
-        fail();
+        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_COMPANY_INVERSE));
 
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
