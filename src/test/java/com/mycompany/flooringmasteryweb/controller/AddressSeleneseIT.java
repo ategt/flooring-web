@@ -2126,7 +2126,7 @@ public class AddressSeleneseIT {
         addresses.sort(new Comparator<Address>() {
             @Override
             public int compare(Address address1, Address address2) {
-                return address1.getId().compareTo(address2.getId());
+                return address2.getId().compareTo(address1.getId());
             }
         });
 
