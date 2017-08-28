@@ -143,6 +143,8 @@ public class AddressReveseableSortingSeleneseIT {
 
     @Test
     public void sortByIdInHtmlWithClickTest() throws IOException {
+        System.out.println("Sort By Id In Html With Click Test");
+        
         WebClient webClient = new WebClient();
 
         URL url = getAddressUrlBuilder()
