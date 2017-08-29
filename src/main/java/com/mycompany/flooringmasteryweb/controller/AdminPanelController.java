@@ -66,9 +66,7 @@ public class AdminPanelController {
     }
 
     private List<ProductCommand> productCommandList() {
-        List<Product> products = productDao.getListOfProducts();
-        products = productDao.sortByProductName(products);
-        List<ProductCommand> productCommands = productDao.buildCommandProductList(products);
+        List<ProductCommand> productCommands = productDao.buildCommandProductList();
         return productCommands;
     }
 
@@ -76,7 +74,7 @@ public class AdminPanelController {
     public String editProduct(@PathVariable("productName") String productName, Map model) {
 
         model.put("productCommands", productCommandList());
-        model.put("productCommand", productDao.buildCommandProduct(productDao.get(productName)));
+        model.put("productCommand", ProductCommand.buildProductCommand(productDao.get(productName)));
         return "product\\edit";
     }
 

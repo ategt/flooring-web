@@ -17,14 +17,11 @@ public interface ProductDao {
 
     String bestGuessProductName(String inputName);
 
-    ProductCommand buildCommandProduct(Product product);
-
-    List<ProductCommand> buildCommandProductList(List<Product> products);
+    List<ProductCommand> buildCommandProductList();
 
     Product create(Product product);
 
     Product create(Product product, String productName);
-
     Product create(String productName, Product product);
 
     void delete(Product product);
@@ -37,21 +34,7 @@ public interface ProductDao {
 
     List<String> guessProductName(String inputName);
 
-    Product resolveCommandProduct(ProductCommand productCommand);
-
     int size();
-
-    List<ProductCommand> sortByProductCommandName(List<ProductCommand> products);
-
-    List<ProductCommand> sortByProductCommandNameRev(List<ProductCommand> products);
-
-    List<Product> sortByProductCost(List<Product> products);
-
-    List<Product> sortByProductCostRev(List<Product> products);
-
-    List<Product> sortByProductName(List<Product> products);
-
-    List<Product> sortByProductNameRev(List<Product> products);
 
     void update(Product product);
 

@@ -9,10 +9,7 @@ import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -35,8 +32,25 @@ public class ProductDaoPostgresImpl implements ProductDao {
     private static final String SQL_GET_PRODUCT = "SELECT * FROM products WHERE LOWER(product_name) = LOWER(?);";
     private static final String SQL_GET_PRODUCT_NAMES_SIZE = "SELECT COUNT(product_name) FROM products";
     private static final String SQL_GET_PRODUCT_NAMES = "SELECT product_name FROM products";
+    private static final String SQL_GET_PRODUCTS = "SELECT * FROM products";
 
     private static final String SQL_CREATE_PRODUCTS = "CREATE TABLE IF NOT EXISTS products(id serial PRIMARY KEY, product_name varchar(145) NOT NULL UNIQUE CHECK(product_name <> ''), labor_cost decimal(8,4) NOT NULL CHECK(labor_cost >= 0), material_cost decimal(8,4));";
+
+    private static final String SQL_GUESS_PRODUCT_NAMES = "WITH inputQuery(n) AS (SELECT ?), "
+            + "mainQuery AS ("
+            + "              SELECT product_name, 1 AS rank FROM products WHERE product_name = (SELECT n FROM inputQuery) "
+            + "              UNION ALL SELECT product_name, 2 AS rank FROM products WHERE product_name = (SELECT LOWER(n) FROM inputQuery) "
+            + "              UNION ALL SELECT product_name, 3 AS rank FROM products WHERE product_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery) "
+            + "              UNION ALL SELECT product_name, 4 AS rank FROM products WHERE product_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)"
+            + "          )"
+            + " SELECT t1.product_name FROM mainQuery t1"
+            + " JOIN ("
+            + "	SELECT product_name, MIN(rank) min_rank"
+            + "	FROM mainQuery"
+            + "	GROUP BY product_name"
+            + ") t2"
+            + " ON t1.product_name = t2.product_name AND t1.rank = t2.min_rank"
+            + " ORDER BY t1.rank DESC";
 
     @Inject
     public ProductDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -205,22 +219,6 @@ public class ProductDaoPostgresImpl implements ProductDao {
         return productGuesses.get(0);
     }
 
-    private static final String SQL_GUESS_PRODUCT_NAMES = "WITH inputQuery(n) AS (SELECT ?), "
-            + "mainQuery AS ("
-            + "              SELECT product_name, 1 AS rank FROM products WHERE product_name = (SELECT n FROM inputQuery) "
-            + "              UNION ALL SELECT product_name, 2 AS rank FROM products WHERE product_name = (SELECT LOWER(n) FROM inputQuery) "
-            + "              UNION ALL SELECT product_name, 3 AS rank FROM products WHERE product_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery) "
-            + "              UNION ALL SELECT product_name, 4 AS rank FROM products WHERE product_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)"
-            + "          )"
-            + " SELECT t1.product_name FROM mainQuery t1"
-            + " JOIN ("
-            + "	SELECT product_name, MIN(rank) min_rank"
-            + "	FROM mainQuery"
-            + "	GROUP BY product_name"
-            + ") t2"
-            + " ON t1.product_name = t2.product_name AND t1.rank = t2.min_rank"
-            + " ORDER BY t1.rank DESC";
-
     @Override
     public List<String> guessProductName(String inputName) {
 
@@ -233,117 +231,15 @@ public class ProductDaoPostgresImpl implements ProductDao {
         return Arrays.asList(productNames);
     }
 
-    private static final String SQL_GET_PRODUCTS = "SELECT * FROM products";
-
     @Override
     public List<Product> getListOfProducts() {
         return jdbcTemplate.query(SQL_GET_PRODUCTS, new ProductMapper());
-    }
+    }   
 
     @Override
-    public List<Product> sortByProductName(List<Product> products) {
-
-        products.sort(
-                new Comparator<Product>() {
-            public int compare(Product c1, Product c2) {
-                return c1.getProductName().compareTo(c2.getProductName());
-            }
-        });
-
-        return products;
-    }
-
-    @Override
-    public List<Product> sortByProductNameRev(List<Product> products) {
-        List<Product> shallowCopy = sortByProductName(products).subList(0, products.size());
-        Collections.reverse(shallowCopy);
-        return shallowCopy;
-    }
-
-    @Override
-    public List<Product> sortByProductCost(List<Product> products) {
-
-        products.sort(
-                new Comparator<Product>() {
-            public int compare(Product c1, Product c2) {
-                return Double.compare(c1.getCost(), c2.getCost());
-            }
-        });
-
-        return products;
-    }
-
-    @Override
-    public List<Product> sortByProductCostRev(List<Product> products) {
-        List<Product> shallowCopy = sortByProductName(products).subList(0, products.size());
-        Collections.reverse(shallowCopy);
-        return shallowCopy;
-    }
-
-    @Override
-    public ProductCommand buildCommandProduct(Product product) {
-
-        ProductCommand productCommand = new ProductCommand();
-
-        String productName = product.getProductName();
-        productCommand.setProductName(productName);
-
-        Double productCost = product.getCost();
-        productCommand.setCost(productCost);
-
-        Double laborCost = product.getLaborCost();
-        productCommand.setLaborCost(laborCost);
-
-        return productCommand;
-    }
-
-    @Override
-    public Product resolveCommandProduct(ProductCommand productCommand) {
-
-        Product product = new Product();
-
-        String productName = productCommand.getProductName();
-        product.setProductName(productName);
-
-        Double productCost = productCommand.getCost();
-        product.setCost(productCost);
-
-        Double laborCost = productCommand.getLaborCost();
-        product.setLaborCost(laborCost);
-
-        return product;
-    }
-
-    @Override
-    public List<ProductCommand> buildCommandProductList(List<Product> products) {
-        List<ProductCommand> resultsList = new ArrayList();
-
-        for (Product product : products) {
-
-            resultsList.add(buildCommandProduct(product));
-
-        }
-
-        return resultsList;
-    }
-
-    @Override
-    public List<ProductCommand> sortByProductCommandName(List<ProductCommand> products) {
-
-        products.sort(
-                new Comparator<ProductCommand>() {
-            public int compare(ProductCommand c1, ProductCommand c2) {
-                return c1.getProductName().compareTo(c2.getProductName());
-            }
-        });
-
-        return products;
-    }
-
-    @Override
-    public List<ProductCommand> sortByProductCommandNameRev(List<ProductCommand> products) {
-        List<ProductCommand> shallowCopy = sortByProductCommandName(products).subList(0, products.size());
-        Collections.reverse(shallowCopy);
-        return shallowCopy;
+    public List<ProductCommand> buildCommandProductList() {
+        return getListOfProducts().stream()
+                .map(product -> ProductCommand.buildProductCommand(product))
+                .collect(Collectors.toList());
     }
 }

@@ -10,7 +10,6 @@ import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
-import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
@@ -61,8 +60,7 @@ public class HomeController {
     }
 
     private void loadProductCommandsToMap(Map model) {
-        List<Product> products = productDao.getListOfProducts();
-        List<ProductCommand> productCommands = productDao.buildCommandProductList(products);
+        List<ProductCommand> productCommands = productDao.buildCommandProductList();
         model.put("productCommands", productCommands);
     }
 

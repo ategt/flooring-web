@@ -112,4 +112,19 @@ public class Product {
         this.id = id;
     }
 
+    public static Product buildProduct(ProductCommand productCommand) {
+
+        Product product = new Product();
+
+        String productName = productCommand.getProductName();
+        product.setProductName(productName);
+
+        Double productCost = productCommand.getCost();
+        product.setCost(productCost);
+
+        Double laborCost = productCommand.getLaborCost();
+        product.setLaborCost(laborCost);
+
+        return product;
+    }
 }

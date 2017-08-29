@@ -13,13 +13,13 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author apprentice
  */
 public class ProductCommand {
-    
-    @NotEmpty(message="You must enter a product name.")
+
+    @NotEmpty(message = "You must enter a product name.")
     private String productName;
-    
+
     @Min(0)
     private double productCost;
-    
+
     @Min(0)
     private double laborCost;
     private int id;
@@ -107,6 +107,18 @@ public class ProductCommand {
     public void setId(int id) {
         this.id = id;
     }
-    
-    
+
+    public static ProductCommand buildProductCommand(Product product) {
+        ProductCommand productCommand = new ProductCommand();
+
+        String productName = product.getProductName();
+        productCommand.setProductName(productName);
+
+        Double productCost = product.getCost();
+        productCommand.setCost(productCost);
+
+        Double laborCost = product.getLaborCost();
+        productCommand.setLaborCost(laborCost);
+        return productCommand;
+    }
 }

@@ -338,8 +338,7 @@ public class OrdersController {
     }
 
     private void loadProductCommandsToMap(Map model) {
-        List<Product> products = productDao.getListOfProducts();
-        List<ProductCommand> productCommands = productDao.buildCommandProductList(products);
+        List<ProductCommand> productCommands = productDao.buildCommandProductList();
         model.put("productCommands", productCommands);
     }
 

@@ -56,9 +56,7 @@ public class ProductController {
     }
 
     private List<ProductCommand> productCommandList() {
-        List<Product> products = productDao.getListOfProducts();
-        products = productDao.sortByProductName(products);
-        List<ProductCommand> productCommands = productDao.buildCommandProductList(products);
+        List<ProductCommand> productCommands = productDao.buildCommandProductList();
         return productCommands;
     }
 
@@ -66,7 +64,7 @@ public class ProductController {
     public String edit(@PathVariable("productName") String productName, Map model) {
 
         model.put("productCommands", productCommandList());
-        model.put("productCommand", productDao.buildCommandProduct(productDao.get(productName)));
+        model.put("productCommand", ProductCommand.buildProductCommand(productDao.get(productName)));
 
         return "product\\edit";
     }
@@ -75,15 +73,12 @@ public class ProductController {
     public String update(@Valid @ModelAttribute ProductCommand productCommand, BindingResult bindingResult, Map model) {
 
         if (bindingResult.hasErrors()) {
-
             model.put("productCommand", productCommand);
             model.put("productCommands", productCommandList());
 
             return "product\\edit";
-
         } else {
-
-            Product product = productDao.resolveCommandProduct(productCommand);
+            Product product = Product.buildProduct(productCommand);
 
             if (productDao.get(product.getProductName()) == null) {
                 productDao.create(product);
@@ -93,16 +88,11 @@ public class ProductController {
 
             return "redirect:/product/";
         }
-
     }
 
     @RequestMapping(value = "/delete/{productName}", method = RequestMethod.GET)
     public String delete(@PathVariable("productName") String productName) {
-
-        //orderDao.delete(orderDao.get(orderId));
         productDao.delete(productDao.get(productName));
-
         return "redirect:/product/";
     }
-
 }
