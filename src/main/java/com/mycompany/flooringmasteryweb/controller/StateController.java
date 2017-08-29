@@ -8,20 +8,24 @@ package com.mycompany.flooringmasteryweb.controller;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
+import com.mycompany.flooringmasteryweb.dto.Product;
+import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -47,7 +51,7 @@ public class StateController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String blank(Map model) {
+    public String index(Map model) {
 
         List<StateCommand> stateCommands = stateList();
 
@@ -55,6 +59,13 @@ public class StateController {
         model.put("stateCommand", new StateCommand());
 
         return "state\\edit";
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public State[] index() {
+        List<State> states = stateDao.getListOfStates();
+        return states.toArray(new State[states.size()]);
     }
 
     private List<StateCommand> stateList() {
@@ -119,6 +130,21 @@ public class StateController {
 
             return "redirect:/state/";
         }
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.PUT, headers = "Accept=application/json")
+    @ResponseBody
+    public State update(@Valid @RequestBody StateCommand stateCommand) {
+
+        State state = State.buildState(stateCommand);
+
+        if (stateDao.get(state.getStateName()) == null) {
+            state = stateDao.create(state);
+        } else {
+            state = stateDao.update(state);
+        }
+
+        return product;
     }
 
     @RequestMapping(value = "/delete/{stateName}", method = RequestMethod.GET)
