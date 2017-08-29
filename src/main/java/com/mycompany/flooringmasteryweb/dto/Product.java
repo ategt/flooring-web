@@ -40,7 +40,7 @@ public class Product {
 
     @Override
     public int hashCode() {
-        return getId();
+        return Objects.isNull(getId()) ? 0 : getId();
     }
 
     /**
