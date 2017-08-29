@@ -80,58 +80,6 @@ public class ProductControllerIT {
     }
 
     @Test
-    public void formTest() throws MalformedURLException, IOException {
-        System.out.println("Form Test");
-
-        Random random = new Random();
-        
-        WebClient webClient = new WebClient();
-
-        HttpUrl httpUrl = getProductUrlBuilder()
-                .addPathSegment("")
-                .build();
-
-        HtmlPage htmlPage = webClient.getPage(httpUrl.url());
-
-        String title = htmlPage.getTitleText();
-        assertEquals(title, "Flooring Master");
- 
-        DomElement productName = htmlPage.getElementById("productName");
-        productName.focus();
-        
-        String productNameFormText = UUID.randomUUID().toString();
-        
-        productName.setTextContent(productNameFormText);
-                
-        String productCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
-        
-        DomElement productCost = htmlPage.getElementById("productCost");
-        productCost.setTextContent(productCostText);
-        
-        String productLaborCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
-        
-        DomElement productLaborCost = htmlPage.getElementById("laborCost");
-        productCost.setTextContent(productLaborCostText);
-        
-        DomElement updateButton = htmlPage.getElementById("product-update-btn");
-        
-        Page updatedPage = updateButton.click();
-        
-        assertTrue(updatedPage.isHtmlPage());
-        
-        HtmlPage updatedHtmlPage = (HtmlPage) updatedPage;
-        
-        title = updatedHtmlPage.getTitleText();
-        assertEquals(title, "Flooring Master");
-
-        String pageText = updatedHtmlPage.asText();
-        
-        assertTrue(pageText.contains(productNameFormText));
-        assertTrue(pageText.contains(productLaborCostText));
-        assertTrue(pageText.contains(productCostText));
-    }
-
-    @Test
     public void formByFormsTest() throws MalformedURLException, IOException {
         System.out.println("Form Test");
 
@@ -148,28 +96,21 @@ public class ProductControllerIT {
         String title = htmlPage.getTitleText();
         assertEquals(title, "Flooring Master");
  
-        //HtmlForm productForm = htmlPage.getFormByName("productCommand");
+        int beforeCreation = htmlPage.getElementsByTagName("tr").size();
         
-        //HtmlInput productNameInput = productForm.getInputByName("productName");
-        //productNameInput
-        
-        //DomElement productName = htmlPage.getElementById("productName");        
         HtmlInput productName = (HtmlInput) htmlPage.getElementById("productName");        
         
         String productNameFormText = UUID.randomUUID().toString();
         
-        //productName.setTextContent(productNameFormText);
         productName.setValueAttribute(productNameFormText);
                 
         String productCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
         
-        //DomElement productCost = htmlPage.getElementById("productCost");
         HtmlInput productCost = (HtmlInput) htmlPage.getElementById("productCost");
         productCost.setValueAttribute(productCostText);
         
         String productLaborCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
         
-        //DomElement productLaborCost = htmlPage.getElementById("laborCost");
         HtmlInput productLaborCost = (HtmlInput) htmlPage.getElementById("laborCost");
         productLaborCost.setValueAttribute(productLaborCostText);
         
@@ -189,6 +130,49 @@ public class ProductControllerIT {
         assertTrue("Product Name: " + productNameFormText + " could not be found.", pageText.contains(productNameFormText));
         assertTrue("Labor: " + productLaborCostText + " could not be found.", pageText.contains(productLaborCostText));
         assertTrue("Cost: " + productCostText + " could not be found.", pageText.contains(productCostText));
+
+        htmlPage = updatedHtmlPage;
+        
+        title = htmlPage.getTitleText();
+        assertEquals(title, "Flooring Master");
+ 
+        int afterCreation = htmlPage.getElementsByTagName("tr").size();
+        
+        assertEquals(afterCreation, beforeCreation + 1);
+        
+        productName = (HtmlInput) htmlPage.getElementById("productName");        
+        String productNameValue = productName.getValueAttribute();
+        assertEquals(productNameValue, productNameFormText);
+        
+        productCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
+        
+        productCost = (HtmlInput) htmlPage.getElementById("productCost");
+        productCost.setValueAttribute(productCostText);
+        
+        productLaborCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
+        
+        productLaborCost = (HtmlInput) htmlPage.getElementById("laborCost");
+        productLaborCost.setValueAttribute(productLaborCostText);
+        
+        updateButton = htmlPage.getElementById("product-update-btn");
+        
+        updatedPage = updateButton.click();
+        
+        assertTrue(updatedPage.isHtmlPage());
+        
+        updatedHtmlPage = (HtmlPage) updatedPage;
+        
+        title = updatedHtmlPage.getTitleText();
+        assertEquals(title, "Flooring Master");
+
+        pageText = updatedHtmlPage.asText();
+        
+        assertTrue("Product Name: " + productNameFormText + " could not be found.", pageText.contains(productNameFormText));
+        assertTrue("Labor: " + productLaborCostText + " could not be found.", pageText.contains(productLaborCostText));
+        assertTrue("Cost: " + productCostText + " could not be found.", pageText.contains(productCostText));
+
+        int afterEdit = updatedHtmlPage.getElementsByTagName("tr").size();
+        assertEquals(afterEdit, afterCreation);
     }
 
     @Test
