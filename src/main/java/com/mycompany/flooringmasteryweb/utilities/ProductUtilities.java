@@ -24,4 +24,9 @@ public class ProductUtilities {
         product.setProductName(productName);
         return product;
     }
+
+    public static double roundToDecimalPlace(double cost1, int places) {
+        cost1 = (double) Math.round(cost1 * Math.pow(10, places)) / Math.pow(10, places);
+        return cost1;
+    }
 }

@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import com.mycompany.flooringmasteryweb.utilities.ProductUtilities;
 import java.util.Objects;
 
 /**
@@ -82,6 +83,7 @@ public class Product {
      * @param cost the cost to set
      */
     public void setCost(double cost) {
+        cost = ProductUtilities.roundToDecimalPlace(cost,4);
         this.cost = cost;
     }
 
@@ -96,12 +98,15 @@ public class Product {
      * @param laborCost the laborCost to set
      */
     public void setLaborCost(double laborCost) {
+        laborCost = ProductUtilities.roundToDecimalPlace(laborCost,4);
         this.laborCost = laborCost;
     }
 
     public static Product buildProduct(ProductCommand productCommand) {
-        if (Objects.isNull(productCommand)) return null;
-        
+        if (Objects.isNull(productCommand)) {
+            return null;
+        }
+
         Product product = new Product();
 
         String productName = productCommand.getProductName();

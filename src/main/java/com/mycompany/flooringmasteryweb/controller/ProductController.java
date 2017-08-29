@@ -117,6 +117,8 @@ public class ProductController {
     @RequestMapping(value = "/{productName}", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public Product show(@PathVariable("productName") String productName) {
+        
+        
         return productDao.get(productName);
     }
 

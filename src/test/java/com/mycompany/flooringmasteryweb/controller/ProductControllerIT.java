@@ -108,7 +108,7 @@ public class ProductControllerIT {
         int productId = productReturned.getId();
 
         HttpUrl showUrl = getProductUrlBuilder()
-                .addPathSegment(Integer.toString(productId))
+                .addPathSegment(productReturned.getProductName())
                 .build();
 
         WebClient showProductWebClient = new WebClient();
