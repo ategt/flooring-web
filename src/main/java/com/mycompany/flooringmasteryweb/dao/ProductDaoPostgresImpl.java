@@ -72,7 +72,7 @@ public class ProductDaoPostgresImpl implements ProductDao {
 
                 product.setId(id);
                 return product;
-            } catch (org.springframework.dao.DuplicateKeyException ex) {
+            } catch (org.springframework.dao.DataIntegrityViolationException ex) {
                 return null;
             }
 
