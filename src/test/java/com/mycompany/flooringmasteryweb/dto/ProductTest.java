@@ -57,7 +57,7 @@ public class ProductTest {
     public void testEqualsWithNew() {
         System.out.println("equals");
         Product object = new Product();
-        Product instance = orderGenerator();
+        Product instance = productGenerator();
 
         boolean expResult = false;
         boolean result = instance.equals(object);
@@ -81,7 +81,7 @@ public class ProductTest {
         Product object = new Product();
         for (int i = 0; i < 50; i++) {
 
-            Product instance = orderGenerator();
+            Product instance = productGenerator();
 
             boolean expResult = false;
             boolean result = instance.equals(object);
@@ -95,7 +95,7 @@ public class ProductTest {
         Product object = new Product();
         for (int i = 0; i < 50; i++) {
 
-            Product instance = orderGenerator();
+            Product instance = productGenerator();
 
             boolean expResult = false;
             boolean result = object.equals(instance);
@@ -113,7 +113,7 @@ public class ProductTest {
         assertEquals(expResult, result);
     }
 
-    private Product orderGenerator() {
+    private Product productGenerator() {
         Product instance = new Product();
         Random random = new Random();
         instance.setCost(random.nextDouble());
@@ -183,5 +183,17 @@ public class ProductTest {
         orderb.setType(ordera.getType());
 
         assertEquals(ordera, orderb);
+    }
+    
+    @Test
+    public void buildCommandProductTest(){
+        Product product = productGenerator();
+        
+        ProductCommand productCommand = ProductCommand.buildProductCommand(product);
+        
+        Product returnedProduct = Product.buildProduct(productCommand);
+        returnedProduct.setId(product.getId());
+        
+        assertEquals(product, returnedProduct);        
     }
 }
