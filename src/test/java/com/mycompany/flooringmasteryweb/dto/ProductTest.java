@@ -196,4 +196,13 @@ public class ProductTest {
         
         assertEquals(product, returnedProduct);        
     }
+
+    @Test
+    public void buildCommandProductWithNullsTest(){
+        ProductCommand productCommand = ProductCommand.buildProductCommand(null);
+        assertNull(productCommand);
+        
+        Product returnedProduct = Product.buildProduct(null);
+        assertNull(returnedProduct);
+    }
 }

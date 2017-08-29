@@ -100,7 +100,8 @@ public class Product {
     }
 
     public static Product buildProduct(ProductCommand productCommand) {
-
+        if (Objects.isNull(productCommand)) return null;
+        
         Product product = new Product();
 
         String productName = productCommand.getProductName();

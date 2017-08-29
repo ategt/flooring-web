@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import java.util.Objects;
 import javax.validation.constraints.Min;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -109,6 +110,9 @@ public class ProductCommand {
     }
 
     public static ProductCommand buildProductCommand(Product product) {
+        if (Objects.isNull(product))
+            return null;
+        
         ProductCommand productCommand = new ProductCommand();
 
         String productName = product.getProductName();
