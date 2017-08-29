@@ -185,45 +185,6 @@ public class StateDaoPostgresImpl implements StateDao {
     }
 
     @Override
-    public List<State> sortByStateName(List<State> states) {
-
-        states.sort(
-                new Comparator<State>() {
-            public int compare(State c1, State c2) {
-                return c1.getStateName().compareTo(c2.getStateName());
-            }
-        });
-
-        return states;
-    }
-
-    @Override
-    public List<State> sortByStateNameRev(List<State> states) {
-        List<State> shallowCopy = sortByStateName(states).subList(0, states.size());
-        Collections.reverse(shallowCopy);
-        return shallowCopy;
-    }
-
-    @Override
-    public List<State> sortByStateTax(List<State> states) {
-        states.sort(
-                new Comparator<State>() {
-            public int compare(State c1, State c2) {
-                return Double.compare(c1.getStateTax(), c2.getStateTax());
-            }
-        });
-
-        return states;
-    }
-
-    @Override
-    public List<State> sortByStateTaxRev(List<State> states) {
-        List<State> shallowCopy = sortByStateName(states).subList(0, states.size());
-        Collections.reverse(shallowCopy);
-        return shallowCopy;
-    }
-
-    @Override
     public StateCommand buildCommandState(State state) {
         if (state == null) {
             return null;
@@ -262,24 +223,5 @@ public class StateDaoPostgresImpl implements StateDao {
         }
 
         return resultsList;
-    }
-
-    @Override
-    public List<StateCommand> sortByStateFullName(List<StateCommand> states) {
-
-        states.sort(
-                new Comparator<StateCommand>() {
-            public int compare(StateCommand c1, StateCommand c2) {
-                return c1.getStateName().compareTo(c2.getStateName());
-            }
-        });
-        return states;
-    }
-
-    @Override
-    public List<StateCommand> sortByStateFullNameRev(List<StateCommand> states) {
-        List<StateCommand> shallowCopy = sortByStateFullName(states).subList(0, states.size());
-        Collections.reverse(shallowCopy);
-        return shallowCopy;
     }
 }
