@@ -15,11 +15,14 @@
  http://www.springframework.org/schema/aop
  http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
  
+    <bean id="titleCaseAspect" class="com.mycompany.flooringmasteryweb.aop.ProductTitleCasingAspect" >
+    </bean>
+        
     <aop:config>
         <aop:aspect ref="titleCaseAspect">            
             <aop:before method="titleCaseProduct"
-                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.ProductDao.create(..))"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.ProductDao.create(..))"
             />        
         </aop:aspect>        
-    </aop:config>       
+    </aop:config>          
 </beans>
