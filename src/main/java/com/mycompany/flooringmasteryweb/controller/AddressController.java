@@ -348,7 +348,6 @@ public class AddressController {
             addresses = searchDatabase(addressSearchRequest, resultProperties);
         }
 
-        //generatePagingLinks(resultProperties, request, uriComponentsBuilder, model);
         generatePagingLinks(resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
