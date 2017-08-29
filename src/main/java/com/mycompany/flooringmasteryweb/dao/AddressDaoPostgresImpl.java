@@ -41,12 +41,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
-    private static final String SQL_BASE_SEARCH_QUERY = "SELECT * FROM addresses WHERE id IN ("
-            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
-            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
-            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
-            + ")";
-
     private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL = " ORDER BY LOWER(last_name) ASC, LOWER(first_name) ASC, LOWER(company) ASC, id ASC";
     private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_INVERSE_PARTIAL = " ORDER BY LOWER(last_name) DESC, LOWER(first_name) DESC, LOWER(company) DESC, id DESC";
     private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_PARTIAL = " ORDER BY LOWER(first_name) ASC, LOWER(last_name) ASC, LOWER(company) ASC, id ASC";
@@ -55,6 +49,126 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private static final String SQL_SORT_ADDRESSES_BY_COMPANY_INVERSE_PARTIAL = " ORDER BY LOWER(company) DESC, LOWER(last_name) DESC, LOWER(first_name) DESC, id DESC";
     private static final String SQL_SORT_ADDRESSES_BY_ID_PARTIAL = " ORDER BY id ASC";
     private static final String SQL_SORT_ADDRESSES_BY_ID_INVERSE_PARTIAL = " ORDER BY id DESC";
+    
+    
+    private static final String SQL_SEARCH_ADDRESS_BASE_QUERY = "SELECT * FROM addresses WHERE id IN ("
+            + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
+            + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
+            + "UNION SELECT id FROM fourthQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery) AND NOT EXISTS (SELECT id FROM thirdQuery)"
+            + ")";
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE first_name = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE first_name = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE first_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE first_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE last_name = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE last_name = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE last_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE last_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_FULL_NAME = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', first_name, last_name) = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_NAME = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       (CONCAT_WS(' ', first_name, last_name) || first_name || last_name) = (SELECT n FROM inputQuery)), "
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name)||last_name||first_name) = (SELECT LOWER(n) FROM inputQuery)), "
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name)||last_name||first_name) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)), "
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name)||last_name||first_name) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE company = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE company = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE company LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE company LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       (CONCAT_WS(' ', first_name, last_name) || first_name || last_name || company) = (SELECT n FROM inputQuery)), "
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name)||last_name||first_name || company) = (SELECT LOWER(n) FROM inputQuery)), "
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name)||last_name||first_name || company) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)), "
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name)||last_name||first_name || company) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_CITY = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE city = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE city = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE city LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE city LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STATE = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE state = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE state = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE state LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE state LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_ZIP = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE zip = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE zip = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE zip LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE zip LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE street_number = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE street_number = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE street_number LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE street_number LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE street_name = (SELECT n FROM inputQuery)),"
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE street_name = (SELECT LOWER(n) FROM inputQuery)),"
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE street_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)),"
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE street_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_STREET = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       (CONCAT_WS(' ', street_number, street_name) || street_number || street_name ) = (SELECT n FROM inputQuery)), "
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', street_number, street_name) || street_number || street_name ) = (SELECT LOWER(n) FROM inputQuery)), "
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', street_number, street_name) || street_number || street_name ) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)), "
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', street_number, street_name) || street_number || street_name ) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_ALL = "WITH inputQuery(n) AS (SELECT ?),"
+            + " firstQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       (CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) = (SELECT n FROM inputQuery)), "
+            + " secondQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) = (SELECT LOWER(n) FROM inputQuery)), "
+            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)), "
+            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE "
+            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
+            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+
+    private static final String SQL_SEARCH_ADDRESS_BY_ANY = "SELECT DISTINCT * FROM addresses WHERE"
+            + " LOWER(CONCAT_WS(' ', first_name, last_name)||CONCAT_WS(' ', street_number, street_name)||"
+            + "first_name||last_name||company||city||state||zip||street_number||street_name)"
+            + " LIKE (SELECT LOWER(CONCAT('%', ?, '%')))";
+
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -219,26 +333,12 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_FIRST_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + "firstQuery AS (SELECT id FROM addresses WHERE first_name = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT LOWER(CONCAT(n,'%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT LOWER(CONCAT('%',n,'%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
-
     @Override
     public List<Address> searchByFirstName(String firstName, ResultProperties resultProperties) {
         List<Address> result = search(firstName, SQL_SEARCH_ADDRESS_BY_FIRST_NAME, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE last_name = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(last_name) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByLastName(String lastName, ResultProperties resultProperties) {
@@ -247,82 +347,40 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_CITY_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE city = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(city) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(city) LIKE (SELECT LOWER(CONCAT(n,'%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(city) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
-
     @Override
     public List<Address> searchByCity(String city, ResultProperties resultProperties) {
-        List<Address> result = search(city, SQL_SEARCH_ADDRESS_BY_CITY_NAME, resultProperties);
+        List<Address> result = search(city, SQL_SEARCH_ADDRESS_BY_CITY, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_COMPANY_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE company = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(company) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(company) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(company) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByCompany(String company, ResultProperties resultProperties) {
-        List<Address> result = search(company, SQL_SEARCH_ADDRESS_BY_COMPANY_NAME, resultProperties);
+        List<Address> result = search(company, SQL_SEARCH_ADDRESS_BY_COMPANY, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_STATE_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE state = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(state) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(state) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(state) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByState(String state, ResultProperties resultProperties) {
-        List<Address> result = search(state, SQL_SEARCH_ADDRESS_BY_STATE_NAME, resultProperties);
+        List<Address> result = search(state, SQL_SEARCH_ADDRESS_BY_STATE, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_ZIP_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE zip = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(zip) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(zip) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(zip) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByZip(String zip, ResultProperties resultProperties) {
-        List<Address> result = search(zip, SQL_SEARCH_ADDRESS_BY_ZIP_NAME, resultProperties);
+        List<Address> result = search(zip, SQL_SEARCH_ADDRESS_BY_ZIP, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', street_number, street_name) = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByStreetAddress(String streetAddress, ResultProperties resultProperties) {
-        List<Address> result = search(streetAddress, SQL_SEARCH_ADDRESS_BY_FULL_STREET_ADDRESS, resultProperties);
+        List<Address> result = search(streetAddress, SQL_SEARCH_ADDRESS_BY_STREET, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE street_number = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByStreetNumber(String streetNumber, ResultProperties resultProperties) {
@@ -331,34 +389,12 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQueryInput(n) AS (SELECT n FROM sourceQuery),"
-            + " firstQueryInputLower(n) AS (SELECT LOWER(n) FROM firstQueryInput),"
-            + " secondQueryInput(n) AS (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery),"
-            + " thirdQueryInput(n) AS (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInput) IN (first_name||last_name||CONCAT_WS(' ', first_name, last_name))),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInputLower) IN (first_name||last_name||CONCAT_WS(' ', first_name, last_name))),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT n FROM secondQueryInput) OR LOWER(last_name) LIKE (SELECT n FROM secondQueryInput) OR LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT n FROM secondQueryInput)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(first_name) LIKE (SELECT n FROM thirdQueryInput) OR LOWER(last_name) LIKE (SELECT n FROM thirdQueryInput) OR LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT n FROM thirdQueryInput)) "
-            + SQL_BASE_SEARCH_QUERY;
-
     @Override
     public List<Address> searchByName(String name, ResultProperties resultProperties) {
         List<Address> result = search(name, SQL_SEARCH_ADDRESS_BY_NAME, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQueryInput(n) AS (SELECT n FROM sourceQuery),"
-            + " firstQueryInputLower(n) AS (SELECT LOWER(n) FROM firstQueryInput),"
-            + " secondQueryInput(n) AS (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery),"
-            + " thirdQueryInput(n) AS (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInput) = street_number OR (SELECT n FROM firstQueryInput) = street_name OR (SELECT n FROM firstQueryInput) = CONCAT_WS(' ', street_number, street_name)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInputLower) = LOWER(street_number) OR (SELECT n FROM firstQueryInputLower) = LOWER(street_name) OR (SELECT n FROM firstQueryInputLower) = LOWER(CONCAT_WS(' ', street_number, street_name))),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE (SELECT n FROM secondQueryInput) OR LOWER(street_name) LIKE (SELECT n FROM secondQueryInput) OR LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE (SELECT n FROM secondQueryInput)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_number) LIKE (SELECT n FROM thirdQueryInput) OR LOWER(street_name) LIKE (SELECT n FROM thirdQueryInput) OR LOWER(CONCAT_WS(' ', street_number, street_name)) LIKE (SELECT n FROM thirdQueryInput)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByStreet(String street, ResultProperties resultProperties) {
@@ -367,50 +403,12 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY = "WITH firstQueryInput(n) AS (SELECT ?),"
-            + "		firstQueryInputLower(n) AS (SELECT LOWER(n) FROM firstQueryInput),"
-            + "		 secondQueryInput(n) AS (SELECT LOWER(CONCAT(n, '%')) FROM firstQueryInput),"
-            + "		  thirdQueryInput(n) AS (SELECT LOWER(CONCAT('%', n, '%')) FROM firstQueryInput),"
-            + "		 firstQuery AS ("
-            + "		 SELECT id FROM addresses "
-            + "		 WHERE first_name = (SELECT n FROM firstQueryInput)"
-            + "		  OR (SELECT n FROM firstQueryInput) = last_name "
-            + "		  OR (SELECT n FROM firstQueryInput) = CONCAT_WS(' ', first_name, last_name)"
-            + "		   OR (SELECT n FROM firstQueryInput) = company),"
-            + "			 secondQuery AS ("
-            + "			 SELECT id FROM addresses "
-            + "			 WHERE (SELECT n FROM firstQueryInputLower) = LOWER(first_name) "
-            + "			 OR (SELECT n FROM firstQueryInputLower) = LOWER(last_name) "
-            + "			 OR (SELECT n FROM firstQueryInputLower) = LOWER(CONCAT_WS(' ', first_name, last_name)) "
-            + "			 OR (SELECT n FROM firstQueryInputLower) = LOWER(company)),"
-            + "			  thirdQuery AS ("
-            + "			  SELECT id FROM addresses "
-            + "			  WHERE LOWER(first_name) LIKE (SELECT n FROM secondQueryInput)"
-            + "			  OR LOWER(last_name) LIKE (SELECT n FROM secondQueryInput) "
-            + "			  OR LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT n FROM secondQueryInput)"
-            + "			  OR LOWER(company) LIKE (SELECT n FROM secondQueryInput)),"
-            + "			    fourthQuery AS ("
-            + "				 SELECT id FROM addresses "
-            + "				 WHERE LOWER(first_name) LIKE (SELECT n FROM thirdQueryInput)"
-            + "				 OR LOWER(last_name) LIKE (SELECT n FROM thirdQueryInput)"
-            + "				 OR LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT n FROM thirdQueryInput)"
-            + "				 OR LOWER(company) LIKE (SELECT n FROM thirdQueryInput))"
-            + SQL_BASE_SEARCH_QUERY;
-
     @Override
     public List<Address> searchByNameOrCompany(String input, ResultProperties resultProperties) {
         List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_ALL = "WITH firstQueryInput(n) AS (SELECT ?),"
-            + " firstQueryInputLower(n) AS (SELECT LOWER(n) FROM firstQueryInput),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInput) IN (last_name, first_name, company, street_number, street_name, city, state, zip, CONCAT_WS(' ', first_name, last_name), CONCAT_WS(' ', street_number, street_name))),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE (SELECT n FROM firstQueryInputLower) IN (LOWER(last_name), LOWER(first_name), LOWER(company), LOWER(street_number), LOWER(street_name), LOWER(city), LOWER(state), LOWER(zip), LOWER(CONCAT_WS(' ', first_name, last_name)), LOWER(CONCAT_WS(' ', street_number, street_name)))),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM firstQueryInput)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM firstQueryInput)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByAll(String input, ResultProperties resultProperties) {
@@ -419,10 +417,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return result;
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE = "SELECT * FROM addresses WHERE id IN(SELECT id FROM addresses WHERE (LOWER(last_name)||LOWER(first_name)||LOWER(company)||LOWER(street_number)||LOWER(street_name)||LOWER(city)||LOWER(state)||LOWER(zip)||LOWER(CONCAT_WS(' ', first_name, last_name))||LOWER(CONCAT_WS(' ', street_number, street_name))) LIKE LOWER('%'||?||'%'))";
-
     public List<Address> searchByAny(String input, ResultProperties resultProperties) {
-        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE, resultProperties);
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_ANY, resultProperties);
 
         return result;
     }
@@ -466,26 +462,12 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     }
 
-    private static final String SQL_SEARCH_ADDRESS_BY_FULL_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE CONCAT_WS(' ', first_name, last_name) = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(CONCAT_WS(' ', first_name, last_name)) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
-
     @Override
     public List<Address> searchByFullName(String fullName, ResultProperties resultProperties) {
         List<Address> result = search(fullName, SQL_SEARCH_ADDRESS_BY_FULL_NAME, resultProperties);
 
         return result;
     }
-
-    private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "WITH sourceQuery(n) AS (SELECT ?),"
-            + " firstQuery AS (SELECT id FROM addresses WHERE street_name = (SELECT n FROM sourceQuery)),"
-            + " secondQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) = (SELECT LOWER(n) FROM sourceQuery)),"
-            + " thirdQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM sourceQuery)), "
-            + " fourthQuery AS (SELECT id FROM addresses WHERE LOWER(street_name) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM sourceQuery)) "
-            + SQL_BASE_SEARCH_QUERY;
 
     @Override
     public List<Address> searchByStreetName(String streetName, ResultProperties resultProperties) {
@@ -531,13 +513,13 @@ public class AddressDaoPostgresImpl implements AddressDao {
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_FIRST_NAME;
                 break;
             case COMPANY:
-                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_COMPANY_NAME;
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_COMPANY;
                 break;
             case CITY:
-                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_CITY_NAME;
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_CITY;
                 break;
             case STATE:
-                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STATE_NAME;
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STATE;
                 break;
             case STREET_NAME:
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET_NAME;
@@ -549,7 +531,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_STREET;
                 break;
             case ZIP:
-                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ZIP_NAME;
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ZIP;
                 break;
             case NAME:
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME;
@@ -562,7 +544,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ALL;
                 break;
             default:
-                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_EVERYTHING_CLOSE;
+                sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ANY;
                 break;
         }
         return sqlSearchQuery;
