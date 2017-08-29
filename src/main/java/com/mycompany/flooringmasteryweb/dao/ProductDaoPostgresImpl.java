@@ -60,31 +60,9 @@ public class ProductDaoPostgresImpl implements ProductDao {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public Product create(Product product) {
         if (product != null) {
-            return create(product.getType(), product);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public Product create(Product product, String productName) {
-        return create(productName, product);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Product create(String productName, Product product) {
-
-        if (product == null) {
-            return null;
-        } else if (product.getType() == null) {
-            return null;
-        } else if (productName.equals(product.getType())) {
-
-            convertProductNameToTitleCase(product);
-
             try {
                 Integer id = jdbcTemplate.queryForObject(SQL_INSERT_PRODUCT,
                         Integer.class,
@@ -94,13 +72,12 @@ public class ProductDaoPostgresImpl implements ProductDao {
 
                 product.setId(id);
                 return product;
-
             } catch (org.springframework.dao.DuplicateKeyException ex) {
                 return null;
             }
 
         } else {
-            return null;  // Look up how to throw exceptions and consider that instead.
+            return null;
         }
     }
 

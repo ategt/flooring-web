@@ -28,6 +28,7 @@ public class Product {
             Product product = (Product) object;
 
             return Objects.equals(getCost(), product.getCost())
+                    && Objects.equals(getCost(), product.getCost())
                     && Objects.equals(getId(), product.getId())
                     && Objects.equals(getLaborCost(), product.getLaborCost())
                     && Objects.equals(getProductName(), product.getProductName())

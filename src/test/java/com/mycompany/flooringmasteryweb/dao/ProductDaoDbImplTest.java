@@ -338,7 +338,6 @@ public class ProductDaoDbImplTest {
 
     @Test
     public void testSize() {
-
         Product product = productFactory();
         product.setType("best floor");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);

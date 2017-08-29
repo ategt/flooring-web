@@ -17,5 +17,19 @@
     <!-- Bean definitions go here -->
     
     <import resource="test-SQLBase-applicationContext.xml" />    
-    <import resource="testProductDb-ApplicationContext.xml" />        
+    <import resource="testProductDb-ApplicationContext.xml" /> 
+    
+    <bean id="titleCaseAspect" class="com.mycompany.flooringmasteryweb.aop.ProductTitleCasingAspect" >
+    </bean>
+        
+    <aop:config>
+        <aop:aspect ref="titleCaseAspect">
+            
+            <aop:before method="titleCaseProduct"
+                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.ProductDao.create(..))"
+            />
+        
+        </aop:aspect>
+        
+    </aop:config>       
 </beans>
