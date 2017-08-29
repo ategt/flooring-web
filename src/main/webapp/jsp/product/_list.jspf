@@ -1,6 +1,6 @@
 <%@ page pageEncoding="windows-1252" %>
 
-<table class="table table-hover">
+<table id="product-table" class="table table-hover">
     <th>Product Name</th>
     <th>Product Material Cost</th>
     <th>Product Installation Cost</th>
