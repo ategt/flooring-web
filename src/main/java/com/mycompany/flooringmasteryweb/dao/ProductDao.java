@@ -20,10 +20,7 @@ public interface ProductDao {
     List<ProductCommand> buildCommandProductList();
 
     Product create(Product product);
-
-    Product create(Product product, String productName);
-    Product create(String productName, Product product);
-
+    
     Product delete(Product product);
 
     Product get(String name);

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -100,7 +101,7 @@ public class ProductController {
 
     @RequestMapping(value = "/", method = RequestMethod.PUT, headers = "Accept=application/json")
     @ResponseBody
-    public Product update(@Valid @ModelAttribute ProductCommand productCommand) {
+    public Product update(@Valid @RequestBody ProductCommand productCommand) {
 
         Product product = Product.buildProduct(productCommand);
 

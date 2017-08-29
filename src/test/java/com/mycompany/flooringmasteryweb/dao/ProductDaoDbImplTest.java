@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -117,7 +117,7 @@ public class ProductDaoDbImplTest {
         product.setType("Product2");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
-        Product result = instance.create(product, product.getType());
+        Product result = instance.create(product);
         assertEquals(expResult, result);
     }
 
@@ -129,7 +129,7 @@ public class ProductDaoDbImplTest {
         product.setType("Product7");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
-        Product result = instance.create(product, product.getType());
+        Product result = instance.create(product);
         assertEquals(expResult, result);
     }
 
@@ -140,7 +140,7 @@ public class ProductDaoDbImplTest {
         Product product = productFactory();
         product.setType(fakeProducts[3].toUpperCase());
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-        Product result = instance.create(product, product.getType());
+        Product result = instance.create(product);
         assertEquals(fakeProducts[3], result.getType());
 
         instance.delete(product);
@@ -153,9 +153,32 @@ public class ProductDaoDbImplTest {
         Product product = productFactory();
         product.setType(fakeProducts[4].toUpperCase());
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-        Product result = instance.create(product, product.getType());
+        Product result = instance.create(product);
         assertEquals(fakeProducts[4], result.getType());
 
+        product.setType(fakeProducts[4].toUpperCase());
+        instance.update(product);
+
+        result = instance.get(product.getProductName());
+        assertEquals(fakeProducts[4], result.getType());
+
+        instance.delete(product);
+    }
+
+    @Test
+    public void testCreateThenGetWithCosts() {
+        
+        System.out.println("Create Then Get With Costs");
+        Product product = productFactory();
+        product.setType(fakeProducts[4]);
+        product.setCost(05.25d);
+        product.setLaborCost(09.509d);
+        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
+        Product result = instance.create(product);
+        assertEquals(fakeProducts[4], result.getType());
+
+        assertEquals(result, product);
+        
         product.setType(fakeProducts[4].toUpperCase());
         instance.update(product);
 
@@ -173,7 +196,7 @@ public class ProductDaoDbImplTest {
         String productName = null;
         product.setType("BEST Product ever");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-        Product ignored = instance.create(product, product.getType());
+        Product ignored = instance.create(product);
         Product result = instance.get(productName);
 
         assertNull(result);

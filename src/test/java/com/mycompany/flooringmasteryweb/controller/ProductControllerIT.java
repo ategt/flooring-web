@@ -94,6 +94,105 @@ public class ProductControllerIT {
         assertEquals(title, "Flooring Master");
     }
 
+    @Test
+    public void createTest() throws IOException {
+        System.out.println("Create Test");
+
+        Product product = productGenerator();
+        Assert.assertNotNull(product);
+        Assert.assertNull(product.getId());
+
+        HttpUrl createUrl = getProductUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient createProductWebClient = new WebClient();
+
+        Gson gson = new GsonBuilder().create();
+        String productJson = gson.toJson(product);
+
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.PUT);
+        createRequest.setRequestBody(productJson);
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+        createRequest.setAdditionalHeader("Accept", "application/json");
+
+        Page createPage = createProductWebClient.getPage(createRequest);
+
+        String returnedProductJson = createPage.getWebResponse().getContentAsString();
+
+        Product productReturned = gson.fromJson(returnedProductJson, Product.class);
+
+        Assert.assertNotNull(productReturned);
+        Integer returnedProductId = productReturned.getId();
+
+        Assert.assertTrue(returnedProductId > 0);
+
+        product.setId(returnedProductId);
+
+        Assert.assertEquals(productReturned, product);
+
+        int productId = productReturned.getId();
+
+        HttpUrl showUrl = getProductUrlBuilder()
+                .addPathSegment(Integer.toString(productId))
+                .build();
+
+        WebClient showProductWebClient = new WebClient();
+        showProductWebClient.addRequestHeader("Accept", "application/json");
+
+        Page singleProductPage = showProductWebClient.getPage(showUrl.url());
+        WebResponse jsonSingleProductResponse = singleProductPage.getWebResponse();
+        assertEquals(jsonSingleProductResponse.getStatusCode(), 200);
+        assertTrue(jsonSingleProductResponse.getContentLength() > 50);
+
+        Product specificProduct = null;
+
+        if (jsonSingleProductResponse.getContentType().equals("application/json")) {
+            String json = jsonSingleProductResponse.getContentAsString();
+            specificProduct = gson.fromJson(json, Product.class);
+
+            Assert.assertNotNull(specificProduct);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        Assert.assertNotNull(specificProduct);
+        Assert.assertEquals(specificProduct, productReturned);
+
+        Product storedProduct = null;
+
+        HttpUrl showUrl2 = getProductUrlBuilder()
+                .addPathSegment(Integer.toString(productId))
+                .build();
+
+        WebClient showProductWebClient2 = new WebClient();
+        showProductWebClient2.addRequestHeader("Accept", "application/json");
+
+        Page singleProductPage2 = showProductWebClient2.getPage(showUrl2.url());
+        WebResponse jsonSingleProductResponse2 = singleProductPage2.getWebResponse();
+        assertEquals(jsonSingleProductResponse2.getStatusCode(), 200);
+        assertTrue(jsonSingleProductResponse2.getContentLength() > 50);
+
+        if (jsonSingleProductResponse2.getContentType().equals("application/json")) {
+            String json = jsonSingleProductResponse2.getContentAsString();
+            storedProduct = gson.fromJson(json, Product.class);
+
+            Assert.assertNotNull(storedProduct);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        assertNotNull(storedProduct);
+        Assert.assertEquals(storedProduct, productReturned);
+    }
+
+    private Product productGenerator() {
+        Random random = new Random();
+        
+        Product product = productBuilder(UUID.randomUUID().toString(), random.nextDouble(), random.nextDouble());
+        return product;
+    }
+
     private Product productBuilder(String name, double cost, double labor) {
         Product product = new Product();
         product.setProductName(name);

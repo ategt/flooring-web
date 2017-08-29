@@ -16,7 +16,7 @@ public class Product {
     private String type;
     private double cost;
     private double laborCost;
-    private int id;
+    private Integer id;
 
     @Override
     public boolean equals(Object object) {
@@ -39,7 +39,7 @@ public class Product {
 
     @Override
     public int hashCode() {
-        return id;
+        return getId();
     }
 
     /**
@@ -98,20 +98,6 @@ public class Product {
         this.laborCost = laborCost;
     }
 
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public static Product buildProduct(ProductCommand productCommand) {
 
         Product product = new Product();
@@ -126,5 +112,19 @@ public class Product {
         product.setLaborCost(laborCost);
 
         return product;
+    }
+
+    /**
+     * @return the id
+     */
+    public Integer getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
