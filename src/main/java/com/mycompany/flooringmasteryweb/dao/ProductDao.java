@@ -24,7 +24,7 @@ public interface ProductDao {
     Product create(Product product, String productName);
     Product create(String productName, Product product);
 
-    void delete(Product product);
+    Product delete(Product product);
 
     Product get(String name);
 
@@ -36,7 +36,7 @@ public interface ProductDao {
 
     int size();
 
-    void update(Product product);
+    Product update(Product product);
 
     boolean validProductName(String inputName);
     

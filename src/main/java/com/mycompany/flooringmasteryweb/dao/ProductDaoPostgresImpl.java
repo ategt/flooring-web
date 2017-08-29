@@ -27,8 +27,8 @@ public class ProductDaoPostgresImpl implements ProductDao {
     private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_INSERT_PRODUCT = "INSERT INTO products ( product_name, labor_cost, material_cost ) VALUES ( ?, ?, ? ) RETURNING id;";
-    private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET labor_cost = ?, material_cost = ? WHERE LOWER(product_name) = LOWER(?);";
-    private static final String SQL_DELETE_PRODUCT = "DELETE FROM products WHERE LOWER(product_name) = LOWER(?);";
+    private static final String SQL_UPDATE_PRODUCT = "UPDATE products SET labor_cost = ?, material_cost = ? WHERE LOWER(product_name) = LOWER(?) RETURNING *";
+    private static final String SQL_DELETE_PRODUCT = "DELETE FROM products WHERE LOWER(product_name) = LOWER(?) RETURNING *";
     private static final String SQL_GET_PRODUCT = "SELECT * FROM products WHERE LOWER(product_name) = LOWER(?);";
     private static final String SQL_GET_PRODUCT_NAMES_SIZE = "SELECT COUNT(product_name) FROM products";
     private static final String SQL_GET_PRODUCT_NAMES = "SELECT product_name FROM products";
@@ -113,26 +113,26 @@ public class ProductDaoPostgresImpl implements ProductDao {
         }
 
         try {
-            return jdbcTemplate.queryForObject(SQL_GET_PRODUCT, new ProductMapper(), name);
+            return jdbcTemplate.queryForObject(SQL_GET_PRODUCT, new ProductRowMapper(), name);
         } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
             return null;
         }
     }
 
     @Override
-    public void update(Product product) {
+    public Product update(Product product) {
 
         if (product == null) {
-            return;
+            return null;
         }
 
         convertProductNameToTitleCase(product);
 
         if (get(product.getProductName()) == null) {
-            create(product);
+            return create(product);
         } else {
-
-            jdbcTemplate.update(SQL_UPDATE_PRODUCT,
+            return jdbcTemplate.queryForObject(SQL_UPDATE_PRODUCT,
+                    new ProductRowMapper(),
                     product.getLaborCost(),
                     product.getCost(),
                     product.getProductName());
@@ -145,20 +145,22 @@ public class ProductDaoPostgresImpl implements ProductDao {
     }
 
     @Override
-    public void delete(Product product) {
+    public Product delete(Product product) {
 
         if (product == null) {
-            return;
+            return null;
         }
 
         convertProductNameToTitleCase(product);
 
         String name = product.getProductName();
         try {
-            jdbcTemplate.update(SQL_DELETE_PRODUCT, name);
+            return jdbcTemplate.queryForObject(SQL_DELETE_PRODUCT, new ProductRowMapper(), name);
         } catch (org.springframework.dao.DataIntegrityViolationException ex) {
 
         }
+        
+        return null;
     }
 
     @Override
@@ -171,7 +173,7 @@ public class ProductDaoPostgresImpl implements ProductDao {
         return jdbcTemplate.queryForObject(SQL_GET_PRODUCT_NAMES_SIZE, Integer.class);
     }
 
-    private final class ProductMapper implements RowMapper<Product> {
+    private final class ProductRowMapper implements RowMapper<Product> {
 
         @Override
         public Product mapRow(ResultSet rs, int i) throws SQLException {
@@ -185,16 +187,13 @@ public class ProductDaoPostgresImpl implements ProductDao {
 
             return product;
         }
-
     }
 
     private final class ProductNameMapper implements RowMapper<String> {
 
         @Override
         public String mapRow(ResultSet rs, int i) throws SQLException {
-
             String productName = rs.getString("product_name");
-
             return productName;
         }
     }
@@ -233,7 +232,7 @@ public class ProductDaoPostgresImpl implements ProductDao {
 
     @Override
     public List<Product> getListOfProducts() {
-        return jdbcTemplate.query(SQL_GET_PRODUCTS, new ProductMapper());
+        return jdbcTemplate.query(SQL_GET_PRODUCTS, new ProductRowMapper());
     }   
 
     @Override
