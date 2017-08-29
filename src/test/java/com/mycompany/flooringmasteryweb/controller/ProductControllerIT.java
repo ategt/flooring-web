@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.utilities.ProductUtilities;
+import com.mycompany.flooringmasteryweb.utilities.TextUtilities;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -127,6 +128,8 @@ public class ProductControllerIT {
 
         String pageText = updatedHtmlPage.asText();
         
+        productNameFormText = TextUtilities.toTitleCase(productNameFormText);
+        
         assertTrue("Product Name: " + productNameFormText + " could not be found.", pageText.contains(productNameFormText));
         assertTrue("Labor: " + productLaborCostText + " could not be found.", pageText.contains(productLaborCostText));
         assertTrue("Cost: " + productCostText + " could not be found.", pageText.contains(productCostText));
@@ -139,11 +142,7 @@ public class ProductControllerIT {
         int afterCreation = htmlPage.getElementsByTagName("tr").size();
         
         assertEquals(afterCreation, beforeCreation + 1);
-        
-        productName = (HtmlInput) htmlPage.getElementById("productName");        
-        String productNameValue = productName.getValueAttribute();
-        assertEquals(productNameValue, productNameFormText);
-        
+               
         productCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
         
         productCost = (HtmlInput) htmlPage.getElementById("productCost");
