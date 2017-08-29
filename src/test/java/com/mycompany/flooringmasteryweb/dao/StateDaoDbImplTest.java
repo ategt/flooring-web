@@ -147,7 +147,7 @@ public class StateDaoDbImplTest {
         state.setState("SW");
         StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = state;
-        State result = instance.create(state, state.getState());
+        State result = instance.create(state);
         assertTrue(verifyState(expResult, result));
     }
 
@@ -160,8 +160,8 @@ public class StateDaoDbImplTest {
         stateB.setState("SW");
         StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = state;
-        instance.create(state, state.getState());
-        State result = instance.create(stateB, state.getState());
+        instance.create(state);
+        State result = instance.create(stateB);
         assertNull(result);
     }
 
@@ -171,8 +171,8 @@ public class StateDaoDbImplTest {
         State state = new State();
         state.setState("SW");
         StateDao instance = ctx.getBean("stateDao", StateDao.class);
-        instance.create(state, state.getState());
-        State result = instance.create(state, state.getState());
+        instance.create(state);
+        State result = instance.create(state);
         assertNull(result);
     }
 
@@ -183,7 +183,7 @@ public class StateDaoDbImplTest {
         state.setState("Mexico");
         StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
-        State result = instance.create(state, state.getState());
+        State result = instance.create(state);
         assertTrue(verifyState(expResult, result));
     }
 
@@ -194,7 +194,7 @@ public class StateDaoDbImplTest {
         state.setState("HQ");
         StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
-        State result = instance.create(state, "HR");
+        State result = instance.create(state);
         assertTrue(verifyState(expResult, result));
     }
 

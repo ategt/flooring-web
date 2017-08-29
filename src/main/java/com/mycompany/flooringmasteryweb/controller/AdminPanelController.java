@@ -12,6 +12,7 @@ import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
+import com.mycompany.flooringmasteryweb.utilities.ControllerUtilites;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -56,13 +57,9 @@ public class AdminPanelController {
 
         return "admin\\admin";
     }
-
   
     private List<StateCommand> stateList() {
-        List<State> states = stateDao.getListOfStates();
-        states = stateDao.sortByStateName(states);
-        List<StateCommand> stateCommands = stateDao.buildCommandStateList(states);
-        return stateCommands;
+        return ControllerUtilites.stateList(stateDao);
     }
 
     private List<ProductCommand> productCommandList() {
@@ -82,7 +79,7 @@ public class AdminPanelController {
     public String edit(@PathVariable("stateName") String stateName, Map model) {
 
         model.put("states", stateList());
-        model.put("stateCommand", stateDao.buildCommandState(stateDao.get(stateName)));
+        model.put("stateCommand", StateCommand.buildCommandState(stateDao.get(stateName)));
 
         return "state\\edit";
     }

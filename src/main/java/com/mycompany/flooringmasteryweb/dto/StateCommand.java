@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 import java.util.Objects;
 
 /**
@@ -78,5 +79,33 @@ public class StateCommand {
     public void setStateTax(double stateTax) {
         this.stateTax = stateTax;
     }
-    
+        
+    public static StateCommand buildCommandState(State state) {
+        if (state == null) {
+            return null;
+        }
+
+        StateCommand stateCommand = new StateCommand();
+
+        if (StateUtilities.validStateAbbr(state.getStateName())) {
+            String stateAbbreviation = state.getStateName();
+            String stateName = StateUtilities.stateFromAbbr(stateAbbreviation);
+
+            stateCommand.setStateAbbreviation(stateAbbreviation);
+            stateCommand.setStateName(stateName);
+
+            stateCommand.setStateTax(state.getStateTax());
+
+        } else if (StateUtilities.validStateInput(state.getStateName())) {
+            String guessedName = StateUtilities.bestGuessStateName(state.getStateName());
+            String stateAbbreviation = StateUtilities.abbrFromState(guessedName);
+
+            stateCommand.setStateAbbreviation(stateAbbreviation);
+            stateCommand.setStateName(guessedName);
+
+            stateCommand.setStateTax(state.getStateTax());
+        }
+
+        return stateCommand;
+    }    
 }

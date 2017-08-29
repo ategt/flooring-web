@@ -14,6 +14,7 @@ import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
+import com.mycompany.flooringmasteryweb.utilities.ControllerUtilites;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,7 +63,7 @@ public class OrdersController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(Map model) {
         loadOrdersToMap(model);
-        loadStateCommandsToMap(model);
+        ControllerUtilites.loadStateCommandsToMap(stateDao, model);
         loadProductCommandsToMap(model);
 
         putBlankOrder(model);
@@ -340,12 +341,6 @@ public class OrdersController {
     private void loadProductCommandsToMap(Map model) {
         List<ProductCommand> productCommands = productDao.buildCommandProductList();
         model.put("productCommands", productCommands);
-    }
-
-    private void loadStateCommandsToMap(Map model) {
-        List<State> states = stateDao.getListOfStates();
-        List<StateCommand> stateCommands = stateDao.buildCommandStateList(states);
-        model.put("stateCommands", stateCommands);
     }
 
     public void putBlankOrder(Map model) {

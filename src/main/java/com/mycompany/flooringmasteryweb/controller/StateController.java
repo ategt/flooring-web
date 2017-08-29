@@ -11,8 +11,10 @@ import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -56,21 +58,16 @@ public class StateController {
     }
 
     private List<StateCommand> stateList() {
-        List<State> states = stateDao.getListOfStates();
-        states = stateDao.sortByStateName(states);
-        List<StateCommand> stateCommands = stateDao.buildCommandStateList(states);
-        return stateCommands;
+        return stateDao.getListOfStates().stream()
+                .map(state -> StateCommand.buildCommandState(state))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/edit/{stateName}", method = RequestMethod.GET)
     public String edit(@PathVariable("stateName") String stateName, Map model) {
 
-        List<State> states = stateDao.getListOfStates();
-
-        states = stateDao.sortByStateName(states);
-
         model.put("states", stateList());
-        model.put("stateCommand", stateDao.buildCommandState(stateDao.get(stateName)));
+        model.put("stateCommand", StateCommand.buildCommandState(stateDao.get(stateName)));
 
         return "state\\edit";
     }
@@ -122,7 +119,6 @@ public class StateController {
 
             return "redirect:/state/";
         }
-
     }
 
     @RequestMapping(value = "/delete/{stateName}", method = RequestMethod.GET)
@@ -132,5 +128,4 @@ public class StateController {
 
         return "redirect:/state/";
     }
-
 }

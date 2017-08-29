@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import javax.inject.Inject;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,14 +30,14 @@ public class StateDaoPostgresImpl implements StateDao {
     private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_INSERT_STATE = "INSERT INTO states ( state_name, state_abbreviation, tax_rate ) VALUES ( ?, ?, ? ) RETURNING id";
-    private static final String SQL_UPDATE_STATE = "UPDATE states SET tax_rate = ? WHERE LOWER(state_abbreviation) = LOWER(?);";
-    private static final String SQL_DELETE_STATE = "DELETE FROM states WHERE LOWER(state_abbreviation) = LOWER(?);";
+    private static final String SQL_UPDATE_STATE = "UPDATE states SET tax_rate = ? WHERE LOWER(state_abbreviation) = LOWER(?) RETURNING *;";
+    private static final String SQL_DELETE_STATE = "DELETE FROM states WHERE LOWER(state_abbreviation) = LOWER(?) RETURNING *;";
     private static final String SQL_GET_STATE = "SELECT * FROM states WHERE LOWER(state_abbreviation) = LOWER(?) LIMIT 1;";
-    private static final String SQL_GET_STATE_LIST = "SELECT * FROM states";
+    private static final String SQL_GET_STATE_LIST = "SELECT * FROM states ORDER BY state_abbreviation ASC";
     private static final String SQL_COUNT_STATES = "SELECT COUNT(*) FROM states";
-    private static final String SQL_GET_STATE_NAMES = "SELECT state_abbreviation FROM states";
+    private static final String SQL_GET_STATE_NAMES = "SELECT state_abbreviation FROM states ORDER BY state_abbreviation ASC";
 
-    private static final String SQL_CREATE_STATES = "CREATE TABLE IF NOT EXISTS states(id serial PRIMARY KEY, state_name varchar(45), state_abbreviation varchar(2) NOT NULL UNIQUE, tax_rate decimal(6,4));";
+    private static final String SQL_CREATE_STATES = "CREATE TABLE IF NOT EXISTS states(id serial PRIMARY KEY, state_name varchar(45), state_abbreviation varchar(2) NOT NULL UNIQUE CHECK(length(state_abbreviation) = 2), tax_rate decimal(6,4));";
 
     @Inject
     public StateDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -45,38 +46,14 @@ public class StateDaoPostgresImpl implements StateDao {
     }
 
     @Override
-    public State create(State state) {
-        if (state == null) {
-            return null;
-        } else {
-            return create(state.getState(), state);
-        }
-    }
-
-    @Override
-    public State create(State state, String stateName) {
-        return create(stateName, state);
-    }
-
-    /**
-     * The state Name must be the two character state postal code abbreviation
-     * and must match the getState() method of the passed in state object.
-     *
-     * @param stateName
-     * @param state
-     * @return
-     */
-    @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public State create(String stateName, State state) {
+    public State create(State state) {
         State returnedState = null;
 
-        if (state.getState() == null) {
-        } else if (stateName == null) {
-        } else if (stateName.length() != 2) {
-        } else if (stateName.equals(state.getState())) {
-
-            String postalCode = stateName.toUpperCase();
+        if (state == null)
+            return null;
+        
+        if (Objects.nonNull(state.getState()) && state.getState().length() == 2) {
 
             try {
                 Integer id = jdbcTemplate.queryForObject(SQL_INSERT_STATE, Integer.class, null, state.getStateName(), state.getStateTax());
@@ -98,8 +75,6 @@ public class StateDaoPostgresImpl implements StateDao {
             return null;
         }
 
-        //name = name.toUpperCase();
-
         try {
             return jdbcTemplate.queryForObject(SQL_GET_STATE, new StateMapper(), name);
         } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
@@ -108,30 +83,32 @@ public class StateDaoPostgresImpl implements StateDao {
     }
 
     @Override
-    public void update(State state) {
+    public State update(State state) {
 
         if (state == null) {
-            return;
+            return null;
         }
 
-        jdbcTemplate.update(SQL_UPDATE_STATE,
+        return jdbcTemplate.queryForObject(SQL_UPDATE_STATE,
+                new StateMapper(),
                 state.getStateTax(),
                 state.getStateName());
     }
 
     @Override
-    public void delete(State state) {
+    public State delete(State state) {
         if (state == null) {
-            return;
+            return null;
         }
 
         String name = state.getStateName();
 
         try {
-            jdbcTemplate.update(SQL_DELETE_STATE, name);
+            return jdbcTemplate.queryForObject(SQL_DELETE_STATE, new StateMapper(), name);
         } catch (org.springframework.dao.DataIntegrityViolationException ex) {
 
         }
+        return null;
     }
 
     @Override
@@ -182,46 +159,5 @@ public class StateDaoPostgresImpl implements StateDao {
     @Override
     public int size() {
         return jdbcTemplate.queryForObject(SQL_COUNT_STATES, Integer.class);
-    }
-
-    @Override
-    public StateCommand buildCommandState(State state) {
-        if (state == null) {
-            return null;
-        }
-
-        StateCommand stateCommand = new StateCommand();
-
-        if (StateUtilities.validStateAbbr(state.getStateName())) {
-            String stateAbbreviation = state.getStateName();
-            String stateName = StateUtilities.stateFromAbbr(stateAbbreviation);
-
-            stateCommand.setStateAbbreviation(stateAbbreviation);
-            stateCommand.setStateName(stateName);
-
-            stateCommand.setStateTax(state.getStateTax());
-
-        } else if (StateUtilities.validStateInput(state.getStateName())) {
-            String guessedName = StateUtilities.bestGuessStateName(state.getStateName());
-            String stateAbbreviation = StateUtilities.abbrFromState(guessedName);
-
-            stateCommand.setStateAbbreviation(stateAbbreviation);
-            stateCommand.setStateName(guessedName);
-
-            stateCommand.setStateTax(state.getStateTax());
-        }
-
-        return stateCommand;
-    }
-
-    @Override
-    public List<StateCommand> buildCommandStateList(List<State> states) {
-        List<StateCommand> resultsList = new ArrayList();
-
-        for (State state : states) {
-            resultsList.add(buildCommandState(state));
-        }
-
-        return resultsList;
     }
 }
