@@ -22,7 +22,7 @@
                 </div>
 
                 <div class="col-md-6 text-center">
-                    <form:form method="POST" commandName="productCommand" action="${pageContext.request.contextPath}/product/update" class="form-horizontal">
+                    <form:form method="POST" commandName="productCommand" name="productCommand" action="${pageContext.request.contextPath}/product/update" class="form-horizontal">
                         <c:if test="false" >
                             <div class="has-error">
                             </c:if>
@@ -89,7 +89,7 @@
                             <div class="form-group">
                                 <div class="col-sm-3"></div>
                                 <div class="col-sm-7">
-                                    <input value="Update" type="submit" class="btn btn-default" />
+                                    <input value="Update" id="product-update-btn" type="submit" class="btn btn-default" />
                                 </div>
                             </div>
                         </div>

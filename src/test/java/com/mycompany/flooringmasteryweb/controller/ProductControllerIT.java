@@ -13,7 +13,10 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.host.Element;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dto.Product;
@@ -74,6 +77,118 @@ public class ProductControllerIT {
 
         String title = htmlPage.getTitleText();
         assertEquals(title, "Flooring Master");
+    }
+
+    @Test
+    public void formTest() throws MalformedURLException, IOException {
+        System.out.println("Form Test");
+
+        Random random = new Random();
+        
+        WebClient webClient = new WebClient();
+
+        HttpUrl httpUrl = getProductUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        HtmlPage htmlPage = webClient.getPage(httpUrl.url());
+
+        String title = htmlPage.getTitleText();
+        assertEquals(title, "Flooring Master");
+ 
+        DomElement productName = htmlPage.getElementById("productName");
+        productName.focus();
+        
+        String productNameFormText = UUID.randomUUID().toString();
+        
+        productName.setTextContent(productNameFormText);
+                
+        String productCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
+        
+        DomElement productCost = htmlPage.getElementById("productCost");
+        productCost.setTextContent(productCostText);
+        
+        String productLaborCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
+        
+        DomElement productLaborCost = htmlPage.getElementById("laborCost");
+        productCost.setTextContent(productLaborCostText);
+        
+        DomElement updateButton = htmlPage.getElementById("product-update-btn");
+        
+        Page updatedPage = updateButton.click();
+        
+        assertTrue(updatedPage.isHtmlPage());
+        
+        HtmlPage updatedHtmlPage = (HtmlPage) updatedPage;
+        
+        title = updatedHtmlPage.getTitleText();
+        assertEquals(title, "Flooring Master");
+
+        String pageText = updatedHtmlPage.asText();
+        
+        assertTrue(pageText.contains(productNameFormText));
+        assertTrue(pageText.contains(productLaborCostText));
+        assertTrue(pageText.contains(productCostText));
+    }
+
+    @Test
+    public void formByFormsTest() throws MalformedURLException, IOException {
+        System.out.println("Form Test");
+
+        Random random = new Random();
+        
+        WebClient webClient = new WebClient();
+
+        HttpUrl httpUrl = getProductUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        HtmlPage htmlPage = webClient.getPage(httpUrl.url());
+
+        String title = htmlPage.getTitleText();
+        assertEquals(title, "Flooring Master");
+ 
+        //HtmlForm productForm = htmlPage.getFormByName("productCommand");
+        
+        //HtmlInput productNameInput = productForm.getInputByName("productName");
+        //productNameInput
+        
+        //DomElement productName = htmlPage.getElementById("productName");        
+        HtmlInput productName = (HtmlInput) htmlPage.getElementById("productName");        
+        
+        String productNameFormText = UUID.randomUUID().toString();
+        
+        //productName.setTextContent(productNameFormText);
+        productName.setValueAttribute(productNameFormText);
+                
+        String productCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
+        
+        //DomElement productCost = htmlPage.getElementById("productCost");
+        HtmlInput productCost = (HtmlInput) htmlPage.getElementById("productCost");
+        productCost.setValueAttribute(productCostText);
+        
+        String productLaborCostText = Double.toString(ProductUtilities.roundToDecimalPlace(random.nextDouble(), 4));
+        
+        //DomElement productLaborCost = htmlPage.getElementById("laborCost");
+        HtmlInput productLaborCost = (HtmlInput) htmlPage.getElementById("laborCost");
+        productLaborCost.setValueAttribute(productLaborCostText);
+        
+        DomElement updateButton = htmlPage.getElementById("product-update-btn");
+        
+        Page updatedPage = updateButton.click();
+        
+        assertTrue(updatedPage.isHtmlPage());
+        
+        HtmlPage updatedHtmlPage = (HtmlPage) updatedPage;
+        
+        title = updatedHtmlPage.getTitleText();
+        assertEquals(title, "Flooring Master");
+
+        String pageText = updatedHtmlPage.asText();
+        
+        assertTrue("Product Name: " + productNameFormText + " could not be found.", pageText.contains(productNameFormText));
+        assertTrue("Labor: " + productLaborCostText + " could not be found.", pageText.contains(productLaborCostText));
+        assertTrue("Cost: " + productCostText + " could not be found.", pageText.contains(productCostText));
     }
 
     @Test
@@ -305,7 +420,342 @@ public class ProductControllerIT {
                     assertTrue(htmlText.contains(productName));
                 });
     }
+    
+    /**
+     * Test of create method, of class ProductDaoPostgresImpl.
+     */
+    @Test
+    public void testCRUD() throws IOException {
+        System.out.println("CRUD test");
 
+        Product product = productGenerator();
+
+        Gson gson = new GsonBuilder().create();
+
+        // Get Size of Database before creation.
+        HttpUrl sizeUrl = getProductUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient sizeWebClient = new WebClient();
+        sizeWebClient.addRequestHeader("Accept", "application/json");
+
+        Page sizePage = sizeWebClient.getPage(sizeUrl.url());
+        WebResponse sizeResponse = sizePage.getWebResponse();
+        assertEquals(sizeResponse.getStatusCode(), 200);        
+
+        Integer beforeCreation = null;
+
+        if (sizeResponse.getContentType().equals("application/json")) {
+            String json = sizeResponse.getContentAsString();
+            Product[] productsBeforeCreation = gson.fromJson(json, Product[].class);
+            beforeCreation = productsBeforeCreation.length;
+            
+            Assert.assertNotNull(beforeCreation);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        // Create Product
+        HttpUrl createUrl = getProductUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient createProductWebClient = new WebClient();
+
+        String productJson = gson.toJson(product);
+
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.PUT);
+        createRequest.setRequestBody(productJson);
+
+        createRequest.setAdditionalHeader("Accept", "application/json");
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page createPage = createProductWebClient.getPage(createRequest);
+
+        String returnedProductJson = createPage.getWebResponse().getContentAsString();
+
+        Product productReturned = gson.fromJson(returnedProductJson, Product.class);
+
+        assertNotNull(productReturned.getId());
+        assertTrue(productReturned.getId() > 0);
+
+        // Get Database Size After Creation
+        WebClient sizeWebClient2 = new WebClient();
+        sizeWebClient2.addRequestHeader("Accept", "application/json");
+
+        Page sizePage2 = sizeWebClient2.getPage(sizeUrl.url());
+        WebResponse sizeResponse2 = sizePage2.getWebResponse();
+        assertEquals(sizeResponse2.getStatusCode(), 200);
+        assertTrue("Response Length: " + sizeResponse2.getContentLength(), sizeResponse2.getContentLength() > 50);
+
+        Integer afterCreation = null;
+
+        if (sizeResponse2.getContentType().equals("application/json")) {
+            String json = sizeResponse2.getContentAsString();
+            Product[] productsAfterCreation = gson.fromJson(json, Product[].class);
+            afterCreation = productsAfterCreation.length;
+            
+            Assert.assertNotNull(afterCreation);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        assertNotNull(afterCreation);
+        assertEquals(beforeCreation + 1, afterCreation.intValue());
+
+        assertNotNull(productReturned);
+        assertNotNull(productReturned.getId());
+
+        assertTrue(productReturned.getId() > 0);
+
+        // Check that created product is in the Database.
+        HttpUrl showUrl = getProductUrlBuilder()
+                .addPathSegment(productReturned.getProductName())
+                .build();
+
+        WebClient showProductWebClient = new WebClient();
+        showProductWebClient.addRequestHeader("Accept", "application/json");
+
+        Page singleProductPage = showProductWebClient.getPage(showUrl.url());
+        WebResponse jsonSingleProductResponse = singleProductPage.getWebResponse();
+        assertEquals(jsonSingleProductResponse.getStatusCode(), 200);
+        assertTrue(jsonSingleProductResponse.getContentLength() > 50);
+
+        Product specificProduct = null;
+
+        if (jsonSingleProductResponse.getContentType().equals("application/json")) {
+            String json = jsonSingleProductResponse.getContentAsString();
+            specificProduct = gson.fromJson(json, Product.class);
+
+            Assert.assertNotNull(specificProduct);
+
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        Assert.assertNotNull(specificProduct);
+
+        assertEquals(productReturned, specificProduct);
+
+        Random random = new Random();
+        
+        productReturned.setCost(random.nextDouble());
+        productReturned.setLaborCost(random.nextDouble());
+
+        // Update Product With Service PUT endpoint
+        HttpUrl updateUrl = getProductUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient updateProductWebClient = new WebClient();
+
+        String updatedProductJson = gson.toJson(productReturned);
+
+        WebRequest updateRequest = new WebRequest(updateUrl.url(), HttpMethod.PUT);
+        updateRequest.setRequestBody(updatedProductJson);
+
+        updateRequest.setAdditionalHeader("Accept", "application/json");
+        updateRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page updatePage = updateProductWebClient.getPage(updateRequest);
+
+        String returnedUpdatedProductJson = updatePage.getWebResponse().getContentAsString();
+
+        Product returnedUpdatedProduct = gson.fromJson(returnedUpdatedProductJson, Product.class);
+
+        assertEquals(productReturned.getCost(), returnedUpdatedProduct.getCost(), .0001d);
+        assertEquals(productReturned.getLaborCost(), returnedUpdatedProduct.getLaborCost(), .0001d);
+
+        // Verify Update Did Not Increase the Size of the Database
+        WebClient sizeWebClient3 = new WebClient();
+        sizeWebClient3.addRequestHeader("Accept", "application/json");
+
+        Page sizePage3 = sizeWebClient3.getPage(sizeUrl.url());
+        WebResponse sizeResponse3 = sizePage3.getWebResponse();
+        assertEquals(sizeResponse3.getStatusCode(), 200);
+        assertTrue("Response3 Length:" + sizeResponse3.getContentLength() ,sizeResponse3.getContentLength() > 50);
+
+        Integer afterUpdate = null;
+
+        if (sizeResponse3.getContentType().equals("application/json")) {
+            String json = sizeResponse3.getContentAsString();
+            Product[] productsAfterUpdate = gson.fromJson(json, Product[].class);
+
+            afterUpdate = productsAfterUpdate.length;
+            
+            Assert.assertNotNull(afterUpdate);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        assertNotNull(afterUpdate);
+        assertEquals(afterUpdate.intValue(), afterCreation.intValue());
+
+        // Delete the Created Product
+        String productIdString = productReturned.getProductName();
+
+        HttpUrl deleteUrl = getProductUrlBuilder()
+                .addPathSegment(productIdString)
+                .build();
+
+        WebClient deleteProductWebClient = new WebClient();
+
+        WebRequest deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
+
+        Page deletePage = deleteProductWebClient.getPage(deleteRequest);
+
+        String returnedDeleteProductJson = deletePage.getWebResponse().getContentAsString();
+
+        Product returnedDeleteProduct = gson.fromJson(returnedDeleteProductJson, Product.class);
+
+        assertEquals(returnedDeleteProduct, returnedUpdatedProduct);
+
+        // Delete The Created Product A Second Time
+        deleteProductWebClient = new WebClient();
+
+        deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
+
+        deletePage = deleteProductWebClient.getPage(deleteRequest);
+
+        returnedDeleteProductJson = deletePage.getWebResponse().getContentAsString();
+        assertEquals(returnedDeleteProductJson, "");
+
+        Product returnedDeleteProduct2 = gson.fromJson(returnedDeleteProductJson, Product.class);
+        assertNull(returnedDeleteProduct2);
+
+        assertNotEquals(returnedDeleteProduct, returnedDeleteProduct2);
+
+        // Verify Product Database Size Has Shrunk By One After Deletion
+        WebClient sizeWebClient4 = new WebClient();
+        sizeWebClient4.addRequestHeader("Accept", "application/json");
+
+        Page sizePage4 = sizeWebClient4.getPage(sizeUrl.url());
+        WebResponse sizeResponse4 = sizePage4.getWebResponse();
+        assertEquals(sizeResponse4.getStatusCode(), 200);
+        assertTrue("Size Response4: " + sizeResponse4.getContentLength(), sizeResponse4.getContentLength() > 50);
+
+        Integer afterDeletion = null;
+
+        if (sizeResponse4.getContentType().equals("application/json")) {
+            String json = sizeResponse4.getContentAsString();
+            Product[] productsAfterDeletion = gson.fromJson(json, Product[].class);
+            afterDeletion = productsAfterDeletion.length;
+            
+            Assert.assertNotNull(afterDeletion);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        assertNotNull(beforeCreation);
+        assertNotNull(afterDeletion);
+        assertEquals(beforeCreation.intValue(), afterDeletion.intValue());
+        assertEquals(afterCreation - 1, afterDeletion.intValue());
+
+        // Try to Get Deleted Product
+        HttpUrl showUrl2 = getProductUrlBuilder()
+                .addPathSegment(productReturned.getProductName())
+                .build();
+
+        WebClient showProductWebClient2 = new WebClient();
+        showProductWebClient2.addRequestHeader("Accept", "application/json");
+
+        Page singleProductPage2 = showProductWebClient2.getPage(showUrl.url());
+        WebResponse jsonSingleProductResponse2 = singleProductPage2.getWebResponse();
+        assertEquals(jsonSingleProductResponse2.getStatusCode(), 200);
+        assertTrue("Single Product Response2: " + jsonSingleProductResponse2.getContentLength(), jsonSingleProductResponse2.getContentLength() < 50);
+
+        String contentType = jsonSingleProductResponse2.getContentType();
+        assertEquals(contentType, "");
+
+        String contentString = jsonSingleProductResponse2.getContentAsString();
+
+        assertEquals(contentString, "");
+
+    }
+    
+    /**
+     * Test of list method, of class ProductDaoPostgresImpl.
+     */
+    @Test
+    public void testList() throws IOException {
+        System.out.println("list");
+
+        Product product = productGenerator();
+
+        // Create Generated Product
+        HttpUrl createUrl = getProductUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient createProductWebClient = new WebClient();
+
+        Gson gson = new GsonBuilder().create();
+        String productJson = gson.toJson(product);
+
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.PUT);
+        createRequest.setRequestBody(productJson);
+        createRequest.setAdditionalHeader("Accept", "application/json");
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page createdProductPage = createProductWebClient.getPage(createRequest);
+
+        WebResponse createProductWebResponse = createdProductPage.getWebResponse();
+        assertEquals(createProductWebResponse.getStatusCode(), 200);
+        assertTrue(createProductWebResponse.getContentLength() > 100);
+
+        Product createdProduct = null;
+
+        if (createProductWebResponse.getContentType().equals("application/json")) {
+            String json = createProductWebResponse.getContentAsString();
+            createdProduct = gson.fromJson(json, Product.class);
+
+            assertNotNull(createdProduct);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        // Get The List Of Products
+        HttpUrl getListUrl = getProductUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient getListWebClient = new WebClient();
+        getListWebClient.addRequestHeader("Accept", "application/json");
+
+        Page getListPage = getListWebClient.getPage(getListUrl.url());
+        WebResponse getListWebResponse = getListPage.getWebResponse();
+        assertEquals(getListWebResponse.getStatusCode(), 200);
+        assertTrue(getListWebResponse.getContentLength() > 100);
+
+        List<Product> list = null;
+
+        if (getListWebResponse.getContentType().equals("application/json")) {
+            String json = getListWebResponse.getContentAsString();
+            Product[] products = gson.fromJson(json, Product[].class);
+
+            assertTrue(products.length > 20);
+
+            list = Arrays.asList(products);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        Assert.assertNotNull(list);
+
+        assertTrue(list.contains(createdProduct));
+        assertNotEquals(product, createdProduct);
+
+        assertNotNull(createdProduct);
+        Integer createdProductId = createdProduct.getId();
+        product.setId(createdProductId);
+
+        assertNotNull(createdProductId);
+        assertEquals("Product: " + product.getId() + ", " + product.getProductName() + ", " + product.getCost() + ", " + product.getLaborCost() + "\n" + 
+                "Product Created: " + createdProduct.getId() + ", " + createdProduct.getProductName() + ", " + createdProduct.getCost() + ", " + createdProduct.getLaborCost(),
+                product, createdProduct);
+    }
+    
     private Product productGenerator() {
         Random random = new Random();
         
