@@ -103,9 +103,9 @@ public class ProductControllerIT {
 
         product.setId(returnedProductId);
 
-        Assert.assertEquals(productReturned, product);
-
-        int productId = productReturned.getId();
+        Assert.assertEquals("Product Returned: " + productReturned.getId() + ", " + productReturned.getProductName() + ", " + productReturned.getCost() + ", " + productReturned.getLaborCost() + "\n" + 
+                "Product Started: " + product.getId() + ", " + product.getProductName() + ", " + product.getCost() + ", " + product.getLaborCost()
+                ,productReturned, product);
 
         HttpUrl showUrl = getProductUrlBuilder()
                 .addPathSegment(productReturned.getProductName())
@@ -129,35 +129,6 @@ public class ProductControllerIT {
         } else {
             fail("Should have been JSON.");
         }
-
-        Assert.assertNotNull(specificProduct);
-        Assert.assertEquals(specificProduct, productReturned);
-
-        Product storedProduct = null;
-
-        HttpUrl showUrl2 = getProductUrlBuilder()
-                .addPathSegment(Integer.toString(productId))
-                .build();
-
-        WebClient showProductWebClient2 = new WebClient();
-        showProductWebClient2.addRequestHeader("Accept", "application/json");
-
-        Page singleProductPage2 = showProductWebClient2.getPage(showUrl2.url());
-        WebResponse jsonSingleProductResponse2 = singleProductPage2.getWebResponse();
-        assertEquals(jsonSingleProductResponse2.getStatusCode(), 200);
-        assertTrue(jsonSingleProductResponse2.getContentLength() > 50);
-
-        if (jsonSingleProductResponse2.getContentType().equals("application/json")) {
-            String json = jsonSingleProductResponse2.getContentAsString();
-            storedProduct = gson.fromJson(json, Product.class);
-
-            Assert.assertNotNull(storedProduct);
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        assertNotNull(storedProduct);
-        Assert.assertEquals(storedProduct, productReturned);
     }
 
     private Product productGenerator() {
