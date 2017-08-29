@@ -10,6 +10,7 @@ import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -182,7 +183,6 @@ public class ProductDaoPostgresImpl implements ProductDao {
 
             return productName;
         }
-
     }
 
     @Override
@@ -205,6 +205,22 @@ public class ProductDaoPostgresImpl implements ProductDao {
         return productGuesses.get(0);
     }
 
+    private static final String SQL_GUESS_PRODUCT_NAMES = "WITH inputQuery(n) AS (SELECT ?), "
+            + "mainQuery AS ("
+            + "              SELECT product_name, 1 AS rank FROM products WHERE product_name = (SELECT n FROM inputQuery) "
+            + "              UNION ALL SELECT product_name, 2 AS rank FROM products WHERE product_name = (SELECT LOWER(n) FROM inputQuery) "
+            + "              UNION ALL SELECT product_name, 3 AS rank FROM products WHERE product_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery) "
+            + "              UNION ALL SELECT product_name, 4 AS rank FROM products WHERE product_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)"
+            + "          )"
+            + " SELECT t1.product_name FROM mainQuery t1"
+            + " JOIN ("
+            + "	SELECT product_name, MIN(rank) min_rank"
+            + "	FROM mainQuery"
+            + "	GROUP BY product_name"
+            + ") t2"
+            + " ON t1.product_name = t2.product_name AND t1.rank = t2.min_rank"
+            + " ORDER BY t1.rank DESC";
+
     @Override
     public List<String> guessProductName(String inputName) {
 
@@ -212,40 +228,16 @@ public class ProductDaoPostgresImpl implements ProductDao {
             return null;
         }
 
-        if (getList() == null) {
-            return null;
-        }
+        String[] productNames = jdbcTemplate.queryForObject(SQL_GUESS_PRODUCT_NAMES, String[].class, inputName);
 
-        List<String> productNames = getList().stream()
-                .filter(a -> a != null)
-                .filter(a -> a.equalsIgnoreCase(inputName))
-                .collect(Collectors.toList());
-
-        if (productNames.isEmpty()) {
-            productNames = getList().stream()
-                    .filter(a -> a != null)
-                    .filter(a -> a.toLowerCase().startsWith(inputName.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-
-        if (productNames.isEmpty()) {
-            productNames = getList().stream()
-                    .filter(a -> a != null)
-                    .filter(a -> a.toLowerCase().contains(inputName.toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-
-        return productNames;
+        return Arrays.asList(productNames);
     }
+
+    private static final String SQL_GET_PRODUCTS = "SELECT * FROM products";
 
     @Override
     public List<Product> getListOfProducts() {
-
-        List<Product> products = getList().stream()
-                .map(name -> get(name))
-                .collect(Collectors.toList());
-
-        return products;
+        return jdbcTemplate.query(SQL_GET_PRODUCTS, new ProductMapper());
     }
 
     @Override
