@@ -25,9 +25,12 @@
                                 <div class="col-md-offset-2 col-md-6">
                                     <select name="searchBy" class="form-control">
                                         <option value="searchByAll" >Search By Everything</option>
+                                        <option value="searchByFullName" >Search By Name</option>
                                         <option value="searchByFirstName" >Search By First Name</option>
                                         <option value="searchByLastName" >Search By Last Name</option>
                                         <option value="searchByCompany" >Search By Company</option>
+                                        <option value="searchByNameOrCompany" >Search By Name Or Company</option>
+                                        <option value="searchByStreet" >Search By Street</option>
                                         <option value="searchByCity" >Search By City</option>
                                         <option value="searchByState" >Search By State</option>
                                         <option value="searchByZip" >Search By Zip Code</option>
