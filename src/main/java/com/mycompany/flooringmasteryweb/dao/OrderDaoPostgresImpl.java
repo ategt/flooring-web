@@ -7,6 +7,10 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.State;
 import static com.mycompany.flooringmasteryweb.utilities.DateUtilities.isSameDay;
@@ -35,12 +39,12 @@ public class OrderDaoPostgresImpl implements OrderDao {
     private StateDao stateDao;
 
     private static final String SQL_INSERT_ORDER = "INSERT INTO orders (customer_name, material_cost, tax_rate, total_tax, grand_total, date, labor_cost, area, cost_per_square_foot, labor_cost_per_square_foot, product_id, state_id ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id;";
-    private static final String SQL_UPDATE_ORDER = "UPDATE orders SET customer_name = ?, material_cost = ?, tax_rate = ?, total_tax = ?, grand_total = ?, date = ?, labor_cost = ?, area = ?, cost_per_square_foot = ?, labor_cost_per_square_foot = ?, product_id = ?, state_id = ? WHERE id = ?";
-    private static final String SQL_DELETE_ORDER = "DELETE FROM orders WHERE id = ?";
+    private static final String SQL_UPDATE_ORDER = "UPDATE orders SET customer_name = ?, material_cost = ?, tax_rate = ?, total_tax = ?, grand_total = ?, date = ?, labor_cost = ?, area = ?, cost_per_square_foot = ?, labor_cost_per_square_foot = ?, product_id = ?, state_id = ? WHERE id = ? RETURNING *";
+    private static final String SQL_DELETE_ORDER = "DELETE FROM orders WHERE id = ? RETURNING *";
     private static final String SQL_GET_ORDER = "SELECT * FROM orders WHERE id = ?";
-    private static final String SQL_GET_ORDER_LIST = "SELECT * FROM orders";
+    private static final String SQL_GET_ORDER_LIST = "SELECT *, 1 AS rank FROM orders";
     private static final String SQL_COUNT_ORDERS = "SELECT COUNT(*) FROM orders";
-    
+
     private static final String SQL_CREATE_ORDER_TABLE = "CREATE TABLE IF NOT EXISTS orders (id SERIAL PRIMARY KEY, customer_name varchar(145), material_cost decimal(10,2), tax_rate decimal(6,4), total_tax decimal(10,2), grand_total decimal(10,2), date date, labor_cost decimal(10,2), area decimal(16,4), cost_per_square_foot decimal(10,3), labor_cost_per_square_foot decimal(10,3), product_id varchar(145), state_id varchar(3));";
 
     @Inject
@@ -48,7 +52,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.jdbcTemplate = jdbcTemplate;
-        
+
         jdbcTemplate.execute(SQL_CREATE_ORDER_TABLE);
     }
 
@@ -108,25 +112,26 @@ public class OrderDaoPostgresImpl implements OrderDao {
     }
 
     @Override
-    public void update(Order order) {
+    public Order update(Order order) {
 
         if (order == null) {
-            return;
+            return null;
         }
 
         if (order.getId() > 0) {
 
             if (order.getState() == null || order.getState().getStateName() == null) {
-                return;
+                return null;
             }
 
             if (order.getProduct() == null || order.getProduct().getProductName() == null) {
-                return;
+                return null;
             }
 
             try {
 
-                jdbcTemplate.update(SQL_UPDATE_ORDER,
+                return jdbcTemplate.queryForObject(SQL_UPDATE_ORDER,
+                        new OrderMapper(),
                         order.getName(),
                         order.getMaterialCost(),
                         order.getTaxRate(),
@@ -142,20 +147,54 @@ public class OrderDaoPostgresImpl implements OrderDao {
                         order.getId());
 
             } catch (org.springframework.dao.DataIntegrityViolationException ex) {
-                return;
+                return null;
             }
         }
+        return null;
     }
 
     @Override
-    public void delete(Order order) {
+    public Order delete(Order order) {
         if (order == null) {
-            return;
+            return null;
         }
 
         int id = order.getId();
 
-        jdbcTemplate.update(SQL_DELETE_ORDER, id);
+        return jdbcTemplate.queryForObject(SQL_DELETE_ORDER, new OrderMapper(), id);
+    }
+
+    @Override
+    public List<Order> list(OrderResultSegment resultSegment) {
+        return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ORDER_LIST, resultSegment), new OrderMapper());
+    }
+
+    @Override
+    public List<Order> search(OrderSearchRequest searchRequest, OrderResultSegment resultSegment) {
+        return search(searchRequest.getSearchText(), searchRequest.getSearchBy(), resultSegment);
+    }
+
+    private List<Order> search(String queryString,
+            OrderSearchByOptionEnum searchOption,
+            OrderResultSegment resultProperties) {
+
+        List<Order> orders;
+        String sqlSearchQuery;
+
+        if (null == searchOption) {
+            orders = list(resultProperties);
+        } else {
+            sqlSearchQuery = determineSqlSearchQuery(searchOption);
+            orders = search(queryString, sqlSearchQuery, resultProperties);
+
+        }
+        return orders;
+    }
+    
+    private List<Order> search(String stringToSearchFor, String sqlQueryToUse, OrderResultSegment resultProperties) {
+        List<Order> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, resultProperties), new OrderMapper(), stringToSearchFor);
+
+        return result;
     }
 
     private final class OrderMapper implements RowMapper<Order> {
@@ -205,7 +244,8 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
     @Override
     public int size() {
-        return jdbcTemplate.queryForObject(SQL_COUNT_ORDERS, Integer.class);
+        return jdbcTemplate.queryForObject(SQL_COUNT_ORDERS, Integer.class
+        );
     }
 
     @Override
@@ -409,5 +449,121 @@ public class OrderDaoPostgresImpl implements OrderDao {
         orderCommand.setProduct(productName);
 
         return orderCommand;
+    }
+    
+    private static final String SQL_SEARCH_ORDERS_BY_DATE = "";
+
+    private String determineSqlSearchQuery(OrderSearchByOptionEnum searchOption) {
+        String sqlSearchQuery;
+        switch (searchOption) {
+            case DATE:
+                sqlSearchQuery = SQL_SEARCH_ORDERS_BY_DATE;
+                break;
+            case NAME:
+                sqlSearchQuery = SQL_SEARCH_ORDERS_BY_NAME;
+                break;
+            case ORDER_NUMBER:
+                sqlSearchQuery = SQL_SEARCH_ORDERS_BY_ORDER_NUMBER;
+                break;
+            case PRODUCT:
+                sqlSearchQuery = SQL_SEARCH_ORDERS_BY_PRODUCT;
+                break;
+            case STATE:
+                sqlSearchQuery = SQL_SEARCH_ORDERS_BY_STATE;
+                break;
+            case EVERYTHING:
+            default:
+                sqlSearchQuery = SQL_SEARCH_ORDERS_BY_EVERYTHING;
+                break;            
+        }
+        return sqlSearchQuery;
+    }
+
+    private String paginateQuery(String query, Integer page, Integer resultsPerPage) {
+        if (page == null || resultsPerPage == null) {
+            return query;
+        }
+
+        if (page < 0 || resultsPerPage < 0) {
+            return query;
+        }
+
+        if (query.contains(";")) {
+            throw new UnsupportedOperationException("Pagination Method can not handle semi-colons(;)");
+        }
+
+        long offset = (long) resultsPerPage * (long) page;
+
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append("SELECT * FROM (");
+        stringBuffer.append(query);
+        stringBuffer.append(") AS innerQuery OFFSET ");
+        stringBuffer.append(offset);
+        stringBuffer.append(" LIMIT ");
+        stringBuffer.append(resultsPerPage);
+
+        return stringBuffer.toString();
+    }
+
+    private String sortQuery(String query, OrderSortByEnum sortByEnum) {
+        if (sortByEnum == null) {
+            return query;
+        }
+
+        if (query.contains(";")) {
+            throw new UnsupportedOperationException("Sorting Method can not handle semi-colons(;)");
+        }
+
+        StringBuilder stringBuffer = new StringBuilder();
+        stringBuffer.append("SELECT * FROM (");
+        stringBuffer.append(query);
+        stringBuffer.append(") AS preSortedQuery");
+
+        switch (sortByEnum) {
+            case SORT_BY_DATE:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_DATE_PARTIAL);
+                break;
+            case SORT_BY_DATE_INVERSE:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_DATE_INVERSE_PARTIAL);
+                break;
+            case SORT_BY_ID:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_ID_PARTIAL);
+                break;
+            case SORT_BY_NAME:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_NAME_PARTIAL);
+                break;
+            case SORT_BY_NAME_INVERSE:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_NAME_INVERSE_PARTIAL);
+                break;
+            case SORT_BY_PRODUCT:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_PRODUCT_PARTIAL);
+                break;
+            case SORT_BY_PRODUCT_INVERSE:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_PRODUCT_INVERSE_PARTIAL);
+                break;
+            case SORT_BY_STATE:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_STATE_PARTIAL);
+                break;
+            case SORT_BY_STATE_INVERSE:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_STATE_INVERSE_PARTIAL);
+                break;
+            case SORT_BY_ID_INVERSE:
+            default:
+                stringBuffer.append(SQL_SORT_ORDERS_BY_ID_INVERSE_PARTIAL);
+                break;
+        }
+
+        return stringBuffer.toString();
+    }
+
+    private String sortAndPaginateQuery(String query, OrderSortByEnum sortByEnum, Integer page, Integer resultsPerPage) {
+        return paginateQuery(sortQuery(query, sortByEnum), page, resultsPerPage);
+    }
+
+    private String sortAndPaginateQuery(String query, OrderResultSegment resultProperties) {
+        if (resultProperties == null) {
+            return query;
+        }
+        return sortAndPaginateQuery(query, resultProperties.getSortByEnum(), resultProperties.getPageNumber(), resultProperties.getResultsPerPage());
     }
 }
