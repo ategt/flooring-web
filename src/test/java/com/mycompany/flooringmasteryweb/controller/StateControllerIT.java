@@ -165,88 +165,92 @@ public class StateControllerIT {
 
         int afterEdit = updatedHtmlPage.getElementsByTagName("tr").size();
         assertEquals(afterEdit, afterCreation);
-        
+
         HtmlAnchor deleteLink = updatedHtmlPage.getAnchorByHref("/state/delete/AA");
         Page deletedStatePage = deleteLink.click();
-        
+
         assertTrue(deletedStatePage.isHtmlPage());
         HtmlPage deletePage = (HtmlPage) deletedStatePage;
-        
+
         pageText = deletePage.asText();
-        
+
         assertTrue("State Name: \"Armed Forces Americas\" was supposed to be deleted.", !pageText.contains("Armed Forces Americas"));
         assertTrue("Tax: " + stateTaxText + " should be gone.", !pageText.contains(stateTaxText));
 
         int afterDelete = deletePage.getElementsByTagName("tr").size();
         assertEquals(beforeCreation, afterDelete);
-       
+
     }
 
-//    @Test
-//    public void createTest() throws IOException {
-//        System.out.println("Create Test");
-//
-//        State state = stateGenerator();
-//        Assert.assertNotNull(state);
-//        Assert.assertNull(state.getId());
-//        
-//        state = StateUtilities.titleCaseStateName(state);
-//
-//        HttpUrl createUrl = getStateUrlBuilder()
-//                .addPathSegment("")
-//                .build();
-//
-//        WebClient createStateWebClient = new WebClient();
-//
-//        Gson gson = new GsonBuilder().create();
-//        String stateJson = gson.toJson(state);
-//
-//        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.PUT);
-//        createRequest.setRequestBody(stateJson);
-//        createRequest.setAdditionalHeader("Content-type", "application/json");
-//        createRequest.setAdditionalHeader("Accept", "application/json");
-//
-//        Page createPage = createStateWebClient.getPage(createRequest);
-//
-//        String returnedStateJson = createPage.getWebResponse().getContentAsString();
-//
-//        State stateReturned = gson.fromJson(returnedStateJson, State.class);
-//
-//        Assert.assertNotNull(stateReturned);
-//        Integer returnedStateId = stateReturned.getId();
-//
-//        Assert.assertTrue(returnedStateId > 0);
-//
-//        state.setId(returnedStateId);
-//
-//        Assert.assertEquals("State Returned: " + stateReturned.getId() + ", " + stateReturned.getStateName() + ", " + stateReturned.getCost() + ", " + stateReturned.getLaborCost() + "\n" + 
-//                "State Started: " + state.getId() + ", " + state.getStateName() + ", " + state.getCost() + ", " + state.getLaborCost()
-//                ,stateReturned, state);
-//
-//        HttpUrl showUrl = getStateUrlBuilder()
-//                .addPathSegment(stateReturned.getStateName())
-//                .build();
-//
-//        WebClient showStateWebClient = new WebClient();
-//        showStateWebClient.addRequestHeader("Accept", "application/json");
-//
-//        Page singleStatePage = showStateWebClient.getPage(showUrl.url());
-//        WebResponse jsonSingleStateResponse = singleStatePage.getWebResponse();
-//        assertEquals(jsonSingleStateResponse.getStatusCode(), 200);
-//        assertTrue(jsonSingleStateResponse.getContentLength() > 50);
-//
-//        State specificState = null;
-//
-//        if (jsonSingleStateResponse.getContentType().equals("application/json")) {
-//            String json = jsonSingleStateResponse.getContentAsString();
-//            specificState = gson.fromJson(json, State.class);
-//
-//            Assert.assertNotNull(specificState);
-//        } else {
-//            fail("Should have been JSON.");
-//        }
-//    }    
-//
+    @Test
+    public void createTest() throws IOException {
+        System.out.println("Create Test");
+
+        State state = new State();
+        state.setStateName("aa");
+        state.setStateTax(new Random().nextDouble());
+
+        StateCommand commandState = StateCommand.buildCommandState(state);
+        state = State.buildState(commandState);
+        
+        Assert.assertNotNull(commandState);
+        Assert.assertNull(state.getId());
+
+        HttpUrl createUrl = getStateUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient createStateWebClient = new WebClient();
+
+        Gson gson = new GsonBuilder().create();
+        String stateJson = gson.toJson(commandState);
+
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.PUT);
+        createRequest.setRequestBody(stateJson);
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+        createRequest.setAdditionalHeader("Accept", "application/json");
+
+        Page createPage = createStateWebClient.getPage(createRequest);
+
+        String returnedStateJson = createPage.getWebResponse().getContentAsString();
+
+        State stateReturned = gson.fromJson(returnedStateJson, State.class);
+
+        Assert.assertNotNull(stateReturned);
+        Integer returnedStateId = stateReturned.getId();
+
+        Assert.assertTrue(returnedStateId > 0);
+
+        state.setId(returnedStateId);
+
+        Assert.assertEquals("State Returned: " + stateReturned.getState() + ", " + stateReturned.getStateName() + ", " + stateReturned.getStateTax() + "\n"
+                + "State Started: " + state.getState() + ", " + state.getStateName() + ", " + state.getStateTax(),
+                 stateReturned, state);
+
+        HttpUrl showUrl = getStateUrlBuilder()
+                .addPathSegment(stateReturned.getStateName())
+                .build();
+
+        WebClient showStateWebClient = new WebClient();
+        showStateWebClient.addRequestHeader("Accept", "application/json");
+
+        Page singleStatePage = showStateWebClient.getPage(showUrl.url());
+        WebResponse jsonSingleStateResponse = singleStatePage.getWebResponse();
+        assertEquals(jsonSingleStateResponse.getStatusCode(), 200);
+        assertTrue(jsonSingleStateResponse.getContentLength() > 50);
+
+        State specificState = null;
+
+        if (jsonSingleStateResponse.getContentType().equals("application/json")) {
+            String json = jsonSingleStateResponse.getContentAsString();
+            specificState = gson.fromJson(json, State.class);
+
+            Assert.assertNotNull(specificState);
+        } else {
+            fail("Should have been JSON.");
+        }
+    }
+
 //    @Test
 //    public void createAutomaticUsingTitleCaseTest() throws IOException {
 //        System.out.println("Create Test");
