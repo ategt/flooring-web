@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 import java.util.Objects;
 
 /**
@@ -19,7 +20,9 @@ public class State {
 
     @Override
     public int hashCode() {
-        if (id == null) return 0;
+        if (id == null) {
+            return 0;
+        }
         return id;
     }
 
@@ -101,4 +104,14 @@ public class State {
         this.id = id;
     }
 
+    public static State buildState(StateCommand stateCommand) {
+        String enteredName = stateCommand.getStateName();
+        String guessedName = StateUtilities.bestGuessStateName(enteredName);
+        String stateName = StateUtilities.abbrFromState(guessedName);
+
+        State state = new State();
+        state.setStateTax(stateCommand.getStateTax());
+        state.setStateName(stateName);
+        return state;
+    }
 }

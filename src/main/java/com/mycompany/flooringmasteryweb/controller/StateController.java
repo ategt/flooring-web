@@ -114,19 +114,7 @@ public class StateController {
             return "state\\edit";
 
         } else {
-            String enteredName = stateCommand.getStateName();
-            String guessedName = StateUtilities.bestGuessStateName(enteredName);
-            String stateName = StateUtilities.abbrFromState(guessedName);
-
-            State state = new State();
-            state.setStateTax(stateCommand.getStateTax());
-            state.setStateName(stateName);
-
-            if (stateDao.get(state.getStateName()) == null) {
-                stateDao.create(state);
-            } else {
-                stateDao.update(state);
-            }
+            State state = saveState(stateCommand);
 
             return "redirect:/state/";
         }
@@ -136,22 +124,38 @@ public class StateController {
     @ResponseBody
     public State update(@Valid @RequestBody StateCommand stateCommand) {
 
-        State state = State.buildState(stateCommand);
+        State state = saveState(stateCommand);
 
+        return state;
+    }
+
+    private State saveState(StateCommand stateCommand) {
+        State state = State.buildState(stateCommand);
         if (stateDao.get(state.getStateName()) == null) {
             state = stateDao.create(state);
         } else {
             state = stateDao.update(state);
         }
-
-        return product;
+        return state;
     }
 
     @RequestMapping(value = "/delete/{stateName}", method = RequestMethod.GET)
-    public String delete(@PathVariable("stateName") String stateName) {
-
+    public String delete(@PathVariable("stateName") String stateName, Map model) {
         stateDao.delete(stateDao.get(stateName));
 
         return "redirect:/state/";
+    }
+
+    @RequestMapping(value = "/{stateName}", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public State show(@PathVariable("stateName") String stateName) {
+        return stateDao.get(stateName);
+    }
+
+    @RequestMapping(value = "/{stateName}", method = RequestMethod.DELETE, headers = "Accept=application/json")
+    @ResponseBody
+    public State delete(@PathVariable("stateName") String stateName) {
+        State stateToDelete = stateDao.get(stateName);
+        return stateDao.delete(stateToDelete);
     }
 }
