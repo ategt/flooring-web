@@ -5,9 +5,13 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.Product;
+import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import com.mycompany.flooringmasteryweb.dto.State;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +29,8 @@ public interface OrderDao {
 
     @Deprecated
     List<Order> getList();
-
+    List<Order> list(OrderResultSegment resultSegment);
+    
     List<Date> listOrderDates();
     List<Integer> listOrderNumbers();
 
@@ -38,6 +43,7 @@ public interface OrderDao {
     List<Order> searchByProduct(Product product);
     List<Order> searchByState(State state);
     List<Order> searchByOrderNumber(Integer orderNumber);    
+    List<Order> search(OrderSearchRequest searchRequest, OrderResultSegment resultSegment);    
 
     int size();    
 }
