@@ -66,7 +66,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_LAST_NAME = "WITH inputQuery(n) AS (SELECT ?),"
@@ -85,7 +85,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_NAME = "WITH inputQuery(n) AS (SELECT ?),"
@@ -102,7 +102,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_COMPANY = "WITH inputQuery(n) AS (SELECT ?),"
@@ -121,7 +121,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
     
     private static final String SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY = "WITH inputQuery(n) AS (SELECT ?),"
@@ -138,7 +138,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_CITY = "WITH inputQuery(n) AS (SELECT ?),"
@@ -157,7 +157,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_STATE = "WITH inputQuery(n) AS (SELECT ?),"
@@ -176,7 +176,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_ZIP = "WITH inputQuery(n) AS (SELECT ?),"
@@ -195,7 +195,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_STREET_NUMBER = "WITH inputQuery(n) AS (SELECT ?),"
@@ -214,7 +214,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_STREET_NAME = "WITH inputQuery(n) AS (SELECT ?),"
@@ -233,7 +233,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_STREET = "WITH inputQuery(n) AS (SELECT ?),"
@@ -252,7 +252,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_ALL = "WITH inputQuery(n) AS (SELECT ?),"
@@ -271,7 +271,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		SELECT id, MIN(rank) min_rank"
             + "		FROM mainQuery"
             + "		GROUP BY id"
-            + "	) t2"
+            + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_ANY = "SELECT DISTINCT *, 1 AS rank FROM addresses WHERE"
@@ -573,9 +573,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     @Override
     public List<Address> searchByFullName(String fullName, ResultProperties resultProperties) {
-        List<Address> result = search(fullName, SQL_SEARCH_ADDRESS_BY_FULL_NAME, resultProperties);
-
-        return result;
+        return searchByName(fullName, resultProperties);
     }
 
     @Override
@@ -643,13 +641,14 @@ public class AddressDaoPostgresImpl implements AddressDao {
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ZIP;
                 break;
             case NAME:
+            case FULL_NAME:
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME;
                 break;
             case NAME_OR_COMPANY:
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY;
                 break;
             case ALL:
-            case DEFAULT:
+            case DEFAULT:            
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ALL;
                 break;
             default:
