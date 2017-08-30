@@ -67,7 +67,7 @@
                         <div class="form-group">
                             <div class="col-sm-3"></div>
                             <div class="col-sm-7">
-                                <input value="Update" type="submit" class="btn btn-default" />
+                                <input id="state-submit-btn" value="Update" type="submit" class="btn btn-default" />
                             </div>
                         </div>
                     </div>
