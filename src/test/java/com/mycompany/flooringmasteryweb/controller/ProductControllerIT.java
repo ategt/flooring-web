@@ -717,7 +717,7 @@ public class ProductControllerIT {
             String json = getListWebResponse.getContentAsString();
             Product[] products = gson.fromJson(json, Product[].class);
 
-            assertTrue(products.length > 20);
+            assertTrue(products.length > 5);
 
             list = Arrays.asList(products);
         } else {
@@ -734,6 +734,9 @@ public class ProductControllerIT {
         product.setId(createdProductId);
 
         assertNotNull(createdProductId);
+        
+        product = ProductUtilities.titleCaseProductName(product);
+        
         assertEquals("Product: " + product.getId() + ", " + product.getProductName() + ", " + product.getCost() + ", " + product.getLaborCost() + "\n" + 
                 "Product Created: " + createdProduct.getId() + ", " + createdProduct.getProductName() + ", " + createdProduct.getCost() + ", " + createdProduct.getLaborCost(),
                 product, createdProduct);

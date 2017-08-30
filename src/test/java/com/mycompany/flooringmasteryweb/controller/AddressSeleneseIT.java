@@ -117,7 +117,7 @@ public class AddressSeleneseIT {
         Page page = webClient.getPage(webRequest);
         WebResponse webResponse = page.getWebResponse();
         assertEquals(webResponse.getStatusCode(), 200);
-        assertTrue(webResponse.getContentLength() > 100);
+        assertTrue("Web Response Length: " + webResponse.getContentLength() + (webResponse.getContentLength() < 200 ? " - " + webResponse.getContentAsString() : ""), webResponse.getContentLength() > 100);
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
@@ -356,7 +356,7 @@ public class AddressSeleneseIT {
                 assertEquals(addressCountFromIndex.intValue(), addresses.length);
             }
 
-            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == 4));
+            assertTrue("An Id Should be Greater Than 4.", Arrays.asList(addresses).stream().anyMatch(address -> address.getId() > 4));
         } else {
             fail("Should have been JSON.");
         }
