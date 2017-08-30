@@ -45,9 +45,10 @@ public class StateDaoPostgresImpl implements StateDao {
     public State create(State state) {
         State returnedState = null;
 
-        if (state == null)
+        if (state == null) {
             return null;
-        
+        }
+
         if (Objects.nonNull(state.getState()) && state.getState().length() == 2) {
 
             try {
@@ -100,8 +101,7 @@ public class StateDaoPostgresImpl implements StateDao {
 
         try {
             return jdbcTemplate.queryForObject(SQL_DELETE_STATE, new StateMapper(), name);
-        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
-
+        } catch (org.springframework.dao.EmptyResultDataAccessException | org.springframework.dao.DataIntegrityViolationException ex) {
         }
         return null;
     }
@@ -122,7 +122,7 @@ public class StateDaoPostgresImpl implements StateDao {
             State state = new State();
             state.setStateName(rs.getString("state_abbreviation"));
             state.setId(rs.getInt("id"));
-            
+
             try {
                 String taxString = rs.getString("tax_rate");
 
