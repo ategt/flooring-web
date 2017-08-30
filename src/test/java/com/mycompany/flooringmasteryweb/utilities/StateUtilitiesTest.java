@@ -17,14 +17,14 @@ import static org.junit.Assert.*;
  * @author apprentice
  */
 public class StateUtilitiesTest {
-    
+
     public StateUtilitiesTest() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -39,10 +39,9 @@ public class StateUtilitiesTest {
         String expResult = "Utah";
         String result = StateUtilities.stateFromAbbr(abbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-       // fail("The test case is a prototype.");
+
     }
-    
+
     /**
      * Test of stateFromAbbr method, of class StateUtilities.
      */
@@ -53,10 +52,9 @@ public class StateUtilitiesTest {
         String expResult = null;
         String result = StateUtilities.stateFromAbbr(abbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-       // fail("The test case is a prototype.");
+
     }
-    
+
     /**
      * Test of stateFromAbbr method, of class StateUtilities.
      */
@@ -67,10 +65,9 @@ public class StateUtilitiesTest {
         String expResult = "Utah";
         String result = StateUtilities.stateFromAbbr(abbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-       // fail("The test case is a prototype.");
+
     }
-    
+
     /**
      * Test of stateFromAbbr method, of class StateUtilities.
      */
@@ -81,8 +78,7 @@ public class StateUtilitiesTest {
         String expResult = "Utah";
         String result = StateUtilities.stateFromAbbr(abbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-       // fail("The test case is a prototype.");
+
     }
 
     /**
@@ -95,8 +91,7 @@ public class StateUtilitiesTest {
         String expResult = "UT";
         String result = StateUtilities.abbrFromState(stateName);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-       // fail("The test case is a prototype.");
+
     }
 
     /**
@@ -109,8 +104,7 @@ public class StateUtilitiesTest {
         String expResult = null;
         String result = StateUtilities.abbrFromState(stateName);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-       // fail("The test case is a prototype.");
+
     }
 
     /**
@@ -123,8 +117,7 @@ public class StateUtilitiesTest {
         String expResult = null;
         String result = StateUtilities.abbrFromState(stateName);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-       // fail("The test case is a prototype.");
+
     }
 
     /**
@@ -137,8 +130,7 @@ public class StateUtilitiesTest {
         String expResult = "Kentucky";
         String result = StateUtilities.bestGuessStateName(stateName);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -151,8 +143,7 @@ public class StateUtilitiesTest {
         String expResult = "Alaska";
         String result = StateUtilities.bestGuessStateName(stateName);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -165,9 +156,9 @@ public class StateUtilitiesTest {
         String expResult = null;
         String result = StateUtilities.bestGuessStateName(stateName);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
+
     /**
      * Test of bestGuessStateName method, of class StateUtilities.
      */
@@ -178,8 +169,7 @@ public class StateUtilitiesTest {
         String expResult = null;
         String result = StateUtilities.bestGuessStateName(stateName);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -192,8 +182,7 @@ public class StateUtilitiesTest {
         int expResult = 71;
         List<String> result = StateUtilities.guessStateName(stateName);
         assertEquals(expResult, result.size());
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -206,8 +195,7 @@ public class StateUtilitiesTest {
         int expResult = 0;
         List<String> result = StateUtilities.guessStateName(stateName);
         assertEquals(expResult, result.size());
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -220,8 +208,7 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateAbbr(stateAbbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -234,8 +221,7 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateAbbr(stateAbbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -248,8 +234,7 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateAbbr(stateAbbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -262,8 +247,7 @@ public class StateUtilitiesTest {
         boolean expResult = true;
         boolean result = StateUtilities.validStateAbbr(stateAbbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -276,8 +260,7 @@ public class StateUtilitiesTest {
         boolean expResult = true;
         boolean result = StateUtilities.validStateAbbr(stateAbbr);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
 
     /**
@@ -290,10 +273,8 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
-    
 
     /**
      * Test of validStateInput method, of class StateUtilities.
@@ -305,10 +286,9 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
-    
+
     /**
      * Test of validStateInput method, of class StateUtilities.
      */
@@ -319,10 +299,9 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
-    
+
     /**
      * Test of validStateInput method, of class StateUtilities.
      */
@@ -333,10 +312,9 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
-    
+
     /**
      * Test of validStateInput method, of class StateUtilities.
      */
@@ -347,10 +325,9 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
-    
+
     /**
      * Test of validStateInput method, of class StateUtilities.
      */
@@ -361,10 +338,9 @@ public class StateUtilitiesTest {
         boolean expResult = false;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
-    
+
     /**
      * Test of validStateInput method, of class StateUtilities.
      */
@@ -375,11 +351,9 @@ public class StateUtilitiesTest {
         boolean expResult = true;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
     }
-    
-    
+
     /**
      * Test of validStateInput method, of class StateUtilities.
      */
@@ -390,9 +364,8 @@ public class StateUtilitiesTest {
         boolean expResult = true;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+
         //public static Map<String, String> stringMapReverser(Map<String, String> stringMap)
     }
-    
+
 }
