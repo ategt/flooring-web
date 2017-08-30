@@ -41,16 +41,15 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private static final String SQL_CREATE_ADDRESS_TABLE = "CREATE TABLE IF NOT EXISTS addresses (id SERIAL PRIMARY KEY, first_name varchar(45), last_name varchar(45), company varchar(45), street_number varchar(45), street_name varchar(45), city varchar(45), state varchar(45), zip varchar(45))";
 
-    private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL = " ORDER BY LOWER(last_name) ASC, LOWER(first_name) ASC, LOWER(company) ASC, id ASC";
-    private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_INVERSE_PARTIAL = " ORDER BY LOWER(last_name) DESC, LOWER(first_name) DESC, LOWER(company) DESC, id DESC";
-    private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_PARTIAL = " ORDER BY LOWER(first_name) ASC, LOWER(last_name) ASC, LOWER(company) ASC, id ASC";
-    private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_INVERSE_PARTIAL = " ORDER BY LOWER(first_name) DESC, LOWER(last_name) DESC, LOWER(company) DESC, id DESC";
-    private static final String SQL_SORT_ADDRESSES_BY_COMPANY_PARTIAL = " ORDER BY LOWER(company) ASC, LOWER(last_name) ASC, LOWER(first_name) ASC, id ASC";
-    private static final String SQL_SORT_ADDRESSES_BY_COMPANY_INVERSE_PARTIAL = " ORDER BY LOWER(company) DESC, LOWER(last_name) DESC, LOWER(first_name) DESC, id DESC";
-    private static final String SQL_SORT_ADDRESSES_BY_ID_PARTIAL = " ORDER BY id ASC";
-    private static final String SQL_SORT_ADDRESSES_BY_ID_INVERSE_PARTIAL = " ORDER BY id DESC";
-    
-    
+    private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_PARTIAL = " ORDER BY rank ASC, LOWER(last_name) ASC, LOWER(first_name) ASC, LOWER(company) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_LAST_NAME_INVERSE_PARTIAL = " ORDER BY rank ASC, LOWER(last_name) DESC, LOWER(first_name) DESC, LOWER(company) DESC, id DESC";
+    private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_PARTIAL = " ORDER BY rank ASC, LOWER(first_name) ASC, LOWER(last_name) ASC, LOWER(company) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_FIRST_NAME_INVERSE_PARTIAL = " ORDER BY rank ASC, LOWER(first_name) DESC, LOWER(last_name) DESC, LOWER(company) DESC, id DESC";
+    private static final String SQL_SORT_ADDRESSES_BY_COMPANY_PARTIAL = " ORDER BY rank ASC, LOWER(company) ASC, LOWER(last_name) ASC, LOWER(first_name) ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_COMPANY_INVERSE_PARTIAL = " ORDER BY rank ASC, LOWER(company) DESC, LOWER(last_name) DESC, LOWER(first_name) DESC, id DESC";
+    private static final String SQL_SORT_ADDRESSES_BY_ID_PARTIAL = " ORDER BY rank ASC, id ASC";
+    private static final String SQL_SORT_ADDRESSES_BY_ID_INVERSE_PARTIAL = " ORDER BY rank ASC, id DESC";
+
     private static final String SQL_SEARCH_ADDRESS_BASE_QUERY = "SELECT * FROM addresses WHERE id IN ("
             + "SELECT id FROM firstQuery UNION SELECT id FROM secondQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) "
             + "UNION SELECT id FROM thirdQuery WHERE NOT EXISTS (SELECT id FROM firstQuery) AND NOT EXISTS (SELECT id FROM secondQuery)"
@@ -154,21 +153,28 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + SQL_SEARCH_ADDRESS_BASE_QUERY;
 
     private static final String SQL_SEARCH_ADDRESS_BY_ALL = "WITH inputQuery(n) AS (SELECT ?),"
-            + " firstQuery(id) AS (SELECT id FROM addresses WHERE "
-            + "       (CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) = (SELECT n FROM inputQuery)), "
-            + " secondQuery(id) AS (SELECT id FROM addresses WHERE "
-            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) = (SELECT LOWER(n) FROM inputQuery)), "
-            + " thirdQuery(id) AS (SELECT id FROM addresses WHERE "
-            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery)), "
-            + " fourthQuery(id) AS (SELECT id FROM addresses WHERE "
-            + "       LOWER(CONCAT_WS(' ', first_name, last_name) || CONCAT_WS(' ', street_number, street_name) ||first_name||last_name||company|| city || state || zip || street_number || street_name ) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
-            + SQL_SEARCH_ADDRESS_BASE_QUERY;
+            + "	mainQuery AS ("
+            + "     SELECT *, 1 AS rank FROM addresses WHERE "
+            + "      	' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip = (SELECT n FROM inputQuery)"
+            + "     UNION ALL SELECT *, 2 AS rank FROM addresses WHERE "
+            + "      	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip) = (SELECT LOWER(n) FROM inputQuery)"
+            + "     UNION ALL SELECT *, 3 AS rank FROM addresses WHERE "
+            + "      	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip) LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery)"
+            + "     UNION ALL SELECT *, 4 AS rank FROM addresses WHERE "
+            + "      	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)"
+            + ") "
+            + "SELECT t1.* FROM mainQuery t1"
+            + "	JOIN ("
+            + "		SELECT id, MIN(rank) min_rank"
+            + "		FROM mainQuery"
+            + "		GROUP BY id"
+            + "	) t2"
+            + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private static final String SQL_SEARCH_ADDRESS_BY_ANY = "SELECT DISTINCT * FROM addresses WHERE"
             + " LOWER(CONCAT_WS(' ', first_name, last_name)||CONCAT_WS(' ', street_number, street_name)||"
             + "first_name||last_name||company||city||state||zip||street_number||street_name)"
             + " LIKE (SELECT LOWER(CONCAT('%', ?, '%')))";
-
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -608,10 +614,10 @@ public class AddressDaoPostgresImpl implements AddressDao {
                 break;
             case SORT_BY_COMPANY_INVERSE:
                 stringBuffer.append(SQL_SORT_ADDRESSES_BY_COMPANY_INVERSE_PARTIAL);
-                break;            
+                break;
             case SORT_BY_ID_INVERSE:
                 stringBuffer.append(SQL_SORT_ADDRESSES_BY_ID_INVERSE_PARTIAL);
-                break;            
+                break;
             case SORT_BY_ID:
             default:
                 stringBuffer.append(SQL_SORT_ADDRESSES_BY_ID_PARTIAL);
