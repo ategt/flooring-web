@@ -123,7 +123,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		GROUP BY id"
             + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
-    
+
     private static final String SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY = "WITH inputQuery(n) AS (SELECT ?),"
             + "	mainQuery AS ("
             + "     SELECT *, 2 AS rank FROM addresses WHERE "
@@ -274,10 +274,42 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
-    private static final String SQL_SEARCH_ADDRESS_BY_ANY = "SELECT DISTINCT *, 1 AS rank FROM addresses WHERE"
-            + " LOWER(CONCAT_WS(' ', first_name, last_name)||CONCAT_WS(' ', street_number, street_name)||"
-            + "first_name||last_name||company||city||state||zip||street_number||street_name)"
-            + " LIKE (SELECT LOWER(CONCAT('%', ?, '%')))";
+    private static final String SQL_SEARCH_ADDRESS_BY_ANY = "WITH inputQuery(n) AS (SELECT ?),"
+            + "	mainQuery AS ("
+            + "      SELECT *, 1 AS rank FROM addresses WHERE "
+            + "       	' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip || ' ' LIKE (SELECT CONCAT('% ', n, ' %') FROM inputQuery) "
+            + "      UNION ALL SELECT *, 2 AS rank FROM addresses WHERE  "
+            + "       	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip || ' ') LIKE (SELECT LOWER(CONCAT('% ', n, ' %')) FROM inputQuery) "
+            + "      UNION ALL SELECT *, 3 AS rank FROM addresses WHERE  "
+            + "       	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip || ' ') LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery) "
+            + "      UNION ALL SELECT *, 4 AS rank FROM addresses WHERE  "
+            + "       	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip || ' ') LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery) "
+            + "      UNION ALL SELECT *, 5 AS rank FROM addresses WHERE "
+            + "		LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip || ' ') LIKE "
+            + "             ALL( "
+            + "                 ARRAY("
+            + "                     SELECT CONCAT('%', input_column, '%') FROM ( "
+            + "                         SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery "
+            + "                     ) AS augmented_input_table "
+            + "                 ) "
+            + "             ) "
+            + "      UNION ALL SELECT *, 6 AS rank FROM addresses WHERE "
+            + "		LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip) LIKE "
+            + "             ANY( "
+            + "                 ARRAY("
+            + "                     SELECT CONCAT('%', input_column, '%') FROM ( "
+            + "                         SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery "
+            + "                     ) AS augmented_input_table "
+            + "                 ) "
+            + "             ) "
+            + ") "
+            + "SELECT t1.* FROM mainQuery t1"
+            + "	JOIN ("
+            + "		SELECT id, MIN(rank) min_rank"
+            + "		FROM mainQuery"
+            + "		GROUP BY id"
+            + "	) t2 "
+            + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -648,7 +680,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY;
                 break;
             case ALL:
-            case DEFAULT:            
+            case DEFAULT:
                 sqlSearchQuery = SQL_SEARCH_ADDRESS_BY_ALL;
                 break;
             default:
