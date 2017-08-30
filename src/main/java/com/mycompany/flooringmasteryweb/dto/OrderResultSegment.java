@@ -1,17 +1,34 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 public class OrderResultSegment {
-    Integer pageNumber;
-    Integer resultsPerPage;
-    OrderSortByEnum sortByEnum;
+    private final Integer pageNumber;
+    private final Integer resultsPerPage;
+    private final OrderSortByEnum sortByEnum;
 
-    public OrderResultSegment(OrderSortByEnum sortByEnum, Integer pageNumber, Integer resultsPerPage) {
-        this(pageNumber, resultsPerPage, sortByEnum);
-    }
-
-    public OrderResultSegment(Integer pageNumber, Integer resultsPerPage, OrderSortByEnum sortByEnum) {
+    public OrderResultSegment(OrderSortByEnum orderSortByEnum, Integer resultsPerPage, Integer pageNumber){
         this.pageNumber = pageNumber;
         this.resultsPerPage = resultsPerPage;
-        this.sortByEnum = sortByEnum;
+        this.sortByEnum = orderSortByEnum;
     }
+
+    /**
+     * @return the pageNumber
+     */
+    public Integer getPageNumber() {
+        return pageNumber;
+    }
+
+    /**
+     * @return the resultsPerPage
+     */
+    public Integer getResultsPerPage() {
+        return resultsPerPage;
+    }
+
+    /**
+     * @return the sortByEnum
+     */
+    public OrderSortByEnum getSortByEnum() {
+        return sortByEnum;
+    }    
 }
