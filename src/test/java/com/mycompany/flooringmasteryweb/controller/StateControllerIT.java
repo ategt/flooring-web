@@ -63,6 +63,7 @@ public class StateControllerIT {
     @Before
     public void setUp() {
         uriToTest = ctx.getBean("baseUrlToTest", URI.class);
+        deleteTestState();
     }
 
     @After
@@ -485,7 +486,7 @@ public class StateControllerIT {
 
         assertNotNull(stateReturned);
         assertNotNull(returnedUpdatedState);
-        
+
         assertEquals(stateReturned.getStateTax(), returnedUpdatedState.getStateTax(), .0001d);
 
         // Verify Update Did Not Increase the Size of the Database
@@ -595,87 +596,92 @@ public class StateControllerIT {
 
     }
 
-//    /**
-//     * Test of list method, of class StateDaoPostgresImpl.
-//     */
-//    @Test
-//    public void testList() throws IOException {
-//        System.out.println("list");
-//
-//        State state = stateGenerator();
-//
-//        // Create Generated State
-//        HttpUrl createUrl = getStateUrlBuilder()
-//                .addPathSegment("")
-//                .build();
-//
-//        WebClient createStateWebClient = new WebClient();
-//
-//        Gson gson = new GsonBuilder().create();
-//        String stateJson = gson.toJson(state);
-//
-//        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.PUT);
-//        createRequest.setRequestBody(stateJson);
-//        createRequest.setAdditionalHeader("Accept", "application/json");
-//        createRequest.setAdditionalHeader("Content-type", "application/json");
-//
-//        Page createdStatePage = createStateWebClient.getPage(createRequest);
-//
-//        WebResponse createStateWebResponse = createdStatePage.getWebResponse();
-//        assertEquals(createStateWebResponse.getStatusCode(), 200);
-//        assertTrue(createStateWebResponse.getContentLength() > 100);
-//
-//        State createdState = null;
-//
-//        if (createStateWebResponse.getContentType().equals("application/json")) {
-//            String json = createStateWebResponse.getContentAsString();
-//            createdState = gson.fromJson(json, State.class);
-//
-//            assertNotNull(createdState);
-//        } else {
-//            fail("Should have been JSON.");
-//        }
-//
-//        // Get The List Of States
-//        HttpUrl getListUrl = getStateUrlBuilder()
-//                .addPathSegment("")
-//                .build();
-//
-//        WebClient getListWebClient = new WebClient();
-//        getListWebClient.addRequestHeader("Accept", "application/json");
-//
-//        Page getListPage = getListWebClient.getPage(getListUrl.url());
-//        WebResponse getListWebResponse = getListPage.getWebResponse();
-//        assertEquals(getListWebResponse.getStatusCode(), 200);
-//        assertTrue(getListWebResponse.getContentLength() > 100);
-//
-//        List<State> list = null;
-//
-//        if (getListWebResponse.getContentType().equals("application/json")) {
-//            String json = getListWebResponse.getContentAsString();
-//            State[] states = gson.fromJson(json, State[].class);
-//
-//            assertTrue(states.length > 20);
-//
-//            list = Arrays.asList(states);
-//        } else {
-//            fail("Should have been JSON.");
-//        }
-//
-//        Assert.assertNotNull(list);
-//
-//        assertTrue(list.contains(createdState));
-//        assertNotEquals(state, createdState);
-//
-//        assertNotNull(createdState);
-//        Integer createdStateId = createdState.getId();
-//        state.setId(createdStateId);
-//
-//        assertNotNull(createdStateId);
-//        assertEquals("State: " + state.getId() + ", " + state.getStateName() + ", " + state.getCost() + ", " + state.getLaborCost() + "\n" + 
-//                "State Created: " + createdState.getId() + ", " + createdState.getStateName() + ", " + createdState.getCost() + ", " + createdState.getLaborCost(),
-//                state, createdState);
-//    }
+    /**
+     * Test of list method, of class StateDaoPostgresImpl.
+     */
+    @Test
+    public void testList() throws IOException {
+        System.out.println("list");
+
+        State state = new State();
+        state.setStateName("aa");
+        state.setStateTax(ProductUtilities.roundToDecimalPlace(new Random().nextDouble(), 4));
+
+        StateCommand commandState = StateCommand.buildCommandState(state);
+        state = State.buildState(commandState);
+
+        // Create Generated State
+        HttpUrl createUrl = getStateUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient createStateWebClient = new WebClient();
+
+        Gson gson = new GsonBuilder().create();
+        String stateJson = gson.toJson(commandState);
+
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.PUT);
+        createRequest.setRequestBody(stateJson);
+        createRequest.setAdditionalHeader("Accept", "application/json");
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page createdStatePage = createStateWebClient.getPage(createRequest);
+
+        WebResponse createStateWebResponse = createdStatePage.getWebResponse();
+        assertEquals(createStateWebResponse.getStatusCode(), 200);
+
+        State createdState = null;
+
+        if (createStateWebResponse.getContentType().equals("application/json")) {
+            String json = createStateWebResponse.getContentAsString();
+            createdState = gson.fromJson(json, State.class);
+
+            assertNotNull(createdState);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        // Get The List Of States
+        HttpUrl getListUrl = getStateUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient getListWebClient = new WebClient();
+        getListWebClient.addRequestHeader("Accept", "application/json");
+
+        Page getListPage = getListWebClient.getPage(getListUrl.url());
+        WebResponse getListWebResponse = getListPage.getWebResponse();
+        assertEquals(getListWebResponse.getStatusCode(), 200);
+        assertTrue(getListWebResponse.getContentLength() > 100);
+
+        List<State> list = null;
+
+        if (getListWebResponse.getContentType().equals("application/json")) {
+            String json = getListWebResponse.getContentAsString();
+            State[] states = gson.fromJson(json, State[].class);
+
+            assertTrue(states.length > 0);
+
+            list = Arrays.asList(states);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        Assert.assertNotNull(list);
+
+        assertTrue(list.contains(createdState));
+        assertNotEquals(state, createdState);
+
+        assertNotNull(createdState);
+        Integer createdStateId = createdState.getId();
+        state.setId(createdStateId);
+
+        assertNotNull(createdStateId);
+        assertEquals("State: " + state.getId() + ", " + state.getStateName() + ", " + state.getState() + ", " + state.getStateTax() + "\n"
+                + "State Created: " + createdState.getId() + ", " + createdState.getStateName() + ", " + createdState.getState() + ", " + createdState.getStateTax(),
+                state, createdState);
+    }
+
     private State stateBuilder(String name, double tax) {
         State state = new State();
         state.setStateName(name);
@@ -686,5 +692,21 @@ public class StateControllerIT {
     private HttpUrl.Builder getStateUrlBuilder() {
         return HttpUrl.get(uriToTest).newBuilder()
                 .addPathSegment("state");
+    }
+
+    private void deleteTestState() {
+        try {
+            WebClient webClient = new WebClient();
+
+            HttpUrl httpUrl = getStateUrlBuilder()
+                    .addPathSegment("")
+                    .build();
+
+            HtmlPage htmlPage = webClient.getPage(httpUrl.url());
+
+            HtmlAnchor deleteLink = htmlPage.getAnchorByHref("/state/delete/AA");
+            deleteLink.click();
+        } catch (IOException | com.gargoylesoftware.htmlunit.ElementNotFoundException ex) {
+        }
     }
 }
