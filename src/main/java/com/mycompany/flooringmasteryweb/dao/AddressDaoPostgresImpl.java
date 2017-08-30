@@ -152,16 +152,18 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "       LOWER(CONCAT_WS(' ', street_number, street_name) || street_number || street_name ) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)) "
             + SQL_SEARCH_ADDRESS_BASE_QUERY;
 
+    private static final String SQL_ALL_PARTIAL = "' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip";
+    
     private static final String SQL_SEARCH_ADDRESS_BY_ALL = "WITH inputQuery(n) AS (SELECT ?),"
             + "	mainQuery AS ("
             + "     SELECT *, 1 AS rank FROM addresses WHERE "
-            + "      	' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip = (SELECT n FROM inputQuery)"
+            + "      	" + SQL_ALL_PARTIAL + " = (SELECT n FROM inputQuery)"
             + "     UNION ALL SELECT *, 2 AS rank FROM addresses WHERE "
-            + "      	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip) = (SELECT LOWER(n) FROM inputQuery)"
+            + "      	LOWER(" + SQL_ALL_PARTIAL + ") = (SELECT LOWER(n) FROM inputQuery)"
             + "     UNION ALL SELECT *, 3 AS rank FROM addresses WHERE "
-            + "      	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip) LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery)"
+            + "      	LOWER(" + SQL_ALL_PARTIAL + ") LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery)"
             + "     UNION ALL SELECT *, 4 AS rank FROM addresses WHERE "
-            + "      	LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)"
+            + "      	LOWER(" + SQL_ALL_PARTIAL + ") LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)"
             + ") "
             + "SELECT t1.* FROM mainQuery t1"
             + "	JOIN ("
@@ -171,7 +173,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "	) t2"
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
-    private static final String SQL_SEARCH_ADDRESS_BY_ANY = "SELECT DISTINCT * FROM addresses WHERE"
+    private static final String SQL_SEARCH_ADDRESS_BY_ANY = "SELECT DISTINCT *, 1 AS rank FROM addresses WHERE"
             + " LOWER(CONCAT_WS(' ', first_name, last_name)||CONCAT_WS(' ', street_number, street_name)||"
             + "first_name||last_name||company||city||state||zip||street_number||street_name)"
             + " LIKE (SELECT LOWER(CONCAT('%', ?, '%')))";
