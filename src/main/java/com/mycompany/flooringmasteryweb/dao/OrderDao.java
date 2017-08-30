@@ -18,9 +18,10 @@ import java.util.List;
  */
 public interface OrderDao {
 
-    Order create(Order order);
-    void delete(Order order);
     Order get(Integer id);
+    Order create(Order order);
+    Order update(Order order);
+    Order delete(Order order);
 
     @Deprecated
     List<Order> getList();
@@ -36,10 +37,7 @@ public interface OrderDao {
     List<Order> searchByName(String orderName);
     List<Order> searchByProduct(Product product);
     List<Order> searchByState(State state);
+    List<Order> searchByOrderNumber(Integer orderNumber);    
 
-    int size();
-
-    void update(Order order);
-    
-    java.util.List<Order> searchByOrderNumber(Integer orderNumber);    
+    int size();    
 }
