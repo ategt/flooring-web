@@ -180,6 +180,10 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
     @Override
     public List<Order> search(OrderSearchRequest searchRequest, OrderResultSegment resultSegment) {
+        if (searchRequest == null) {
+            return list(resultSegment);
+        }
+
         return search(searchRequest.getSearchText(), searchRequest.getSearchBy(), resultSegment);
     }
 

@@ -2259,9 +2259,19 @@ public class OrderDaoDbImplTest {
                         searchText = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
                         break;
                     case NAME:
-                        randomValidOrder = allOrders.get(random.nextInt(size));
-                        searchText = randomValidOrder.getName();
-                        searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getName() == null) {
+                            randomValidOrder = allOrders.get(random.nextInt(size));
+                            searchText = randomValidOrder.getName();
+                        }
+                        
+                        int subStringLength = random.nextInt(searchText.length()) + 5;
+                        
+                        System.out.println("String Length: " + searchText.length());
+                        System.out.println("Sub Length: " + subStringLength);
+                        System.out.println("");
+                        
+                        searchText = searchText.length() - 2 < 5  || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
                         break;
                     case ORDER_NUMBER:
                         randomValidOrder = allOrders.get(random.nextInt(size));
@@ -2322,8 +2332,10 @@ public class OrderDaoDbImplTest {
                 List<Order> orders = orderDao.search(searchRequest, resultSegment);
                 assertNotNull(orders);
 
-                assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId() , orders.size() > 0);
-                assertEquals(orders.size(), orderDao.size());
+                assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
+                        orders.size() > 0);
+
+                assertTrue(orders.contains(randomValidOrder));
             }
 
             OrderSearchRequest searchRequest = new OrderSearchRequest("", searchByEnum);
@@ -2331,20 +2343,13 @@ public class OrderDaoDbImplTest {
             List<Order> orders = orderDao.search(searchRequest, null);
             assertNotNull(orders);
 
-            assertTrue(orders.size() > 0);
-            assertEquals(orders.size(), orderDao.size());
-
             searchRequest = new OrderSearchRequest("", null);
 
             orders = orderDao.search(searchRequest, null);
             assertNotNull(orders);
 
-            assertTrue(orders.size() > 0);
-
             orders = orderDao.search(null, null);
             assertNotNull(orders);
-
-            assertTrue(orders.size() > 0);
             assertEquals(orders.size(), orderDao.size());
         }
     }
