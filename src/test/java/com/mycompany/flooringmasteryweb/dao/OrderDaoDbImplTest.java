@@ -2374,7 +2374,8 @@ public class OrderDaoDbImplTest {
                 assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
                         orders.size() > 0);
 
-                assertTrue(orders.contains(randomValidOrder));
+                assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
+                        orders.contains(randomValidOrder));
             }
 
             OrderSearchRequest searchRequest = new OrderSearchRequest("", searchByEnum);
