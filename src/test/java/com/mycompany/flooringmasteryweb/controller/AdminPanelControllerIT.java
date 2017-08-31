@@ -49,22 +49,6 @@ public class AdminPanelControllerIT {
     public void tearDown() {
     }
 
-    @Test
-    public void listTest() throws MalformedURLException, IOException {
-        System.out.println("List Test");
-
-        WebClient webClient = new WebClient();
-
-        HttpUrl httpUrl = getAdminUrlBuilder()
-                .addPathSegment("search")
-                .build();
-
-        HtmlPage htmlPage = webClient.getPage(httpUrl.url());
-
-        String title = htmlPage.getTitleText();
-        assertEquals(title, "Address Book");
-    }
-
     /**
      * Test of blank method, of class AdminPanelController.
      */
@@ -91,27 +75,11 @@ public class AdminPanelControllerIT {
     public void testEditProduct() throws IOException {
         System.out.println("editProduct");
 
-        Random random = new Random();
-        
         WebClient webClient = new WebClient();
 
         HttpUrl httpUrl = getAdminUrlBuilder()
-                .addPathSegment("")
-                .build();
-
-        HtmlPage htmlPage = webClient.getPage(httpUrl.url());
-
-        DomElement stateTable = htmlPage.getElementById("state-table");
-        DomNodeList<HtmlElement> stateTableRows = stateTable.getElementsByTagName("tr");
-        HtmlElement randomStateRow = stateTableRows.get(random.nextInt(stateTableRows.size()));
-        
-        randomStateRow.getElementsByTagName("a")
-
-        webClient = new WebClient();
-
-        httpUrl = getAdminUrlBuilder()
                 .addPathSegment("editProduct")
-                .addPathSegment()
+                .addPathSegment("Tar")
                 .build();
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
@@ -129,7 +97,8 @@ public class AdminPanelControllerIT {
         WebClient webClient = new WebClient();
 
         HttpUrl httpUrl = getAdminUrlBuilder()
-                .addPathSegment("")
+                .addPathSegment("editState")
+                .addPathSegment("AA")
                 .build();
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
