@@ -421,7 +421,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return orderCommand;
     }
 
-    private static final String SQL_SEARCH_ORDERS_BY_DATE = "SELECT *, 1 AS rank FROM orders WHERE DATE_PART('year', date) || '-' || DATE_PART('month', date) || '-' || DATE_PART('day', date) LIKE ?";
+    private static final String SQL_SEARCH_ORDERS_BY_DATE = "SELECT *, 1 AS rank FROM orders WHERE DATE_PART('month', date) || '-' || DATE_PART('day', date) || '-' || DATE_PART('year', date) LIKE REPLACE(REPLACE( ? ,'/', '-'), '\', '-') ";
     private static final String SQL_SEARCH_ORDERS_BY_ORDER_NUMBER = "SELECT *, 1 AS rank FROM orders WHERE id = ?";
     private static final String SQL_SEARCH_ORDERS_BY_STATE = "SELECT *, 1 AS rank FROM orders WHERE state_id = ?";
 

@@ -7,6 +7,10 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.utilities.ProductUtilities;
@@ -2094,7 +2098,7 @@ public class OrderDaoDbImplTest {
 
         Order firstTestOrder = returnedOrder;
         Order secondTestOrder = testOrder;
-        
+
         assertTrue(Objects.equals(firstTestOrder.getArea(), secondTestOrder.getArea()));
         assertEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
         assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
@@ -2121,14 +2125,14 @@ public class OrderDaoDbImplTest {
         returnedOrder.setMaterialCost(random.nextDouble() * 100);
         returnedOrder.setTax(random.nextDouble() * 100);
         returnedOrder.setTaxRate(random.nextDouble() * 100);
-        
+
         Order updatedOrder = orderDao.update(returnedOrder);
 
         assertNotNull(updatedOrder);
-        
+
         firstTestOrder = updatedOrder;
         secondTestOrder = returnedOrder;
-        
+
         assertEquals(firstTestOrder.getArea(), secondTestOrder.getArea(), 0.01);
         assertEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
         assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
@@ -2144,12 +2148,12 @@ public class OrderDaoDbImplTest {
         assertEquals(firstTestOrder.getTaxRate(), secondTestOrder.getTaxRate(), 0.01);
         assertEquals(firstTestOrder.getTotal(), secondTestOrder.getTotal(), 0.01);
         assertEquals(firstTestOrder.getProduct(), secondTestOrder.getProduct());
-        
+
         assertNotEquals(premodifiedOrder, updatedOrder);
-        
+
         firstTestOrder = premodifiedOrder;
         secondTestOrder = updatedOrder;
-        
+
         assertTrue(!Objects.equals(firstTestOrder.getArea(), secondTestOrder.getArea()));
         assertNotEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
         assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
@@ -2181,6 +2185,204 @@ public class OrderDaoDbImplTest {
 
         Order nullOrder = orderDao.get(id);
         assertNull(nullOrder);
+    }
+
+    @Test
+    public void listTest() {
+        Random random = new Random();
+
+        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+
+        for (OrderSortByEnum sortByEnum : OrderSortByEnum.values()) {
+            OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, Integer.MAX_VALUE, 0);
+
+            List<Order> orders = orderDao.list(resultSegment);
+            assertNotNull(orders);
+
+            assertTrue(orders.size() > 0);
+            assertEquals(orders.size(), orderDao.size());
+        }
+
+        for (OrderSortByEnum sortByEnum : OrderSortByEnum.values()) {
+
+            int size = random.nextInt(orderDao.size());
+
+            OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, size, 0);
+
+            List<Order> orders = orderDao.list(resultSegment);
+            assertNotNull(orders);
+
+            assertEquals(orders.size(), size);
+        }
+
+        int size = random.nextInt(orderDao.size());
+        OrderResultSegment resultSegment = new OrderResultSegment(null, size, 0);
+
+        List<Order> orders = orderDao.list(resultSegment);
+        assertNotNull(orders);
+
+        assertEquals(orders.size(), size);
+
+        orders = orderDao.list(null);
+        assertNotNull(orders);
+
+        assertEquals(orders.size(), orderDao.size());
+    }
+
+    @Test
+    public void searchTest() {
+        Random random = new Random();
+
+        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+
+        List<Order> allOrders = orderDao.getList();
+        int size = allOrders.size();
+
+        Order randomValidOrder = null;
+
+        for (OrderSearchByOptionEnum searchByEnum : OrderSearchByOptionEnum.values()) {
+            for (OrderSortByEnum sortByEnum : OrderSortByEnum.values()) {
+
+                String searchText = null;
+
+                switch (searchByEnum) {
+                    case DATE:
+                        Date randomValidDate = null;
+                        while (randomValidDate == null) {
+                            randomValidOrder = allOrders.get(random.nextInt(size));
+                            randomValidDate = randomValidOrder.getDate();
+                        }
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(randomValidDate);
+
+                        searchText = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
+                        break;
+                    case NAME:
+                        randomValidOrder = allOrders.get(random.nextInt(size));
+                        searchText = randomValidOrder.getName();
+                        searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+                        break;
+                    case ORDER_NUMBER:
+                        randomValidOrder = allOrders.get(random.nextInt(size));
+                        searchText = Integer.toString(randomValidOrder.getId());
+                        break;
+                    case PRODUCT:
+                        randomValidOrder = allOrders.get(random.nextInt(size));
+                        searchText = randomValidOrder.getProduct().getProductName();
+                        searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+                        break;
+                    case STATE:
+                        randomValidOrder = allOrders.get(random.nextInt(size));
+                        searchText = randomValidOrder.getState().getStateName();
+                        searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+                        break;
+                    case EVERYTHING:
+                        switch (random.nextInt(5)) {
+                            case 0:
+                                Date randomValidDate2 = null;
+                                while (randomValidDate2 == null) {
+                                    randomValidOrder = allOrders.get(random.nextInt(size));
+                                    randomValidDate2 = randomValidOrder.getDate();
+                                }
+
+                                Calendar calendar2 = Calendar.getInstance();
+                                calendar2.setTime(randomValidDate2);
+
+                                searchText = (calendar2.get(Calendar.MONTH) + 1) + "/" + calendar2.get(Calendar.DAY_OF_MONTH) + "/" + calendar2.get(Calendar.YEAR);
+                                break;
+                            case 1:
+                                randomValidOrder = allOrders.get(random.nextInt(size));
+                                searchText = randomValidOrder.getName();
+                                searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+                                break;
+                            case 2:
+                                randomValidOrder = allOrders.get(random.nextInt(size));
+                                searchText = Integer.toString(randomValidOrder.getId());
+                                break;
+                            case 3:
+                                randomValidOrder = allOrders.get(random.nextInt(size));
+                                searchText = randomValidOrder.getProduct().getProductName();
+                                searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+                                break;
+                            case 4:
+                            default:
+                                randomValidOrder = allOrders.get(random.nextInt(size));
+                                searchText = randomValidOrder.getState().getStateName();
+                                searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+                                break;
+                        }
+                    default:
+                        fail("This should not get here.");
+                }
+
+                OrderSearchRequest searchRequest = new OrderSearchRequest(searchText, searchByEnum);
+                OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, Integer.MAX_VALUE, 0);
+
+                List<Order> orders = orderDao.search(searchRequest, resultSegment);
+                assertNotNull(orders);
+
+                assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId() , orders.size() > 0);
+                assertEquals(orders.size(), orderDao.size());
+            }
+
+            OrderSearchRequest searchRequest = new OrderSearchRequest("", searchByEnum);
+
+            List<Order> orders = orderDao.search(searchRequest, null);
+            assertNotNull(orders);
+
+            assertTrue(orders.size() > 0);
+            assertEquals(orders.size(), orderDao.size());
+
+            searchRequest = new OrderSearchRequest("", null);
+
+            orders = orderDao.search(searchRequest, null);
+            assertNotNull(orders);
+
+            assertTrue(orders.size() > 0);
+
+            orders = orderDao.search(null, null);
+            assertNotNull(orders);
+
+            assertTrue(orders.size() > 0);
+            assertEquals(orders.size(), orderDao.size());
+        }
+    }
+
+    @Test
+    public void searchForPatTest() {
+        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+
+        OrderSearchRequest searchRequest = new OrderSearchRequest("pat", OrderSearchByOptionEnum.NAME);
+        OrderResultSegment resultSegment = new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0);
+
+        List<Order> orders = orderDao.search(searchRequest, resultSegment);
+
+        assertNotNull(orders);
+
+        assertTrue(orders.size() > 0);
+
+        Order aPatOrder = orderDao.get(1485);
+
+        assertTrue(orders.contains(aPatOrder));
+    }
+
+    @Test
+    public void searchForPatByEverythingTest() {
+        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+
+        OrderSearchRequest searchRequest = new OrderSearchRequest("pat", OrderSearchByOptionEnum.EVERYTHING);
+        OrderResultSegment resultSegment = new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0);
+
+        List<Order> orders = orderDao.search(searchRequest, resultSegment);
+
+        assertNotNull(orders);
+
+        assertTrue(orders.size() > 0);
+
+        Order aPatOrder = orderDao.get(1485);
+
+        assertTrue(orders.contains(aPatOrder));
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
