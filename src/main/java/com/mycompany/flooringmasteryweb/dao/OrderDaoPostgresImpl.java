@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Propagation;
@@ -165,7 +166,11 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
         int id = order.getId();
 
-        return jdbcTemplate.queryForObject(SQL_DELETE_ORDER, new OrderMapper(), id);
+        try {
+            return jdbcTemplate.queryForObject(SQL_DELETE_ORDER, new OrderMapper(), id);
+        } catch (EmptyResultDataAccessException ex) {
+        }
+        return null;
     }
 
     @Override

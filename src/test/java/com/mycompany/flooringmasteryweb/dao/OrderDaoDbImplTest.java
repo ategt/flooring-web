@@ -7,6 +7,9 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.dto.Product;
+import com.mycompany.flooringmasteryweb.dto.State;
+import com.mycompany.flooringmasteryweb.utilities.ProductUtilities;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
@@ -659,7 +664,6 @@ public class OrderDaoDbImplTest {
 //        }
 //        return text;
 //    }
-
 //    @Test
 //    public void testToStringExtreme() {
 //
@@ -743,7 +747,6 @@ public class OrderDaoDbImplTest {
 //        assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
 //
 //    }
-
 //    @Test
 //    public void testToStringEscapeAtEnd() {
 //
@@ -825,7 +828,6 @@ public class OrderDaoDbImplTest {
 //        assertEquals(readFile(secondValidTestFile), readFile(secondTestFile));
 //
 //    }
-
     @Test
     public void testResolverZ() {
 
@@ -2035,6 +2037,154 @@ public class OrderDaoDbImplTest {
         assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
         assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
 
+    }
+
+    @Test
+    public void newCrudTest() {
+        Random random = new Random();
+
+        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
+        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
+        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+
+        List<Product> allProducts = productDao.getListOfProducts();
+        Product randomProduct = allProducts.get(random.nextInt(allProducts.size()));
+
+        List<State> allStates = stateDao.getListOfStates();
+        State randomState = allStates.get(random.nextInt(allStates.size()));
+
+        OrderCommand orderCommand = new OrderCommand();
+
+        Calendar postgresSupportedCalendar = Calendar.getInstance();
+        postgresSupportedCalendar.setTimeInMillis(0);
+
+        int year = -4713 + random.nextInt(294276);
+        int month = random.nextInt(12);
+        int date = random.nextInt(32);
+
+        postgresSupportedCalendar.set(year, month, date);
+
+        Date postgresSupportedDate = postgresSupportedCalendar.getTime();
+
+        orderCommand.setName(UUID.randomUUID().toString());
+        orderCommand.setArea(random.nextDouble() + random.nextInt(1000));
+        orderCommand.setDate(postgresSupportedDate);
+        orderCommand.setProduct(randomProduct.getProductName());
+        orderCommand.setState(randomState.getStateName());
+
+        Order testOrder = orderDao.orderBuilder(orderCommand);
+
+        testOrder = orderDao.create(testOrder);
+
+        assertNotNull(testOrder);
+
+        Integer id = testOrder.getId();
+
+        assertNotNull(id);
+        assertTrue(id > 1);
+
+        Order premodifiedOrder = orderDao.get(id);
+        Order returnedOrder = orderDao.get(id);
+
+        double area = testOrder.getArea();
+        area = ProductUtilities.roundToDecimalPlace(area, 4);
+        testOrder.setArea(area);
+
+        assertNotNull(returnedOrder);
+        //assertEquals(returnedOrder, testOrder);
+
+        Order firstTestOrder = returnedOrder;
+        Order secondTestOrder = testOrder;
+        
+        assertTrue(Objects.equals(firstTestOrder.getArea(), secondTestOrder.getArea()));
+        assertEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
+        //assertTrue(Objects.equals(returnedOrder.getDate(), testOrder.getDate()));
+        assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
+        assertEquals(firstTestOrder.getDate().getYear(), secondTestOrder.getDate().getYear());
+        assertEquals(firstTestOrder.getDate().getMonth(), secondTestOrder.getDate().getMonth());
+        assertTrue(Objects.equals(firstTestOrder.getId(), secondTestOrder.getId()));
+        assertEquals(firstTestOrder.getLaborCost(), secondTestOrder.getLaborCost(), 0.01);
+        //assertTrue(Objects.equals(returnedOrder.getLaborCostPerSquareFoot(), testOrder.getLaborCostPerSquareFoot()));
+        assertEquals(firstTestOrder.getLaborCostPerSquareFoot(), secondTestOrder.getLaborCostPerSquareFoot(), 0.01);
+        assertEquals(firstTestOrder.getMaterialCost(), secondTestOrder.getMaterialCost(), 0.01);
+        assertTrue(Objects.equals(firstTestOrder.getName(), secondTestOrder.getName()));
+        assertTrue(Objects.equals(firstTestOrder.getState(), secondTestOrder.getState()));
+        assertEquals(firstTestOrder.getTax(), secondTestOrder.getTax(), 0.01);
+        assertEquals(firstTestOrder.getTaxRate(), secondTestOrder.getTaxRate(), 0.01);
+        assertEquals(firstTestOrder.getTotal(), secondTestOrder.getTotal(), 0.01);
+        assertEquals(firstTestOrder.getProduct(), secondTestOrder.getProduct());
+
+        assertEquals(returnedOrder, premodifiedOrder);
+
+        returnedOrder.setArea(random.nextDouble() * 100);
+        returnedOrder.setTotal(random.nextDouble() * 100);
+        returnedOrder.setCostPerSquareFoot(random.nextDouble() * 100);
+        returnedOrder.setLaborCost(random.nextDouble() * 100);
+        returnedOrder.setLaborCostPerSquareFoot(random.nextDouble() * 100);
+        returnedOrder.setMaterialCost(random.nextDouble() * 100);
+        returnedOrder.setTax(random.nextDouble() * 100);
+        returnedOrder.setTaxRate(random.nextDouble() * 100);
+        
+        Order updatedOrder = orderDao.update(returnedOrder);
+
+        assertNotNull(updatedOrder);
+        
+        firstTestOrder = updatedOrder;
+        secondTestOrder = returnedOrder;
+        
+        assertEquals(firstTestOrder.getArea(), secondTestOrder.getArea(), 0.01);
+        assertEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
+        assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
+        assertEquals(firstTestOrder.getDate().getYear(), secondTestOrder.getDate().getYear());
+        assertEquals(firstTestOrder.getDate().getMonth(), secondTestOrder.getDate().getMonth());
+        assertTrue(Objects.equals(firstTestOrder.getId(), secondTestOrder.getId()));
+        assertEquals(firstTestOrder.getLaborCost(), secondTestOrder.getLaborCost(), 0.01);
+        assertEquals(firstTestOrder.getLaborCostPerSquareFoot(), secondTestOrder.getLaborCostPerSquareFoot(), 0.01);
+        assertEquals(firstTestOrder.getMaterialCost(), secondTestOrder.getMaterialCost(), 0.01);
+        assertTrue(Objects.equals(firstTestOrder.getName(), secondTestOrder.getName()));
+        assertTrue(Objects.equals(firstTestOrder.getState(), secondTestOrder.getState()));
+        assertEquals(firstTestOrder.getTax(), secondTestOrder.getTax(), 0.01);
+        assertEquals(firstTestOrder.getTaxRate(), secondTestOrder.getTaxRate(), 0.01);
+        assertEquals(firstTestOrder.getTotal(), secondTestOrder.getTotal(), 0.01);
+        assertEquals(firstTestOrder.getProduct(), secondTestOrder.getProduct());
+        
+        //assertEquals(updatedOrder, returnedOrder);
+        assertNotEquals(premodifiedOrder, updatedOrder);
+        
+        firstTestOrder = premodifiedOrder;
+        secondTestOrder = updatedOrder;
+        
+        assertTrue(!Objects.equals(firstTestOrder.getArea(), secondTestOrder.getArea()));
+        assertNotEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
+        assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
+        assertEquals(firstTestOrder.getDate().getYear(), secondTestOrder.getDate().getYear());
+        assertEquals(firstTestOrder.getDate().getMonth(), secondTestOrder.getDate().getMonth());
+        assertTrue(Objects.equals(firstTestOrder.getId(), secondTestOrder.getId()));
+        assertNotEquals(firstTestOrder.getLaborCost(), secondTestOrder.getLaborCost(), 0.01);
+        assertNotEquals(firstTestOrder.getLaborCostPerSquareFoot(), secondTestOrder.getLaborCostPerSquareFoot(), 0.01);
+        assertNotEquals(firstTestOrder.getMaterialCost(), secondTestOrder.getMaterialCost(), 0.01);
+        assertTrue(Objects.equals(firstTestOrder.getName(), secondTestOrder.getName()));
+        assertTrue(Objects.equals(firstTestOrder.getState(), secondTestOrder.getState()));
+        assertNotEquals(firstTestOrder.getTax(), secondTestOrder.getTax(), 0.01);
+        assertNotEquals(firstTestOrder.getTaxRate(), secondTestOrder.getTaxRate(), 0.01);
+        assertNotEquals(firstTestOrder.getTotal(), secondTestOrder.getTotal(), 0.01);
+        assertEquals(firstTestOrder.getProduct(), secondTestOrder.getProduct());
+
+        Order postUpdateOrder = orderDao.get(id);
+
+        assertNotNull(postUpdateOrder);
+        assertEquals(postUpdateOrder, updatedOrder);
+
+        Order deletedOrder = orderDao.delete(updatedOrder);
+
+        assertNotNull(deletedOrder);
+        assertEquals(deletedOrder, updatedOrder);
+
+        Order alsoNullOrder = orderDao.delete(updatedOrder);
+        assertNull(alsoNullOrder);
+
+        Order nullOrder = orderDao.get(id);
+        assertNull(nullOrder);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
