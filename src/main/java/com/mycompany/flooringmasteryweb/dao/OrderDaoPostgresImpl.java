@@ -17,6 +17,7 @@ import static com.mycompany.flooringmasteryweb.utilities.DateUtilities.isSameDay
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -44,6 +45,8 @@ public class OrderDaoPostgresImpl implements OrderDao {
     private static final String SQL_DELETE_ORDER = "DELETE FROM orders WHERE id = ? RETURNING *";
     private static final String SQL_GET_ORDER = "SELECT * FROM orders WHERE id = ?";
     private static final String SQL_GET_ORDER_LIST = "SELECT *, 1 AS rank FROM orders";
+    private static final String SQL_GET_ORDER_ID_LIST_SPECIALTY = "SELECT id FROM orders";
+    private static final String SQL_GET_ORDER_DATE_LIST_SPECIALTY = "SELECT date FROM orders";
     private static final String SQL_COUNT_ORDERS = "SELECT COUNT(*) FROM orders";
 
     private static final String SQL_CREATE_ORDER_TABLE = "CREATE TABLE IF NOT EXISTS orders (id SERIAL PRIMARY KEY, customer_name varchar(145), material_cost decimal(10,2), tax_rate decimal(6,4), total_tax decimal(10,2), grand_total decimal(10,2), date date, labor_cost decimal(10,2), area decimal(16,4), cost_per_square_foot decimal(10,3), labor_cost_per_square_foot decimal(10,3), product_id varchar(145), state_id varchar(3));";
@@ -251,79 +254,69 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
     @Override
     public java.util.List<Order> searchByDate(java.util.Date date) {
-        if (Objects.isNull(date)) return null;
-        
+        if (Objects.isNull(date)) {
+            return null;
+        }
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        
+
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        
+
         String dateString = year + " " + month + " " + day;
-        
+
         return search(new OrderSearchRequest(dateString, OrderSearchByOptionEnum.DATE), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0));
     }
 
     @Override
     public java.util.List<Order> searchByProduct(Product product) {
-        if (Objects.isNull(product)) return null;
+        if (Objects.isNull(product)) {
+            return null;
+        }
         return search(new OrderSearchRequest(product.getProductName(), OrderSearchByOptionEnum.PRODUCT), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0));
     }
 
     @Override
     public java.util.List<Order> searchByOrderNumber(Integer orderNumber) {
-        if (Objects.isNull(orderNumber)) return null;
+        if (Objects.isNull(orderNumber)) {
+            return null;
+        }
         return search(
-                new OrderSearchRequest(Integer.toString(orderNumber), OrderSearchByOptionEnum.ORDER_NUMBER), 
+                new OrderSearchRequest(Integer.toString(orderNumber), OrderSearchByOptionEnum.ORDER_NUMBER),
                 new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0)
         );
     }
 
     @Override
     public java.util.List<Order> searchByState(State state) {
-        if (Objects.isNull(state)) return null;
+        if (Objects.isNull(state)) {
+            return null;
+        }
         return search(
-                new OrderSearchRequest(state.getStateName(), OrderSearchByOptionEnum.STATE), 
+                new OrderSearchRequest(state.getStateName(), OrderSearchByOptionEnum.STATE),
                 new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0)
         );
     }
 
     @Override
     public java.util.List<Integer> listOrderNumbers() {
-        java.util.List<Integer> orderNumbers = new ArrayList();
-
-        getAllOrders().stream()
-                .forEach(o -> orderNumbers.add(o.getId()));
-
-        Collections.sort(orderNumbers);
-
-        return orderNumbers;
+        return Arrays.asList(jdbcTemplate.queryForObject(SQL_GET_ORDER_ID_LIST_SPECIALTY, Integer[].class));
     }
 
     @Override
     public java.util.List<java.util.Date> listOrderDates() {
-        java.util.List<java.util.Date> orderDates = new ArrayList();
-        java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("dd-MM-");
-
-        java.util.Map<String, java.util.Date> dateMap = new java.util.HashMap();
-
-        for (Order order : getAllOrders()) {
-            dateMap.putIfAbsent(fmt.format(order.getDate()), order.getDate());
-        }
-
-        orderDates.addAll(dateMap.values());
-
-        java.util.Collections.sort(orderDates);
-
-        return orderDates;
+        return Arrays.asList(jdbcTemplate.queryForObject(SQL_GET_ORDER_DATE_LIST_SPECIALTY, Date[].class));
     }
 
     @Override
     public java.util.List<Order> searchByName(String orderName) {
-        if (Objects.isNull(orderName)) return null;
+        if (Objects.isNull(orderName)) {
+            return null;
+        }
         return search(
-                new OrderSearchRequest(orderName, OrderSearchByOptionEnum.NAME), 
+                new OrderSearchRequest(orderName, OrderSearchByOptionEnum.NAME),
                 new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0)
         );
     }
