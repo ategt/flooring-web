@@ -190,7 +190,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         }
         return orders;
     }
-    
+
     private List<Order> search(String stringToSearchFor, String sqlQueryToUse, OrderResultSegment resultProperties) {
         List<Order> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, resultProperties), new OrderMapper(), stringToSearchFor);
 
@@ -450,8 +450,78 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
         return orderCommand;
     }
-    
-    private static final String SQL_SEARCH_ORDERS_BY_DATE = "";
+
+    private static final String SQL_SEARCH_ORDERS_BY_DATE = "SELECT *, 1 AS rank FROM orders WHERE date = ?";
+    private static final String SQL_SEARCH_ORDERS_BY_ORDER_NUMBER = "SELECT *, 1 AS rank FROM orders WHERE id = ?";
+    private static final String SQL_SEARCH_ORDERS_BY_STATE = "SELECT *, 1 AS rank FROM orders WHERE state_id = ?";
+
+    private static final String SQL_SEARCH_ORDERS_BY_PRODUCT = "WITH inputQuery(n) AS (SELECT ?), "
+            + "	mainQuery AS ( "
+            + "		SELECT *, 1 AS rank FROM orders WHERE product_id = (SELECT n FROM inputQuery) "
+            + "		UNION ALL SELECT *, 2 AS rank FROM orders WHERE LOWER(product_id) = (SELECT LOWER(n) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 3 AS rank FROM orders WHERE LOWER(product_id) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 4 AS rank FROM orders WHERE LOWER(product_id) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 5 AS rank FROM orders WHERE  "
+            + "			LOWER(product_id) LIKE  "
+            + "			  ALL(  "
+            + "			    ARRAY( "
+            + "				   SELECT CONCAT('%', input_column, '%') FROM (SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery) AS augmented_input_table  "
+            + "				 )  "
+            + "			   )  "
+            + "			) "
+            + "SELECT t1.* FROM mainQuery t1 "
+            + "JOIN ( "
+            + "	SELECT id, MIN(rank) min_rank "
+            + "   FROM mainQuery "
+            + "   GROUP BY id "
+            + ") t2  "
+            + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
+
+    private static final String SQL_SEARCH_ORDERS_BY_NAME = "WITH inputQuery(n) AS (SELECT ?), "
+            + "	mainQuery AS ( "
+            + "		SELECT *, 1 AS rank FROM orders WHERE customer_name = (SELECT n FROM inputQuery) "
+            + "		UNION ALL SELECT *, 2 AS rank FROM orders WHERE LOWER(customer_name) = (SELECT LOWER(n) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 3 AS rank FROM orders WHERE LOWER(customer_name) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 4 AS rank FROM orders WHERE LOWER(customer_name) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 5 AS rank FROM orders WHERE "
+            + "			LOWER(customer_name) LIKE  "
+            + "			  ALL(  "
+            + "			    ARRAY( "
+            + "				   SELECT CONCAT('%', input_column, '%') FROM (SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery) AS augmented_input_table  "
+            + "				 )  "
+            + "			   )  "
+            + "			) "
+            + "SELECT t1.* FROM mainQuery t1 "
+            + "JOIN ( "
+            + "	SELECT id, MIN(rank) min_rank "
+            + "   FROM mainQuery "
+            + "   GROUP BY id "
+            + ") t2  "
+            + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
+
+    private static final String SQL_SEARCH_ORDERS_BY_EVERYTHING = "WITH inputQuery(n) AS (SELECT ?), "
+            + "	mainQuery AS ( "
+            + "		SELECT *, 1 AS rank FROM orders WHERE CONCAT('', id) LIKE (SELECT CONCAT('', n) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 1 AS rank FROM orders WHERE DATE_PART('month', date) || '-' || DATE_PART('day', date) || '-' || DATE_PART('year', date) LIKE (SELECT REPLACE(REPLACE(n, '\\', '-'), '/', '-') FROM inputQuery) "
+            + "		UNION ALL SELECT *, 2 AS rank FROM orders WHERE ' ' || product_id || ' ' || state_id || ' ' || customer_name || ' ' LIKE (SELECT CONCAT('% ', n, ' %') FROM inputQuery) "
+            + "		UNION ALL SELECT *, 3 AS rank FROM orders WHERE LOWER(' ' || product_id || ' ' || state_id || ' ' || customer_name) LIKE (SELECT LOWER(CONCAT('% ', n, ' %')) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 4 AS rank FROM orders WHERE LOWER(' ' || product_id || ' ' || state_id || ' ' || customer_name) LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 5 AS rank FROM orders WHERE LOWER(' ' || product_id || ' ' || state_id || ' ' || customer_name) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery) "
+            + "		UNION ALL SELECT *, 6 AS rank FROM orders WHERE  "
+            + "			LOWER(' ' || product_id || ' ' || state_id || ' ' || customer_name) LIKE  "
+            + "			  ALL(  "
+            + "			    ARRAY( "
+            + "				   SELECT CONCAT('%', input_column, '%') FROM (SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery) AS augmented_input_table  "
+            + "				 )  "
+            + "			   )  "
+            + "			) "
+            + "SELECT t1.* FROM mainQuery t1 "
+            + "JOIN ( "
+            + "	SELECT id, MIN(rank) min_rank "
+            + "   FROM mainQuery "
+            + "   GROUP BY id "
+            + ") t2  "
+            + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
     private String determineSqlSearchQuery(OrderSearchByOptionEnum searchOption) {
         String sqlSearchQuery;
@@ -474,7 +544,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
             case EVERYTHING:
             default:
                 sqlSearchQuery = SQL_SEARCH_ORDERS_BY_EVERYTHING;
-                break;            
+                break;
         }
         return sqlSearchQuery;
     }
@@ -504,6 +574,17 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
         return stringBuffer.toString();
     }
+
+    private static final String SQL_SORT_ORDERS_BY_DATE_PARTIAL = " ORDER BY rank ASC, date ASC, customer_name ASC, state_id ASC, product_id ASC, id ASC";
+    private static final String SQL_SORT_ORDERS_BY_DATE_INVERSE_PARTIAL = " ORDER BY rank ASC, date DESC, customer_name ASC, state_id ASC, product_id ASC, id ASC";
+    private static final String SQL_SORT_ORDERS_BY_ID_PARTIAL = " ORDER BY rank ASC, id ASC";
+    private static final String SQL_SORT_ORDERS_BY_ID_INVERSE_PARTIAL = " ORDER BY rank ASC, id DESC";
+    private static final String SQL_SORT_ORDERS_BY_NAME_PARTIAL = " ORDER BY rank ASC, customer_name ASC, date ASC, state_id ASC, product_id ASC, id ASC";
+    private static final String SQL_SORT_ORDERS_BY_NAME_INVERSE_PARTIAL = " ORDER BY rank ASC, customer_name DESC, date ASC, state_id ASC, product_id ASC, id ASC";
+    private static final String SQL_SORT_ORDERS_BY_PRODUCT_PARTIAL = " ORDER BY rank ASC, product_id ASC, customer_name ASC, date ASC, state_id ASC, id ASC";
+    private static final String SQL_SORT_ORDERS_BY_PRODUCT_INVERSE_PARTIAL = " ORDER BY rank ASC, product_id DESC, customer_name ASC, date ASC, state_id ASC, id ASC";
+    private static final String SQL_SORT_ORDERS_BY_STATE_PARTIAL = " ORDER BY rank ASC, state_id ASC, customer_name ASC, date ASC, product_id DESC, id ASC";
+    private static final String SQL_SORT_ORDERS_BY_STATE_INVERSE_PARTIAL = " ORDER BY rank ASC, state_id DESC, customer_name ASC, date ASC, product_id DESC, id ASC";
 
     private String sortQuery(String query, OrderSortByEnum sortByEnum) {
         if (sortByEnum == null) {
