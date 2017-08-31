@@ -17,6 +17,7 @@ import static com.mycompany.flooringmasteryweb.utilities.DateUtilities.isSameDay
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -250,42 +251,42 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
     @Override
     public java.util.List<Order> searchByDate(java.util.Date date) {
-        java.util.List<Order> specificOrders = new ArrayList();
-
-        getAllOrders().stream()
-                .filter(o -> isSameDay(o.getDate(), date))
-                .forEach(o -> specificOrders.add(o));
-
-        return specificOrders;
+        if (Objects.isNull(date)) return null;
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        
+        String dateString = year + " " + month + " " + day;
+        
+        return search(new OrderSearchRequest(dateString, OrderSearchByOptionEnum.DATE), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0));
     }
 
     @Override
     public java.util.List<Order> searchByProduct(Product product) {
-        java.util.List<Order> specificOrders = getAllOrders().stream()
-                .filter(o -> o.getProduct() != null)
-                .filter(o -> o.getProduct() == product)
-                .collect(Collectors.toList());
-
-        return specificOrders;
+        if (Objects.isNull(product)) return null;
+        return search(new OrderSearchRequest(product.getProductName(), OrderSearchByOptionEnum.PRODUCT), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0));
     }
 
     @Override
     public java.util.List<Order> searchByOrderNumber(Integer orderNumber) {
-        java.util.List<Order> specificOrders = getAllOrders().stream()
-                .filter(o -> Integer.toString(o.getId()).contains(orderNumber.toString()))
-                .collect(Collectors.toList());
-
-        return specificOrders;
+        if (Objects.isNull(orderNumber)) return null;
+        return search(
+                new OrderSearchRequest(Integer.toString(orderNumber), OrderSearchByOptionEnum.ORDER_NUMBER), 
+                new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0)
+        );
     }
 
     @Override
     public java.util.List<Order> searchByState(State state) {
-        java.util.List<Order> specificOrders = getAllOrders().stream()
-                .filter(o -> Objects.nonNull(o.getState()))
-                .filter(o -> o.getState() == state)
-                .collect(Collectors.toList());
-
-        return specificOrders;
+        if (Objects.isNull(state)) return null;
+        return search(
+                new OrderSearchRequest(state.getStateName(), OrderSearchByOptionEnum.STATE), 
+                new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0)
+        );
     }
 
     @Override
@@ -320,40 +321,11 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
     @Override
     public java.util.List<Order> searchByName(String orderName) {
-        java.util.List<Order> specificOrders = new ArrayList();
-        java.util.List<Order> closeOrders = new ArrayList();
-
-        if (Objects.isNull(orderName)) {
-            specificOrders.addAll(getAllOrders());
-            return specificOrders;
-        }
-
-        for (Order order : getAllOrders()) {
-            if (orderName.equalsIgnoreCase(order.getName())) {
-                specificOrders.add(order);
-            }
-
-            if (Objects.nonNull(order)) {
-                if (order.getName().toLowerCase().startsWith(orderName.toLowerCase()) || order.getName().toLowerCase().startsWith(orderName.toLowerCase())) {
-                    closeOrders.add(order);
-                }
-            }
-        }
-
-        if (closeOrders.isEmpty()) {
-
-            closeOrders = getAllOrders().stream()
-                    .filter(o -> o.getName() != null)
-                    .filter(o -> o.getName().toLowerCase().contains(orderName.toLowerCase()))
-                    .collect(Collectors.toList());
-
-        }
-
-        if (specificOrders.isEmpty()) {
-            return closeOrders;
-        } else {
-            return specificOrders;
-        }
+        if (Objects.isNull(orderName)) return null;
+        return search(
+                new OrderSearchRequest(orderName, OrderSearchByOptionEnum.NAME), 
+                new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0)
+        );
     }
 
     @Override
@@ -451,7 +423,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return orderCommand;
     }
 
-    private static final String SQL_SEARCH_ORDERS_BY_DATE = "SELECT *, 1 AS rank FROM orders WHERE date = ?";
+    private static final String SQL_SEARCH_ORDERS_BY_DATE = "SELECT *, 1 AS rank FROM orders WHERE date::text = ?";
     private static final String SQL_SEARCH_ORDERS_BY_ORDER_NUMBER = "SELECT *, 1 AS rank FROM orders WHERE id = ?";
     private static final String SQL_SEARCH_ORDERS_BY_STATE = "SELECT *, 1 AS rank FROM orders WHERE state_id = ?";
 
