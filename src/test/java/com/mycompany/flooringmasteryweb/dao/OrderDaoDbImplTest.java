@@ -2317,26 +2317,50 @@ public class OrderDaoDbImplTest {
                                 searchText = (calendar2.get(Calendar.MONTH) + 1) + "/" + calendar2.get(Calendar.DAY_OF_MONTH) + "/" + calendar2.get(Calendar.YEAR);
                                 break;
                             case 1:
-                                randomValidOrder = allOrders.get(random.nextInt(size));
-                                searchText = randomValidOrder.getName();
-                                searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getName() == null) {
+                                    randomValidOrder = allOrders.get(random.nextInt(size));
+                                    searchText = randomValidOrder.getName();
+                                }
+
+                                subStringLength = random.nextInt(searchText.length()) + 5;
+
+                                System.out.println("String Length: " + searchText.length());
+                                System.out.println("Sub Length: " + subStringLength);
+                                System.out.println("");
+
+                                searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
                                 break;
                             case 2:
                                 randomValidOrder = allOrders.get(random.nextInt(size));
                                 searchText = Integer.toString(randomValidOrder.getId());
                                 break;
                             case 3:
-                                randomValidOrder = allOrders.get(random.nextInt(size));
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getProduct() == null || randomValidOrder.getProduct().getProductName() == null) {
+                                    randomValidOrder = allOrders.get(random.nextInt(size));
+                                }
+
                                 searchText = randomValidOrder.getProduct().getProductName();
-                                searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+
+                                subStringLength = random.nextInt(searchText.length()) + 5;
+
+                                System.out.println("String Length: " + searchText.length());
+                                System.out.println("Sub Length: " + subStringLength);
+                                System.out.println("");
+
+                                searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
                                 break;
                             case 4:
                             default:
-                                randomValidOrder = allOrders.get(random.nextInt(size));
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getState() == null) {
+                                    randomValidOrder = allOrders.get(random.nextInt(size));
+                                }
                                 searchText = randomValidOrder.getState().getStateName();
-                                searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
                                 break;
                         }
+                        break;
                     default:
                         fail("This should not get here.");
                 }
