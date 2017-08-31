@@ -2242,158 +2242,155 @@ public class OrderDaoDbImplTest {
 
         Order randomValidOrder = null;
 
-        for (int i = 0; i < 10; i++) {
+        for (OrderSearchByOptionEnum searchByEnum : OrderSearchByOptionEnum.values()) {
+            for (OrderSortByEnum sortByEnum : OrderSortByEnum.values()) {
 
-            for (OrderSearchByOptionEnum searchByEnum : OrderSearchByOptionEnum.values()) {
-                for (OrderSortByEnum sortByEnum : OrderSortByEnum.values()) {
+                String searchText = null;
 
-                    String searchText = null;
-
-                    switch (searchByEnum) {
-                        case DATE:
-                            Date randomValidDate = null;
-                            while (randomValidDate == null) {
-                                randomValidOrder = allOrders.get(random.nextInt(size));
-                                randomValidDate = randomValidOrder.getDate();
-                            }
-
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.setTime(randomValidDate);
-
-                            searchText = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
-                            break;
-                        case NAME:
-                            randomValidOrder = null;
-                            while (randomValidOrder == null || randomValidOrder.getName() == null) {
-                                randomValidOrder = allOrders.get(random.nextInt(size));
-                                searchText = randomValidOrder.getName();
-                            }
-
-                            int subStringLength = random.nextInt(searchText.length()) + 5;
-
-                            System.out.println("String Length: " + searchText.length());
-                            System.out.println("Sub Length: " + subStringLength);
-                            System.out.println("");
-
-                            searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
-                            break;
-                        case ORDER_NUMBER:
+                switch (searchByEnum) {
+                    case DATE:
+                        Date randomValidDate = null;
+                        while (randomValidDate == null) {
                             randomValidOrder = allOrders.get(random.nextInt(size));
-                            searchText = Integer.toString(randomValidOrder.getId());
-                            break;
-                        case PRODUCT:
-                            randomValidOrder = null;
-                            while (randomValidOrder == null || randomValidOrder.getProduct() == null || randomValidOrder.getProduct().getProductName() == null) {
-                                randomValidOrder = allOrders.get(random.nextInt(size));
-                            }
+                            randomValidDate = randomValidOrder.getDate();
+                        }
 
-                            searchText = randomValidOrder.getProduct().getProductName();
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(randomValidDate);
 
-                            subStringLength = random.nextInt(searchText.length()) + 5;
+                        searchText = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
+                        break;
+                    case NAME:
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getName() == null) {
+                            randomValidOrder = allOrders.get(random.nextInt(size));
+                            searchText = randomValidOrder.getName();
+                        }
 
-                            System.out.println("String Length: " + searchText.length());
-                            System.out.println("Sub Length: " + subStringLength);
-                            System.out.println("");
+                        int subStringLength = random.nextInt(searchText.length()) + 5;
 
-                            searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
-                            break;
-                        case STATE:
-                            randomValidOrder = null;
-                            while (randomValidOrder == null || randomValidOrder.getState() == null) {
-                                randomValidOrder = allOrders.get(random.nextInt(size));
-                            }
-                            searchText = randomValidOrder.getState().getStateName();
-                            break;
-                        case EVERYTHING:
-                            switch (random.nextInt(5)) {
-                                case 0:
-                                    Date randomValidDate2 = null;
-                                    while (randomValidDate2 == null) {
-                                        randomValidOrder = allOrders.get(random.nextInt(size));
-                                        randomValidDate2 = randomValidOrder.getDate();
-                                    }
+                        System.out.println("String Length: " + searchText.length());
+                        System.out.println("Sub Length: " + subStringLength);
+                        System.out.println("");
 
-                                    Calendar calendar2 = Calendar.getInstance();
-                                    calendar2.setTime(randomValidDate2);
+                        searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+                        break;
+                    case ORDER_NUMBER:
+                        randomValidOrder = allOrders.get(random.nextInt(size));
+                        searchText = Integer.toString(randomValidOrder.getId());
+                        break;
+                    case PRODUCT:
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getProduct() == null || randomValidOrder.getProduct().getProductName() == null) {
+                            randomValidOrder = allOrders.get(random.nextInt(size));
+                        }
 
-                                    searchText = (calendar2.get(Calendar.MONTH) + 1) + "/" + calendar2.get(Calendar.DAY_OF_MONTH) + "/" + calendar2.get(Calendar.YEAR);
-                                    break;
-                                case 1:
-                                    randomValidOrder = null;
-                                    while (randomValidOrder == null || randomValidOrder.getName() == null) {
-                                        randomValidOrder = allOrders.get(random.nextInt(size));
-                                        searchText = randomValidOrder.getName();
-                                    }
+                        searchText = randomValidOrder.getProduct().getProductName();
 
-                                    subStringLength = random.nextInt(searchText.length()) + 5;
+                        subStringLength = random.nextInt(searchText.length()) + 5;
 
-                                    System.out.println("String Length: " + searchText.length());
-                                    System.out.println("Sub Length: " + subStringLength);
-                                    System.out.println("");
+                        System.out.println("String Length: " + searchText.length());
+                        System.out.println("Sub Length: " + subStringLength);
+                        System.out.println("");
 
-                                    searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
-                                    break;
-                                case 2:
+                        searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+                        break;
+                    case STATE:
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getState() == null) {
+                            randomValidOrder = allOrders.get(random.nextInt(size));
+                        }
+                        searchText = randomValidOrder.getState().getStateName();
+                        break;
+                    case EVERYTHING:
+                        switch (random.nextInt(5)) {
+                            case 0:
+                                Date randomValidDate2 = null;
+                                while (randomValidDate2 == null) {
                                     randomValidOrder = allOrders.get(random.nextInt(size));
-                                    searchText = Integer.toString(randomValidOrder.getId());
-                                    break;
-                                case 3:
-                                    randomValidOrder = null;
-                                    while (randomValidOrder == null || randomValidOrder.getProduct() == null || randomValidOrder.getProduct().getProductName() == null) {
-                                        randomValidOrder = allOrders.get(random.nextInt(size));
-                                    }
+                                    randomValidDate2 = randomValidOrder.getDate();
+                                }
 
-                                    searchText = randomValidOrder.getProduct().getProductName();
+                                Calendar calendar2 = Calendar.getInstance();
+                                calendar2.setTime(randomValidDate2);
 
-                                    subStringLength = random.nextInt(searchText.length()) + 5;
+                                searchText = (calendar2.get(Calendar.MONTH) + 1) + "/" + calendar2.get(Calendar.DAY_OF_MONTH) + "/" + calendar2.get(Calendar.YEAR);
+                                break;
+                            case 1:
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getName() == null) {
+                                    randomValidOrder = allOrders.get(random.nextInt(size));
+                                    searchText = randomValidOrder.getName();
+                                }
 
-                                    System.out.println("String Length: " + searchText.length());
-                                    System.out.println("Sub Length: " + subStringLength);
-                                    System.out.println("");
+                                subStringLength = random.nextInt(searchText.length()) + 5;
 
-                                    searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
-                                    break;
-                                case 4:
-                                default:
-                                    randomValidOrder = null;
-                                    while (randomValidOrder == null || randomValidOrder.getState() == null) {
-                                        randomValidOrder = allOrders.get(random.nextInt(size));
-                                    }
-                                    searchText = randomValidOrder.getState().getStateName();
-                                    break;
-                            }
-                            break;
-                        default:
-                            fail("This should not get here.");
-                    }
+                                System.out.println("String Length: " + searchText.length());
+                                System.out.println("Sub Length: " + subStringLength);
+                                System.out.println("");
 
-                    OrderSearchRequest searchRequest = new OrderSearchRequest(searchText, searchByEnum);
-                    OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, Integer.MAX_VALUE, 0);
+                                searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+                                break;
+                            case 2:
+                                randomValidOrder = allOrders.get(random.nextInt(size));
+                                searchText = Integer.toString(randomValidOrder.getId());
+                                break;
+                            case 3:
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getProduct() == null || randomValidOrder.getProduct().getProductName() == null) {
+                                    randomValidOrder = allOrders.get(random.nextInt(size));
+                                }
 
-                    List<Order> orders = orderDao.search(searchRequest, resultSegment);
-                    assertNotNull(orders);
+                                searchText = randomValidOrder.getProduct().getProductName();
 
-                    assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
-                            orders.size() > 0);
+                                subStringLength = random.nextInt(searchText.length()) + 5;
 
-                    assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
-                            orders.contains(randomValidOrder));
+                                System.out.println("String Length: " + searchText.length());
+                                System.out.println("Sub Length: " + subStringLength);
+                                System.out.println("");
+
+                                searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+                                break;
+                            case 4:
+                            default:
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getState() == null) {
+                                    randomValidOrder = allOrders.get(random.nextInt(size));
+                                }
+                                searchText = randomValidOrder.getState().getStateName();
+                                break;
+                        }
+                        break;
+                    default:
+                        fail("This should not get here.");
                 }
 
-                OrderSearchRequest searchRequest = new OrderSearchRequest("", searchByEnum);
+                OrderSearchRequest searchRequest = new OrderSearchRequest(searchText, searchByEnum);
+                OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, Integer.MAX_VALUE, 0);
 
-                List<Order> orders = orderDao.search(searchRequest, null);
+                List<Order> orders = orderDao.search(searchRequest, resultSegment);
                 assertNotNull(orders);
 
-                searchRequest = new OrderSearchRequest("", null);
+                assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
+                        orders.size() > 0);
 
-                orders = orderDao.search(searchRequest, null);
-                assertNotNull(orders);
-
-                orders = orderDao.search(null, null);
-                assertNotNull(orders);
-                assertEquals(orders.size(), orderDao.size());
+                assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
+                        orders.contains(randomValidOrder));
             }
+
+            OrderSearchRequest searchRequest = new OrderSearchRequest("", searchByEnum);
+
+            List<Order> orders = orderDao.search(searchRequest, null);
+            assertNotNull(orders);
+
+            searchRequest = new OrderSearchRequest("", null);
+
+            orders = orderDao.search(searchRequest, null);
+            assertNotNull(orders);
+
+            orders = orderDao.search(null, null);
+            assertNotNull(orders);
+            assertEquals(orders.size(), orderDao.size());
         }
     }
 
