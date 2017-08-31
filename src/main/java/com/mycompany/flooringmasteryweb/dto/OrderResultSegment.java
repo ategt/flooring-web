@@ -6,7 +6,7 @@ public class OrderResultSegment implements ResultSegement {
     private final Integer resultsPerPage;
     private final OrderSortByEnum sortByEnum;
 
-    public OrderResultSegment(OrderSortByEnum orderSortByEnum, Integer resultsPerPage, Integer pageNumber) {
+    public OrderResultSegment(OrderSortByEnum orderSortByEnum, Integer pageNumber, Integer resultsPerPage) {
         this.pageNumber = pageNumber;
         this.resultsPerPage = resultsPerPage;
         this.sortByEnum = orderSortByEnum;
