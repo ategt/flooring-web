@@ -2231,6 +2231,8 @@ public class OrderDaoDbImplTest {
 
     @Test
     public void searchTest() {
+        System.out.println("Test Search For Orders By Everything");
+
         Random random = new Random();
 
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
@@ -2264,28 +2266,41 @@ public class OrderDaoDbImplTest {
                             randomValidOrder = allOrders.get(random.nextInt(size));
                             searchText = randomValidOrder.getName();
                         }
-                        
+
                         int subStringLength = random.nextInt(searchText.length()) + 5;
-                        
+
                         System.out.println("String Length: " + searchText.length());
                         System.out.println("Sub Length: " + subStringLength);
                         System.out.println("");
-                        
-                        searchText = searchText.length() - 2 < 5  || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+
+                        searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
                         break;
                     case ORDER_NUMBER:
                         randomValidOrder = allOrders.get(random.nextInt(size));
                         searchText = Integer.toString(randomValidOrder.getId());
                         break;
                     case PRODUCT:
-                        randomValidOrder = allOrders.get(random.nextInt(size));
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getProduct() == null || randomValidOrder.getProduct().getProductName() == null) {
+                            randomValidOrder = allOrders.get(random.nextInt(size));
+                        }
+
                         searchText = randomValidOrder.getProduct().getProductName();
-                        searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
+
+                        subStringLength = random.nextInt(searchText.length()) + 5;
+
+                        System.out.println("String Length: " + searchText.length());
+                        System.out.println("Sub Length: " + subStringLength);
+                        System.out.println("");
+
+                        searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
                         break;
                     case STATE:
-                        randomValidOrder = allOrders.get(random.nextInt(size));
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getState() == null) {
+                            randomValidOrder = allOrders.get(random.nextInt(size));
+                        }
                         searchText = randomValidOrder.getState().getStateName();
-                        searchText = searchText.substring(2, random.nextInt(searchText.length()) + 5);
                         break;
                     case EVERYTHING:
                         switch (random.nextInt(5)) {
