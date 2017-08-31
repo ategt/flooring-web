@@ -338,10 +338,10 @@ public class OrderDaoDbImplTest {
 
         List<Order> testList = instance.getList();
 
-        assertTrue(isOrderInList(orderOne, instance.getList()));
-        assertTrue(isOrderInList(orderTwo, instance.getList()));
-        assertTrue(isOrderInList(orderThree, instance.getList()));
-        assertTrue(isOrderInList(orderFour, instance.getList()));
+        assertTrue(isOrderInList(orderOne, testList));
+        assertTrue(isOrderInList(orderTwo, testList));
+        assertTrue(isOrderInList(orderThree, testList));
+        assertTrue(isOrderInList(orderFour, testList));
 
         List<Order> result = instance.searchByDate(firstDate);
 

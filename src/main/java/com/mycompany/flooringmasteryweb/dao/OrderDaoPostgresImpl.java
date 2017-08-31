@@ -262,10 +262,10 @@ public class OrderDaoPostgresImpl implements OrderDao {
         calendar.setTime(date);
 
         int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        String dateString = year + " " + month + " " + day;
+        String dateString = year + "-" + month + "-" + day;
 
         return search(new OrderSearchRequest(dateString, OrderSearchByOptionEnum.DATE), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0));
     }
@@ -416,7 +416,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return orderCommand;
     }
 
-    private static final String SQL_SEARCH_ORDERS_BY_DATE = "SELECT *, 1 AS rank FROM orders WHERE date::text = ?";
+    private static final String SQL_SEARCH_ORDERS_BY_DATE = "SELECT *, 1 AS rank FROM orders WHERE DATE_PART('year', date) || '-' || DATE_PART('month', date) || '-' || DATE_PART('day', date) LIKE ?";
     private static final String SQL_SEARCH_ORDERS_BY_ORDER_NUMBER = "SELECT *, 1 AS rank FROM orders WHERE id = ?";
     private static final String SQL_SEARCH_ORDERS_BY_STATE = "SELECT *, 1 AS rank FROM orders WHERE state_id = ?";
 
