@@ -25,6 +25,21 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author ATeg
  */
 public class ControllerUtilities {
+
+    public static void loadStateCommandsToMap(StateDao stateDao, Map model) {
+        List<StateCommand> stateCommands = stateDao.getListOfStates().stream()
+                .map(state -> StateCommand.buildCommandState(state))
+                .collect(Collectors.toList());
+
+        model.put("stateCommands", stateCommands);
+    }
+
+    public static List<StateCommand> stateList(StateDao stateDao) {
+        return stateDao.getListOfStates().stream()
+                .map(state -> StateCommand.buildCommandState(state))
+                .collect(Collectors.toList());
+    }
+
     public static Integer loadDefaultPageNumber(ApplicationContext ctx, Integer page) throws BeansException {
         if (page == null) {
             int defaultStartingPage = ctx.getBean("defaultStartingPage", Integer.class);

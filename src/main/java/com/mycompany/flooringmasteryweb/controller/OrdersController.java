@@ -57,11 +57,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping(value = "/orders")
 public class OrdersController {
 
-    private ProductDao productDao;
-    private StateDao stateDao;
-    private OrderDao orderDao;
+    private final ProductDao productDao;
+    private final StateDao stateDao;
+    private final OrderDao orderDao;
 
-    private ApplicationContext ctx;
+    private final ApplicationContext ctx;
 
     private final String RESULTS_COOKIE_NAME = "results_cookie";
     private final String SORT_COOKIE_NAME = "sort_cookie";
@@ -126,7 +126,7 @@ public class OrdersController {
 
         loadOrdersToMap(model, resultSegment);
 
-        loadStateCommandsToMap(model);
+        ControllerUtilities.loadStateCommandsToMap(stateDao, model);
         loadProductCommandsToMap(model);
 
         putBlankOrder(model);
