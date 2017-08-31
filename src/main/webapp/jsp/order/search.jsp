@@ -38,6 +38,7 @@
                                 <div class="col-md-2"></div>
                                 <div class="col-md-6">
                                     <select name="searchBy" class="form-control">
+                                        <option value="searchByEverything" >Search Orders By Everything</option>
                                         <option value="searchByOrderNumber" >Search By Order Number</option>
                                         <option value="searchByName" >Search By Order Name</option>
                                         <option value="searchByProduct" >Search By Product</option>
