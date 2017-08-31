@@ -425,7 +425,20 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return orderCommand;
     }
 
-    private static final String SQL_SEARCH_ORDERS_BY_DATE = "SELECT *, 1 AS rank FROM orders WHERE DATE_PART('month', date) || '-' || DATE_PART('day', date) || '-' || DATE_PART('year', date) LIKE REPLACE(REPLACE( ? ,'/', '-'), '\', '-') ";
+    private static final String SQL_SEARCH_ORDERS_BY_DATE = "WITH inputQuery(n) AS (SELECT ?), "
+            + "firstQuery AS ( "
+            + "	SELECT * FROM orders "
+            + " 		WHERE DATE_PART('month', date) || '-' || DATE_PART('day', date) || '-' || DATE_PART('year', date) "
+            + "		LIKE (SELECT REPLACE(REPLACE(n  ,'/', '-'), '\\', '-') FROM inputQuery) "
+            + "	), "
+            + "secondQuery AS ( "
+            + "	SELECT * FROM orders "
+            + " 		WHERE DATE_PART('year', date) || '-' || DATE_PART('month', date) || '-' || DATE_PART('day', date) "
+            + "		LIKE (SELECT REPLACE(REPLACE(n  ,'/', '-'), '\\', '-') FROM inputQuery) "
+            + "	) "
+            + "	SELECT *, 1 AS rank FROM firstQuery "
+            + "	UNION ALL SELECT *, 1 AS rank FROM secondQuery WHERE NOT EXISTS (SELECT * FROM firstQuery)";
+
     private static final String SQL_SEARCH_ORDERS_BY_ORDER_NUMBER = "SELECT *, 1 AS rank FROM orders WHERE CONCAT(id, '') LIKE ?";
     private static final String SQL_SEARCH_ORDERS_BY_STATE = "SELECT *, 1 AS rank FROM orders WHERE state_id = ?";
 
