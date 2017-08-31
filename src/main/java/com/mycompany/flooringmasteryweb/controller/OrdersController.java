@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -125,6 +126,11 @@ public class OrdersController {
 
         loadOrdersToMap(model, resultSegment);
 
+        loadStateCommandsToMap(model);
+        loadProductCommandsToMap(model);
+
+        putBlankOrder(model);
+        
         return "order\\index";
     }
 
@@ -394,6 +400,21 @@ public class OrdersController {
         List<Order> orders = orderDao.list(resultSegment);
         model.put("orders", orders);
     }
+    
+    private void loadStateCommandsToMap(Map model) {
+        List<StateCommand> stateCommands = stateDao.getListOfStates().stream()
+                .map(state -> StateCommand.buildCommandState(state))
+                .collect(Collectors.toList());
+
+        model.put("stateCommands", stateCommands);
+    }
+
+    private List<StateCommand> stateList() {
+        return stateDao.getListOfStates().stream()
+                .map(state -> StateCommand.buildCommandState(state))
+                .collect(Collectors.toList());
+    }
+
 
     private void loadProductCommandsToMap(Map model) {
         List<ProductCommand> productCommands = productDao.buildCommandProductList();
