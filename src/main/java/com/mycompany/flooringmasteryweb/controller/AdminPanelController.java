@@ -12,7 +12,7 @@ import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
-import com.mycompany.flooringmasteryweb.utilities.ControllerUtilites;
+import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -59,7 +59,7 @@ public class AdminPanelController {
     }
   
     private List<StateCommand> stateList() {
-        return ControllerUtilites.stateList(stateDao);
+        return ControllerUtilities.stateList(stateDao);
     }
 
     private List<ProductCommand> productCommandList() {

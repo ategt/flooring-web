@@ -14,7 +14,7 @@ import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
-import com.mycompany.flooringmasteryweb.utilities.ControllerUtilites;
+import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,11 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  *
@@ -45,9 +49,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/orders")
 public class OrdersController {
 
-    ProductDao productDao;
-    StateDao stateDao;
-    OrderDao orderDao;
+    private ProductDao productDao;
+    private StateDao stateDao;
+    private OrderDao orderDao;
+    
+    private final String RESULTS_COOKIE_NAME = "results_cookie";
+    private final String SORT_COOKIE_NAME = "sort_cookie";
 
     @Inject
     public OrdersController(
@@ -61,13 +68,34 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(Map model) {
+    public List<Order> index(
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
+            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            UriComponentsBuilder uriComponentsBuilder,
+            HttpServletResponse response,
+            HttpServletRequest request,
+            Map model) {
+        
+        return orderDao.list(resultSegment);       
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public String index(
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
+            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            UriComponentsBuilder uriComponentsBuilder,
+            HttpServletResponse response,
+            HttpServletRequest request) {
+
         loadOrdersToMap(model);
-        ControllerUtilites.loadStateCommandsToMap(stateDao, model);
-        loadProductCommandsToMap(model);
-
-        putBlankOrder(model);
-
+        
         return "order\\index";
     }
 

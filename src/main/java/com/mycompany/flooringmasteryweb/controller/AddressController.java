@@ -11,6 +11,7 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -71,7 +72,7 @@ public class AddressController {
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
 
-        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model);
+        ControllerUtilities.generatePagingLinks(addressDao.size(), resultProperties, request, uriComponentsBuilder, model);
 
         model.put("addresses", addresses);
         return "address\\index";
@@ -169,11 +170,6 @@ public class AddressController {
         return "address\\edit";
     }
 
-    private void loadAddress(Integer contactId, Map model) {
-        Address address = addressDao.get(contactId);
-        model.put("address", address);
-    }
-
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
     public String update(@PathVariable("id") Integer contactId, @ModelAttribute Address address, Map model, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -193,75 +189,6 @@ public class AddressController {
             addressDao.update(address);
             return "redirect:/address/" + address.getId();
         }
-    }
-
-    private ResultProperties processResultPropertiesWithContextDefaults(
-            Integer resultsPerPage,
-            Integer resultsPerPageCookie,
-            Integer page,
-            String sortBy,
-            HttpServletResponse response,
-            String sortCookie
-    ) throws BeansException {
-
-        resultsPerPage = loadDefaultResults(resultsPerPage, resultsPerPageCookie);
-        page = loadDefaultPageNumber(page);
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return resultProperties;
-    }
-
-    private ResultProperties processResultPropertiesWithAllAsDefault(
-            String sortBy,
-            HttpServletResponse response,
-            String sortCookie,
-            Integer page,
-            Integer resultsPerPage,
-            Integer resultsPerPageCookie) {
-
-        resultsPerPage = loadDefaultResults(resultsPerPage, resultsPerPageCookie);
-        page = loadDefaultPageNumber(page);
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return resultProperties;
-    }
-
-    private ResultProperties processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
-        AddressSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
-
-        ResultProperties resultProperties = new ResultProperties(sortEnum, page, resultsPerPage);
-
-        updateResultsCookie(resultProperties.getResultsPerPage(), response);
-        return resultProperties;
-    }
-
-    private AddressSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, String sortCookie) {
-        sortBy = checkForReverseRequest(sortBy, sortCookie);
-
-        if (sortBy != null) {
-            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
-        } else if (sortCookie != null) {
-            sortBy = sortCookie;
-        }
-
-        return AddressSortByEnum.parse(sortBy);
-    }
-
-    private String checkForReverseRequest(String sortBy, String sortCookie) {
-        if (Objects.nonNull(sortBy)) {
-            AddressSortByEnum sortOld = AddressSortByEnum.parse(sortCookie);
-            AddressSortByEnum sortNew = AddressSortByEnum.parse(sortBy);
-            
-            if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
-                sortBy = sortOld.reverse().toString();
-            }
-        }
-        return sortBy;
-    }
-
-    private Integer updateResultsCookie(Integer resultsPerPage, HttpServletResponse response) {
-        if (resultsPerPage != null) {
-            response.addCookie(new Cookie(RESULTS_COOKIE_NAME, Integer.toString(resultsPerPage)));
-        }
-        return resultsPerPage;
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = {"Content-type=application/json", "Accept=application/json"})
@@ -317,7 +244,7 @@ public class AddressController {
 
         List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
 
-        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+        ControllerUtilities.generatePagingLinks(addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 
@@ -348,16 +275,11 @@ public class AddressController {
             addresses = searchDatabase(addressSearchRequest, resultProperties);
         }
 
-        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+        ControllerUtilities.generatePagingLinks(addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 
         return "address\\search";
-    }
-
-    private List<Address> searchDatabase(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
-        return addressDao.search(searchRequest,
-                resultProperties);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -400,93 +322,82 @@ public class AddressController {
         }
     }
 
-    private Integer loadDefaultPageNumber(Integer page) throws BeansException {
-        if (page == null) {
-            int defaultStartingPage = ctx.getBean("defaultStartingPage", Integer.class);
-            page = defaultStartingPage;
-        }
-        return page;
+    private ResultProperties processResultPropertiesWithContextDefaults(
+            Integer resultsPerPage,
+            Integer resultsPerPageCookie,
+            Integer page,
+            String sortBy,
+            HttpServletResponse response,
+            String sortCookie
+    ) throws BeansException {
+
+        resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return resultProperties;
     }
 
-    private Integer loadDefaultResults(Integer resultsPerPage, Integer resultsPerPageCookie) throws BeansException {
-        if (resultsPerPage == null) {
-            if (resultsPerPageCookie == null) {
-                int defaultResultsPerPage = ctx.getBean("defaultResultsPerPage", Integer.class);
-                resultsPerPage = defaultResultsPerPage;
-            } else {
-                resultsPerPage = resultsPerPageCookie;
+    private ResultProperties processResultPropertiesWithAllAsDefault(
+            String sortBy,
+            HttpServletResponse response,
+            String sortCookie,
+            Integer page,
+            Integer resultsPerPage,
+            Integer resultsPerPageCookie) {
+
+        resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
+        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return resultProperties;
+    }
+
+    private ResultProperties processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+        AddressSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
+
+        ResultProperties resultProperties = new ResultProperties(sortEnum, page, resultsPerPage);
+
+        updateResultsCookie(resultProperties.getResultsPerPage(), response);
+        return resultProperties;
+    }
+
+    private AddressSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, String sortCookie) {
+        sortBy = checkForReverseRequest(sortBy, sortCookie);
+
+        if (sortBy != null) {
+            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
+        } else if (sortCookie != null) {
+            sortBy = sortCookie;
+        }
+
+        return AddressSortByEnum.parse(sortBy);
+    }
+
+    private static String checkForReverseRequest(String sortBy, String sortCookie) {
+        if (Objects.nonNull(sortBy)) {
+            AddressSortByEnum sortOld = AddressSortByEnum.parse(sortCookie);
+            AddressSortByEnum sortNew = AddressSortByEnum.parse(sortBy);
+
+            if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
+                sortBy = sortOld.reverse().toString();
             }
+        }
+        return sortBy;
+    }
+
+    private Integer updateResultsCookie(Integer resultsPerPage, HttpServletResponse response) {
+        if (resultsPerPage != null) {
+            response.addCookie(new Cookie(RESULTS_COOKIE_NAME, Integer.toString(resultsPerPage)));
         }
         return resultsPerPage;
     }
 
-    private void generatePagingLinks(ResultProperties resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
-        generatePagingLinks(resultProperties, request, uriComponentsBuilder, model, null);
+    private void loadAddress(Integer contactId, Map model) {
+        Address address = addressDao.get(contactId);
+        model.put("address", address);
     }
 
-    private void generatePagingLinks(
-            ResultProperties resultProperties,
-            HttpServletRequest request,
-            UriComponentsBuilder uriComponentsBuilder,
-            Map model,
-            AddressSearchRequest addressSearchRequest) {
-
-        int totalAddresses = addressDao.size(addressSearchRequest);
-        int totalPages = totalAddresses / resultProperties.getResultsPerPage();
-        int page = resultProperties.getPageNumber();
-
-        String query = request.getQueryString();
-        uriComponentsBuilder.query(query);
-        String uri = request.getRequestURI();
-
-        if (addressSearchRequest != null) {
-            AddressSearchByOptionEnum addressSearchByOptionEnum = addressSearchRequest.searchBy();
-            uriComponentsBuilder
-                    .replaceQueryParam("searchBy", addressSearchByOptionEnum.value());
-
-            String searchQuery = addressSearchRequest.getSearchText();
-            uriComponentsBuilder
-                    .replaceQueryParam("searchText", searchQuery);
-        }
-
-        boolean displayFirstPage = page > 0;
-        if (displayFirstPage) {
-            String firstQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", 0)
-                    .build()
-                    .getQuery();
-            model.put("first_link", firstQuery);
-        }
-
-        boolean displayPreviousPage = page > 0;
-        if (displayPreviousPage) {
-            String prevQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", page - 1)
-                    .build()
-                    .getQuery();
-            model.put("prev_link", prevQuery);
-        }
-
-        boolean displayNextPage = page < totalPages;
-        if (displayNextPage) {
-            String nextQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", page + 1)
-                    .build()
-                    .getQuery();
-            model.put("next_link", nextQuery);
-        }
-
-        boolean displayLastPage = page < totalPages;
-        if (displayLastPage) {
-            String lastQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", totalPages)
-                    .build()
-                    .getQuery();
-            model.put("last_link", lastQuery);
-        }
-
-        if (displayNextPage && displayPreviousPage) {
-            model.put("current_page", page);
-        }
+    private List<Address> searchDatabase(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
+        return addressDao.search(searchRequest,
+                resultProperties);
     }
 }

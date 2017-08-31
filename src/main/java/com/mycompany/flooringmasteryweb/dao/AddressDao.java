@@ -17,7 +17,7 @@ import java.util.Set;
  *
  * @author ATeg
  */
-public interface AddressDao {
+public interface AddressDao extends sizableDao {
     
     public Address create(Address address);
     public void update(Address address);
@@ -26,7 +26,6 @@ public interface AddressDao {
     public Address getByCompany(String company);
     public Address delete(Integer id);
 
-    public int size();
     public int size(AddressSearchRequest addressSearchRequest);
     
     public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties);
