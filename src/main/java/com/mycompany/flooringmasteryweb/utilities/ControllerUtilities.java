@@ -13,7 +13,9 @@ import com.mycompany.flooringmasteryweb.dto.ValueEnum;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -58,11 +60,19 @@ public class ControllerUtilities {
         return resultsPerPage;
     }
 
-    public static void generatePagingLinks(int totalItems, ResultSegement resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
-        generatePagingLinks(totalItems, resultProperties, request, uriComponentsBuilder, model, null);
+    public static Integer updateResultsCookie(Integer resultsPerPage, String resultCookieName, HttpServletResponse response) {
+        if (resultsPerPage != null && resultsPerPage > 0) {
+            response.addCookie(new Cookie(resultCookieName, Integer.toString(resultsPerPage)));
+        }
+        return resultsPerPage;
+    }
+
+    public static void generatePagingLinks(ApplicationContext ctx, int totalItems, ResultSegement resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
+        generatePagingLinks(ctx, totalItems, resultProperties, request, uriComponentsBuilder, model, null);
     }
 
     public static void generatePagingLinks(
+            ApplicationContext ctx,
             int totalItems,
             ResultSegement resultProperties,
             HttpServletRequest request,
@@ -72,7 +82,14 @@ public class ControllerUtilities {
     ) {
 
         int totalAddresses = totalItems;
-        int totalPages = totalAddresses / resultProperties.getResultsPerPage();
+
+        int resultsPerPage = resultProperties.getResultsPerPage();
+
+        if (resultsPerPage < 1) {
+            resultsPerPage = ctx.getBean("defaultResultsPerPage", Integer.class);
+        }
+        
+        int totalPages = totalAddresses / resultsPerPage;
         int page = resultProperties.getPageNumber();
 
         String query = request.getQueryString();

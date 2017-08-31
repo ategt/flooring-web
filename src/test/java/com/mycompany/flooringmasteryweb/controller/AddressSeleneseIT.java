@@ -96,6 +96,23 @@ public class AddressSeleneseIT {
     }
 
     @Test
+    public void listWithZeroTest() throws MalformedURLException, IOException {
+        System.out.println("List Test");
+
+        WebClient webClient = new WebClient();
+
+        HttpUrl httpUrl = getAddressUrlBuilder()
+                .addPathSegment("")
+                .addQueryParameter("results", Integer.toString(0))
+                .build();
+
+        HtmlPage htmlPage = webClient.getPage(httpUrl.url());
+
+        String title = htmlPage.getTitleText();
+        assertEquals(title, "Address Book");
+    }
+
+    @Test
     public void testSearch() throws IOException {
         System.out.println("Search Test");
 

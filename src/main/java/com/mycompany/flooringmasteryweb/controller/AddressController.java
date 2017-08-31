@@ -72,7 +72,7 @@ public class AddressController {
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
 
-        ControllerUtilities.generatePagingLinks(addressDao.size(), resultProperties, request, uriComponentsBuilder, model);
+        ControllerUtilities.generatePagingLinks(ctx, addressDao.size(), resultProperties, request, uriComponentsBuilder, model);
 
         model.put("addresses", addresses);
         return "address\\index";
@@ -244,7 +244,7 @@ public class AddressController {
 
         List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
 
-        ControllerUtilities.generatePagingLinks(addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+        ControllerUtilities.generatePagingLinks(ctx, addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 
@@ -275,7 +275,7 @@ public class AddressController {
             addresses = searchDatabase(addressSearchRequest, resultProperties);
         }
 
-        ControllerUtilities.generatePagingLinks(addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+        ControllerUtilities.generatePagingLinks(ctx, addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 

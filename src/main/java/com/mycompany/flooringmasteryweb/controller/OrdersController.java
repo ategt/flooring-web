@@ -121,7 +121,7 @@ public class OrdersController {
                 response,
                 sortCookie);
 
-        ControllerUtilities.generatePagingLinks(orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
+        ControllerUtilities.generatePagingLinks(ctx, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
 
         loadOrdersToMap(model, resultSegment);
 
@@ -441,7 +441,7 @@ public class OrdersController {
 
         ResultSegement resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
 
-        updateResultsCookie(resultProperties.getResultsPerPage(), response);
+        ControllerUtilities.updateResultsCookie(resultProperties.getResultsPerPage(), RESULTS_COOKIE_NAME, response);
         return resultProperties;
     }
 
@@ -468,14 +468,7 @@ public class OrdersController {
         }
         return sortBy;
     }
-
-    private Integer updateResultsCookie(Integer resultsPerPage, HttpServletResponse response) {
-        if (resultsPerPage != null) {
-            response.addCookie(new Cookie(RESULTS_COOKIE_NAME, Integer.toString(resultsPerPage)));
-        }
-        return resultsPerPage;
-    }
-
+    
     private void loadOrder(Integer contactId, Map model) {
         Order address = orderDao.get(contactId);
         model.put("address", address);
