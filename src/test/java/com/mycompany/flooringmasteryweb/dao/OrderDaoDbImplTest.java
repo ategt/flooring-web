@@ -2091,20 +2091,17 @@ public class OrderDaoDbImplTest {
         testOrder.setArea(area);
 
         assertNotNull(returnedOrder);
-        //assertEquals(returnedOrder, testOrder);
 
         Order firstTestOrder = returnedOrder;
         Order secondTestOrder = testOrder;
         
         assertTrue(Objects.equals(firstTestOrder.getArea(), secondTestOrder.getArea()));
         assertEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
-        //assertTrue(Objects.equals(returnedOrder.getDate(), testOrder.getDate()));
         assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
         assertEquals(firstTestOrder.getDate().getYear(), secondTestOrder.getDate().getYear());
         assertEquals(firstTestOrder.getDate().getMonth(), secondTestOrder.getDate().getMonth());
         assertTrue(Objects.equals(firstTestOrder.getId(), secondTestOrder.getId()));
         assertEquals(firstTestOrder.getLaborCost(), secondTestOrder.getLaborCost(), 0.01);
-        //assertTrue(Objects.equals(returnedOrder.getLaborCostPerSquareFoot(), testOrder.getLaborCostPerSquareFoot()));
         assertEquals(firstTestOrder.getLaborCostPerSquareFoot(), secondTestOrder.getLaborCostPerSquareFoot(), 0.01);
         assertEquals(firstTestOrder.getMaterialCost(), secondTestOrder.getMaterialCost(), 0.01);
         assertTrue(Objects.equals(firstTestOrder.getName(), secondTestOrder.getName()));
@@ -2148,7 +2145,6 @@ public class OrderDaoDbImplTest {
         assertEquals(firstTestOrder.getTotal(), secondTestOrder.getTotal(), 0.01);
         assertEquals(firstTestOrder.getProduct(), secondTestOrder.getProduct());
         
-        //assertEquals(updatedOrder, returnedOrder);
         assertNotEquals(premodifiedOrder, updatedOrder);
         
         firstTestOrder = premodifiedOrder;
