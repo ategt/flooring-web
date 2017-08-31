@@ -7,6 +7,8 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.State;
 import java.util.Date;
@@ -37,12 +39,13 @@ public class OrderDaoTimingDummy implements OrderDao {
     }
 
     @Override
-    public void delete(Order order) {
+    public Order delete(Order order) {
         try {
             Thread.sleep(timeToSleep);
         } catch (InterruptedException ex) {
             Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
 
     @Override
@@ -141,12 +144,13 @@ public class OrderDaoTimingDummy implements OrderDao {
     }
 
     @Override
-    public void update(Order order) {
+    public Order update(Order order) {
         try {
             Thread.sleep(timeToSleep);
         } catch (InterruptedException ex) {
             Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
 
     @Override
@@ -161,6 +165,31 @@ public class OrderDaoTimingDummy implements OrderDao {
 
     @Override
     public Order orderBuilder(OrderCommand basicOrder) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Order> list(OrderResultSegment resultSegment) {
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Order> search(OrderSearchRequest searchRequest, OrderResultSegment resultSegment) {
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }
