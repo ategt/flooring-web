@@ -89,7 +89,7 @@ public class OrdersController {
             HttpServletResponse response,
             HttpServletRequest request
     ) {
-        
+
         ResultSegement resultSegment = processResultPropertiesWithAllAsDefault(
                 sortBy,
                 response,
@@ -97,7 +97,7 @@ public class OrdersController {
                 page,
                 resultsPerPage,
                 resultsPerPageCookie);
-        
+
         return orderDao.list(resultSegment);
     }
 
@@ -113,7 +113,17 @@ public class OrdersController {
             HttpServletRequest request,
             Map model) {
 
-        loadOrdersToMap(model);
+        ResultSegement resultSegment = processResultPropertiesWithContextDefaults(
+                resultsPerPage,
+                resultsPerPageCookie,
+                page,
+                sortBy,
+                response,
+                sortCookie);
+
+        ControllerUtilities.generatePagingLinks(orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
+
+        loadOrdersToMap(model, resultSegment);
 
         return "order\\index";
     }
@@ -380,8 +390,8 @@ public class OrdersController {
         return "order\\search";
     }
 
-    private void loadOrdersToMap(Map model) {
-        List<Order> orders = orderDao.getList();
+    private void loadOrdersToMap(Map model, ResultSegement resultSegment) {
+        List<Order> orders = orderDao.list(resultSegment);
         model.put("orders", orders);
     }
 
