@@ -12,7 +12,7 @@ import java.util.Optional;
  **
  * @author ATeg
  */
-public enum AddressSearchByOptionEnum {
+public enum AddressSearchByOptionEnum implements ValueEnum {
     LAST_NAME("searchByLastName"),
     FIRST_NAME("searchByFirstName"),
     FULL_NAME("searchByFullName"),
@@ -35,6 +35,7 @@ public enum AddressSearchByOptionEnum {
         this.searchString = searchString;
     }
 
+    @Override
     public String value() {
         return searchString;
     }

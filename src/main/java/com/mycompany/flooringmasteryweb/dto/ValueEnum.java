@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.flooringmasteryweb.dao;
+package com.mycompany.flooringmasteryweb.dto;
 
 /**
  *
  * @author ATeg
  */
-public interface sizableDao {
+public interface ValueEnum {
 
-    int size();
+    String value();
     
 }

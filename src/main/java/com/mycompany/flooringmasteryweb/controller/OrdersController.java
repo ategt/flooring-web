@@ -10,8 +10,12 @@ import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
+import com.mycompany.flooringmasteryweb.dto.ResultSegement;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
@@ -23,10 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -52,7 +59,9 @@ public class OrdersController {
     private ProductDao productDao;
     private StateDao stateDao;
     private OrderDao orderDao;
-    
+
+    private ApplicationContext ctx;
+
     private final String RESULTS_COOKIE_NAME = "results_cookie";
     private final String SORT_COOKIE_NAME = "sort_cookie";
 
@@ -65,10 +74,35 @@ public class OrdersController {
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
+        ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public List<Order> index(
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
+            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            UriComponentsBuilder uriComponentsBuilder,
+            HttpServletResponse response,
+            HttpServletRequest request
+    ) {
+        
+        ResultSegement resultProperties = processResultPropertiesWithAllAsDefault(
+                sortBy,
+                response,
+                sortCookie,
+                page,
+                resultsPerPage,
+                resultsPerPageCookie);
+        
+        return orderDao.list(resultSegment);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public List<Order> index(
+    public String index(
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
@@ -78,24 +112,9 @@ public class OrdersController {
             HttpServletResponse response,
             HttpServletRequest request,
             Map model) {
-        
-        return orderDao.list(resultSegment);       
-    }
-
-    @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
-    @ResponseBody
-    public String index(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
-            UriComponentsBuilder uriComponentsBuilder,
-            HttpServletResponse response,
-            HttpServletRequest request) {
 
         loadOrdersToMap(model);
-        
+
         return "order\\index";
     }
 
@@ -111,10 +130,10 @@ public class OrdersController {
     public String showWithHtml(@PathVariable("id") Integer orderId, Map model, @RequestHeader(value = "Accept", required = true) String acceptHeader) {
         Order order = orderDao.get(orderId);
 
-        if (Objects.isNull(order)){
+        if (Objects.isNull(order)) {
             return "order\\orderNotFound";
         }
-        
+
         OrderCommand orderCommand = orderDao.resolveOrderCommand(order);
 
         model.put("orderCommand", orderCommand);
@@ -273,7 +292,7 @@ public class OrdersController {
 
         return "order\\index";
     }
-    
+
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@ModelAttribute OrderCommand basicOrder) {
         Order order = orderDao.orderBuilder(basicOrder);
@@ -376,5 +395,84 @@ public class OrdersController {
         orderCommand.setId(0);
 
         model.put("orderCommand", orderCommand);
+    }
+
+    private ResultSegement processResultPropertiesWithContextDefaults(
+            Integer resultsPerPage,
+            Integer resultsPerPageCookie,
+            Integer page,
+            String sortBy,
+            HttpServletResponse response,
+            String sortCookie
+    ) throws BeansException {
+
+        resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
+        ResultSegement resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return resultProperties;
+    }
+
+    private ResultSegement processResultPropertiesWithAllAsDefault(
+            String sortBy,
+            HttpServletResponse response,
+            String sortCookie,
+            Integer page,
+            Integer resultsPerPage,
+            Integer resultsPerPageCookie) {
+
+        resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
+        ResultSegement resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return resultProperties;
+    }
+
+    private ResultSegement processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+        OrderSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
+
+        ResultSegement resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
+
+        updateResultsCookie(resultProperties.getResultsPerPage(), response);
+        return resultProperties;
+    }
+
+    private OrderSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, String sortCookie) {
+        sortBy = checkForReverseRequest(sortBy, sortCookie);
+
+        if (sortBy != null) {
+            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
+        } else if (sortCookie != null) {
+            sortBy = sortCookie;
+        }
+
+        return OrderSortByEnum.parse(sortBy);
+    }
+
+    private static String checkForReverseRequest(String sortBy, String sortCookie) {
+        if (Objects.nonNull(sortBy)) {
+            OrderSortByEnum sortOld = OrderSortByEnum.parse(sortCookie);
+            OrderSortByEnum sortNew = OrderSortByEnum.parse(sortBy);
+
+            if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
+                sortBy = sortOld.reverse().toString();
+            }
+        }
+        return sortBy;
+    }
+
+    private Integer updateResultsCookie(Integer resultsPerPage, HttpServletResponse response) {
+        if (resultsPerPage != null) {
+            response.addCookie(new Cookie(RESULTS_COOKIE_NAME, Integer.toString(resultsPerPage)));
+        }
+        return resultsPerPage;
+    }
+
+    private void loadOrder(Integer contactId, Map model) {
+        Order address = orderDao.get(contactId);
+        model.put("address", address);
+    }
+
+    private List<Order> searchDatabase(OrderSearchRequest searchRequest, OrderResultSegment resultProperties) {
+        return orderDao.search(searchRequest,
+                resultProperties);
     }
 }

@@ -1,11 +1,12 @@
 package com.mycompany.flooringmasteryweb.dto;
 
-public class OrderResultSegment {
+public class OrderResultSegment implements ResultSegement {
+
     private final Integer pageNumber;
     private final Integer resultsPerPage;
     private final OrderSortByEnum sortByEnum;
 
-    public OrderResultSegment(OrderSortByEnum orderSortByEnum, Integer resultsPerPage, Integer pageNumber){
+    public OrderResultSegment(OrderSortByEnum orderSortByEnum, Integer resultsPerPage, Integer pageNumber) {
         this.pageNumber = pageNumber;
         this.resultsPerPage = resultsPerPage;
         this.sortByEnum = orderSortByEnum;
@@ -30,5 +31,5 @@ public class OrderResultSegment {
      */
     public OrderSortByEnum getSortByEnum() {
         return sortByEnum;
-    }    
+    }
 }

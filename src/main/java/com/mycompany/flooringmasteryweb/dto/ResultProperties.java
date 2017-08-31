@@ -9,7 +9,7 @@ package com.mycompany.flooringmasteryweb.dto;
  *
  * @author ATeg
  */
-public class ResultProperties {
+public class ResultProperties implements ResultSegement {
 
     private final Integer pageNumber;
     private final Integer resultsPerPage;
@@ -28,6 +28,7 @@ public class ResultProperties {
     /**
      * @return the pageNumber
      */
+    @Override
     public Integer getPageNumber() {
         return pageNumber;
     }
@@ -35,13 +36,14 @@ public class ResultProperties {
     /**
      * @return the resultsPerPage
      */
+    @Override
     public Integer getResultsPerPage() {
         return resultsPerPage;
     }
 
     /**
      * @return the sortByEnum
-     */
+     */    
     public AddressSortByEnum getSortByEnum() {
         return sortByEnum;
     }

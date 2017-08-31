@@ -9,7 +9,7 @@ package com.mycompany.flooringmasteryweb.dto;
  *
  * @author ATeg
  */
-public class AddressSearchRequest {
+public class AddressSearchRequest implements SearchRequest {
 
     private AddressSearchByOptionEnum searchBy;
     private String searchText;
@@ -34,6 +34,7 @@ public class AddressSearchRequest {
         return searchBy.value();
     }
 
+    @Override
     public AddressSearchByOptionEnum searchBy() {
         return searchBy;
     }
@@ -52,6 +53,7 @@ public class AddressSearchRequest {
     /**
      * @return the searchText
      */
+    @Override
     public String getSearchText() {
         return searchText;
     }
@@ -59,6 +61,7 @@ public class AddressSearchRequest {
     /**
      * @param searchText the searchText to set
      */
+    @Override
     public void setSearchText(String searchText) {
         this.searchText = searchText;
     }

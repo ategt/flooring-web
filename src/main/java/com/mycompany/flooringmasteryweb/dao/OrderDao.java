@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author apprentice
  */
-public interface OrderDao {
+public interface OrderDao extends SizeableDao{
 
     Order get(Integer id);
     Order create(Order order);

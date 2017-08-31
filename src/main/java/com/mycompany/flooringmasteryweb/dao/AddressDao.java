@@ -17,7 +17,7 @@ import java.util.Set;
  *
  * @author ATeg
  */
-public interface AddressDao extends sizableDao {
+public interface AddressDao extends SizeableDao {
     
     public Address create(Address address);
     public void update(Address address);

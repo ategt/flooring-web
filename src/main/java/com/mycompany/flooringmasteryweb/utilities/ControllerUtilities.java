@@ -6,11 +6,10 @@
 package com.mycompany.flooringmasteryweb.utilities;
 
 import com.mycompany.flooringmasteryweb.dao.StateDao;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.ResultProperties;
-import com.mycompany.flooringmasteryweb.dto.State;
+import com.mycompany.flooringmasteryweb.dto.ResultSegement;
+import com.mycompany.flooringmasteryweb.dto.SearchRequest;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
+import com.mycompany.flooringmasteryweb.dto.ValueEnum;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,17 +58,17 @@ public class ControllerUtilities {
         return resultsPerPage;
     }
 
-    public static void generatePagingLinks(int totalItems, ResultProperties resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
+    public static void generatePagingLinks(int totalItems, ResultSegement resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
         generatePagingLinks(totalItems, resultProperties, request, uriComponentsBuilder, model, null);
     }
 
     public static void generatePagingLinks(
             int totalItems,
-            ResultProperties resultProperties,
+            ResultSegement resultProperties,
             HttpServletRequest request,
             UriComponentsBuilder uriComponentsBuilder,
             Map model,
-            AddressSearchRequest addressSearchRequest
+            SearchRequest addressSearchRequest
     ) {
 
         int totalAddresses = totalItems;
@@ -81,9 +80,9 @@ public class ControllerUtilities {
         String uri = request.getRequestURI();
 
         if (addressSearchRequest != null) {
-            AddressSearchByOptionEnum addressSearchByOptionEnum = addressSearchRequest.searchBy();
+            ValueEnum valueEnum = addressSearchRequest.searchBy();
             uriComponentsBuilder
-                    .replaceQueryParam("searchBy", addressSearchByOptionEnum.value());
+                    .replaceQueryParam("searchBy", valueEnum.value());
 
             String searchQuery = addressSearchRequest.getSearchText();
             uriComponentsBuilder
