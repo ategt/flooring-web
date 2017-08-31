@@ -10,8 +10,10 @@ import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
 import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import com.mycompany.flooringmasteryweb.dto.ResultSegement;
 import com.mycompany.flooringmasteryweb.dto.State;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +31,7 @@ public interface OrderDao extends SizeableDao{
 
     @Deprecated
     List<Order> getList();
-    List<Order> list(OrderResultSegment resultSegment);
+    List<Order> list(ResultSegement<OrderSortByEnum> resultSegment);
     
     List<Date> listOrderDates();
     List<Integer> listOrderNumbers();

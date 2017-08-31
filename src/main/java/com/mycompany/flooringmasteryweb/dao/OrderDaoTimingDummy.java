@@ -9,7 +9,9 @@ import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
 import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
+import com.mycompany.flooringmasteryweb.dto.ResultSegement;
 import com.mycompany.flooringmasteryweb.dto.State;
 import java.util.Date;
 import java.util.List;
@@ -174,7 +176,7 @@ public class OrderDaoTimingDummy implements OrderDao {
     }
 
     @Override
-    public List<Order> list(OrderResultSegment resultSegment) {
+    public List<Order> list(ResultSegement<OrderSortByEnum> resultSegment) {
         try {
             Thread.sleep(timeToSleep);
         } catch (InterruptedException ex) {

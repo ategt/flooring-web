@@ -12,6 +12,7 @@ import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
+import com.mycompany.flooringmasteryweb.dto.ResultSegement;
 import com.mycompany.flooringmasteryweb.dto.State;
 import static com.mycompany.flooringmasteryweb.utilities.DateUtilities.isSameDay;
 import java.sql.ResultSet;
@@ -174,7 +175,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> list(OrderResultSegment resultSegment) {
+    public List<Order> list(ResultSegement<OrderSortByEnum> resultSegment) {
         return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ORDER_LIST, resultSegment), new OrderMapper());
     }
 
@@ -628,7 +629,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return paginateQuery(sortQuery(query, sortByEnum), page, resultsPerPage);
     }
 
-    private String sortAndPaginateQuery(String query, OrderResultSegment resultProperties) {
+    private String sortAndPaginateQuery(String query, ResultSegement<OrderSortByEnum> resultProperties) {
         if (resultProperties == null) {
             return query;
         }

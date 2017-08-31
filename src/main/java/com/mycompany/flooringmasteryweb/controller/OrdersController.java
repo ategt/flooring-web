@@ -90,7 +90,7 @@ public class OrdersController {
             HttpServletRequest request
     ) {
         
-        ResultSegement resultProperties = processResultPropertiesWithAllAsDefault(
+        ResultSegement resultSegment = processResultPropertiesWithAllAsDefault(
                 sortBy,
                 response,
                 sortCookie,

@@ -9,7 +9,7 @@ package com.mycompany.flooringmasteryweb.dto;
  *
  * @author ATeg
  */
-public interface ResultSegement {
+public interface ResultSegement<T> {
 
     /**
      * @return the pageNumber
@@ -20,5 +20,7 @@ public interface ResultSegement {
      * @return the resultsPerPage
      */
     Integer getResultsPerPage();
+    
+    T getSortByEnum();
 
 }
