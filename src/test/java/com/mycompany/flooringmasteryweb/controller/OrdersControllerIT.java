@@ -23,11 +23,13 @@ import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.Order;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
+import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.dto.Product;
+import com.mycompany.flooringmasteryweb.dto.State;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -35,6 +37,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -68,11 +71,13 @@ public class OrdersControllerIT {
 
     ApplicationContext ctx;
     URI uriToTest;
+    Random random;
 
-    Integer addressCountFromIndex = null;
+    Integer orderCountFromIndex = null;
 
     public OrdersControllerIT() {
         ctx = new ClassPathXmlApplicationContext("integrationTest-Context.xml");
+        random = new Random();
     }
 
     @Before
@@ -98,8 +103,8 @@ public class OrdersControllerIT {
 
         String title = htmlPage.getTitleText();
         assertEquals(title, "Flooring Master");
-    } 
-    
+    }
+
     @Test
     public void searchListTest() throws MalformedURLException, IOException {
         System.out.println("Search List Test");
@@ -114,8 +119,8 @@ public class OrdersControllerIT {
 
         String title = htmlPage.getTitleText();
         assertEquals(title, "Flooring Master");
-    } 
-    
+    }
+
     @Test
     public void listWithZeroTest() throws MalformedURLException, IOException {
         System.out.println("List Test");
@@ -134,54 +139,15 @@ public class OrdersControllerIT {
     }
 
     @Test
-    public void orderFormContainsPopulatedStateAndProductDropdownsTest(){
+    public void orderFormContainsPopulatedStateAndProductDropdownsTest() {
         fail("This is not implemented yet.");
-    }
-    
-    @Test
-    public void testSearch() throws IOException {
-        System.out.println("Search Test");
-
-        HttpUrl httpUrl = getOrdersUrlBuilder()
-                .addPathSegment("search")
-                .build();
-
-        WebClient webClient = new WebClient();
-        webClient.addRequestHeader("Accept", "application/json");
-
-        List<NameValuePair> paramsList = new ArrayList();
-
-        paramsList.add(new NameValuePair("searchText", "bill"));
-        paramsList.add(new NameValuePair("searchBy", "searchByLastName"));
-
-        WebRequest webRequest = new WebRequest(httpUrl.url(), HttpMethod.POST);
-        webRequest.setRequestParameters(paramsList);
-
-        Page page = webClient.getPage(webRequest);
-        WebResponse webResponse = page.getWebResponse();
-        assertEquals(webResponse.getStatusCode(), 200);
-        assertTrue("Web Response Length: " + webResponse.getContentLength() + (webResponse.getContentLength() < 200 ? " - " + webResponse.getContentAsString() : ""), webResponse.getContentLength() > 100);
-
-        if (webResponse.getContentType().equals("application/json")) {
-            String json = webResponse.getContentAsString();
-
-            assertEquals(webResponse.getStatusCode(), 200);
-
-            Gson gson = new GsonBuilder().create();
-
-            Address[] addresses = gson.fromJson(json, Address[].class);
-
-            assertEquals(addresses.length, 1);
-        } else {
-            fail("Response was supposed to be json.");
-        }
     }
 
     @Test
     public void loadIndexPage() throws IOException {
         System.out.println("Load Index Page");
 
-        int minimumAddresses = 200;
+        int minimumOrders = 200;
         Gson gson = new GsonBuilder().create();
 
         // Get Size of Database before creation.
@@ -208,25 +174,25 @@ public class OrdersControllerIT {
             fail("Should have been JSON.");
         }
 
-        for (int i = currentSize; i < minimumAddresses; i++) {
-            Address address = addressGenerator();
-            Assert.assertNotNull(address);
-            Assert.assertNull(address.getId());
+        for (int i = currentSize; i < minimumOrders; i++) {
+            Order order = orderGenerator();
+            Assert.assertNotNull(order);
+            Assert.assertNull(order.getId());
 
             HttpUrl createUrl = getOrdersUrlBuilder()
                     .addPathSegment("")
                     .build();
 
-            WebClient createAddressWebClient = new WebClient();
+            WebClient createOrderWebClient = new WebClient();
 
             //Gson gson = new GsonBuilder().create();
-            String addressJson = gson.toJson(address);
+            String orderJson = gson.toJson(order);
 
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
-            createRequest.setRequestBody(addressJson);
+            createRequest.setRequestBody(orderJson);
             createRequest.setAdditionalHeader("Content-type", "application/json");
 
-            Page createPage = createAddressWebClient.getPage(createRequest);
+            Page createPage = createOrderWebClient.getPage(createRequest);
 
         }
 
@@ -250,16 +216,16 @@ public class OrdersControllerIT {
 
         String title = htmlPage.getTitleText();
         assertEquals(title, "Flooring Master");
-        DomElement addressTable = htmlPage.getElementById("address-table");
+        DomElement orderTable = htmlPage.getElementById("order-table");
 
-        DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
+        DomNodeList<HtmlElement> orderRows = orderTable.getElementsByTagName("tr");
 
-        assertTrue(addressRows.size() > minimumAddresses);
+        assertTrue(orderRows.size() > minimumOrders);
 
-        if (addressCountFromIndex == null) {
-            addressCountFromIndex = addressRows.size();
+        if (orderCountFromIndex == null) {
+            orderCountFromIndex = orderRows.size();
         } else {
-            assertEquals(addressCountFromIndex.intValue(), addressRows.size());
+            assertEquals(orderCountFromIndex.intValue(), orderRows.size());
         }
 
         HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=first_name");
@@ -331,11 +297,11 @@ public class OrdersControllerIT {
 
         String title = htmlPage.getTitleText();
         assertEquals(title, "Flooring Master");
-        DomElement addressTable = htmlPage.getElementById("address-table");
+        DomElement orderTable = htmlPage.getElementById("order-table");
 
-        DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
+        DomNodeList<HtmlElement> orderRows = orderTable.getElementsByTagName("tr");
 
-        assertTrue(addressRows.size() < 200);
+        assertTrue(orderRows.size() < 200);
 
         HtmlAnchor nextPageLink = htmlPage.getAnchorByText("Next Page >");
         String nextHref = nextPageLink.getHrefAttribute();
@@ -389,25 +355,25 @@ public class OrdersControllerIT {
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            Address[] addresses = gson.fromJson(json, Address[].class);
+            Order[] orders = gson.fromJson(json, Order[].class);
 
-            assertTrue(addresses.length > 20);
+            assertTrue(orders.length > 20);
 
-            if (addressCountFromIndex == null) {
-                addressCountFromIndex = addresses.length;
+            if (orderCountFromIndex == null) {
+                orderCountFromIndex = orders.length;
             } else {
-                assertEquals(addressCountFromIndex.intValue(), addresses.length);
+                assertEquals(orderCountFromIndex.intValue(), orders.length);
             }
 
-            assertTrue("An Id Should be Greater Than 4.", Arrays.asList(addresses).stream().anyMatch(address -> address.getId() > 4));
+            assertTrue("An Id Should be Greater Than 4.", Arrays.asList(orders).stream().anyMatch(order -> order.getId() > 4));
         } else {
             fail("Should have been JSON.");
         }
     }
 
     @Test
-    public void verifyJsonAndHtmlIndexHaveSameAddresses() throws IOException {
-        System.out.println("Verify Json And Html Have Same Addresses");
+    public void verifyJsonAndHtmlIndexHaveSameOrders() throws IOException {
+        System.out.println("Verify Json And Html Have Same Orders");
 
         HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
@@ -432,40 +398,35 @@ public class OrdersControllerIT {
         WebResponse htmlResponse = htmlPage.getWebResponse();
         assertEquals(htmlResponse.getStatusCode(), 200);
 
-        Address[] addresses = null;
+        Order[] orders = null;
 
         if (jsonResponse.getContentType().equals("application/json")) {
             String json = jsonResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            addresses = gson.fromJson(json, Address[].class);
+            orders = gson.fromJson(json, Order[].class);
 
-            assertTrue(addresses.length > 20);
+            assertTrue(orders.length > 20);
         } else {
             fail("Should have been JSON.");
         }
 
-        DomElement addressTable = htmlPage.getElementById("address-table");
+        DomElement orderTable = htmlPage.getElementById("order-table");
 
-        DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
+        DomNodeList<HtmlElement> orderRows = orderTable.getElementsByTagName("tr");
 
-        assertNotNull(addresses);
-        assertEquals(addressRows.size(), addresses.length + 1);
+        assertNotNull(orders);
+        assertEquals(orderRows.size(), orders.length + 1);
 
         final String htmlText = htmlPage.asText();
 
-        Arrays.stream(addresses)
-                .forEach((address) -> {
-                    String firstName = address.getFirstName();
-                    if (Objects.nonNull(firstName)) {
-                        assertTrue(htmlText.contains(firstName));
+        Arrays.stream(orders)
+                .forEach((order) -> {
+                    String orderName = order.getName();
+                    if (Objects.nonNull(orderName)) {
+                        assertTrue(htmlText.contains(orderName));
                     }
 
-                    String lastName = address.getLastName();
-                    if (Objects.nonNull(lastName)) {
-                        assertTrue(htmlText.contains(lastName));
-                    }
-
-                    int id = address.getId();
+                    int id = order.getId();
                     assertTrue(htmlText.contains(Integer.toString(id)));
                 });
     }
@@ -486,155 +447,150 @@ public class OrdersControllerIT {
         assertEquals(webResponse.getStatusCode(), 200);
         assertTrue(webResponse.getContentLength() > 100);
 
-        Address[] addresses = null;
+        Order[] orders = null;
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            addresses = gson.fromJson(json, Address[].class);
+            orders = gson.fromJson(json, Order[].class);
 
-            assertTrue(addresses.length > 20);
+            assertTrue(orders.length > 20);
         } else {
             fail("Should have been JSON.");
         }
 
         Random random = new Random();
-        assertNotNull(addresses);
-        int randomAddressPlace = random.nextInt(addresses.length);
+        assertNotNull(orders);
+        int randomOrderPlace = random.nextInt(orders.length);
 
-        Address randomAddress = addresses[randomAddressPlace];
-        Assert.assertNotNull(randomAddress);
+        Order randomOrder = orders[randomOrderPlace];
+        Assert.assertNotNull(randomOrder);
 
-        final int randomAddressId = randomAddress.getId();
+        final int randomOrderId = randomOrder.getId();
 
         HttpUrl showUrl = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(randomAddressId))
+                .addPathSegment(Integer.toString(randomOrderId))
                 .build();
 
-        WebClient showAddressWebClient = new WebClient();
-        showAddressWebClient.addRequestHeader("Accept", "application/json");
+        WebClient showOrderWebClient = new WebClient();
+        showOrderWebClient.addRequestHeader("Accept", "application/json");
 
-        Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
-        WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
-        assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
-        assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 50);
+        Page singleOrderPage = showOrderWebClient.getPage(showUrl.url());
+        WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
+        assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
+        assertTrue("Content Length: " + jsonSingleOrderResponse.getContentLength(), jsonSingleOrderResponse.getContentLength() > 50);
 
-        Address specificAddress = null;
+        Order specificOrder = null;
 
-        if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
-            String json = jsonSingleAddressResponse.getContentAsString();
+        if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
+            String json = jsonSingleOrderResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            specificAddress = gson.fromJson(json, Address.class);
+            specificOrder = gson.fromJson(json, Order.class);
 
-            Assert.assertNotNull(specificAddress);
+            Assert.assertNotNull(specificOrder);
 
-            assertTrue(Arrays.asList(addresses).stream().anyMatch(address -> address.getId() == randomAddressId));
+            assertTrue(Arrays.asList(orders).stream().anyMatch(order -> order.getId() == randomOrderId));
         } else {
             fail("Should have been JSON.");
         }
 
-        Assert.assertNotNull(specificAddress);
-        Assert.assertEquals(specificAddress, randomAddress);
-    }
-
-    private HttpUrl.Builder getOrdersUrlBuilder() {
-        return HttpUrl.get(uriToTest).newBuilder()
-                .addPathSegment("address");
+        Assert.assertNotNull(specificOrder);
+        Assert.assertEquals(specificOrder, randomOrder);
     }
 
     @Test
     public void createTest() throws IOException {
         System.out.println("Create Test");
 
-        Address address = addressGenerator();
-        Assert.assertNotNull(address);
-        Assert.assertNull(address.getId());
+        Order order = orderGenerator();
+        Assert.assertNotNull(order);
+        Assert.assertNull(order.getId());
 
         HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createOrderWebClient = new WebClient();
 
         Gson gson = new GsonBuilder().create();
-        String addressJson = gson.toJson(address);
+        String orderJson = gson.toJson(order);
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
-        createRequest.setRequestBody(addressJson);
+        createRequest.setRequestBody(orderJson);
         createRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page createPage = createAddressWebClient.getPage(createRequest);
+        Page createPage = createOrderWebClient.getPage(createRequest);
 
-        String returnedAddressJson = createPage.getWebResponse().getContentAsString();
+        String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
-        Address addressReturned = gson.fromJson(returnedAddressJson, Address.class);
+        Order orderReturned = gson.fromJson(returnedOrderJson, Order.class);
 
-        Assert.assertNotNull(addressReturned);
-        Integer returnedAddressId = addressReturned.getId();
+        Assert.assertNotNull(orderReturned);
+        Integer returnedOrderId = orderReturned.getId();
 
-        Assert.assertTrue(returnedAddressId > 0);
+        Assert.assertTrue(returnedOrderId > 0);
 
-        address.setId(returnedAddressId);
+        order.setId(returnedOrderId);
 
-        Assert.assertEquals(addressReturned, address);
+        Assert.assertEquals(orderReturned, order);
 
-        int addressId = addressReturned.getId();
+        int orderId = orderReturned.getId();
 
         HttpUrl showUrl = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(addressId))
+                .addPathSegment(Integer.toString(orderId))
                 .build();
 
-        WebClient showAddressWebClient = new WebClient();
-        showAddressWebClient.addRequestHeader("Accept", "application/json");
+        WebClient showOrderWebClient = new WebClient();
+        showOrderWebClient.addRequestHeader("Accept", "application/json");
 
-        Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
-        WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
-        assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
-        assertTrue(jsonSingleAddressResponse.getContentLength() > 50);
+        Page singleOrderPage = showOrderWebClient.getPage(showUrl.url());
+        WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
+        assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
+        assertTrue(jsonSingleOrderResponse.getContentLength() > 50);
 
-        Address specificAddress = null;
+        Order specificOrder = null;
 
-        if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
-            String json = jsonSingleAddressResponse.getContentAsString();
-            specificAddress = gson.fromJson(json, Address.class);
+        if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
+            String json = jsonSingleOrderResponse.getContentAsString();
+            specificOrder = gson.fromJson(json, Order.class);
 
-            Assert.assertNotNull(specificAddress);
+            Assert.assertNotNull(specificOrder);
         } else {
             fail("Should have been JSON.");
         }
 
-        Assert.assertNotNull(specificAddress);
-        Assert.assertEquals(specificAddress, addressReturned);
+        Assert.assertNotNull(specificOrder);
+        Assert.assertEquals(specificOrder, orderReturned);
 
-        Address storedAddress = null;
+        Order storedOrder = null;
 
         HttpUrl showUrl2 = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(addressId))
+                .addPathSegment(Integer.toString(orderId))
                 .build();
 
-        WebClient showAddressWebClient2 = new WebClient();
-        showAddressWebClient2.addRequestHeader("Accept", "application/json");
+        WebClient showOrderWebClient2 = new WebClient();
+        showOrderWebClient2.addRequestHeader("Accept", "application/json");
 
-        Page singleAddressPage2 = showAddressWebClient2.getPage(showUrl2.url());
-        WebResponse jsonSingleAddressResponse2 = singleAddressPage2.getWebResponse();
-        assertEquals(jsonSingleAddressResponse2.getStatusCode(), 200);
-        assertTrue(jsonSingleAddressResponse2.getContentLength() > 50);
+        Page singleOrderPage2 = showOrderWebClient2.getPage(showUrl2.url());
+        WebResponse jsonSingleOrderResponse2 = singleOrderPage2.getWebResponse();
+        assertEquals(jsonSingleOrderResponse2.getStatusCode(), 200);
+        assertTrue(jsonSingleOrderResponse2.getContentLength() > 50);
 
-        if (jsonSingleAddressResponse2.getContentType().equals("application/json")) {
-            String json = jsonSingleAddressResponse2.getContentAsString();
-            storedAddress = gson.fromJson(json, Address.class);
+        if (jsonSingleOrderResponse2.getContentType().equals("application/json")) {
+            String json = jsonSingleOrderResponse2.getContentAsString();
+            storedOrder = gson.fromJson(json, Order.class);
 
-            Assert.assertNotNull(storedAddress);
+            Assert.assertNotNull(storedOrder);
         } else {
             fail("Should have been JSON.");
         }
 
-        assertNotNull(storedAddress);
-        Assert.assertEquals(storedAddress, addressReturned);
+        assertNotNull(storedOrder);
+        Assert.assertEquals(storedOrder, orderReturned);
     }
 
     /**
-     * Test of create method, of class AddressDaoPostgresImpl.
+     * Test of create method, of class OrderDaoPostgresImpl.
      */
     @Test
     public void testCRUD() throws IOException {
@@ -649,7 +605,7 @@ public class OrdersControllerIT {
         String streetNumber = UUID.randomUUID().toString();
         String streetName = UUID.randomUUID().toString();
 
-        Address address = addressBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
+        Order order = orderBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
 
         Gson gson = new GsonBuilder().create();
 
@@ -677,29 +633,29 @@ public class OrdersControllerIT {
             fail("Should have been JSON.");
         }
 
-        // Create Address
+        // Create Order
         HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createOrderWebClient = new WebClient();
 
-        String addressJson = gson.toJson(address);
+        String orderJson = gson.toJson(order);
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
-        createRequest.setRequestBody(addressJson);
+        createRequest.setRequestBody(orderJson);
 
         createRequest.setAdditionalHeader("Accept", "application/json");
         createRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page createPage = createAddressWebClient.getPage(createRequest);
+        Page createPage = createOrderWebClient.getPage(createRequest);
 
-        String returnedAddressJson = createPage.getWebResponse().getContentAsString();
+        String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
-        Address addressReturned = gson.fromJson(returnedAddressJson, Address.class);
+        Order orderReturned = gson.fromJson(returnedOrderJson, Order.class);
 
-        assertNotNull(addressReturned.getId());
-        assertTrue(addressReturned.getId() > 0);
+        assertNotNull(orderReturned.getId());
+        assertTrue(orderReturned.getId() > 0);
 
         // Get Database Size After Creation
         WebClient sizeWebClient2 = new WebClient();
@@ -724,67 +680,67 @@ public class OrdersControllerIT {
         assertNotNull(afterCreation);
         assertEquals(beforeCreation + 1, afterCreation.intValue());
 
-        assertNotNull(addressReturned);
-        assertNotNull(addressReturned.getId());
+        assertNotNull(orderReturned);
+        assertNotNull(orderReturned.getId());
 
-        assertTrue(addressReturned.getId() > 0);
+        assertTrue(orderReturned.getId() > 0);
 
-        // Check that created address is in the Database.
+        // Check that created order is in the Database.
         HttpUrl showUrl = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(addressReturned.getId()))
+                .addPathSegment(Integer.toString(orderReturned.getId()))
                 .build();
 
-        WebClient showAddressWebClient = new WebClient();
-        showAddressWebClient.addRequestHeader("Accept", "application/json");
+        WebClient showOrderWebClient = new WebClient();
+        showOrderWebClient.addRequestHeader("Accept", "application/json");
 
-        Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
-        WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
-        assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
-        assertTrue(jsonSingleAddressResponse.getContentLength() > 50);
+        Page singleOrderPage = showOrderWebClient.getPage(showUrl.url());
+        WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
+        assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
+        assertTrue(jsonSingleOrderResponse.getContentLength() > 50);
 
-        Address specificAddress = null;
+        Order specificOrder = null;
 
-        if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
-            String json = jsonSingleAddressResponse.getContentAsString();
-            specificAddress = gson.fromJson(json, Address.class);
+        if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
+            String json = jsonSingleOrderResponse.getContentAsString();
+            specificOrder = gson.fromJson(json, Order.class);
 
-            Assert.assertNotNull(specificAddress);
+            Assert.assertNotNull(specificOrder);
 
         } else {
             fail("Should have been JSON.");
         }
 
-        Assert.assertNotNull(specificAddress);
+        Assert.assertNotNull(specificOrder);
 
-        assertEquals(addressReturned, specificAddress);
+        assertEquals(orderReturned, specificOrder);
 
         String updatedCity = UUID.randomUUID().toString();
-        addressReturned.setCity(updatedCity);
+        orderReturned.setCity(updatedCity);
 
-        // Update Address With Service PUT endpoint
+        // Update Order With Service PUT endpoint
         HttpUrl updateUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
-        WebClient updateAddressWebClient = new WebClient();
+        WebClient updateOrderWebClient = new WebClient();
 
-        String updatedAddressJson = gson.toJson(addressReturned);
+        String updatedOrderJson = gson.toJson(orderReturned);
 
         WebRequest updateRequest = new WebRequest(updateUrl.url(), HttpMethod.PUT);
-        updateRequest.setRequestBody(updatedAddressJson);
+        updateRequest.setRequestBody(updatedOrderJson);
 
         updateRequest.setAdditionalHeader("Accept", "application/json");
         updateRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page updatePage = updateAddressWebClient.getPage(updateRequest);
+        Page updatePage = updateOrderWebClient.getPage(updateRequest);
 
-        String returnedUpdatedAddressJson = updatePage.getWebResponse().getContentAsString();
+        String returnedUpdatedOrderJson = updatePage.getWebResponse().getContentAsString();
 
-        Address returnedUpdatedAddress = gson.fromJson(returnedUpdatedAddressJson, Address.class);
+        Order returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, Order.class);
 
-        assertEquals(updatedCity, returnedUpdatedAddress.getCity());
+        assertEquals(updatedCity, returnedUpdatedOrder.getCity());
 
-        // Get Address By Company
+        // Get Order By Company
         HttpUrl searchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .build();
@@ -805,25 +761,25 @@ public class OrdersControllerIT {
 
         assertEquals(companySearchPage.getWebResponse().getStatusCode(), 200);
 
-        String companySearchAddressJson = companySearchPage.getWebResponse().getContentAsString();
+        String companySearchOrderJson = companySearchPage.getWebResponse().getContentAsString();
 
-        Address[] returnedCompanySearchAddresses = gson.fromJson(companySearchAddressJson, Address[].class);
+        Order[] returnedCompanySearchOrders = gson.fromJson(companySearchOrderJson, Order[].class);
 
-        assertEquals(returnedCompanySearchAddresses.length, 1);
+        assertEquals(returnedCompanySearchOrders.length, 1);
 
-        Address returnedCompanySearchAddress = returnedCompanySearchAddresses[0];
+        Order returnedCompanySearchOrder = returnedCompanySearchOrders[0];
 
-        assertEquals(returnedUpdatedAddress, returnedCompanySearchAddress);
-        assertEquals(addressReturned, returnedCompanySearchAddress);
-        assertNotEquals(specificAddress, returnedCompanySearchAddress);
+        assertEquals(returnedUpdatedOrder, returnedCompanySearchOrder);
+        assertEquals(orderReturned, returnedCompanySearchOrder);
+        assertNotEquals(specificOrder, returnedCompanySearchOrder);
 
         // Check search using json object.
         WebClient jsonSearchWebClient = new WebClient();
 
-        String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
+        String orderSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
 
         WebRequest searchByCityRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByCityRequest.setRequestBody(addressSearchRequestJson);
+        searchByCityRequest.setRequestBody(orderSearchRequestJson);
 
         searchByCityRequest.setAdditionalHeader("Accept", "application/json");
         searchByCityRequest.setAdditionalHeader("Content-type", "application/json");
@@ -832,27 +788,27 @@ public class OrdersControllerIT {
 
         assertEquals(citySearchPage.getWebResponse().getStatusCode(), 200);
 
-        String citySearchAddressJson = citySearchPage.getWebResponse().getContentAsString();
+        String citySearchOrderJson = citySearchPage.getWebResponse().getContentAsString();
 
-        Address[] returnedCitySearchAddresses = gson.fromJson(citySearchAddressJson, Address[].class);
+        Order[] returnedCitySearchOrders = gson.fromJson(citySearchOrderJson, Order[].class);
 
-        assertEquals(returnedCitySearchAddresses.length, 1);
+        assertEquals(returnedCitySearchOrders.length, 1);
 
-        Address returnedCitySearchAddress = returnedCitySearchAddresses[0];
+        Order returnedCitySearchOrder = returnedCitySearchOrders[0];
 
-        assertEquals(returnedUpdatedAddress, returnedCitySearchAddress);
-        assertEquals(addressReturned, returnedCitySearchAddress);
-        assertNotEquals(specificAddress, returnedCitySearchAddress);
+        assertEquals(returnedUpdatedOrder, returnedCitySearchOrder);
+        assertEquals(orderReturned, returnedCitySearchOrder);
+        assertNotEquals(specificOrder, returnedCitySearchOrder);
 
         // Check search using json object built with my purspective api.
         WebClient jsonSearchWebClient2 = new WebClient();
 
-        AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchByOptionEnum.CITY);
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest(updatedCity, OrderSearchByOptionEnum.CITY);
 
-        String addressSearchRequestJson2 = gson.toJson(addressSearchRequest);
+        String orderSearchRequestJson2 = gson.toJson(orderSearchRequest);
 
         WebRequest searchByCityRequest2 = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByCityRequest2.setRequestBody(addressSearchRequestJson2);
+        searchByCityRequest2.setRequestBody(orderSearchRequestJson2);
 
         searchByCityRequest2.setAdditionalHeader("Accept", "application/json");
         searchByCityRequest2.setAdditionalHeader("Content-type", "application/json");
@@ -861,19 +817,19 @@ public class OrdersControllerIT {
 
         assertEquals(citySearchPage2.getWebResponse().getStatusCode(), 200);
 
-        String citySearchAddressJson2 = citySearchPage2.getWebResponse().getContentAsString();
+        String citySearchOrderJson2 = citySearchPage2.getWebResponse().getContentAsString();
 
-        Address[] returnedCitySearchAddresses2 = gson.fromJson(citySearchAddressJson2, Address[].class);
+        Order[] returnedCitySearchOrders2 = gson.fromJson(citySearchOrderJson2, Order[].class);
 
-        assertEquals(returnedCitySearchAddresses2.length, 1);
+        assertEquals(returnedCitySearchOrders2.length, 1);
 
-        Address returnedCitySearchAddress2 = returnedCitySearchAddresses2[0];
+        Order returnedCitySearchOrder2 = returnedCitySearchOrders2[0];
 
-        assertEquals(returnedUpdatedAddress, returnedCitySearchAddress2);
-        assertEquals(addressReturned, returnedCitySearchAddress2);
-        assertNotEquals(specificAddress, returnedCitySearchAddress2);
+        assertEquals(returnedUpdatedOrder, returnedCitySearchOrder2);
+        assertEquals(orderReturned, returnedCitySearchOrder2);
+        assertNotEquals(specificOrder, returnedCitySearchOrder2);
 
-        assertEquals(returnedCitySearchAddress, returnedCitySearchAddress2);
+        assertEquals(returnedCitySearchOrder, returnedCitySearchOrder2);
 
         // Verify Update Did Not Increase the Size of the Database
         WebClient sizeWebClient3 = new WebClient();
@@ -898,41 +854,41 @@ public class OrdersControllerIT {
         assertNotNull(afterUpdate);
         assertEquals(afterUpdate.intValue(), afterCreation.intValue());
 
-        // Delete the Created Address
-        String addressIdString = Integer.toString(addressReturned.getId());
+        // Delete the Created Order
+        String orderIdString = Integer.toString(orderReturned.getId());
 
         HttpUrl deleteUrl = getOrdersUrlBuilder()
-                .addPathSegment(addressIdString)
+                .addPathSegment(orderIdString)
                 .build();
 
-        WebClient deleteAddressWebClient = new WebClient();
+        WebClient deleteOrderWebClient = new WebClient();
 
         WebRequest deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
 
-        Page deletePage = deleteAddressWebClient.getPage(deleteRequest);
+        Page deletePage = deleteOrderWebClient.getPage(deleteRequest);
 
-        String returnedDeleteAddressJson = deletePage.getWebResponse().getContentAsString();
+        String returnedDeleteOrderJson = deletePage.getWebResponse().getContentAsString();
 
-        Address returnedDeleteAddress = gson.fromJson(returnedDeleteAddressJson, Address.class);
+        Order returnedDeleteOrder = gson.fromJson(returnedDeleteOrderJson, Order.class);
 
-        assertEquals(returnedDeleteAddress, returnedUpdatedAddress);
+        assertEquals(returnedDeleteOrder, returnedUpdatedOrder);
 
-        // Delete The Created Address A Second Time
-        deleteAddressWebClient = new WebClient();
+        // Delete The Created Order A Second Time
+        deleteOrderWebClient = new WebClient();
 
         deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
 
-        deletePage = deleteAddressWebClient.getPage(deleteRequest);
+        deletePage = deleteOrderWebClient.getPage(deleteRequest);
 
-        returnedDeleteAddressJson = deletePage.getWebResponse().getContentAsString();
-        assertEquals(returnedDeleteAddressJson, "");
+        returnedDeleteOrderJson = deletePage.getWebResponse().getContentAsString();
+        assertEquals(returnedDeleteOrderJson, "");
 
-        Address returnedDeleteAddress2 = gson.fromJson(returnedDeleteAddressJson, Address.class);
-        assertNull(returnedDeleteAddress2);
+        Order returnedDeleteOrder2 = gson.fromJson(returnedDeleteOrderJson, Order.class);
+        assertNull(returnedDeleteOrder2);
 
-        assertNotEquals(returnedDeleteAddress, returnedDeleteAddress2);
+        assertNotEquals(returnedDeleteOrder, returnedDeleteOrder2);
 
-        // Verify Address Database Size Has Shrunk By One After Deletion
+        // Verify Order Database Size Has Shrunk By One After Deletion
         WebClient sizeWebClient4 = new WebClient();
         sizeWebClient4.addRequestHeader("Accept", "application/json");
 
@@ -957,27 +913,27 @@ public class OrdersControllerIT {
         assertEquals(beforeCreation.intValue(), afterDeletion.intValue());
         assertEquals(afterCreation - 1, afterDeletion.intValue());
 
-        // Try to Get Deleted Address
+        // Try to Get Deleted Order
         HttpUrl showUrl2 = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(addressReturned.getId()))
+                .addPathSegment(Integer.toString(orderReturned.getId()))
                 .build();
 
-        WebClient showAddressWebClient2 = new WebClient();
-        showAddressWebClient2.addRequestHeader("Accept", "application/json");
+        WebClient showOrderWebClient2 = new WebClient();
+        showOrderWebClient2.addRequestHeader("Accept", "application/json");
 
-        Page singleAddressPage2 = showAddressWebClient2.getPage(showUrl.url());
-        WebResponse jsonSingleAddressResponse2 = singleAddressPage2.getWebResponse();
-        assertEquals(jsonSingleAddressResponse2.getStatusCode(), 200);
-        assertTrue(jsonSingleAddressResponse2.getContentLength() < 50);
+        Page singleOrderPage2 = showOrderWebClient2.getPage(showUrl.url());
+        WebResponse jsonSingleOrderResponse2 = singleOrderPage2.getWebResponse();
+        assertEquals(jsonSingleOrderResponse2.getStatusCode(), 200);
+        assertTrue(jsonSingleOrderResponse2.getContentLength() < 50);
 
-        String contentType = jsonSingleAddressResponse2.getContentType();
+        String contentType = jsonSingleOrderResponse2.getContentType();
         assertEquals(contentType, "");
 
-        String contentString = jsonSingleAddressResponse2.getContentAsString();
+        String contentString = jsonSingleOrderResponse2.getContentAsString();
 
         assertEquals(contentString, "");
 
-        // Get Deleted Address By Company
+        // Get Deleted Order By Company
         WebClient searchWebClient2 = new WebClient();
 
         List<NameValuePair> paramsList2 = new ArrayList();
@@ -993,12 +949,12 @@ public class OrdersControllerIT {
 
         assertEquals(citySearchPage3.getWebResponse().getStatusCode(), 200);
 
-        String citySearchAddressJson3 = citySearchPage3.getWebResponse().getContentAsString();
-        assertEquals(citySearchAddressJson3, "[]");
+        String citySearchOrderJson3 = citySearchPage3.getWebResponse().getContentAsString();
+        assertEquals(citySearchOrderJson3, "[]");
 
-        Address[] returnedCitySearchAddresses3 = gson.fromJson(citySearchAddressJson3, Address[].class);
+        Order[] returnedCitySearchOrders3 = gson.fromJson(citySearchOrderJson3, Order[].class);
 
-        assertEquals(returnedCitySearchAddresses3.length, 0);
+        assertEquals(returnedCitySearchOrders3.length, 0);
 
         // Search for deleted Company by get Search
         HttpUrl searchUrl2 = getOrdersUrlBuilder()
@@ -1006,80 +962,97 @@ public class OrdersControllerIT {
                 .addPathSegment("search")
                 .build();
 
-        WebClient showAddressWebClient3 = new WebClient();
-        showAddressWebClient3.addRequestHeader("Accept", "application/json");
+        WebClient showOrderWebClient3 = new WebClient();
+        showOrderWebClient3.addRequestHeader("Accept", "application/json");
 
-        Page singleAddressPage3 = showAddressWebClient3.getPage(showUrl.url());
-        WebResponse jsonSingleAddressResponse3 = singleAddressPage3.getWebResponse();
-        assertEquals(jsonSingleAddressResponse3.getStatusCode(), 200);
-        assertTrue(jsonSingleAddressResponse3.getContentLength() < 50);
+        Page singleOrderPage3 = showOrderWebClient3.getPage(showUrl.url());
+        WebResponse jsonSingleOrderResponse3 = singleOrderPage3.getWebResponse();
+        assertEquals(jsonSingleOrderResponse3.getStatusCode(), 200);
+        assertTrue(jsonSingleOrderResponse3.getContentLength() < 50);
 
-        String contentType2 = jsonSingleAddressResponse3.getContentType();
+        String contentType2 = jsonSingleOrderResponse3.getContentType();
         assertEquals(contentType2, "");
 
-        String json = jsonSingleAddressResponse3.getContentAsString();
+        String json = jsonSingleOrderResponse3.getContentAsString();
         assertEquals(json, "");
 
-        Address alsoDeleted2 = gson.fromJson(json, Address.class);
+        Order alsoDeleted2 = gson.fromJson(json, Order.class);
 
         Assert.assertNull(alsoDeleted2);
     }
 
-    private Address addressBuilder(String city, String company, String firstName, String lastName, String state, String streetName, String streetNumber, String zip) {
-        Address address = new Address();
-        address.setCity(city);
-        address.setCompany(company);
-        address.setFirstName(firstName);
-        address.setLastName(lastName);
-        address.setState(state);
-        address.setStreetName(streetName);
-        address.setStreetNumber(streetNumber);
-        address.setZip(zip);
-        return address;
+    private Order orderBuilder(String name,
+            double area,
+            double costPerFoot,
+            double laborCost,
+            double laborCostPerFoot,
+            double materialCost,
+            double tax,
+            double taxRate,
+            double total,
+            Date date,
+            Product product,
+            State state) {
+
+        Order order = new Order();
+        order.setArea(area);
+        order.setCostPerSquareFoot(costPerFoot);
+        order.setDate(date);
+        order.setLaborCost(laborCost);
+        order.setLaborCostPerSquareFoot(laborCostPerFoot);
+        order.setMaterialCost(materialCost);
+        order.setName(name);
+        order.setProduct(product);
+        order.setState(state);
+        order.setTax(tax);
+        order.setTaxRate(taxRate);
+        order.setTotal(total);
+
+        return order;
     }
 
     /**
-     * Test of list method, of class AddressDaoPostgresImpl.
+     * Test of list method, of class OrderDaoPostgresImpl.
      */
     @Test
     public void testList() throws IOException {
         System.out.println("list");
 
-        Address address = addressGenerator();
+        Order order = orderGenerator();
 
-        // Create Generated Address
+        // Create Generated Order
         HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createOrderWebClient = new WebClient();
 
         Gson gson = new GsonBuilder().create();
-        String addressJson = gson.toJson(address);
+        String orderJson = gson.toJson(order);
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
-        createRequest.setRequestBody(addressJson);
+        createRequest.setRequestBody(orderJson);
         createRequest.setAdditionalHeader("Accept", "application/json");
         createRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page createdAddressPage = createAddressWebClient.getPage(createRequest);
+        Page createdOrderPage = createOrderWebClient.getPage(createRequest);
 
-        WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
-        assertEquals(createAddressWebResponse.getStatusCode(), 200);
-        assertTrue(createAddressWebResponse.getContentLength() > 100);
+        WebResponse createOrderWebResponse = createdOrderPage.getWebResponse();
+        assertEquals(createOrderWebResponse.getStatusCode(), 200);
+        assertTrue(createOrderWebResponse.getContentLength() > 100);
 
-        Address createdAddress = null;
+        Order createdOrder = null;
 
-        if (createAddressWebResponse.getContentType().equals("application/json")) {
-            String json = createAddressWebResponse.getContentAsString();
-            createdAddress = gson.fromJson(json, Address.class);
+        if (createOrderWebResponse.getContentType().equals("application/json")) {
+            String json = createOrderWebResponse.getContentAsString();
+            createdOrder = gson.fromJson(json, Order.class);
 
-            assertNotNull(createdAddress);
+            assertNotNull(createdOrder);
         } else {
             fail("Should have been JSON.");
         }
 
-        // Get The List Of Addresses
+        // Get The List Of Orders
         HttpUrl getListUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
@@ -1093,15 +1066,15 @@ public class OrdersControllerIT {
         assertEquals(getListWebResponse.getStatusCode(), 200);
         assertTrue(getListWebResponse.getContentLength() > 100);
 
-        List<Address> list = null;
+        List<Order> list = null;
 
         if (getListWebResponse.getContentType().equals("application/json")) {
             String json = getListWebResponse.getContentAsString();
-            Address[] addresses = gson.fromJson(json, Address[].class);
+            Order[] orders = gson.fromJson(json, Order[].class);
 
-            assertTrue(addresses.length > 20);
+            assertTrue(orders.length > 20);
 
-            list = Arrays.asList(addresses);
+            list = Arrays.asList(orders);
         } else {
             fail("Should have been JSON.");
         }
@@ -1134,63 +1107,63 @@ public class OrdersControllerIT {
         Assert.assertNotNull(databaseSize);
         assertEquals(list.size(), databaseSize.intValue());
 
-        assertTrue(list.contains(createdAddress));
-        assertNotEquals(address, createdAddress);
+        assertTrue(list.contains(createdOrder));
+        assertNotEquals(order, createdOrder);
 
-        assertNotNull(createdAddress);
-        Integer createdAddressId = createdAddress.getId();
-        address.setId(createdAddressId);
+        assertNotNull(createdOrder);
+        Integer createdOrderId = createdOrder.getId();
+        order.setId(createdOrderId);
 
-        assertNotNull(createdAddressId);
-        assertEquals(address, createdAddress);
+        assertNotNull(createdOrderId);
+        assertEquals(order, createdOrder);
     }
 
     /**
-     * Test of searchByLastName method, of class AddressDaoPostgresImpl.
+     * Test of searchByLastName method, of class OrderDaoPostgresImpl.
      */
     @Test
     public void testSearchByLastName() throws IOException {
         System.out.println("searchByLastName");
         String lastName = UUID.randomUUID().toString();
 
-        Address address = addressGenerator();
-        address.setLastName(lastName);
+        Order order = orderGenerator();
+        order.setLastName(lastName);
 
-        // Create a Address Using the POST endpoint
+        // Create a Order Using the POST endpoint
         HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createOrderWebClient = new WebClient();
 
         Gson gson = new GsonBuilder().create();
-        String addressJson = gson.toJson(address);
+        String orderJson = gson.toJson(order);
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
-        createRequest.setRequestBody(addressJson);
+        createRequest.setRequestBody(orderJson);
         createRequest.setAdditionalHeader("Accept", "application/json");
         createRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page createdAddressPage = createAddressWebClient.getPage(createRequest);
+        Page createdOrderPage = createOrderWebClient.getPage(createRequest);
 
-        WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
-        assertEquals(createAddressWebResponse.getStatusCode(), 200);
-        assertTrue(createAddressWebResponse.getContentLength() > 100);
+        WebResponse createOrderWebResponse = createdOrderPage.getWebResponse();
+        assertEquals(createOrderWebResponse.getStatusCode(), 200);
+        assertTrue(createOrderWebResponse.getContentLength() > 100);
 
-        Address createdAddress = null;
+        Order createdOrder = null;
 
-        if (createAddressWebResponse.getContentType().equals("application/json")) {
-            String json = createAddressWebResponse.getContentAsString();
-            createdAddress = gson.fromJson(json, Address.class);
+        if (createOrderWebResponse.getContentType().equals("application/json")) {
+            String json = createOrderWebResponse.getContentAsString();
+            createdOrder = gson.fromJson(json, Order.class);
 
-            assertNotNull(createdAddress);
+            assertNotNull(createdOrder);
         } else {
             fail("Should have been JSON.");
         }
 
-        assertNotNull(createdAddress);
+        assertNotNull(createdOrder);
 
-        // Search for created Address.
+        // Search for created Order.
         WebClient searchWebClient = new WebClient();
 
         List<NameValuePair> paramsList = new ArrayList();
@@ -1212,63 +1185,63 @@ public class OrdersControllerIT {
 
         String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
 
-        Address[] returnedAddressList = gson.fromJson(lastNameSearchJson, Address[].class);
+        Order[] returnedOrderList = gson.fromJson(lastNameSearchJson, Order[].class);
 
-        assertEquals(returnedAddressList.length, 1);
+        assertEquals(returnedOrderList.length, 1);
 
-        List<Address> result = Arrays.asList(returnedAddressList);
+        List<Order> result = Arrays.asList(returnedOrderList);
 
         assertNotNull(result);
-        assertTrue(result.contains(createdAddress));
+        assertTrue(result.contains(createdOrder));
         assertEquals(result.size(), 1);
 
-        List<Address> resultb = searchForAddressByLastNameUsingXForm(lastName, gson, searchUrl.url(), "searchByLastName");
+        List<Order> resultb = searchForOrderByLastNameUsingXForm(lastName, gson, searchUrl.url(), "searchByLastName");
 
         assertNotNull(resultb);
-        assertTrue(resultb.contains(createdAddress));
+        assertTrue(resultb.contains(createdOrder));
         assertEquals(resultb.size(), 1);
 
-        List<Address> resultc = searchForAddressByUsingJson(lastName, gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        List<Order> resultc = searchForOrderByUsingJson(lastName, gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
 
         assertNotNull(resultc);
-        assertTrue(resultc.contains(createdAddress));
+        assertTrue(resultc.contains(createdOrder));
         assertEquals(resultc.size(), 1);
 
-        result = searchForAddressByUsingJson(lastName.toLowerCase(), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByUsingJson(lastName.toLowerCase(), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByLastNameUsingXForm(lastName.toLowerCase(), gson, searchUrl.url(), "searchByLastName");
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByLastNameUsingXForm(lastName.toLowerCase(), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByUsingJson(lastName.toUpperCase(), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByUsingJson(lastName.toUpperCase(), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByLastNameUsingXForm(lastName.toUpperCase(), gson, searchUrl.url(), "searchByLastName");
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByLastNameUsingXForm(lastName.toUpperCase(), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByUsingJson(lastName.substring(5), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByUsingJson(lastName.substring(5), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByLastNameUsingXForm(lastName.substring(5), gson, searchUrl.url(), "searchByLastName");
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByLastNameUsingXForm(lastName.substring(5), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByUsingJson(lastName.substring(5, 20), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByUsingJson(lastName.substring(5, 20), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20), gson, searchUrl.url(), "searchByLastName");
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByUsingJson(lastName.substring(5, 20).toLowerCase(), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByUsingJson(lastName.substring(5, 20).toLowerCase(), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20).toLowerCase(), gson, searchUrl.url(), "searchByLastName");
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20).toLowerCase(), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByUsingJson(lastName.substring(5, 20).toUpperCase(), gson, AddressSearchByOptionEnum.LAST_NAME, searchUrl.url());
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByUsingJson(lastName.substring(5, 20).toUpperCase(), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        assertTrue(result.contains(createdOrder));
 
-        result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20).toUpperCase(), gson, searchUrl.url(), "searchByLastName");
-        assertTrue(result.contains(createdAddress));
+        result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20).toUpperCase(), gson, searchUrl.url(), "searchByLastName");
+        assertTrue(result.contains(createdOrder));
 
         searchWebClient = new WebClient();
 
@@ -1281,39 +1254,39 @@ public class OrdersControllerIT {
 
         String title = lastNameSearchHtmlPage.getTitleText();
         assertEquals(title, "Flooring Master");
-        DomElement addressTable = lastNameSearchHtmlPage.getElementById("address-table");
+        DomElement orderTable = lastNameSearchHtmlPage.getElementById("order-table");
 
-        DomNodeList<HtmlElement> tableRows = addressTable.getElementsByTagName("tr");
+        DomNodeList<HtmlElement> tableRows = orderTable.getElementsByTagName("tr");
 
         assertTrue(tableRows.size() > 1);
 
         java.util.Iterator<HtmlElement> tableRowIterator = tableRows.iterator();
 
-        Integer createdAddressRowNumber = null;
+        Integer createdOrderRowNumber = null;
         while (tableRowIterator.hasNext()) {
             HtmlElement htmlElement = tableRowIterator.next();
             String htmlText = htmlElement.asText();
-            if (htmlText.contains(Integer.toString(createdAddress.getId()))) {
-                createdAddressRowNumber = tableRows.indexOf(htmlElement);
+            if (htmlText.contains(Integer.toString(createdOrder.getId()))) {
+                createdOrderRowNumber = tableRows.indexOf(htmlElement);
                 break;
             }
         }
 
-        assertNotNull(createdAddressRowNumber);
+        assertNotNull(createdOrderRowNumber);
 
-        HtmlElement specificRow = tableRows.get(createdAddressRowNumber);
+        HtmlElement specificRow = tableRows.get(createdOrderRowNumber);
 
         String xml = specificRow.asXml();
 
-        assertTrue(xml.contains(createdAddress.getFirstName()));
-        assertTrue(xml.contains(createdAddress.getLastName()));
-        assertTrue(xml.contains(Integer.toString(createdAddress.getId())));
+        assertTrue(xml.contains(createdOrder.getFirstName()));
+        assertTrue(xml.contains(createdOrder.getLastName()));
+        assertTrue(xml.contains(Integer.toString(createdOrder.getId())));
         assertTrue(xml.contains("Edit"));
         assertTrue(xml.contains("Delete"));
 
     }
 
-    private List<Address> searchForAddressByLastNameUsingXForm(String lastName, Gson gson, URL searchUrl, String searchBy) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
+    private List<Order> searchForOrderByLastNameUsingXForm(String lastName, Gson gson, URL searchUrl, String searchBy) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
         WebClient searchWebClient = new WebClient();
         List<NameValuePair> paramsList = new ArrayList();
         paramsList.add(new NameValuePair("searchText", lastName));
@@ -1325,16 +1298,16 @@ public class OrdersControllerIT {
         Page lastNameSearchPage = searchWebClient.getPage(searchByLastNameRequest);
         assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
         String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
-        Address[] returnedAddressList = gson.fromJson(lastNameSearchJson, Address[].class);
-        assertEquals(returnedAddressList.length, 1);
-        List<Address> result = Arrays.asList(returnedAddressList);
+        Order[] returnedOrderList = gson.fromJson(lastNameSearchJson, Order[].class);
+        assertEquals(returnedOrderList.length, 1);
+        List<Order> result = Arrays.asList(returnedOrderList);
         return result;
     }
 
-    private List<Address> searchForAddressByUsingJson(String lastName, Gson gson, AddressSearchByOptionEnum searchOptionEnum, URL searchUrl) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
+    private List<Order> searchForOrderByUsingJson(String lastName, Gson gson, OrderSearchByOptionEnum searchOptionEnum, URL searchUrl) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
         WebClient searchWebClient = new WebClient();
 
-        AddressSearchRequest searchRequest = new AddressSearchRequest(lastName, searchOptionEnum);
+        OrderSearchRequest searchRequest = new OrderSearchRequest(lastName, searchOptionEnum);
 
         String searchRequestJson = gson.toJson(searchRequest);
 
@@ -1345,20 +1318,20 @@ public class OrdersControllerIT {
         Page lastNameSearchPage = searchWebClient.getPage(searchByLastNameRequest);
 
         String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
-        Address[] returnedAddressList = gson.fromJson(lastNameSearchJson, Address[].class);
+        Order[] returnedOrderList = gson.fromJson(lastNameSearchJson, Order[].class);
 
-        List<Address> result = Arrays.asList(returnedAddressList);
+        List<Order> result = Arrays.asList(returnedOrderList);
         return result;
     }
 
     /**
-     * Test of searchByLastName method, of class AddressDaoPostgresImpl.
+     * Test of searchByLastName method, of class OrderDaoPostgresImpl.
      */
     @Test
     public void testSearchByEverything() throws IOException {
         System.out.println("searchByEverything");
 
-        AddressSearchByOptionEnum[] searchOptions = AddressSearchByOptionEnum.values();
+        OrderSearchByOptionEnum[] searchOptions = OrderSearchByOptionEnum.values();
 
         assertTrue(searchOptions.length > 5);
 
@@ -1369,75 +1342,75 @@ public class OrdersControllerIT {
             String searchingBy = searchOptions[i].value();
             String randomString = UUID.randomUUID().toString();
 
-            Address address = addressGenerator();
+            Order order = orderGenerator();
 
             switch (searchingBy) {
                 case "searchByLastName":
-                    address.setLastName(randomString);
+                    order.setLastName(randomString);
                     break;
                 case "searchByFirstName":
-                    address.setFirstName(randomString);
+                    order.setFirstName(randomString);
                     break;
                 case "searchByFullName":
-                    address.setFirstName(randomString);
-                    randomString = address.getFullName();
+                    order.setFirstName(randomString);
+                    randomString = order.getFullName();
                     break;
                 case "searchByCity":
-                    address.setCity(randomString);
+                    order.setCity(randomString);
                     break;
                 case "searchByState":
-                    address.setState(randomString);
+                    order.setState(randomString);
                     break;
                 case "searchByZip":
-                    address.setZip(randomString);
+                    order.setZip(randomString);
                     break;
                 case "searchByCompany":
-                    address.setCompany(randomString);
+                    order.setCompany(randomString);
                     break;
                 case "searchByStreet":
-                    address.setStreetName(randomString);
+                    order.setStreetName(randomString);
                     break;
                 case "searchByStreetNumber":
-                    address.setStreetNumber(randomString);
+                    order.setStreetNumber(randomString);
                     break;
                 case "searchByStreetName":
-                    address.setStreetName(randomString);
+                    order.setStreetName(randomString);
                     break;
                 case "searchByName":
-                    address.setFirstName(randomString);
+                    order.setFirstName(randomString);
                     break;
                 case "searchByNameOrCompany":
-                    address.setCompany(randomString);
+                    order.setCompany(randomString);
                     break;
                 case "searchByAll":
-                    address.setStreetName(randomString);
+                    order.setStreetName(randomString);
                     break;
                 case "searchByAny":
 
                     switch (new Random().nextInt(8)) {
                         case 0:
-                            address.setZip(randomString);
+                            order.setZip(randomString);
                             break;
                         case 1:
-                            address.setCity(randomString);
+                            order.setCity(randomString);
                             break;
                         case 2:
-                            address.setCompany(randomString);
+                            order.setCompany(randomString);
                             break;
                         case 3:
-                            address.setFirstName(randomString);
+                            order.setFirstName(randomString);
                             break;
                         case 4:
-                            address.setLastName(randomString);
+                            order.setLastName(randomString);
                             break;
                         case 5:
-                            address.setState(randomString);
+                            order.setState(randomString);
                             break;
                         case 6:
-                            address.setStreetName(randomString);
+                            order.setStreetName(randomString);
                             break;
                         case 7:
-                            address.setStreetNumber(randomString);
+                            order.setStreetNumber(randomString);
                             break;
                         default:
                             fail("Wrong random number generated.");
@@ -1447,41 +1420,41 @@ public class OrdersControllerIT {
                     fail("This should never happen.\n" + searchingBy + " is not checked.");
             }
 
-            // Create a Address Using the POST endpoint
+            // Create a Order Using the POST endpoint
             HttpUrl createUrl = getOrdersUrlBuilder()
                     .addPathSegment("")
                     .build();
 
-            WebClient createAddressWebClient = new WebClient();
+            WebClient createOrderWebClient = new WebClient();
 
             Gson gson = new GsonBuilder().create();
-            String addressJson = gson.toJson(address);
+            String orderJson = gson.toJson(order);
 
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
-            createRequest.setRequestBody(addressJson);
+            createRequest.setRequestBody(orderJson);
             createRequest.setAdditionalHeader("Accept", "application/json");
             createRequest.setAdditionalHeader("Content-type", "application/json");
 
-            Page createdAddressPage = createAddressWebClient.getPage(createRequest);
+            Page createdOrderPage = createOrderWebClient.getPage(createRequest);
 
-            WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
-            assertEquals(createAddressWebResponse.getStatusCode(), 200);
-            assertTrue(createAddressWebResponse.getContentLength() > 100);
+            WebResponse createOrderWebResponse = createdOrderPage.getWebResponse();
+            assertEquals(createOrderWebResponse.getStatusCode(), 200);
+            assertTrue(createOrderWebResponse.getContentLength() > 100);
 
-            Address createdAddress = null;
+            Order createdOrder = null;
 
-            if (createAddressWebResponse.getContentType().equals("application/json")) {
-                String json = createAddressWebResponse.getContentAsString();
-                createdAddress = gson.fromJson(json, Address.class);
+            if (createOrderWebResponse.getContentType().equals("application/json")) {
+                String json = createOrderWebResponse.getContentAsString();
+                createdOrder = gson.fromJson(json, Order.class);
 
-                assertNotNull(createdAddress);
+                assertNotNull(createdOrder);
             } else {
                 fail("Should have been JSON.");
             }
 
-            assertNotNull(createdAddress);
+            assertNotNull(createdOrder);
 
-            // Search for created Address.
+            // Search for created Order.
             WebClient searchWebClient = new WebClient();
 
             List<NameValuePair> paramsList = new ArrayList();
@@ -1504,63 +1477,63 @@ public class OrdersControllerIT {
             String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
             assertNotEquals("Failed while performing " + searchingBy, lastNameSearchJson, "");
 
-            Address[] returnedAddressList = gson.fromJson(lastNameSearchJson, Address[].class);
+            Order[] returnedOrderList = gson.fromJson(lastNameSearchJson, Order[].class);
 
-            assertEquals(searchingBy + " gave: " + lastNameSearchJson, returnedAddressList.length, 1);
+            assertEquals(searchingBy + " gave: " + lastNameSearchJson, returnedOrderList.length, 1);
 
-            List<Address> result = Arrays.asList(returnedAddressList);
+            List<Order> result = Arrays.asList(returnedOrderList);
 
             assertNotNull(result);
-            assertTrue(result.contains(createdAddress));
+            assertTrue(result.contains(createdOrder));
             assertEquals(result.size(), 1);
 
-            List<Address> resultb = searchForAddressByLastNameUsingXForm(randomString, gson, searchUrl.url(), searchingBy);
+            List<Order> resultb = searchForOrderByLastNameUsingXForm(randomString, gson, searchUrl.url(), searchingBy);
 
             assertNotNull(resultb);
-            assertTrue(resultb.contains(createdAddress));
+            assertTrue(resultb.contains(createdOrder));
             assertEquals(resultb.size(), 1);
 
-            List<Address> resultc = searchForAddressByUsingJson(randomString, gson, searchOptions[i], searchUrl.url());
+            List<Order> resultc = searchForOrderByUsingJson(randomString, gson, searchOptions[i], searchUrl.url());
 
             assertNotNull(resultc);
-            assertTrue(resultc.contains(createdAddress));
+            assertTrue(resultc.contains(createdOrder));
             assertEquals(resultc.size(), 1);
 
-            result = searchForAddressByUsingJson(randomString.toLowerCase(), gson, searchOptions[i], searchUrl.url());
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByUsingJson(randomString.toLowerCase(), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByLastNameUsingXForm(randomString.toLowerCase(), gson, searchUrl.url(), searchingBy);
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByLastNameUsingXForm(randomString.toLowerCase(), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByUsingJson(randomString.toUpperCase(), gson, searchOptions[i], searchUrl.url());
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByUsingJson(randomString.toUpperCase(), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByLastNameUsingXForm(randomString.toUpperCase(), gson, searchUrl.url(), searchingBy);
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByLastNameUsingXForm(randomString.toUpperCase(), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByUsingJson(randomString.substring(5), gson, searchOptions[i], searchUrl.url());
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByUsingJson(randomString.substring(5), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByLastNameUsingXForm(randomString.substring(5), gson, searchUrl.url(), searchingBy);
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByLastNameUsingXForm(randomString.substring(5), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByUsingJson(randomString.substring(5, 20), gson, searchOptions[i], searchUrl.url());
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByUsingJson(randomString.substring(5, 20), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByLastNameUsingXForm(randomString.substring(5, 20), gson, searchUrl.url(), searchingBy);
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByLastNameUsingXForm(randomString.substring(5, 20), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByUsingJson(randomString.substring(5, 20).toLowerCase(), gson, searchOptions[i], searchUrl.url());
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByUsingJson(randomString.substring(5, 20).toLowerCase(), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByLastNameUsingXForm(randomString.substring(5, 20).toLowerCase(), gson, searchUrl.url(), searchingBy);
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByLastNameUsingXForm(randomString.substring(5, 20).toLowerCase(), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByUsingJson(randomString.substring(5, 20).toUpperCase(), gson, searchOptions[i], searchUrl.url());
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByUsingJson(randomString.substring(5, 20).toUpperCase(), gson, searchOptions[i], searchUrl.url());
+            assertTrue(result.contains(createdOrder));
 
-            result = searchForAddressByLastNameUsingXForm(randomString.substring(5, 20).toUpperCase(), gson, searchUrl.url(), searchingBy);
-            assertTrue(result.contains(createdAddress));
+            result = searchForOrderByLastNameUsingXForm(randomString.substring(5, 20).toUpperCase(), gson, searchUrl.url(), searchingBy);
+            assertTrue(result.contains(createdOrder));
 
             searchWebClient = new WebClient();
 
@@ -1573,33 +1546,33 @@ public class OrdersControllerIT {
 
             String title = randomStringSearchHtmlPage.getTitleText();
             assertEquals(title, "Flooring Master");
-            DomElement addressTable = randomStringSearchHtmlPage.getElementById("address-table");
+            DomElement orderTable = randomStringSearchHtmlPage.getElementById("order-table");
 
-            DomNodeList<HtmlElement> tableRows = addressTable.getElementsByTagName("tr");
+            DomNodeList<HtmlElement> tableRows = orderTable.getElementsByTagName("tr");
 
             assertTrue(tableRows.size() > 1);
 
             java.util.Iterator<HtmlElement> tableRowIterator = tableRows.iterator();
 
-            Integer createdAddressRowNumber = null;
+            Integer createdOrderRowNumber = null;
             while (tableRowIterator.hasNext()) {
                 HtmlElement htmlElement = tableRowIterator.next();
                 String htmlText = htmlElement.asText();
-                if (htmlText.contains(Integer.toString(createdAddress.getId()))) {
-                    createdAddressRowNumber = tableRows.indexOf(htmlElement);
+                if (htmlText.contains(Integer.toString(createdOrder.getId()))) {
+                    createdOrderRowNumber = tableRows.indexOf(htmlElement);
                     break;
                 }
             }
 
-            assertNotNull(createdAddressRowNumber);
+            assertNotNull(createdOrderRowNumber);
 
-            HtmlElement specificRow = tableRows.get(createdAddressRowNumber);
+            HtmlElement specificRow = tableRows.get(createdOrderRowNumber);
 
             String xml = specificRow.asXml();
 
-            assertTrue(xml.contains(createdAddress.getFirstName()));
-            assertTrue(xml.contains(createdAddress.getLastName()));
-            assertTrue(xml.contains(Integer.toString(createdAddress.getId())));
+            assertTrue(xml.contains(createdOrder.getFirstName()));
+            assertTrue(xml.contains(createdOrder.getLastName()));
+            assertTrue(xml.contains(Integer.toString(createdOrder.getId())));
             assertTrue(xml.contains("Edit"));
             assertTrue(xml.contains("Delete"));
         }
@@ -1646,7 +1619,7 @@ public class OrdersControllerIT {
                 randomStrings[i] = UUID.randomUUID().toString();
             }
 
-            Address address = addressBuilder(randomStrings[0],
+            Order order = orderBuilder(randomStrings[0],
                     randomStrings[1],
                     randomStrings[2],
                     randomStrings[3],
@@ -1655,16 +1628,16 @@ public class OrdersControllerIT {
                     randomStrings[6],
                     randomStrings[7]);
 
-            Address createdAddress = createAddressUsingJson(address);
-            int resultId = createdAddress.getId();
+            Order createdOrder = createOrderUsingJson(order);
+            int resultId = createdOrder.getId();
 
             int position = new Random().nextInt(randomStrings.length);
             String searchString = randomStrings[position];
 
-            Address result = createdAddress;
+            Order result = createdOrder;
 
-            Address returnedDeleteAddress = deleteAddress(resultId);
-            assertNotNull(returnedDeleteAddress);
+            Order returnedDeleteOrder = deleteOrder(resultId);
+            assertNotNull(returnedDeleteOrder);
         }
 
         for (int pass = 0; pass < 150; pass++) {
@@ -1676,7 +1649,7 @@ public class OrdersControllerIT {
                 randomStrings[i] = caseRandomizer(random, randomStrings[i]);
             }
 
-            Address address = addressBuilder(randomStrings[0],
+            Order order = orderBuilder(randomStrings[0],
                     randomStrings[1],
                     randomStrings[2],
                     randomStrings[3],
@@ -1685,8 +1658,8 @@ public class OrdersControllerIT {
                     randomStrings[6],
                     randomStrings[7]);
 
-            address = createAddressUsingJson(address);
-            int resultId = address.getId();
+            order = createOrderUsingJson(order);
+            int resultId = order.getId();
 
             int position = new Random().nextInt(randomStrings.length);
             String searchString = randomStrings[position];
@@ -1699,36 +1672,36 @@ public class OrdersControllerIT {
             searchString = searchString.substring(startingPostition, endingPostition);
             searchString = caseRandomizer(random, searchString);
 
-            // Search for Address Using Search GET Endpoint
+            // Search for Order Using Search GET Endpoint
             HttpUrl getUrl = getOrdersUrlBuilder()
                     .addPathSegment(searchString)
                     .addPathSegment("search")
                     .build();
 
-            WebClient showAddressWebClient = new WebClient();
-            showAddressWebClient.addRequestHeader("Accept", "application/json");
+            WebClient showOrderWebClient = new WebClient();
+            showOrderWebClient.addRequestHeader("Accept", "application/json");
 
-            Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
-            WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
-            assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
-            assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 50);
+            Page singleOrderPage = showOrderWebClient.getPage(getUrl.url());
+            WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
+            assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
+            assertTrue("Content Length: " + jsonSingleOrderResponse.getContentLength(), jsonSingleOrderResponse.getContentLength() > 50);
 
-            Address specificAddress = null;
+            Order specificOrder = null;
 
-            if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
-                String json = jsonSingleAddressResponse.getContentAsString();
+            if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
+                String json = jsonSingleOrderResponse.getContentAsString();
                 Gson gson = new GsonBuilder().create();
-                specificAddress = gson.fromJson(json, Address.class);
+                specificOrder = gson.fromJson(json, Order.class);
 
-                Assert.assertNotNull(specificAddress);
+                Assert.assertNotNull(specificOrder);
             } else {
                 fail("Should have been JSON.");
             }
 
-            assertEquals(specificAddress, address);
+            assertEquals(specificOrder, order);
 
-            Address returnedDeleteAddress = deleteAddress(resultId);
-            assertNotNull(returnedDeleteAddress);
+            Order returnedDeleteOrder = deleteOrder(resultId);
+            assertNotNull(returnedDeleteOrder);
         }
     }
 
@@ -1737,33 +1710,33 @@ public class OrdersControllerIT {
         System.out.println("AutoComplete Suggestions");
         final Random random = new Random();
 
-        List<Address> addressesAdded = new ArrayList();
+        List<Order> ordersAdded = new ArrayList();
 
         for (int pass = 0; pass < 25; pass++) {
 
-            Address address = addressGenerator();
+            Order order = orderGenerator();
 
-            Address createdAddress = createAddressUsingJson(address);
+            Order createdOrder = createOrderUsingJson(order);
 
-            addressesAdded.add(createdAddress);
+            ordersAdded.add(createdOrder);
         }
 
         for (int pass = 0; pass < 150; pass++) {
 
-            Address address = addressGenerator();
-            address = createAddressUsingJson(address);
-            int resultId = address.getId();
+            Order order = orderGenerator();
+            order = createOrderUsingJson(order);
+            int resultId = order.getId();
 
-            addressesAdded.add(address);
+            ordersAdded.add(order);
 
-            int size = addressesAdded.size();
+            int size = ordersAdded.size();
             int randomInt = random.nextInt(size);
 
-            Address randomAddress = addressesAdded.get(randomInt);
+            Order randomOrder = ordersAdded.get(randomInt);
 
-            String company = randomAddress.getCompany();
-            String firstName = randomAddress.getFirstName();
-            String lastName = randomAddress.getLastName();
+            String company = randomOrder.getCompany();
+            String firstName = randomOrder.getFirstName();
+            String lastName = randomOrder.getLastName();
 
             String[] randomStrings = {company, firstName, lastName};
 
@@ -1778,24 +1751,24 @@ public class OrdersControllerIT {
             String modifiedSearchString = searchString.substring(startingPostition, endingPostition);
             modifiedSearchString = caseRandomizer(random, modifiedSearchString);
 
-            // Search for Address Using Search GET Endpoint
+            // Search for Order Using Search GET Endpoint
             HttpUrl getUrl = getOrdersUrlBuilder()
                     .addPathSegment(modifiedSearchString)
                     .addPathSegment("name_completion")
                     .build();
 
-            WebClient showAddressWebClient = new WebClient();
-            showAddressWebClient.addRequestHeader("Accept", "application/json");
+            WebClient showOrderWebClient = new WebClient();
+            showOrderWebClient.addRequestHeader("Accept", "application/json");
 
-            Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
-            WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
-            assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
-            assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 35);
+            Page singleOrderPage = showOrderWebClient.getPage(getUrl.url());
+            WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
+            assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
+            assertTrue("Content Length: " + jsonSingleOrderResponse.getContentLength(), jsonSingleOrderResponse.getContentLength() > 35);
 
             String[] returnedSuggestions = null;
 
-            if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
-                String json = jsonSingleAddressResponse.getContentAsString();
+            if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
+                String json = jsonSingleOrderResponse.getContentAsString();
                 Gson gson = new GsonBuilder().create();
 
                 returnedSuggestions = gson.fromJson(json, String[].class);
@@ -1813,9 +1786,9 @@ public class OrdersControllerIT {
 
         }
 
-        for (Address address : addressesAdded) {
-            Address returnedDeleteAddress = deleteAddress(address.getId());
-            assertNotNull(returnedDeleteAddress);
+        for (Order order : ordersAdded) {
+            Order returnedDeleteOrder = deleteOrder(order.getId());
+            assertNotNull(returnedDeleteOrder);
         }
     }
 
@@ -1824,33 +1797,33 @@ public class OrdersControllerIT {
         System.out.println("AutoComplete Suggestions 2");
         final Random random = new Random();
 
-        List<Address> addressesAdded = new ArrayList();
+        List<Order> ordersAdded = new ArrayList();
 
         for (int pass = 0; pass < 25; pass++) {
 
-            Address address = addressGenerator();
+            Order order = orderGenerator();
 
-            Address createdAddress = createAddressUsingJson(address);
+            Order createdOrder = createOrderUsingJson(order);
 
-            addressesAdded.add(createdAddress);
+            ordersAdded.add(createdOrder);
         }
 
         for (int pass = 0; pass < 150; pass++) {
 
-            Address address = addressGenerator();
-            address = createAddressUsingJson(address);
-            int resultId = address.getId();
+            Order order = orderGenerator();
+            order = createOrderUsingJson(order);
+            int resultId = order.getId();
 
-            addressesAdded.add(address);
+            ordersAdded.add(order);
 
-            int size = addressesAdded.size();
+            int size = ordersAdded.size();
             int randomInt = random.nextInt(size);
 
-            Address randomAddress = addressesAdded.get(randomInt);
+            Order randomOrder = ordersAdded.get(randomInt);
 
-            String company = randomAddress.getCompany();
-            String firstName = randomAddress.getFirstName();
-            String lastName = randomAddress.getLastName();
+            String company = randomOrder.getCompany();
+            String firstName = randomOrder.getFirstName();
+            String lastName = randomOrder.getLastName();
 
             String[] randomStrings = {company, firstName, lastName};
 
@@ -1865,7 +1838,7 @@ public class OrdersControllerIT {
             String modifiedSearchString = searchString.substring(startingPostition, endingPostition);
             modifiedSearchString = caseRandomizer(random, modifiedSearchString);
 
-            // Search for Address Using Search GET Endpoint
+            // Search for Order Using Search GET Endpoint
             HttpUrl getUrl;
             if (random.nextBoolean()) {
                 getUrl = getOrdersUrlBuilder()
@@ -1879,18 +1852,18 @@ public class OrdersControllerIT {
                         .build();
             }
 
-            WebClient showAddressWebClient = new WebClient();
-            showAddressWebClient.addRequestHeader("Accept", "application/json");
+            WebClient showOrderWebClient = new WebClient();
+            showOrderWebClient.addRequestHeader("Accept", "application/json");
 
-            Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
-            WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
-            assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
-            assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 35);
+            Page singleOrderPage = showOrderWebClient.getPage(getUrl.url());
+            WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
+            assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
+            assertTrue("Content Length: " + jsonSingleOrderResponse.getContentLength(), jsonSingleOrderResponse.getContentLength() > 35);
 
             String[] returnedSuggestions = null;
 
-            if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
-                String json = jsonSingleAddressResponse.getContentAsString();
+            if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
+                String json = jsonSingleOrderResponse.getContentAsString();
                 Gson gson = new GsonBuilder().create();
 
                 returnedSuggestions = gson.fromJson(json, String[].class);
@@ -1908,53 +1881,53 @@ public class OrdersControllerIT {
 
         }
 
-        for (Address address : addressesAdded) {
-            Address returnedDeleteAddress = deleteAddress(address.getId());
-            assertNotNull(returnedDeleteAddress);
+        for (Order order : ordersAdded) {
+            Order returnedDeleteOrder = deleteOrder(order.getId());
+            assertNotNull(returnedDeleteOrder);
         }
     }
 
-    private Address deleteAddress(int resultId) throws FailingHttpStatusCodeException, JsonSyntaxException, IOException {
-        // Delete the Created Address
-        String addressIdString = Integer.toString(resultId);
+    private Order deleteOrder(int resultId) throws FailingHttpStatusCodeException, JsonSyntaxException, IOException {
+        // Delete the Created Order
+        String orderIdString = Integer.toString(resultId);
         HttpUrl deleteUrl = getOrdersUrlBuilder()
-                .addPathSegment(addressIdString)
+                .addPathSegment(orderIdString)
                 .build();
         Gson gson = new GsonBuilder().create();
-        WebClient deleteAddressWebClient = new WebClient();
+        WebClient deleteOrderWebClient = new WebClient();
         WebRequest deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
-        Page deletePage = deleteAddressWebClient.getPage(deleteRequest);
-        String returnedDeleteAddressJson = deletePage.getWebResponse().getContentAsString();
-        Address returnedDeleteAddress = gson.fromJson(returnedDeleteAddressJson, Address.class);
-        return returnedDeleteAddress;
+        Page deletePage = deleteOrderWebClient.getPage(deleteRequest);
+        String returnedDeleteOrderJson = deletePage.getWebResponse().getContentAsString();
+        Order returnedDeleteOrder = gson.fromJson(returnedDeleteOrderJson, Order.class);
+        return returnedDeleteOrder;
     }
 
-    private Address createAddressUsingJson(Address address) throws IOException, FailingHttpStatusCodeException, JsonSyntaxException, RuntimeException {
-        // Create Address
+    private Order createOrderUsingJson(Order order) throws IOException, FailingHttpStatusCodeException, JsonSyntaxException, RuntimeException {
+        // Create Order
         HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createOrderWebClient = new WebClient();
         Gson gson = new GsonBuilder().create();
-        String addressJson = gson.toJson(address);
+        String orderJson = gson.toJson(order);
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
-        createRequest.setRequestBody(addressJson);
+        createRequest.setRequestBody(orderJson);
         createRequest.setAdditionalHeader("Accept", "application/json");
         createRequest.setAdditionalHeader("Content-type", "application/json");
-        Page createdAddressPage = createAddressWebClient.getPage(createRequest);
-        WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
-        assertEquals(createAddressWebResponse.getStatusCode(), 200);
-        assertTrue(createAddressWebResponse.getContentLength() > 100);
-        Address createdAddress = null;
-        if (createAddressWebResponse.getContentType().equals("application/json")) {
-            String json = createAddressWebResponse.getContentAsString();
-            createdAddress = gson.fromJson(json, Address.class);
+        Page createdOrderPage = createOrderWebClient.getPage(createRequest);
+        WebResponse createOrderWebResponse = createdOrderPage.getWebResponse();
+        assertEquals(createOrderWebResponse.getStatusCode(), 200);
+        assertTrue(createOrderWebResponse.getContentLength() > 100);
+        Order createdOrder = null;
+        if (createOrderWebResponse.getContentType().equals("application/json")) {
+            String json = createOrderWebResponse.getContentAsString();
+            createdOrder = gson.fromJson(json, Order.class);
 
-            assertNotNull(createdAddress);
+            assertNotNull(createdOrder);
         } else {
             fail("Should have been JSON.");
         }
-        return createdAddress;
+        return createdOrder;
     }
 
     @Test
@@ -2022,28 +1995,28 @@ public class OrdersControllerIT {
         assertEquals(webResponse.getStatusCode(), 200);
         assertTrue(webResponse.getContentLength() > 100);
 
-        Address[] addressesReturned = null;
-        Address[] addressesReturned2 = null;
+        Order[] ordersReturned = null;
+        Order[] ordersReturned2 = null;
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            addressesReturned = gson.fromJson(json, Address[].class);
-            addressesReturned2 = gson.fromJson(json, Address[].class);
+            ordersReturned = gson.fromJson(json, Order[].class);
+            ordersReturned2 = gson.fromJson(json, Order[].class);
 
-            assertTrue(addressesReturned.length > 20);
-            assertTrue(addressesReturned2.length > 20);
+            assertTrue(ordersReturned.length > 20);
+            assertTrue(ordersReturned2.length > 20);
         } else {
             fail("Should have been JSON.");
         }
 
-        List<Address> addressesSortedByComparator = Arrays.asList(addressesReturned);
-        List<Address> addressesSortedByDatabase = Arrays.asList(addressesReturned2);
+        List<Order> ordersSortedByComparator = Arrays.asList(ordersReturned);
+        List<Order> ordersSortedByDatabase = Arrays.asList(ordersReturned2);
 
-        addressesSortedByComparator.sort(sortByLastName());
+        ordersSortedByComparator.sort(sortByLastName());
 
-        for (int i = 0; i < addressesSortedByComparator.size(); i++) {
-            assertEquals("IDs: " + addressesSortedByComparator.get(i).getId() + ", " + addressesSortedByDatabase.get(i).getId(), addressesSortedByComparator.get(i), addressesSortedByDatabase.get(i));
+        for (int i = 0; i < ordersSortedByComparator.size(); i++) {
+            assertEquals("IDs: " + ordersSortedByComparator.get(i).getId() + ", " + ordersSortedByDatabase.get(i).getId(), ordersSortedByComparator.get(i), ordersSortedByDatabase.get(i));
         }
     }
 
@@ -2064,28 +2037,28 @@ public class OrdersControllerIT {
         assertEquals(webResponse.getStatusCode(), 200);
         assertTrue(webResponse.getContentLength() > 100);
 
-        Address[] addressesReturned = null;
-        Address[] addressesReturned2 = null;
+        Order[] ordersReturned = null;
+        Order[] ordersReturned2 = null;
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            addressesReturned = gson.fromJson(json, Address[].class);
-            addressesReturned2 = gson.fromJson(json, Address[].class);
+            ordersReturned = gson.fromJson(json, Order[].class);
+            ordersReturned2 = gson.fromJson(json, Order[].class);
 
-            assertTrue(addressesReturned.length > 20);
-            assertTrue(addressesReturned2.length > 20);
+            assertTrue(ordersReturned.length > 20);
+            assertTrue(ordersReturned2.length > 20);
         } else {
             fail("Should have been JSON.");
         }
 
-        List<Address> addresses = Arrays.asList(addressesReturned);
-        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+        List<Order> orders = Arrays.asList(ordersReturned);
+        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
 
-        addresses.sort(sortByFirstName());
+        orders.sort(sortByFirstName());
 
-        for (int i = 0; i < addresses.size(); i++) {
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        for (int i = 0; i < orders.size(); i++) {
+            assertEquals(orders.get(i), ordersFromDb.get(i));
         }
     }
 
@@ -2106,28 +2079,28 @@ public class OrdersControllerIT {
         assertEquals(webResponse.getStatusCode(), 200);
         assertTrue(webResponse.getContentLength() > 100);
 
-        Address[] addressesReturned = null;
-        Address[] addressesReturned2 = null;
+        Order[] ordersReturned = null;
+        Order[] ordersReturned2 = null;
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            addressesReturned = gson.fromJson(json, Address[].class);
-            addressesReturned2 = gson.fromJson(json, Address[].class);
+            ordersReturned = gson.fromJson(json, Order[].class);
+            ordersReturned2 = gson.fromJson(json, Order[].class);
 
-            assertTrue(addressesReturned.length > 20);
-            assertTrue(addressesReturned2.length > 20);
+            assertTrue(ordersReturned.length > 20);
+            assertTrue(ordersReturned2.length > 20);
         } else {
             fail("Should have been JSON.");
         }
 
-        List<Address> addresses = Arrays.asList(addressesReturned);
-        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+        List<Order> orders = Arrays.asList(ordersReturned);
+        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
 
-        addresses.sort(sortByCompany());
+        orders.sort(sortByCompany());
 
-        for (int i = 0; i < addresses.size(); i++) {
-            assertEquals("Made it " + i + " into the list. " + addresses.get(i).getId() + ", " + addressesFromDb.get(i).getId(), addresses.get(i), addressesFromDb.get(i));
+        for (int i = 0; i < orders.size(); i++) {
+            assertEquals("Made it " + i + " into the list. " + orders.get(i).getId() + ", " + ordersFromDb.get(i).getId(), orders.get(i), ordersFromDb.get(i));
         }
     }
 
@@ -2148,33 +2121,33 @@ public class OrdersControllerIT {
         assertEquals(webResponse.getStatusCode(), 200);
         assertTrue(webResponse.getContentLength() > 100);
 
-        Address[] addressesReturned = null;
-        Address[] addressesReturned2 = null;
+        Order[] ordersReturned = null;
+        Order[] ordersReturned2 = null;
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            addressesReturned = gson.fromJson(json, Address[].class);
-            addressesReturned2 = gson.fromJson(json, Address[].class);
+            ordersReturned = gson.fromJson(json, Order[].class);
+            ordersReturned2 = gson.fromJson(json, Order[].class);
 
-            assertTrue(addressesReturned.length > 20);
-            assertTrue(addressesReturned2.length > 20);
+            assertTrue(ordersReturned.length > 20);
+            assertTrue(ordersReturned2.length > 20);
         } else {
             fail("Should have been JSON.");
         }
 
-        List<Address> addresses = Arrays.asList(addressesReturned);
-        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+        List<Order> orders = Arrays.asList(ordersReturned);
+        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
 
-        addresses.sort(new Comparator<Address>() {
+        orders.sort(new Comparator<Order>() {
             @Override
-            public int compare(Address address1, Address address2) {
-                return address2.getId().compareTo(address1.getId());
+            public int compare(Order order1, Order order2) {
+                return order2.getId().compareTo(order1.getId());
             }
         });
 
-        for (int i = 0; i < addresses.size(); i++) {
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        for (int i = 0; i < orders.size(); i++) {
+            assertEquals(orders.get(i), ordersFromDb.get(i));
         }
     }
 
@@ -2194,33 +2167,33 @@ public class OrdersControllerIT {
         assertEquals(webResponse.getStatusCode(), 200);
         assertTrue(webResponse.getContentLength() > 100);
 
-        Address[] addressesReturned = null;
-        Address[] addressesReturned2 = null;
+        Order[] ordersReturned = null;
+        Order[] ordersReturned2 = null;
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
-            addressesReturned = gson.fromJson(json, Address[].class);
-            addressesReturned2 = gson.fromJson(json, Address[].class);
+            ordersReturned = gson.fromJson(json, Order[].class);
+            ordersReturned2 = gson.fromJson(json, Order[].class);
 
-            assertTrue(addressesReturned.length > 20);
-            assertTrue(addressesReturned2.length > 20);
+            assertTrue(ordersReturned.length > 20);
+            assertTrue(ordersReturned2.length > 20);
         } else {
             fail("Should have been JSON.");
         }
 
-        List<Address> addresses = Arrays.asList(addressesReturned);
-        List<Address> addressesFromDb = Arrays.asList(addressesReturned2);
+        List<Order> orders = Arrays.asList(ordersReturned);
+        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
 
-        addresses.sort(new Comparator<Address>() {
+        orders.sort(new Comparator<Order>() {
             @Override
-            public int compare(Address address1, Address address2) {
-                return address1.getId().compareTo(address2.getId());
+            public int compare(Order order1, Order order2) {
+                return order1.getId().compareTo(order2.getId());
             }
         });
 
-        for (int i = 0; i < addresses.size(); i++) {
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
+        for (int i = 0; i < orders.size(); i++) {
+            assertEquals(orders.get(i), ordersFromDb.get(i));
         }
     }
 
@@ -2228,45 +2201,45 @@ public class OrdersControllerIT {
     public void getPaginatedList() throws IOException {
         System.out.println("list by pagination");
 
-        List<Address> createdAddresses = new ArrayList();
+        List<Order> createdOrders = new ArrayList();
 
         Gson gson = new GsonBuilder().create();
 
-        Address address = addressGenerator();
+        Order order = orderGenerator();
 
-        address.setFirstName("Doug");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Doug");
+        createdOrders.add(this.createOrderUsingJson(order));
 
-        address.setFirstName("Doug Jr.");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Doug Jr.");
+        createdOrders.add(this.createOrderUsingJson(order));
 
-        address.setFirstName("Doug III");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Doug III");
+        createdOrders.add(this.createOrderUsingJson(order));
 
-        address.setFirstName("Other Doug");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Other Doug");
+        createdOrders.add(this.createOrderUsingJson(order));
 
-        address.setFirstName("Steve");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Steve");
+        createdOrders.add(this.createOrderUsingJson(order));
 
-        address.setFirstName("Dave");
-        Address daveAddress = this.createAddressUsingJson(address);
-        createdAddresses.add(daveAddress);
+        order.setFirstName("Dave");
+        Order daveOrder = this.createOrderUsingJson(order);
+        createdOrders.add(daveOrder);
 
-        address.setFirstName("Phil");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Phil");
+        createdOrders.add(this.createOrderUsingJson(order));
 
-        address.setFirstName("Stephen");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Stephen");
+        createdOrders.add(this.createOrderUsingJson(order));
 
-        address.setFirstName("Steven");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Steven");
+        createdOrders.add(this.createOrderUsingJson(order));
 
-        address.setFirstName("Steven");
-        createdAddresses.add(this.createAddressUsingJson(address));
+        order.setFirstName("Steven");
+        createdOrders.add(this.createOrderUsingJson(order));
 
         // Check search using json object built with my purspective api.
-        // Get The List Of Addresses
+        // Get The List Of Orders
         HttpUrl searchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .addQueryParameter("sort_by", "last_name")
@@ -2276,12 +2249,12 @@ public class OrdersControllerIT {
 
         WebClient webClient = new WebClient();
 
-        AddressSearchRequest addressSearchRequest = new AddressSearchRequest(address.getLastName(), AddressSearchByOptionEnum.LAST_NAME);
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest(order.getLastName(), OrderSearchByOptionEnum.LAST_NAME);
 
-        String addressSearchRequestJson2 = gson.toJson(addressSearchRequest);
+        String orderSearchRequestJson2 = gson.toJson(orderSearchRequest);
 
         WebRequest searchByLastNameWebRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByLastNameWebRequest.setRequestBody(addressSearchRequestJson2);
+        searchByLastNameWebRequest.setRequestBody(orderSearchRequestJson2);
 
         searchByLastNameWebRequest.setAdditionalHeader("Accept", "application/json");
         searchByLastNameWebRequest.setAdditionalHeader("Content-type", "application/json");
@@ -2290,15 +2263,15 @@ public class OrdersControllerIT {
 
         assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
 
-        String searchAddressJson = lastNameSearchPage.getWebResponse().getContentAsString();
+        String searchOrderJson = lastNameSearchPage.getWebResponse().getContentAsString();
 
-        Address[] returnedLastNameSearchAddresses = gson.fromJson(searchAddressJson, Address[].class);
+        Order[] returnedLastNameSearchOrders = gson.fromJson(searchOrderJson, Order[].class);
 
-        assertEquals(returnedLastNameSearchAddresses.length, 5);
+        assertEquals(returnedLastNameSearchOrders.length, 5);
 
-        Address firstReturnedLastNameSearchAddress = returnedLastNameSearchAddresses[0];
+        Order firstReturnedLastNameSearchOrder = returnedLastNameSearchOrders[0];
 
-        assertEquals(daveAddress, firstReturnedLastNameSearchAddress);
+        assertEquals(daveOrder, firstReturnedLastNameSearchOrder);
 
         webClient = new WebClient();
 
@@ -2313,26 +2286,26 @@ public class OrdersControllerIT {
 
         assertEquals(lastNameSearchPage2.getWebResponse().getStatusCode(), 200);
 
-        Address[] returnedLastNameSearchAddresses2
-                = gson.fromJson(lastNameSearchPage2.getWebResponse().getContentAsString(), Address[].class);
+        Order[] returnedLastNameSearchOrders2
+                = gson.fromJson(lastNameSearchPage2.getWebResponse().getContentAsString(), Order[].class);
 
-        assertEquals(returnedLastNameSearchAddresses2.length, 5);
+        assertEquals(returnedLastNameSearchOrders2.length, 5);
 
-        Set<Address> addressSet = new HashSet();
+        Set<Order> orderSet = new HashSet();
 
-        addressSet.addAll(Arrays.asList(returnedLastNameSearchAddresses));
-        addressSet.addAll(Arrays.asList(returnedLastNameSearchAddresses2));
+        orderSet.addAll(Arrays.asList(returnedLastNameSearchOrders));
+        orderSet.addAll(Arrays.asList(returnedLastNameSearchOrders2));
 
-        assertEquals(addressSet.size(), 10);
+        assertEquals(orderSet.size(), 10);
 
-        for (Address addressToCheck : createdAddresses) {
-            assertTrue(addressSet.contains(addressToCheck));
+        for (Order orderToCheck : createdOrders) {
+            assertTrue(orderSet.contains(orderToCheck));
         }
 
-        assertTrue(addressSet.containsAll(createdAddresses));
+        assertTrue(orderSet.containsAll(createdOrders));
 
-        for (Address addressToDelete : createdAddresses) {
-            deleteAddress(addressToDelete.getId());
+        for (Order orderToDelete : createdOrders) {
+            deleteOrder(orderToDelete.getId());
         }
 
     }
@@ -2374,7 +2347,13 @@ public class OrdersControllerIT {
         return input;
     }
 
-    private Address addressGenerator() {
+    private Order orderGenerator() throws IOException {
+
+        State state = getRandomState();
+        Product product = getRandomProduct();
+        
+        
+
         String city = UUID.randomUUID().toString();
         String firstName = UUID.randomUUID().toString();
         String lastName = UUID.randomUUID().toString();
@@ -2384,110 +2363,90 @@ public class OrdersControllerIT {
         String streetNumber = UUID.randomUUID().toString();
         String streetName = UUID.randomUUID().toString();
 
-        Address address = addressBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
-        return address;
+        Order order = orderBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
+        return order;
     }
 
-    private static Comparator<Object> sortByLastName() {
-        return (Object o1, Object o2) -> {
+    private State getRandomState() throws IOException {
+        Gson gson = new GsonBuilder().create();
 
-            Address address1 = (Address) o1;
-            Address address2 = (Address) o2;
+        // Get The List Of States
+        HttpUrl getListUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("state")
+                .addPathSegment("")
+                .build();
 
-            int result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
+        WebClient getListWebClient = new WebClient();
+        getListWebClient.addRequestHeader("Accept", "application/json");
 
-            if (result == 0) {
-                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
-            }
+        Page getListPage = getListWebClient.getPage(getListUrl.url());
+        WebResponse getListWebResponse = getListPage.getWebResponse();
+        assertEquals(getListWebResponse.getStatusCode(), 200);
+        assertTrue(getListWebResponse.getContentLength() > 100);
 
-            if (result == 0) {
-                if (address1.getCompany() == null && address1.getCompany() == null) {
-                    result = 0;
-                } else if (address1.getCompany() == null) {
-                    result = 1;
-                } else if (address2.getCompany() == null) {
-                    result = -1;
-                } else {
-                    result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
-                }
-            }
+        State[] list = null;
 
-            if (result == 0) {
-                result = Integer.compare(address1.getId(), address2.getId());
-            }
+        if (getListWebResponse.getContentType().equals("application/json")) {
+            String json = getListWebResponse.getContentAsString();
+            State[] states = gson.fromJson(json, State[].class);
 
-            return result;
-        };
-    }
+            assertTrue(states.length > 0);
 
-    private static Comparator<Object> sortByFirstName() {
-        return (Object o1, Object o2) -> {
+            list = states;
+        } else {
+            fail("Should have been JSON.");
+        }
 
-            Address address1 = (Address) o1;
-            Address address2 = (Address) o2;
-
-            int result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
-
-            if (result == 0) {
-                result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
-            }
-
-            if (result == 0) {
-                if (address1.getCompany() == null && address1.getCompany() == null) {
-                    result = 0;
-                } else if (address1.getCompany() == null) {
-                    result = 1;
-                } else if (address2.getCompany() == null) {
-                    result = -1;
-                } else {
-                    result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
-                }
-            }
-
-            if (result == 0) {
-                result = Integer.compare(address1.getId(), address2.getId());
-            }
-
-            return result;
-        };
-    }
-
-    private static Comparator<Object> sortByCompany() {
-        return (Object o1, Object o2) -> {
-
-            Address address1 = (Address) o1;
-            Address address2 = (Address) o2;
-
-            int result;
-
-            if (address1.getCompany() == null && address1.getCompany() == null) {
-                result = 0;
-            } else if (address1.getCompany() == null) {
-                result = 1;
-            } else if (address2.getCompany() == null) {
-                result = -1;
-            } else {
-                result = Strings.nullToEmpty(address1.getCompany()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getCompany()).toLowerCase());
-            }
-
-            if (result == 0) {
-                result = Strings.nullToEmpty(address1.getLastName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getLastName()).toLowerCase());
-            }
-
-            if (result == 0) {
-                result = Strings.nullToEmpty(address1.getFirstName()).toLowerCase().compareTo(Strings.nullToEmpty(address2.getFirstName()).toLowerCase());
-            }
-
-            if (result == 0) {
-                result = Integer.compare(address1.getId(), address2.getId());
-            }
-
-            return result;
-        };
+        return list[random.nextInt(list.length)];
     }
 
     private HttpUrl.Builder getOrdersUrlBuilder() {
         return HttpUrl.get(uriToTest).newBuilder()
                 .addPathSegment("orders");
+    }
+
+    private Product getRandomProduct() throws IOException {
+        HttpUrl httpUrl = HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("product")
+                .addPathSegment("")
+                .build();
+
+        WebClient webClient = new WebClient();
+        webClient.addRequestHeader("Accept", "application/json");
+
+        Page page = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = page.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        Product[] products = null;
+        
+        if (webResponse.getContentType().equals("application/json")) {
+            String json = webResponse.getContentAsString();
+            Gson gson = new GsonBuilder().create();
+            products = gson.fromJson(json, Product[].class);
+
+            assertTrue(products.length > 2);
+
+        } else {
+            fail("Should have been JSON.");
+        }
+        
+        return products[random.nextInt(products.length)];
+    }
+
+    private Product productGenerator() {
+        Random random = new Random();
+
+        Product product = productBuilder(UUID.randomUUID().toString(), random.nextDouble(), random.nextDouble());
+        return product;
+    }
+
+    private Product productBuilder(String name, double cost, double labor) {
+        Product product = new Product();
+        product.setProductName(name);
+        product.setCost(cost);
+        product.setLaborCost(labor);
+        return product;
     }
 }
