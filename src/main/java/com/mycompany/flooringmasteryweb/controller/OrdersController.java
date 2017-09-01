@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -341,7 +342,7 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public String searchSubmit(@RequestParam("searchBy") String searchBy, @RequestParam("searchText") String searchText, Map model) {
+    public java.lang.String searchSubmit(@RequestParam("searchBy") String searchBy, @RequestParam("searchText") String searchText, Map model) {
         List<Order> orders = orderDao.getList();
         Boolean error = false;
         Boolean dateError = false;
@@ -424,7 +425,7 @@ public class OrdersController {
     @RequestMapping(value = "/size", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public Integer size(HttpServletRequest request, HttpServletResponse response) {
-        String acceptHeader = request.getHeader("Accept");
+        java.lang.String acceptHeader = request.getHeader("Accept");
         if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase("application/json")) {
             return orderDao.size();
         } else {

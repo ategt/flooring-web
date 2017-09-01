@@ -2019,7 +2019,7 @@ public class OrderDaoDbImplTest {
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
         for (OrderSortByEnum sortByEnum : OrderSortByEnum.values()) {
-            OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, Integer.MAX_VALUE, 0);
+            OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, 0, Integer.MAX_VALUE);
 
             List<Order> orders = orderDao.list(resultSegment);
             assertNotNull(orders);
@@ -2032,7 +2032,7 @@ public class OrderDaoDbImplTest {
 
             int size = random.nextInt(orderDao.size());
 
-            OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, size, 0);
+            OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, 0, size);
 
             List<Order> orders = orderDao.list(resultSegment);
             assertNotNull(orders);
@@ -2041,7 +2041,7 @@ public class OrderDaoDbImplTest {
         }
 
         int size = random.nextInt(orderDao.size());
-        OrderResultSegment resultSegment = new OrderResultSegment(null, size, 0);
+        OrderResultSegment resultSegment = new OrderResultSegment(null, 0, size);
 
         List<Order> orders = orderDao.list(resultSegment);
         assertNotNull(orders);
@@ -2191,7 +2191,7 @@ public class OrderDaoDbImplTest {
                 }
 
                 OrderSearchRequest searchRequest = new OrderSearchRequest(searchText, searchByEnum);
-                OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, Integer.MAX_VALUE, 0);
+                OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, 0, Integer.MAX_VALUE);
 
                 List<Order> orders = orderDao.search(searchRequest, resultSegment);
                 assertNotNull(orders);
@@ -2224,7 +2224,7 @@ public class OrderDaoDbImplTest {
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
         OrderSearchRequest searchRequest = new OrderSearchRequest("pat", OrderSearchByOptionEnum.NAME);
-        OrderResultSegment resultSegment = new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0);
+        OrderResultSegment resultSegment = new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, 0, Integer.MAX_VALUE);
 
         List<Order> orders = orderDao.search(searchRequest, resultSegment);
 
@@ -2242,7 +2242,7 @@ public class OrderDaoDbImplTest {
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
         OrderSearchRequest searchRequest = new OrderSearchRequest("pat", OrderSearchByOptionEnum.EVERYTHING);
-        OrderResultSegment resultSegment = new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0);
+        OrderResultSegment resultSegment = new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, 0, Integer.MAX_VALUE);
 
         List<Order> orders = orderDao.search(searchRequest, resultSegment);
 
