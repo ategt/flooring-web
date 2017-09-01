@@ -36,6 +36,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -596,16 +597,7 @@ public class OrdersControllerIT {
     public void testCRUD() throws IOException {
         System.out.println("CRUD test");
 
-        String city = UUID.randomUUID().toString();
-        String firstName = UUID.randomUUID().toString();
-        String lastName = UUID.randomUUID().toString();
-        String state = UUID.randomUUID().toString();
-        String zip = UUID.randomUUID().toString();
-        String company = UUID.randomUUID().toString();
-        String streetNumber = UUID.randomUUID().toString();
-        String streetName = UUID.randomUUID().toString();
-
-        Order order = orderBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
+        Order order = orderGenerator();
 
         Gson gson = new GsonBuilder().create();
 
@@ -714,8 +706,10 @@ public class OrdersControllerIT {
 
         assertEquals(orderReturned, specificOrder);
 
-        String updatedCity = UUID.randomUUID().toString();
-        orderReturned.setCity(updatedCity);
+        Order newOrder = orderGenerator();
+
+        Integer id = orderReturned.getId();
+        newOrder.setId(id);
 
         // Update Order With Service PUT endpoint
         HttpUrl updateUrl = getOrdersUrlBuilder()
@@ -724,7 +718,7 @@ public class OrdersControllerIT {
 
         WebClient updateOrderWebClient = new WebClient();
 
-        String updatedOrderJson = gson.toJson(orderReturned);
+        String updatedOrderJson = gson.toJson(newOrder);
 
         WebRequest updateRequest = new WebRequest(updateUrl.url(), HttpMethod.PUT);
         updateRequest.setRequestBody(updatedOrderJson);
@@ -738,45 +732,17 @@ public class OrdersControllerIT {
 
         Order returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, Order.class);
 
-        assertEquals(updatedCity, returnedUpdatedOrder.getCity());
+        assertEquals(newOrder, returnedUpdatedOrder);
 
         // Get Order By Company
         HttpUrl searchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
-        WebClient searchWebClient = new WebClient();
-
-        List<NameValuePair> paramsList = new ArrayList();
-
-        paramsList.add(new NameValuePair("searchText", updatedCity));
-        paramsList.add(new NameValuePair("searchBy", "searchByCity"));
-
-        WebRequest searchByCompanyRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByCompanyRequest.setRequestParameters(paramsList);
-
-        searchByCompanyRequest.setAdditionalHeader("Accept", "application/json");
-
-        Page companySearchPage = searchWebClient.getPage(searchByCompanyRequest);
-
-        assertEquals(companySearchPage.getWebResponse().getStatusCode(), 200);
-
-        String companySearchOrderJson = companySearchPage.getWebResponse().getContentAsString();
-
-        Order[] returnedCompanySearchOrders = gson.fromJson(companySearchOrderJson, Order[].class);
-
-        assertEquals(returnedCompanySearchOrders.length, 1);
-
-        Order returnedCompanySearchOrder = returnedCompanySearchOrders[0];
-
-        assertEquals(returnedUpdatedOrder, returnedCompanySearchOrder);
-        assertEquals(orderReturned, returnedCompanySearchOrder);
-        assertNotEquals(specificOrder, returnedCompanySearchOrder);
-
         // Check search using json object.
         WebClient jsonSearchWebClient = new WebClient();
 
-        String orderSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
+        String orderSearchRequestJson = "{\"searchBy\":\"searchByEverything\",\"searchText\":\"" + newOrder.getName() + "\"}";
 
         WebRequest searchByCityRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
         searchByCityRequest.setRequestBody(orderSearchRequestJson);
@@ -803,7 +769,12 @@ public class OrdersControllerIT {
         // Check search using json object built with my purspective api.
         WebClient jsonSearchWebClient2 = new WebClient();
 
-        OrderSearchRequest orderSearchRequest = new OrderSearchRequest(updatedCity, OrderSearchByOptionEnum.CITY);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(newOrder.getDate());
+
+        String searchText = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
+
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest(searchText, OrderSearchByOptionEnum.DATE);
 
         String orderSearchRequestJson2 = gson.toJson(orderSearchRequest);
 
@@ -934,18 +905,14 @@ public class OrdersControllerIT {
         assertEquals(contentString, "");
 
         // Get Deleted Order By Company
-        WebClient searchWebClient2 = new WebClient();
+        WebClient searchWebClient3 = new WebClient();
+         WebRequest searchByCityRequest3 = new WebRequest(searchUrl.url(), HttpMethod.POST);
+        searchByCityRequest3.setRequestBody(orderSearchRequestJson2);
 
-        List<NameValuePair> paramsList2 = new ArrayList();
-
-        paramsList2.add(new NameValuePair("searchText", updatedCity));
-        paramsList2.add(new NameValuePair("searchBy", "searchByCity"));
-
-        WebRequest searchByCityRequest3 = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByCityRequest3.setRequestParameters(paramsList2);
         searchByCityRequest3.setAdditionalHeader("Accept", "application/json");
+        searchByCityRequest3.setAdditionalHeader("Content-type", "application/json");
 
-        Page citySearchPage3 = searchWebClient2.getPage(searchByCityRequest3);
+        Page citySearchPage3 = searchWebClient3.getPage(searchByCityRequest3);
 
         assertEquals(citySearchPage3.getWebResponse().getStatusCode(), 200);
 
@@ -2351,19 +2318,19 @@ public class OrdersControllerIT {
 
         State state = getRandomState();
         Product product = getRandomProduct();
-        
-        
 
-        String city = UUID.randomUUID().toString();
-        String firstName = UUID.randomUUID().toString();
-        String lastName = UUID.randomUUID().toString();
-        String state = UUID.randomUUID().toString();
-        String zip = UUID.randomUUID().toString();
-        String company = UUID.randomUUID().toString();
-        String streetNumber = UUID.randomUUID().toString();
-        String streetName = UUID.randomUUID().toString();
+        Calendar postgresSupportedCalendar = Calendar.getInstance();
+        postgresSupportedCalendar.setTimeInMillis(0);
 
-        Order order = orderBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
+        int year = -4713 + random.nextInt(294276);
+        int month = random.nextInt(12);
+        int date = random.nextInt(32);
+
+        postgresSupportedCalendar.set(year, month, date);
+
+        Date postgresSupportedDate = postgresSupportedCalendar.getTime();
+
+        Order order = orderBuilder(UUID.randomUUID().toString(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), postgresSupportedDate, product, state);
         return order;
     }
 
@@ -2420,7 +2387,7 @@ public class OrdersControllerIT {
         assertTrue(webResponse.getContentLength() > 100);
 
         Product[] products = null;
-        
+
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
             Gson gson = new GsonBuilder().create();
@@ -2431,7 +2398,7 @@ public class OrdersControllerIT {
         } else {
             fail("Should have been JSON.");
         }
-        
+
         return products[random.nextInt(products.length)];
     }
 
