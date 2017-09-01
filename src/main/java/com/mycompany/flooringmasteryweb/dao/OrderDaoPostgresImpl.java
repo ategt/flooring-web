@@ -14,7 +14,9 @@ import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ResultSegement;
 import com.mycompany.flooringmasteryweb.dto.State;
+
 import static com.mycompany.flooringmasteryweb.utilities.DateUtilities.isSameDay;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -33,7 +36,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
  * @author apprentice
  */
 public class OrderDaoPostgresImpl implements OrderDao {
@@ -189,8 +191,8 @@ public class OrderDaoPostgresImpl implements OrderDao {
     }
 
     private List<Order> search(String queryString,
-            OrderSearchByOptionEnum searchOption,
-            ResultSegement<OrderSortByEnum> resultProperties) {
+                               OrderSearchByOptionEnum searchOption,
+                               ResultSegement<OrderSortByEnum> resultProperties) {
 
         List<Order> orders;
         String sqlSearchQuery;
@@ -275,9 +277,10 @@ public class OrderDaoPostgresImpl implements OrderDao {
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
+        //String dateString = year + "-" + String.format("%02d", month) + "-" + String.format("%02d", day);
         String dateString = year + "-" + month + "-" + day;
 
-        return search(new OrderSearchRequest(dateString, OrderSearchByOptionEnum.DATE), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0));
+        return search(new OrderSearchRequest(dateString, OrderSearchByOptionEnum.DATE), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, 0, Integer.MAX_VALUE));
     }
 
     @Override
@@ -285,7 +288,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         if (Objects.isNull(product)) {
             return null;
         }
-        return search(new OrderSearchRequest(product.getProductName(), OrderSearchByOptionEnum.PRODUCT), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, Integer.MAX_VALUE, 0));
+        return search(new OrderSearchRequest(product.getProductName(), OrderSearchByOptionEnum.PRODUCT), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, 0, Integer.MAX_VALUE));
     }
 
     @Override
@@ -429,12 +432,12 @@ public class OrderDaoPostgresImpl implements OrderDao {
     private static final String SQL_SEARCH_ORDERS_BY_DATE = "WITH inputQuery(n) AS (SELECT ?), "
             + "firstQuery AS ( "
             + "	SELECT * FROM orders "
-            + " 		WHERE DATE_PART('month', date) || '-' || DATE_PART('day', date) || '-' || DATE_PART('year', date) "
+            + " 		WHERE CONCAT(DATE_PART('month', date), '-', DATE_PART('day', date), '-', DATE_PART('year', date)) "
             + "		LIKE (SELECT REPLACE(REPLACE(n  ,'/', '-'), '\\', '-') FROM inputQuery) "
             + "	), "
             + "secondQuery AS ( "
             + "	SELECT * FROM orders "
-            + " 		WHERE DATE_PART('year', date) || '-' || DATE_PART('month', date) || '-' || DATE_PART('day', date) "
+            + " 		WHERE CONCAT(DATE_PART('year', date), '-', DATE_PART('month', date), '-', DATE_PART('day', date)) "
             + "		LIKE (SELECT REPLACE(REPLACE(n  ,'/', '-'), '\\', '-') FROM inputQuery) "
             + "	) "
             + "	SELECT *, 1 AS rank FROM firstQuery "
