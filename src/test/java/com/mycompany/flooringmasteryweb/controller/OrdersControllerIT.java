@@ -28,6 +28,7 @@ import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.State;
 import java.io.IOException;
@@ -923,12 +924,6 @@ public class OrdersControllerIT {
 
         assertEquals(returnedCitySearchOrders3.length, 0);
 
-        // Search for deleted Company by get Search
-        HttpUrl searchUrl2 = getOrdersUrlBuilder()
-                .addPathSegment(updatedCity)
-                .addPathSegment("search")
-                .build();
-
         WebClient showOrderWebClient3 = new WebClient();
         showOrderWebClient3.addRequestHeader("Accept", "application/json");
 
@@ -1089,12 +1084,12 @@ public class OrdersControllerIT {
      * Test of searchByLastName method, of class OrderDaoPostgresImpl.
      */
     @Test
-    public void testSearchByLastName() throws IOException {
+    public void testSearchByName() throws IOException {
         System.out.println("searchByLastName");
         String lastName = UUID.randomUUID().toString();
 
         Order order = orderGenerator();
-        order.setLastName(lastName);
+        order.setName(lastName);
 
         // Create a Order Using the POST endpoint
         HttpUrl createUrl = getOrdersUrlBuilder()
@@ -1168,43 +1163,43 @@ public class OrdersControllerIT {
         assertTrue(resultb.contains(createdOrder));
         assertEquals(resultb.size(), 1);
 
-        List<Order> resultc = searchForOrderByUsingJson(lastName, gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        List<Order> resultc = searchForOrderByUsingJson(lastName, gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
 
         assertNotNull(resultc);
         assertTrue(resultc.contains(createdOrder));
         assertEquals(resultc.size(), 1);
 
-        result = searchForOrderByUsingJson(lastName.toLowerCase(), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        result = searchForOrderByUsingJson(lastName.toLowerCase(), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByLastNameUsingXForm(lastName.toLowerCase(), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByUsingJson(lastName.toUpperCase(), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        result = searchForOrderByUsingJson(lastName.toUpperCase(), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByLastNameUsingXForm(lastName.toUpperCase(), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByUsingJson(lastName.substring(5), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        result = searchForOrderByUsingJson(lastName.substring(5), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByLastNameUsingXForm(lastName.substring(5), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByUsingJson(lastName.substring(5, 20), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        result = searchForOrderByUsingJson(lastName.substring(5, 20), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByUsingJson(lastName.substring(5, 20).toLowerCase(), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        result = searchForOrderByUsingJson(lastName.substring(5, 20).toLowerCase(), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20).toLowerCase(), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByUsingJson(lastName.substring(5, 20).toUpperCase(), gson, OrderSearchByOptionEnum.LAST_NAME, searchUrl.url());
+        result = searchForOrderByUsingJson(lastName.substring(5, 20).toUpperCase(), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20).toUpperCase(), gson, searchUrl.url(), "searchByLastName");
@@ -1245,8 +1240,8 @@ public class OrdersControllerIT {
 
         String xml = specificRow.asXml();
 
-        assertTrue(xml.contains(createdOrder.getFirstName()));
-        assertTrue(xml.contains(createdOrder.getLastName()));
+        assertTrue(xml.contains(Integer.toString(createdOrder.getId())));
+        assertTrue(xml.contains(createdOrder.getName()));
         assertTrue(xml.contains(Integer.toString(createdOrder.getId())));
         assertTrue(xml.contains("Edit"));
         assertTrue(xml.contains("Delete"));
@@ -1298,21 +1293,194 @@ public class OrdersControllerIT {
     public void testSearchByEverything() throws IOException {
         System.out.println("searchByEverything");
 
+        Order randomValidOrder = null;
+        
+        for (OrderSearchByOptionEnum searchByEnum : OrderSearchByOptionEnum.values()) {
+            for (OrderSortByEnum sortByEnum : OrderSortByEnum.values()) {
+
+                String searchText = null;
+
+                switch (searchByEnum) {
+                    case DATE:
+                        Date randomValidDate = null;
+                        while (randomValidDate == null) {
+                            randomValidOrder = getRandomOrder();
+                            randomValidDate = randomValidOrder.getDate();
+                        }
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(randomValidDate);
+
+                        searchText = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
+                        break;
+                    case NAME:
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getName() == null) {
+                            randomValidOrder = getRandomOrder();
+                            searchText = randomValidOrder.getName();
+                        }
+
+                        int subStringLength = random.nextInt(searchText.length()) + 5;
+
+                        System.out.println("String Length: " + searchText.length());
+                        System.out.println("Sub Length: " + subStringLength);
+                        System.out.println("");
+
+                        searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+                        break;
+                    case ORDER_NUMBER:
+                        randomValidOrder = getRandomOrder();
+                        searchText = Integer.toString(randomValidOrder.getId());
+                        break;
+                    case PRODUCT:
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getProduct() == null || randomValidOrder.getProduct().getProductName() == null) {
+                            randomValidOrder = getRandomOrder();
+                        }
+
+                        searchText = randomValidOrder.getProduct().getProductName();
+
+                        subStringLength = random.nextInt(searchText.length()) + 5;
+
+                        System.out.println("String Length: " + searchText.length());
+                        System.out.println("Sub Length: " + subStringLength);
+                        System.out.println("");
+
+                        searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+                        break;
+                    case STATE:
+                        randomValidOrder = null;
+                        while (randomValidOrder == null || randomValidOrder.getState() == null) {
+                            randomValidOrder = getRandomOrder();
+                        }
+                        searchText = randomValidOrder.getState().getStateName();
+                        break;
+                    case EVERYTHING:
+                        switch (random.nextInt(5)) {
+                            case 0:
+                                Date randomValidDate2 = null;
+                                while (randomValidDate2 == null) {
+                                    randomValidOrder = getRandomOrder();
+                                    randomValidDate2 = randomValidOrder.getDate();
+                                }
+
+                                Calendar calendar2 = Calendar.getInstance();
+                                calendar2.setTime(randomValidDate2);
+
+                                searchText = (calendar2.get(Calendar.MONTH) + 1) + "/" + calendar2.get(Calendar.DAY_OF_MONTH) + "/" + calendar2.get(Calendar.YEAR);
+                                break;
+                            case 1:
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getName() == null) {
+                                    randomValidOrder = getRandomOrder();
+                                    searchText = randomValidOrder.getName();
+                                }
+
+                                subStringLength = random.nextInt(searchText.length()) + 5;
+
+                                System.out.println("String Length: " + searchText.length());
+                                System.out.println("Sub Length: " + subStringLength);
+                                System.out.println("");
+
+                                searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+                                break;
+                            case 2:
+                                randomValidOrder = getRandomOrder();
+                                searchText = Integer.toString(randomValidOrder.getId());
+                                break;
+                            case 3:
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getProduct() == null || randomValidOrder.getProduct().getProductName() == null) {
+                                    randomValidOrder = getRandomOrder();
+                                }
+
+                                searchText = randomValidOrder.getProduct().getProductName();
+
+                                subStringLength = random.nextInt(searchText.length()) + 5;
+
+                                System.out.println("String Length: " + searchText.length());
+                                System.out.println("Sub Length: " + subStringLength);
+                                System.out.println("");
+
+                                searchText = searchText.length() - 2 < 5 || searchText.length() - 2 < subStringLength ? searchText.substring(2) : searchText.substring(2, subStringLength);
+                                break;
+                            case 4:
+                            default:
+                                randomValidOrder = null;
+                                while (randomValidOrder == null || randomValidOrder.getState() == null) {
+                                    randomValidOrder = getRandomOrder();
+                                }
+                                searchText = randomValidOrder.getState().getStateName();
+                                break;
+                        }
+                        break;
+                    default:
+                        fail("This should not get here.");
+                }
+
+                OrderSearchRequest searchRequest = new OrderSearchRequest(searchText, searchByEnum);
+                OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, Integer.MAX_VALUE, 0);
+
+                List<Order> orders = orderDao.search(searchRequest, resultSegment);
+                assertNotNull(orders);
+
+                assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
+                        orders.size() > 0);
+
+                assertTrue("SearchBy: " + searchByEnum.toString() + ", SortBy: " + sortByEnum.toString() + ", Count: " + orders.size() + ", Search Text: " + searchText + ", ID: " + randomValidOrder.getId(),
+                        orders.contains(randomValidOrder));
+            }
+
+            OrderSearchRequest searchRequest = new OrderSearchRequest("", searchByEnum);
+
+            List<Order> orders = orderDao.search(searchRequest, null);
+            assertNotNull(orders);
+
+            searchRequest = new OrderSearchRequest("", null);
+
+            orders = orderDao.search(searchRequest, null);
+            assertNotNull(orders);
+
+            orders = orderDao.search(null, null);
+            assertNotNull(orders);
+            assertEquals(orders.size(), orderDao.size());
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         OrderSearchByOptionEnum[] searchOptions = OrderSearchByOptionEnum.values();
 
         assertTrue(searchOptions.length > 5);
 
         Integer databaseSizeBeforeTest = getDatabaseSize();
 
-        for (int i = 0; searchOptions.length > i; i++) {
+        //for (int i = 0; searchOptions.length > i; i++) {
+        for (OrderSearchByOptionEnum searchByEnum : OrderSearchByOptionEnum.values()){
 
-            String searchingBy = searchOptions[i].value();
+            //String searchingBy = searchOptions[i].value();
             String randomString = UUID.randomUUID().toString();
 
             Order order = orderGenerator();
 
-            switch (searchingBy) {
-                case "searchByLastName":
+            switch (searchByEnum) {
+                case DATE:
                     order.setLastName(randomString);
                     break;
                 case "searchByFirstName":
@@ -2360,6 +2528,38 @@ public class OrdersControllerIT {
             assertTrue(states.length > 0);
 
             list = states;
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        return list[random.nextInt(list.length)];
+    }
+
+    private Order getRandomOrder() throws IOException {
+        Gson gson = new GsonBuilder().create();
+
+        // Get The List Of States
+        HttpUrl getListUrl = getOrdersUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient getListWebClient = new WebClient();
+        getListWebClient.addRequestHeader("Accept", "application/json");
+
+        Page getListPage = getListWebClient.getPage(getListUrl.url());
+        WebResponse getListWebResponse = getListPage.getWebResponse();
+        assertEquals(getListWebResponse.getStatusCode(), 200);
+        assertTrue(getListWebResponse.getContentLength() > 100);
+
+        Order[] list = null;
+
+        if (getListWebResponse.getContentType().equals("application/json")) {
+            String json = getListWebResponse.getContentAsString();
+            Order[] orders = gson.fromJson(json, Order[].class);
+
+            assertTrue(orders.length > 0);
+
+            list = orders;
         } else {
             fail("Should have been JSON.");
         }
