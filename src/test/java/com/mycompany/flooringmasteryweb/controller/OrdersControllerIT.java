@@ -26,6 +26,8 @@ import com.google.gson.JsonSyntaxException;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.Order;
+import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -35,38 +37,41 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import okhttp3.HttpUrl;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.w3c.dom.Node;
 
 /**
  *
  * @author ATeg
  */
-public class AddressSeleneseIT {
+public class OrdersControllerIT {
 
     ApplicationContext ctx;
     URI uriToTest;
 
     Integer addressCountFromIndex = null;
 
-    public AddressSeleneseIT() {
+    public OrdersControllerIT() {
         ctx = new ClassPathXmlApplicationContext("integrationTest-Context.xml");
     }
 
@@ -85,14 +90,14 @@ public class AddressSeleneseIT {
 
         WebClient webClient = new WebClient();
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
 
         String title = htmlPage.getTitleText();
-        assertEquals(title, "Address Book");
+        assertEquals(title, "Flooring Master");
     } 
     
     @Test
@@ -101,14 +106,14 @@ public class AddressSeleneseIT {
 
         WebClient webClient = new WebClient();
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
 
         String title = htmlPage.getTitleText();
-        assertEquals(title, "Address Book");
+        assertEquals(title, "Flooring Master");
     } 
     
     @Test
@@ -117,7 +122,7 @@ public class AddressSeleneseIT {
 
         WebClient webClient = new WebClient();
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("results", Integer.toString(0))
                 .build();
@@ -125,14 +130,19 @@ public class AddressSeleneseIT {
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
 
         String title = htmlPage.getTitleText();
-        assertEquals(title, "Address Book");
+        assertEquals(title, "Flooring Master");
     }
 
+    @Test
+    public void orderFormContainsPopulatedStateAndProductDropdownsTest(){
+        fail("This is not implemented yet.");
+    }
+    
     @Test
     public void testSearch() throws IOException {
         System.out.println("Search Test");
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
@@ -175,7 +185,7 @@ public class AddressSeleneseIT {
         Gson gson = new GsonBuilder().create();
 
         // Get Size of Database before creation.
-        HttpUrl sizeUrl = getAddressUrlBuilder()
+        HttpUrl sizeUrl = getOrdersUrlBuilder()
                 .addPathSegment("size")
                 .build();
 
@@ -203,7 +213,7 @@ public class AddressSeleneseIT {
             Assert.assertNotNull(address);
             Assert.assertNull(address.getId());
 
-            HttpUrl createUrl = getAddressUrlBuilder()
+            HttpUrl createUrl = getOrdersUrlBuilder()
                     .addPathSegment("")
                     .build();
 
@@ -220,7 +230,7 @@ public class AddressSeleneseIT {
 
         }
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("page", Integer.toString(0))
                 .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
@@ -239,7 +249,7 @@ public class AddressSeleneseIT {
         }
 
         String title = htmlPage.getTitleText();
-        assertEquals(title, "Address Book");
+        assertEquals(title, "Flooring Master");
         DomElement addressTable = htmlPage.getElementById("address-table");
 
         DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
@@ -303,7 +313,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void loadIndexPageWithPagination() throws IOException {
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -320,7 +330,7 @@ public class AddressSeleneseIT {
         }
 
         String title = htmlPage.getTitleText();
-        assertEquals(title, "Address Book");
+        assertEquals(title, "Flooring Master");
         DomElement addressTable = htmlPage.getElementById("address-table");
 
         DomNodeList<HtmlElement> addressRows = addressTable.getElementsByTagName("tr");
@@ -364,7 +374,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void loadIndexJson() throws IOException {
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -399,7 +409,7 @@ public class AddressSeleneseIT {
     public void verifyJsonAndHtmlIndexHaveSameAddresses() throws IOException {
         System.out.println("Verify Json And Html Have Same Addresses");
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("page", Integer.toString(0))
                 .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
@@ -464,7 +474,7 @@ public class AddressSeleneseIT {
     public void getTest() throws IOException {
         System.out.println("Get Test");
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -497,7 +507,7 @@ public class AddressSeleneseIT {
 
         final int randomAddressId = randomAddress.getId();
 
-        HttpUrl showUrl = getAddressUrlBuilder()
+        HttpUrl showUrl = getOrdersUrlBuilder()
                 .addPathSegment(Integer.toString(randomAddressId))
                 .build();
 
@@ -527,7 +537,7 @@ public class AddressSeleneseIT {
         Assert.assertEquals(specificAddress, randomAddress);
     }
 
-    private HttpUrl.Builder getAddressUrlBuilder() {
+    private HttpUrl.Builder getOrdersUrlBuilder() {
         return HttpUrl.get(uriToTest).newBuilder()
                 .addPathSegment("address");
     }
@@ -540,7 +550,7 @@ public class AddressSeleneseIT {
         Assert.assertNotNull(address);
         Assert.assertNull(address.getId());
 
-        HttpUrl createUrl = getAddressUrlBuilder()
+        HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -570,7 +580,7 @@ public class AddressSeleneseIT {
 
         int addressId = addressReturned.getId();
 
-        HttpUrl showUrl = getAddressUrlBuilder()
+        HttpUrl showUrl = getOrdersUrlBuilder()
                 .addPathSegment(Integer.toString(addressId))
                 .build();
 
@@ -598,7 +608,7 @@ public class AddressSeleneseIT {
 
         Address storedAddress = null;
 
-        HttpUrl showUrl2 = getAddressUrlBuilder()
+        HttpUrl showUrl2 = getOrdersUrlBuilder()
                 .addPathSegment(Integer.toString(addressId))
                 .build();
 
@@ -644,7 +654,7 @@ public class AddressSeleneseIT {
         Gson gson = new GsonBuilder().create();
 
         // Get Size of Database before creation.
-        HttpUrl sizeUrl = getAddressUrlBuilder()
+        HttpUrl sizeUrl = getOrdersUrlBuilder()
                 .addPathSegment("size")
                 .build();
 
@@ -668,7 +678,7 @@ public class AddressSeleneseIT {
         }
 
         // Create Address
-        HttpUrl createUrl = getAddressUrlBuilder()
+        HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -720,7 +730,7 @@ public class AddressSeleneseIT {
         assertTrue(addressReturned.getId() > 0);
 
         // Check that created address is in the Database.
-        HttpUrl showUrl = getAddressUrlBuilder()
+        HttpUrl showUrl = getOrdersUrlBuilder()
                 .addPathSegment(Integer.toString(addressReturned.getId()))
                 .build();
 
@@ -752,7 +762,7 @@ public class AddressSeleneseIT {
         addressReturned.setCity(updatedCity);
 
         // Update Address With Service PUT endpoint
-        HttpUrl updateUrl = getAddressUrlBuilder()
+        HttpUrl updateUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -775,7 +785,7 @@ public class AddressSeleneseIT {
         assertEquals(updatedCity, returnedUpdatedAddress.getCity());
 
         // Get Address By Company
-        HttpUrl searchUrl = getAddressUrlBuilder()
+        HttpUrl searchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
@@ -891,7 +901,7 @@ public class AddressSeleneseIT {
         // Delete the Created Address
         String addressIdString = Integer.toString(addressReturned.getId());
 
-        HttpUrl deleteUrl = getAddressUrlBuilder()
+        HttpUrl deleteUrl = getOrdersUrlBuilder()
                 .addPathSegment(addressIdString)
                 .build();
 
@@ -948,7 +958,7 @@ public class AddressSeleneseIT {
         assertEquals(afterCreation - 1, afterDeletion.intValue());
 
         // Try to Get Deleted Address
-        HttpUrl showUrl2 = getAddressUrlBuilder()
+        HttpUrl showUrl2 = getOrdersUrlBuilder()
                 .addPathSegment(Integer.toString(addressReturned.getId()))
                 .build();
 
@@ -991,7 +1001,7 @@ public class AddressSeleneseIT {
         assertEquals(returnedCitySearchAddresses3.length, 0);
 
         // Search for deleted Company by get Search
-        HttpUrl searchUrl2 = getAddressUrlBuilder()
+        HttpUrl searchUrl2 = getOrdersUrlBuilder()
                 .addPathSegment(updatedCity)
                 .addPathSegment("search")
                 .build();
@@ -1038,7 +1048,7 @@ public class AddressSeleneseIT {
         Address address = addressGenerator();
 
         // Create Generated Address
-        HttpUrl createUrl = getAddressUrlBuilder()
+        HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -1070,7 +1080,7 @@ public class AddressSeleneseIT {
         }
 
         // Get The List Of Addresses
-        HttpUrl getListUrl = getAddressUrlBuilder()
+        HttpUrl getListUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
@@ -1097,7 +1107,7 @@ public class AddressSeleneseIT {
         }
 
         // Get Database Size
-        HttpUrl sizeUrl = getAddressUrlBuilder()
+        HttpUrl sizeUrl = getOrdersUrlBuilder()
                 .addPathSegment("size")
                 .build();
 
@@ -1147,7 +1157,7 @@ public class AddressSeleneseIT {
         address.setLastName(lastName);
 
         // Create a Address Using the POST endpoint
-        HttpUrl createUrl = getAddressUrlBuilder()
+        HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -1188,7 +1198,7 @@ public class AddressSeleneseIT {
         paramsList.add(new NameValuePair("searchText", lastName));
         paramsList.add(new NameValuePair("searchBy", "searchByLastName"));
 
-        HttpUrl searchUrl = getAddressUrlBuilder()
+        HttpUrl searchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
@@ -1270,7 +1280,7 @@ public class AddressSeleneseIT {
         assertEquals(lastNameSearchHtmlPage.getWebResponse().getStatusCode(), 200);
 
         String title = lastNameSearchHtmlPage.getTitleText();
-        assertEquals(title, "Address Book");
+        assertEquals(title, "Flooring Master");
         DomElement addressTable = lastNameSearchHtmlPage.getElementById("address-table");
 
         DomNodeList<HtmlElement> tableRows = addressTable.getElementsByTagName("tr");
@@ -1438,7 +1448,7 @@ public class AddressSeleneseIT {
             }
 
             // Create a Address Using the POST endpoint
-            HttpUrl createUrl = getAddressUrlBuilder()
+            HttpUrl createUrl = getOrdersUrlBuilder()
                     .addPathSegment("")
                     .build();
 
@@ -1479,7 +1489,7 @@ public class AddressSeleneseIT {
             paramsList.add(new NameValuePair("searchText", randomString));
             paramsList.add(new NameValuePair("searchBy", searchingBy));
 
-            HttpUrl searchUrl = getAddressUrlBuilder()
+            HttpUrl searchUrl = getOrdersUrlBuilder()
                     .addPathSegment("search")
                     .build();
 
@@ -1562,7 +1572,7 @@ public class AddressSeleneseIT {
             assertEquals(randomStringSearchHtmlPage.getWebResponse().getStatusCode(), 200);
 
             String title = randomStringSearchHtmlPage.getTitleText();
-            assertEquals(title, "Address Book");
+            assertEquals(title, "Flooring Master");
             DomElement addressTable = randomStringSearchHtmlPage.getElementById("address-table");
 
             DomNodeList<HtmlElement> tableRows = addressTable.getElementsByTagName("tr");
@@ -1601,7 +1611,7 @@ public class AddressSeleneseIT {
 
     private Integer getDatabaseSize() throws JsonSyntaxException, IOException, FailingHttpStatusCodeException {
         // Get Database size.        
-        HttpUrl sizeUrl = getAddressUrlBuilder()
+        HttpUrl sizeUrl = getOrdersUrlBuilder()
                 .addPathSegment("size")
                 .build();
         WebClient sizeWebClient = new WebClient();
@@ -1690,7 +1700,7 @@ public class AddressSeleneseIT {
             searchString = caseRandomizer(random, searchString);
 
             // Search for Address Using Search GET Endpoint
-            HttpUrl getUrl = getAddressUrlBuilder()
+            HttpUrl getUrl = getOrdersUrlBuilder()
                     .addPathSegment(searchString)
                     .addPathSegment("search")
                     .build();
@@ -1769,7 +1779,7 @@ public class AddressSeleneseIT {
             modifiedSearchString = caseRandomizer(random, modifiedSearchString);
 
             // Search for Address Using Search GET Endpoint
-            HttpUrl getUrl = getAddressUrlBuilder()
+            HttpUrl getUrl = getOrdersUrlBuilder()
                     .addPathSegment(modifiedSearchString)
                     .addPathSegment("name_completion")
                     .build();
@@ -1858,12 +1868,12 @@ public class AddressSeleneseIT {
             // Search for Address Using Search GET Endpoint
             HttpUrl getUrl;
             if (random.nextBoolean()) {
-                getUrl = getAddressUrlBuilder()
+                getUrl = getOrdersUrlBuilder()
                         .addPathSegment("name_completion")
                         .addQueryParameter("term", modifiedSearchString)
                         .build();
             } else {
-                getUrl = getAddressUrlBuilder()
+                getUrl = getOrdersUrlBuilder()
                         .addPathSegment("name_completion")
                         .addQueryParameter("query", modifiedSearchString)
                         .build();
@@ -1907,7 +1917,7 @@ public class AddressSeleneseIT {
     private Address deleteAddress(int resultId) throws FailingHttpStatusCodeException, JsonSyntaxException, IOException {
         // Delete the Created Address
         String addressIdString = Integer.toString(resultId);
-        HttpUrl deleteUrl = getAddressUrlBuilder()
+        HttpUrl deleteUrl = getOrdersUrlBuilder()
                 .addPathSegment(addressIdString)
                 .build();
         Gson gson = new GsonBuilder().create();
@@ -1921,7 +1931,7 @@ public class AddressSeleneseIT {
 
     private Address createAddressUsingJson(Address address) throws IOException, FailingHttpStatusCodeException, JsonSyntaxException, RuntimeException {
         // Create Address
-        HttpUrl createUrl = getAddressUrlBuilder()
+        HttpUrl createUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
         WebClient createAddressWebClient = new WebClient();
@@ -1951,7 +1961,7 @@ public class AddressSeleneseIT {
     public void databaseSizeIsNotAccessibleFromABrowser() throws IOException {
         System.out.println("Database size can not be accessed for browser");
 
-        HttpUrl sizeUrl = getAddressUrlBuilder()
+        HttpUrl sizeUrl = getOrdersUrlBuilder()
                 .addPathSegment("size")
                 .build();
 
@@ -1999,7 +2009,7 @@ public class AddressSeleneseIT {
 
     @Test
     public void getSortedByLastName() throws IOException {
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "last_name")
                 .build();
@@ -2041,7 +2051,7 @@ public class AddressSeleneseIT {
     public void getSortedByFirstName() throws IOException {
         System.out.println("Sort By First Name");
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "first_name")
                 .build();
@@ -2083,7 +2093,7 @@ public class AddressSeleneseIT {
     public void getSortedByCompany() throws IOException {
         System.out.println("Sort by Company");
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "company")
                 .build();
@@ -2125,7 +2135,7 @@ public class AddressSeleneseIT {
     public void getSortedById() throws IOException {
         System.out.println("Sorted By ID");
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("sort_by", "id")
                 .build();
@@ -2172,7 +2182,7 @@ public class AddressSeleneseIT {
     public void getSortedByDefault() throws IOException {
         System.out.println("Sort by Default");
 
-        HttpUrl httpUrl = getAddressUrlBuilder()
+        HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
 
@@ -2257,7 +2267,7 @@ public class AddressSeleneseIT {
 
         // Check search using json object built with my purspective api.
         // Get The List Of Addresses
-        HttpUrl searchUrl = getAddressUrlBuilder()
+        HttpUrl searchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .addQueryParameter("sort_by", "last_name")
                 .addQueryParameter("page", Integer.toString(0))
@@ -2474,5 +2484,10 @@ public class AddressSeleneseIT {
 
             return result;
         };
+    }
+
+    private HttpUrl.Builder getOrdersUrlBuilder() {
+        return HttpUrl.get(uriToTest).newBuilder()
+                .addPathSegment("orders");
     }
 }
