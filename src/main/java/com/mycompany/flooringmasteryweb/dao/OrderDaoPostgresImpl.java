@@ -171,7 +171,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
         try {
             return jdbcTemplate.queryForObject(SQL_DELETE_ORDER, new OrderMapper(), id);
-        } catch (EmptyResultDataAccessException ex) {
+        } catch (EmptyResultDataAccessException ignored) {
         }
         return null;
     }
