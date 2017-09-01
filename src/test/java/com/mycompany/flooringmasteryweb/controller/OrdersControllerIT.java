@@ -1741,287 +1741,6 @@ public class OrdersControllerIT {
         return databaseSize;
     }
 
-    @Test
-    public void testGetWithString() throws IOException {
-        System.out.println("searchWithGet");
-        final Random random = new Random();
-
-        for (int pass = 0; pass < 25; pass++) {
-
-            String[] randomStrings = new String[8];
-
-            for (int i = 0; i < randomStrings.length; i++) {
-                randomStrings[i] = UUID.randomUUID().toString();
-            }
-
-            Order order = orderBuilder(randomStrings[0],
-                    randomStrings[1],
-                    randomStrings[2],
-                    randomStrings[3],
-                    randomStrings[4],
-                    randomStrings[5],
-                    randomStrings[6],
-                    randomStrings[7]);
-
-            Order createdOrder = createOrderUsingJson(order);
-            int resultId = createdOrder.getId();
-
-            int position = new Random().nextInt(randomStrings.length);
-            String searchString = randomStrings[position];
-
-            Order result = createdOrder;
-
-            Order returnedDeleteOrder = deleteOrder(resultId);
-            assertNotNull(returnedDeleteOrder);
-        }
-
-        for (int pass = 0; pass < 150; pass++) {
-
-            String[] randomStrings = new String[8];
-
-            for (int i = 0; i < randomStrings.length; i++) {
-                randomStrings[i] = UUID.randomUUID().toString();
-                randomStrings[i] = caseRandomizer(random, randomStrings[i]);
-            }
-
-            Order order = orderBuilder(randomStrings[0],
-                    randomStrings[1],
-                    randomStrings[2],
-                    randomStrings[3],
-                    randomStrings[4],
-                    randomStrings[5],
-                    randomStrings[6],
-                    randomStrings[7]);
-
-            order = createOrderUsingJson(order);
-            int resultId = order.getId();
-
-            int position = new Random().nextInt(randomStrings.length);
-            String searchString = randomStrings[position];
-
-            int minimumStringLength = 10;
-            int processLength = searchString.length() - minimumStringLength;
-            int startingPostition = random.nextInt(processLength - minimumStringLength);
-            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
-
-            searchString = searchString.substring(startingPostition, endingPostition);
-            searchString = caseRandomizer(random, searchString);
-
-            // Search for Order Using Search GET Endpoint
-            HttpUrl getUrl = getOrdersUrlBuilder()
-                    .addPathSegment(searchString)
-                    .addPathSegment("search")
-                    .build();
-
-            WebClient showOrderWebClient = new WebClient();
-            showOrderWebClient.addRequestHeader("Accept", "application/json");
-
-            Page singleOrderPage = showOrderWebClient.getPage(getUrl.url());
-            WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
-            assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
-            assertTrue("Content Length: " + jsonSingleOrderResponse.getContentLength(), jsonSingleOrderResponse.getContentLength() > 50);
-
-            Order specificOrder = null;
-
-            if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
-                String json = jsonSingleOrderResponse.getContentAsString();
-                Gson gson = new GsonBuilder().create();
-                specificOrder = gson.fromJson(json, Order.class);
-
-                Assert.assertNotNull(specificOrder);
-            } else {
-                fail("Should have been JSON.");
-            }
-
-            assertEquals(specificOrder, order);
-
-            Order returnedDeleteOrder = deleteOrder(resultId);
-            assertNotNull(returnedDeleteOrder);
-        }
-    }
-
-    @Test
-    public void testGetSuggestionsForAutoComplete() throws IOException {
-        System.out.println("AutoComplete Suggestions");
-        final Random random = new Random();
-
-        List<Order> ordersAdded = new ArrayList();
-
-        for (int pass = 0; pass < 25; pass++) {
-
-            Order order = orderGenerator();
-
-            Order createdOrder = createOrderUsingJson(order);
-
-            ordersAdded.add(createdOrder);
-        }
-
-        for (int pass = 0; pass < 150; pass++) {
-
-            Order order = orderGenerator();
-            order = createOrderUsingJson(order);
-            int resultId = order.getId();
-
-            ordersAdded.add(order);
-
-            int size = ordersAdded.size();
-            int randomInt = random.nextInt(size);
-
-            Order randomOrder = ordersAdded.get(randomInt);
-
-            String company = randomOrder.getCompany();
-            String firstName = randomOrder.getFirstName();
-            String lastName = randomOrder.getLastName();
-
-            String[] randomStrings = {company, firstName, lastName};
-
-            int position = new Random().nextInt(randomStrings.length);
-            String searchString = randomStrings[position];
-
-            int minimumStringLength = 10;
-            int processLength = searchString.length() - minimumStringLength;
-            int startingPostition = random.nextInt(processLength - minimumStringLength);
-            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
-
-            String modifiedSearchString = searchString.substring(startingPostition, endingPostition);
-            modifiedSearchString = caseRandomizer(random, modifiedSearchString);
-
-            // Search for Order Using Search GET Endpoint
-            HttpUrl getUrl = getOrdersUrlBuilder()
-                    .addPathSegment(modifiedSearchString)
-                    .addPathSegment("name_completion")
-                    .build();
-
-            WebClient showOrderWebClient = new WebClient();
-            showOrderWebClient.addRequestHeader("Accept", "application/json");
-
-            Page singleOrderPage = showOrderWebClient.getPage(getUrl.url());
-            WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
-            assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
-            assertTrue("Content Length: " + jsonSingleOrderResponse.getContentLength(), jsonSingleOrderResponse.getContentLength() > 35);
-
-            String[] returnedSuggestions = null;
-
-            if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
-                String json = jsonSingleOrderResponse.getContentAsString();
-                Gson gson = new GsonBuilder().create();
-
-                returnedSuggestions = gson.fromJson(json, String[].class);
-
-                Assert.assertNotNull(returnedSuggestions);
-            } else {
-                fail("Should have been JSON.");
-            }
-
-            Assert.assertNotNull(returnedSuggestions);
-
-            assertTrue(Arrays.asList(returnedSuggestions).stream().anyMatch(suggestionString -> suggestionString.contains(searchString)));
-
-            assertTrue(returnedSuggestions.length < 31);
-
-        }
-
-        for (Order order : ordersAdded) {
-            Order returnedDeleteOrder = deleteOrder(order.getId());
-            assertNotNull(returnedDeleteOrder);
-        }
-    }
-
-    @Test
-    public void testGetSuggestionsForAutoCompleteWithQuery() throws IOException {
-        System.out.println("AutoComplete Suggestions 2");
-        final Random random = new Random();
-
-        List<Order> ordersAdded = new ArrayList();
-
-        for (int pass = 0; pass < 25; pass++) {
-
-            Order order = orderGenerator();
-
-            Order createdOrder = createOrderUsingJson(order);
-
-            ordersAdded.add(createdOrder);
-        }
-
-        for (int pass = 0; pass < 150; pass++) {
-
-            Order order = orderGenerator();
-            order = createOrderUsingJson(order);
-            int resultId = order.getId();
-
-            ordersAdded.add(order);
-
-            int size = ordersAdded.size();
-            int randomInt = random.nextInt(size);
-
-            Order randomOrder = ordersAdded.get(randomInt);
-
-            String company = randomOrder.getCompany();
-            String firstName = randomOrder.getFirstName();
-            String lastName = randomOrder.getLastName();
-
-            String[] randomStrings = {company, firstName, lastName};
-
-            int position = new Random().nextInt(randomStrings.length);
-            String searchString = randomStrings[position];
-
-            int minimumStringLength = 10;
-            int processLength = searchString.length() - minimumStringLength;
-            int startingPostition = random.nextInt(processLength - minimumStringLength);
-            int endingPostition = random.nextInt(processLength - startingPostition) + startingPostition + minimumStringLength;
-
-            String modifiedSearchString = searchString.substring(startingPostition, endingPostition);
-            modifiedSearchString = caseRandomizer(random, modifiedSearchString);
-
-            // Search for Order Using Search GET Endpoint
-            HttpUrl getUrl;
-            if (random.nextBoolean()) {
-                getUrl = getOrdersUrlBuilder()
-                        .addPathSegment("name_completion")
-                        .addQueryParameter("term", modifiedSearchString)
-                        .build();
-            } else {
-                getUrl = getOrdersUrlBuilder()
-                        .addPathSegment("name_completion")
-                        .addQueryParameter("query", modifiedSearchString)
-                        .build();
-            }
-
-            WebClient showOrderWebClient = new WebClient();
-            showOrderWebClient.addRequestHeader("Accept", "application/json");
-
-            Page singleOrderPage = showOrderWebClient.getPage(getUrl.url());
-            WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
-            assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
-            assertTrue("Content Length: " + jsonSingleOrderResponse.getContentLength(), jsonSingleOrderResponse.getContentLength() > 35);
-
-            String[] returnedSuggestions = null;
-
-            if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
-                String json = jsonSingleOrderResponse.getContentAsString();
-                Gson gson = new GsonBuilder().create();
-
-                returnedSuggestions = gson.fromJson(json, String[].class);
-
-                Assert.assertNotNull(returnedSuggestions);
-            } else {
-                fail("Should have been JSON.");
-            }
-
-            Assert.assertNotNull(returnedSuggestions);
-
-            assertTrue(Arrays.asList(returnedSuggestions).stream().anyMatch(suggestion -> suggestion.contains(searchString)));
-
-            assertTrue(returnedSuggestions.length < 31);
-
-        }
-
-        for (Order order : ordersAdded) {
-            Order returnedDeleteOrder = deleteOrder(order.getId());
-            assertNotNull(returnedDeleteOrder);
-        }
-    }
-
     private Order deleteOrder(int resultId) throws FailingHttpStatusCodeException, JsonSyntaxException, IOException {
         // Delete the Created Order
         String orderIdString = Integer.toString(resultId);
@@ -2114,336 +1833,336 @@ public class OrdersControllerIT {
         String json = webResponse.getContentAsString();
         assertEquals(json, "");
     }
-
-    @Test
-    public void getSortedByLastName() throws IOException {
-        HttpUrl httpUrl = getOrdersUrlBuilder()
-                .addPathSegment("")
-                .addQueryParameter("sort_by", "last_name")
-                .build();
-
-        WebClient webClient = new WebClient();
-        webClient.addRequestHeader("Accept", "application/json");
-
-        Page page = webClient.getPage(httpUrl.url());
-        WebResponse webResponse = page.getWebResponse();
-        assertEquals(webResponse.getStatusCode(), 200);
-        assertTrue(webResponse.getContentLength() > 100);
-
-        Order[] ordersReturned = null;
-        Order[] ordersReturned2 = null;
-
-        if (webResponse.getContentType().equals("application/json")) {
-            String json = webResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
-            ordersReturned = gson.fromJson(json, Order[].class);
-            ordersReturned2 = gson.fromJson(json, Order[].class);
-
-            assertTrue(ordersReturned.length > 20);
-            assertTrue(ordersReturned2.length > 20);
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        List<Order> ordersSortedByComparator = Arrays.asList(ordersReturned);
-        List<Order> ordersSortedByDatabase = Arrays.asList(ordersReturned2);
-
-        ordersSortedByComparator.sort(sortByLastName());
-
-        for (int i = 0; i < ordersSortedByComparator.size(); i++) {
-            assertEquals("IDs: " + ordersSortedByComparator.get(i).getId() + ", " + ordersSortedByDatabase.get(i).getId(), ordersSortedByComparator.get(i), ordersSortedByDatabase.get(i));
-        }
-    }
-
-    @Test
-    public void getSortedByFirstName() throws IOException {
-        System.out.println("Sort By First Name");
-
-        HttpUrl httpUrl = getOrdersUrlBuilder()
-                .addPathSegment("")
-                .addQueryParameter("sort_by", "first_name")
-                .build();
-
-        WebClient webClient = new WebClient();
-        webClient.addRequestHeader("Accept", "application/json");
-
-        Page page = webClient.getPage(httpUrl.url());
-        WebResponse webResponse = page.getWebResponse();
-        assertEquals(webResponse.getStatusCode(), 200);
-        assertTrue(webResponse.getContentLength() > 100);
-
-        Order[] ordersReturned = null;
-        Order[] ordersReturned2 = null;
-
-        if (webResponse.getContentType().equals("application/json")) {
-            String json = webResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
-            ordersReturned = gson.fromJson(json, Order[].class);
-            ordersReturned2 = gson.fromJson(json, Order[].class);
-
-            assertTrue(ordersReturned.length > 20);
-            assertTrue(ordersReturned2.length > 20);
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        List<Order> orders = Arrays.asList(ordersReturned);
-        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
-
-        orders.sort(sortByFirstName());
-
-        for (int i = 0; i < orders.size(); i++) {
-            assertEquals(orders.get(i), ordersFromDb.get(i));
-        }
-    }
-
-    @Test
-    public void getSortedByCompany() throws IOException {
-        System.out.println("Sort by Company");
-
-        HttpUrl httpUrl = getOrdersUrlBuilder()
-                .addPathSegment("")
-                .addQueryParameter("sort_by", "company")
-                .build();
-
-        WebClient webClient = new WebClient();
-        webClient.addRequestHeader("Accept", "application/json");
-
-        Page page = webClient.getPage(httpUrl.url());
-        WebResponse webResponse = page.getWebResponse();
-        assertEquals(webResponse.getStatusCode(), 200);
-        assertTrue(webResponse.getContentLength() > 100);
-
-        Order[] ordersReturned = null;
-        Order[] ordersReturned2 = null;
-
-        if (webResponse.getContentType().equals("application/json")) {
-            String json = webResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
-            ordersReturned = gson.fromJson(json, Order[].class);
-            ordersReturned2 = gson.fromJson(json, Order[].class);
-
-            assertTrue(ordersReturned.length > 20);
-            assertTrue(ordersReturned2.length > 20);
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        List<Order> orders = Arrays.asList(ordersReturned);
-        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
-
-        orders.sort(sortByCompany());
-
-        for (int i = 0; i < orders.size(); i++) {
-            assertEquals("Made it " + i + " into the list. " + orders.get(i).getId() + ", " + ordersFromDb.get(i).getId(), orders.get(i), ordersFromDb.get(i));
-        }
-    }
-
-    @Test
-    public void getSortedById() throws IOException {
-        System.out.println("Sorted By ID");
-
-        HttpUrl httpUrl = getOrdersUrlBuilder()
-                .addPathSegment("")
-                .addQueryParameter("sort_by", "id")
-                .build();
-
-        WebClient webClient = new WebClient();
-        webClient.addRequestHeader("Accept", "application/json");
-
-        Page page = webClient.getPage(httpUrl.url());
-        WebResponse webResponse = page.getWebResponse();
-        assertEquals(webResponse.getStatusCode(), 200);
-        assertTrue(webResponse.getContentLength() > 100);
-
-        Order[] ordersReturned = null;
-        Order[] ordersReturned2 = null;
-
-        if (webResponse.getContentType().equals("application/json")) {
-            String json = webResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
-            ordersReturned = gson.fromJson(json, Order[].class);
-            ordersReturned2 = gson.fromJson(json, Order[].class);
-
-            assertTrue(ordersReturned.length > 20);
-            assertTrue(ordersReturned2.length > 20);
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        List<Order> orders = Arrays.asList(ordersReturned);
-        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
-
-        orders.sort(new Comparator<Order>() {
-            @Override
-            public int compare(Order order1, Order order2) {
-                return order2.getId().compareTo(order1.getId());
-            }
-        });
-
-        for (int i = 0; i < orders.size(); i++) {
-            assertEquals(orders.get(i), ordersFromDb.get(i));
-        }
-    }
-
-    @Test
-    public void getSortedByDefault() throws IOException {
-        System.out.println("Sort by Default");
-
-        HttpUrl httpUrl = getOrdersUrlBuilder()
-                .addPathSegment("")
-                .build();
-
-        WebClient webClient = new WebClient();
-        webClient.addRequestHeader("Accept", "application/json");
-
-        Page page = webClient.getPage(httpUrl.url());
-        WebResponse webResponse = page.getWebResponse();
-        assertEquals(webResponse.getStatusCode(), 200);
-        assertTrue(webResponse.getContentLength() > 100);
-
-        Order[] ordersReturned = null;
-        Order[] ordersReturned2 = null;
-
-        if (webResponse.getContentType().equals("application/json")) {
-            String json = webResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
-            ordersReturned = gson.fromJson(json, Order[].class);
-            ordersReturned2 = gson.fromJson(json, Order[].class);
-
-            assertTrue(ordersReturned.length > 20);
-            assertTrue(ordersReturned2.length > 20);
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        List<Order> orders = Arrays.asList(ordersReturned);
-        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
-
-        orders.sort(new Comparator<Order>() {
-            @Override
-            public int compare(Order order1, Order order2) {
-                return order1.getId().compareTo(order2.getId());
-            }
-        });
-
-        for (int i = 0; i < orders.size(); i++) {
-            assertEquals(orders.get(i), ordersFromDb.get(i));
-        }
-    }
-
-    @Test
-    public void getPaginatedList() throws IOException {
-        System.out.println("list by pagination");
-
-        List<Order> createdOrders = new ArrayList();
-
-        Gson gson = new GsonBuilder().create();
-
-        Order order = orderGenerator();
-
-        order.setFirstName("Doug");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        order.setFirstName("Doug Jr.");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        order.setFirstName("Doug III");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        order.setFirstName("Other Doug");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        order.setFirstName("Steve");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        order.setFirstName("Dave");
-        Order daveOrder = this.createOrderUsingJson(order);
-        createdOrders.add(daveOrder);
-
-        order.setFirstName("Phil");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        order.setFirstName("Stephen");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        order.setFirstName("Steven");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        order.setFirstName("Steven");
-        createdOrders.add(this.createOrderUsingJson(order));
-
-        // Check search using json object built with my purspective api.
-        // Get The List Of Orders
-        HttpUrl searchUrl = getOrdersUrlBuilder()
-                .addPathSegment("search")
-                .addQueryParameter("sort_by", "last_name")
-                .addQueryParameter("page", Integer.toString(0))
-                .addQueryParameter("results", Integer.toString(5))
-                .build();
-
-        WebClient webClient = new WebClient();
-
-        OrderSearchRequest orderSearchRequest = new OrderSearchRequest(order.getLastName(), OrderSearchByOptionEnum.LAST_NAME);
-
-        String orderSearchRequestJson2 = gson.toJson(orderSearchRequest);
-
-        WebRequest searchByLastNameWebRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByLastNameWebRequest.setRequestBody(orderSearchRequestJson2);
-
-        searchByLastNameWebRequest.setAdditionalHeader("Accept", "application/json");
-        searchByLastNameWebRequest.setAdditionalHeader("Content-type", "application/json");
-
-        Page lastNameSearchPage = webClient.getPage(searchByLastNameWebRequest);
-
-        assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
-
-        String searchOrderJson = lastNameSearchPage.getWebResponse().getContentAsString();
-
-        Order[] returnedLastNameSearchOrders = gson.fromJson(searchOrderJson, Order[].class);
-
-        assertEquals(returnedLastNameSearchOrders.length, 5);
-
-        Order firstReturnedLastNameSearchOrder = returnedLastNameSearchOrders[0];
-
-        assertEquals(daveOrder, firstReturnedLastNameSearchOrder);
-
-        webClient = new WebClient();
-
-        URL searchUrl2 = HttpUrl.get(searchByLastNameWebRequest.getUrl()).newBuilder()
-                .removeAllQueryParameters("page")
-                .addQueryParameter("page", Integer.toString(1))
-                .build()
-                .url();
-
-        searchByLastNameWebRequest.setUrl(searchUrl2);
-        Page lastNameSearchPage2 = webClient.getPage(searchByLastNameWebRequest);
-
-        assertEquals(lastNameSearchPage2.getWebResponse().getStatusCode(), 200);
-
-        Order[] returnedLastNameSearchOrders2
-                = gson.fromJson(lastNameSearchPage2.getWebResponse().getContentAsString(), Order[].class);
-
-        assertEquals(returnedLastNameSearchOrders2.length, 5);
-
-        Set<Order> orderSet = new HashSet();
-
-        orderSet.addAll(Arrays.asList(returnedLastNameSearchOrders));
-        orderSet.addAll(Arrays.asList(returnedLastNameSearchOrders2));
-
-        assertEquals(orderSet.size(), 10);
-
-        for (Order orderToCheck : createdOrders) {
-            assertTrue(orderSet.contains(orderToCheck));
-        }
-
-        assertTrue(orderSet.containsAll(createdOrders));
-
-        for (Order orderToDelete : createdOrders) {
-            deleteOrder(orderToDelete.getId());
-        }
-
-    }
+//
+//    @Test
+//    public void getSortedByLastName() throws IOException {
+//        HttpUrl httpUrl = getOrdersUrlBuilder()
+//                .addPathSegment("")
+//                .addQueryParameter("sort_by", "last_name")
+//                .build();
+//
+//        WebClient webClient = new WebClient();
+//        webClient.addRequestHeader("Accept", "application/json");
+//
+//        Page page = webClient.getPage(httpUrl.url());
+//        WebResponse webResponse = page.getWebResponse();
+//        assertEquals(webResponse.getStatusCode(), 200);
+//        assertTrue(webResponse.getContentLength() > 100);
+//
+//        Order[] ordersReturned = null;
+//        Order[] ordersReturned2 = null;
+//
+//        if (webResponse.getContentType().equals("application/json")) {
+//            String json = webResponse.getContentAsString();
+//            Gson gson = new GsonBuilder().create();
+//            ordersReturned = gson.fromJson(json, Order[].class);
+//            ordersReturned2 = gson.fromJson(json, Order[].class);
+//
+//            assertTrue(ordersReturned.length > 20);
+//            assertTrue(ordersReturned2.length > 20);
+//        } else {
+//            fail("Should have been JSON.");
+//        }
+//
+//        List<Order> ordersSortedByComparator = Arrays.asList(ordersReturned);
+//        List<Order> ordersSortedByDatabase = Arrays.asList(ordersReturned2);
+//
+//        ordersSortedByComparator.sort(sortByLastName());
+//
+//        for (int i = 0; i < ordersSortedByComparator.size(); i++) {
+//            assertEquals("IDs: " + ordersSortedByComparator.get(i).getId() + ", " + ordersSortedByDatabase.get(i).getId(), ordersSortedByComparator.get(i), ordersSortedByDatabase.get(i));
+//        }
+//    }
+//
+//    @Test
+//    public void getSortedByFirstName() throws IOException {
+//        System.out.println("Sort By First Name");
+//
+//        HttpUrl httpUrl = getOrdersUrlBuilder()
+//                .addPathSegment("")
+//                .addQueryParameter("sort_by", "first_name")
+//                .build();
+//
+//        WebClient webClient = new WebClient();
+//        webClient.addRequestHeader("Accept", "application/json");
+//
+//        Page page = webClient.getPage(httpUrl.url());
+//        WebResponse webResponse = page.getWebResponse();
+//        assertEquals(webResponse.getStatusCode(), 200);
+//        assertTrue(webResponse.getContentLength() > 100);
+//
+//        Order[] ordersReturned = null;
+//        Order[] ordersReturned2 = null;
+//
+//        if (webResponse.getContentType().equals("application/json")) {
+//            String json = webResponse.getContentAsString();
+//            Gson gson = new GsonBuilder().create();
+//            ordersReturned = gson.fromJson(json, Order[].class);
+//            ordersReturned2 = gson.fromJson(json, Order[].class);
+//
+//            assertTrue(ordersReturned.length > 20);
+//            assertTrue(ordersReturned2.length > 20);
+//        } else {
+//            fail("Should have been JSON.");
+//        }
+//
+//        List<Order> orders = Arrays.asList(ordersReturned);
+//        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
+//
+//        orders.sort(sortByFirstName());
+//
+//        for (int i = 0; i < orders.size(); i++) {
+//            assertEquals(orders.get(i), ordersFromDb.get(i));
+//        }
+//    }
+//
+//    @Test
+//    public void getSortedByCompany() throws IOException {
+//        System.out.println("Sort by Company");
+//
+//        HttpUrl httpUrl = getOrdersUrlBuilder()
+//                .addPathSegment("")
+//                .addQueryParameter("sort_by", "company")
+//                .build();
+//
+//        WebClient webClient = new WebClient();
+//        webClient.addRequestHeader("Accept", "application/json");
+//
+//        Page page = webClient.getPage(httpUrl.url());
+//        WebResponse webResponse = page.getWebResponse();
+//        assertEquals(webResponse.getStatusCode(), 200);
+//        assertTrue(webResponse.getContentLength() > 100);
+//
+//        Order[] ordersReturned = null;
+//        Order[] ordersReturned2 = null;
+//
+//        if (webResponse.getContentType().equals("application/json")) {
+//            String json = webResponse.getContentAsString();
+//            Gson gson = new GsonBuilder().create();
+//            ordersReturned = gson.fromJson(json, Order[].class);
+//            ordersReturned2 = gson.fromJson(json, Order[].class);
+//
+//            assertTrue(ordersReturned.length > 20);
+//            assertTrue(ordersReturned2.length > 20);
+//        } else {
+//            fail("Should have been JSON.");
+//        }
+//
+//        List<Order> orders = Arrays.asList(ordersReturned);
+//        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
+//
+//        orders.sort(sortByCompany());
+//
+//        for (int i = 0; i < orders.size(); i++) {
+//            assertEquals("Made it " + i + " into the list. " + orders.get(i).getId() + ", " + ordersFromDb.get(i).getId(), orders.get(i), ordersFromDb.get(i));
+//        }
+//    }
+//
+//    @Test
+//    public void getSortedById() throws IOException {
+//        System.out.println("Sorted By ID");
+//
+//        HttpUrl httpUrl = getOrdersUrlBuilder()
+//                .addPathSegment("")
+//                .addQueryParameter("sort_by", "id")
+//                .build();
+//
+//        WebClient webClient = new WebClient();
+//        webClient.addRequestHeader("Accept", "application/json");
+//
+//        Page page = webClient.getPage(httpUrl.url());
+//        WebResponse webResponse = page.getWebResponse();
+//        assertEquals(webResponse.getStatusCode(), 200);
+//        assertTrue(webResponse.getContentLength() > 100);
+//
+//        Order[] ordersReturned = null;
+//        Order[] ordersReturned2 = null;
+//
+//        if (webResponse.getContentType().equals("application/json")) {
+//            String json = webResponse.getContentAsString();
+//            Gson gson = new GsonBuilder().create();
+//            ordersReturned = gson.fromJson(json, Order[].class);
+//            ordersReturned2 = gson.fromJson(json, Order[].class);
+//
+//            assertTrue(ordersReturned.length > 20);
+//            assertTrue(ordersReturned2.length > 20);
+//        } else {
+//            fail("Should have been JSON.");
+//        }
+//
+//        List<Order> orders = Arrays.asList(ordersReturned);
+//        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
+//
+//        orders.sort(new Comparator<Order>() {
+//            @Override
+//            public int compare(Order order1, Order order2) {
+//                return order2.getId().compareTo(order1.getId());
+//            }
+//        });
+//
+//        for (int i = 0; i < orders.size(); i++) {
+//            assertEquals(orders.get(i), ordersFromDb.get(i));
+//        }
+//    }
+//
+//    @Test
+//    public void getSortedByDefault() throws IOException {
+//        System.out.println("Sort by Default");
+//
+//        HttpUrl httpUrl = getOrdersUrlBuilder()
+//                .addPathSegment("")
+//                .build();
+//
+//        WebClient webClient = new WebClient();
+//        webClient.addRequestHeader("Accept", "application/json");
+//
+//        Page page = webClient.getPage(httpUrl.url());
+//        WebResponse webResponse = page.getWebResponse();
+//        assertEquals(webResponse.getStatusCode(), 200);
+//        assertTrue(webResponse.getContentLength() > 100);
+//
+//        Order[] ordersReturned = null;
+//        Order[] ordersReturned2 = null;
+//
+//        if (webResponse.getContentType().equals("application/json")) {
+//            String json = webResponse.getContentAsString();
+//            Gson gson = new GsonBuilder().create();
+//            ordersReturned = gson.fromJson(json, Order[].class);
+//            ordersReturned2 = gson.fromJson(json, Order[].class);
+//
+//            assertTrue(ordersReturned.length > 20);
+//            assertTrue(ordersReturned2.length > 20);
+//        } else {
+//            fail("Should have been JSON.");
+//        }
+//
+//        List<Order> orders = Arrays.asList(ordersReturned);
+//        List<Order> ordersFromDb = Arrays.asList(ordersReturned2);
+//
+//        orders.sort(new Comparator<Order>() {
+//            @Override
+//            public int compare(Order order1, Order order2) {
+//                return order1.getId().compareTo(order2.getId());
+//            }
+//        });
+//
+//        for (int i = 0; i < orders.size(); i++) {
+//            assertEquals(orders.get(i), ordersFromDb.get(i));
+//        }
+//    }
+//
+//    @Test
+//    public void getPaginatedList() throws IOException {
+//        System.out.println("list by pagination");
+//
+//        List<Order> createdOrders = new ArrayList();
+//
+//        Gson gson = new GsonBuilder().create();
+//
+//        Order order = orderGenerator();
+//
+//        order.setFirstName("Doug");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        order.setFirstName("Doug Jr.");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        order.setFirstName("Doug III");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        order.setFirstName("Other Doug");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        order.setFirstName("Steve");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        order.setFirstName("Dave");
+//        Order daveOrder = this.createOrderUsingJson(order);
+//        createdOrders.add(daveOrder);
+//
+//        order.setFirstName("Phil");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        order.setFirstName("Stephen");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        order.setFirstName("Steven");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        order.setFirstName("Steven");
+//        createdOrders.add(this.createOrderUsingJson(order));
+//
+//        // Check search using json object built with my purspective api.
+//        // Get The List Of Orders
+//        HttpUrl searchUrl = getOrdersUrlBuilder()
+//                .addPathSegment("search")
+//                .addQueryParameter("sort_by", "last_name")
+//                .addQueryParameter("page", Integer.toString(0))
+//                .addQueryParameter("results", Integer.toString(5))
+//                .build();
+//
+//        WebClient webClient = new WebClient();
+//
+//        OrderSearchRequest orderSearchRequest = new OrderSearchRequest(order.getLastName(), OrderSearchByOptionEnum.LAST_NAME);
+//
+//        String orderSearchRequestJson2 = gson.toJson(orderSearchRequest);
+//
+//        WebRequest searchByLastNameWebRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+//        searchByLastNameWebRequest.setRequestBody(orderSearchRequestJson2);
+//
+//        searchByLastNameWebRequest.setAdditionalHeader("Accept", "application/json");
+//        searchByLastNameWebRequest.setAdditionalHeader("Content-type", "application/json");
+//
+//        Page lastNameSearchPage = webClient.getPage(searchByLastNameWebRequest);
+//
+//        assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
+//
+//        String searchOrderJson = lastNameSearchPage.getWebResponse().getContentAsString();
+//
+//        Order[] returnedLastNameSearchOrders = gson.fromJson(searchOrderJson, Order[].class);
+//
+//        assertEquals(returnedLastNameSearchOrders.length, 5);
+//
+//        Order firstReturnedLastNameSearchOrder = returnedLastNameSearchOrders[0];
+//
+//        assertEquals(daveOrder, firstReturnedLastNameSearchOrder);
+//
+//        webClient = new WebClient();
+//
+//        URL searchUrl2 = HttpUrl.get(searchByLastNameWebRequest.getUrl()).newBuilder()
+//                .removeAllQueryParameters("page")
+//                .addQueryParameter("page", Integer.toString(1))
+//                .build()
+//                .url();
+//
+//        searchByLastNameWebRequest.setUrl(searchUrl2);
+//        Page lastNameSearchPage2 = webClient.getPage(searchByLastNameWebRequest);
+//
+//        assertEquals(lastNameSearchPage2.getWebResponse().getStatusCode(), 200);
+//
+//        Order[] returnedLastNameSearchOrders2
+//                = gson.fromJson(lastNameSearchPage2.getWebResponse().getContentAsString(), Order[].class);
+//
+//        assertEquals(returnedLastNameSearchOrders2.length, 5);
+//
+//        Set<Order> orderSet = new HashSet();
+//
+//        orderSet.addAll(Arrays.asList(returnedLastNameSearchOrders));
+//        orderSet.addAll(Arrays.asList(returnedLastNameSearchOrders2));
+//
+//        assertEquals(orderSet.size(), 10);
+//
+//        for (Order orderToCheck : createdOrders) {
+//            assertTrue(orderSet.contains(orderToCheck));
+//        }
+//
+//        assertTrue(orderSet.containsAll(createdOrders));
+//
+//        for (Order orderToDelete : createdOrders) {
+//            deleteOrder(orderToDelete.getId());
+//        }
+//
+//    }
 
     private String caseRandomizer(final Random random, String input) {
         switch (random.nextInt(6)) {
