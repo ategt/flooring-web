@@ -422,6 +422,7 @@ public class OrdersControllerIT {
         final String htmlText = htmlPage.asText();
 
         Arrays.stream(orders)
+                .parallel()
                 .forEach((order) -> {
                     String orderName = order.getName();
                     if (Objects.nonNull(orderName)) {
