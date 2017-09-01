@@ -9,7 +9,7 @@ package com.mycompany.flooringmasteryweb.dto;
  *
  * @author ATeg
  */
-public class ResultProperties implements ResultSegement {
+public class ResultProperties implements ResultSegment {
 
     private final Integer pageNumber;
     private final Integer resultsPerPage;

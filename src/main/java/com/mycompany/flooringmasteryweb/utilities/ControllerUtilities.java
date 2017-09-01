@@ -6,7 +6,7 @@
 package com.mycompany.flooringmasteryweb.utilities;
 
 import com.mycompany.flooringmasteryweb.dao.StateDao;
-import com.mycompany.flooringmasteryweb.dto.ResultSegement;
+import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.dto.SearchRequest;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.dto.ValueEnum;
@@ -67,14 +67,14 @@ public class ControllerUtilities {
         return resultsPerPage;
     }
 
-    public static void generatePagingLinks(ApplicationContext ctx, int totalItems, ResultSegement resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
+    public static void generatePagingLinks(ApplicationContext ctx, int totalItems, ResultSegment resultProperties, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
         generatePagingLinks(ctx, totalItems, resultProperties, request, uriComponentsBuilder, model, null);
     }
 
     public static void generatePagingLinks(
             ApplicationContext ctx,
             int totalItems,
-            ResultSegement resultProperties,
+            ResultSegment resultProperties,
             HttpServletRequest request,
             UriComponentsBuilder uriComponentsBuilder,
             Map model,

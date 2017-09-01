@@ -15,11 +15,12 @@ import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductCommand;
-import com.mycompany.flooringmasteryweb.dto.ResultSegement;
+import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,7 +52,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
- *
  * @author apprentice
  */
 @Controller
@@ -92,7 +92,7 @@ public class OrdersController {
             HttpServletRequest request
     ) {
 
-        ResultSegement resultSegment = processResultPropertiesWithAllAsDefault(
+        ResultSegment resultSegment = processResultPropertiesWithAllAsDefault(
                 sortBy,
                 response,
                 sortCookie,
@@ -115,7 +115,7 @@ public class OrdersController {
             HttpServletRequest request,
             Map model) {
 
-        ResultSegement resultSegment = processResultPropertiesWithContextDefaults(
+        ResultSegment resultSegment = processResultPropertiesWithContextDefaults(
                 resultsPerPage,
                 resultsPerPageCookie,
                 page,
@@ -131,20 +131,23 @@ public class OrdersController {
         loadProductCommandsToMap(model);
 
         putBlankOrder(model);
-        
+
         return "order\\index";
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
-    public Order showWithAjax(@PathVariable("id") Integer orderId, @RequestHeader(value = "Accept", required = true) String acceptHeader) {
+    public Order show(@PathVariable("id") Integer orderId) {
         Order contact = orderDao.get(orderId);
 
         return contact;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String showWithHtml(@PathVariable("id") Integer orderId, Map model, @RequestHeader(value = "Accept", required = true) String acceptHeader) {
+    public String show(
+            @PathVariable("id") Integer orderId,
+            Map model
+    ) {
         Order order = orderDao.get(orderId);
 
         if (Objects.isNull(order)) {
@@ -161,7 +164,7 @@ public class OrdersController {
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
-    public OrderCommand updateWithAjax(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
+    public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
 
         validateInputs(orderCommand, bindingResult);
 
@@ -187,15 +190,9 @@ public class OrdersController {
         validateProduct(orderCommand, bindingResult);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public void deleteWithAjax(@PathVariable("id") Integer orderId) {
-        orderDao.delete(orderDao.get(orderId));
-    }
-
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public OrderCommand createWithAjax(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
+    public OrderCommand create(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return null;
@@ -215,7 +212,12 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("orderCommand") OrderCommand orderCommand, BindingResult bindingResult, Map model, HttpSession session) {
+    public String update(
+            @Valid @ModelAttribute("orderCommand") OrderCommand orderCommand,
+            BindingResult bindingResult,
+            Map model,
+            HttpSession session
+    ) {
 
         validateInputs(orderCommand, bindingResult);
 
@@ -318,8 +320,15 @@ public class OrdersController {
         return "redirect:/";
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
+    @ResponseBody
+    public Order delete(@PathVariable("id") Integer orderId) {
+        return orderDao.delete(orderDao.get(orderId));
+    }
+
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public String delete(@PathVariable("id") Integer orderId) {
+    public String delete(@PathVariable("id") Integer orderId,
+                         Map model) {
 
         orderDao.delete(orderDao.get(orderId));
 
@@ -407,19 +416,11 @@ public class OrdersController {
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response
     ) {
-        ResultSegement<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
 
         List<Order> orders = searchDatabase(addressSearchRequest, resultProperties);
 
         return orders;
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
-    @ResponseBody
-    public Order show(@PathVariable("id") Integer addressId) {
-        Order contact = orderDao.get(addressId);
-
-        return contact;
     }
 
     @RequestMapping(value = "/size", method = RequestMethod.GET, headers = "Accept=application/json")
@@ -433,12 +434,12 @@ public class OrdersController {
             return null;
         }
     }
-    
-    private void loadOrdersToMap(Map model, ResultSegement resultSegment) {
+
+    private void loadOrdersToMap(Map model, ResultSegment resultSegment) {
         List<Order> orders = orderDao.list(resultSegment);
         model.put("orders", orders);
     }
-    
+
     private void loadStateCommandsToMap(Map model) {
         List<StateCommand> stateCommands = stateDao.getListOfStates().stream()
                 .map(state -> StateCommand.buildCommandState(state))
@@ -466,7 +467,7 @@ public class OrdersController {
         model.put("orderCommand", orderCommand);
     }
 
-    private ResultSegement processResultPropertiesWithContextDefaults(
+    private ResultSegment processResultPropertiesWithContextDefaults(
             Integer resultsPerPage,
             Integer resultsPerPageCookie,
             Integer page,
@@ -477,11 +478,11 @@ public class OrdersController {
 
         resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
         page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
-        ResultSegement resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        ResultSegment resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return resultProperties;
     }
 
-    private ResultSegement processResultPropertiesWithAllAsDefault(
+    private ResultSegment processResultPropertiesWithAllAsDefault(
             String sortBy,
             HttpServletResponse response,
             String sortCookie,
@@ -491,14 +492,14 @@ public class OrdersController {
 
         resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
         page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
-        ResultSegement resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        ResultSegment resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return resultProperties;
     }
 
-    private ResultSegement processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+    private ResultSegment processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
         OrderSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
 
-        ResultSegement resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
+        ResultSegment resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
 
         ControllerUtilities.updateResultsCookie(resultProperties.getResultsPerPage(), RESULTS_COOKIE_NAME, response);
         return resultProperties;
@@ -527,13 +528,13 @@ public class OrdersController {
         }
         return sortBy;
     }
-    
+
     private void loadOrder(Integer contactId, Map model) {
         Order address = orderDao.get(contactId);
         model.put("address", address);
     }
 
-    private List<Order> searchDatabase(OrderSearchRequest searchRequest, ResultSegement<OrderSortByEnum> resultProperties) {
+    private List<Order> searchDatabase(OrderSearchRequest searchRequest, ResultSegment<OrderSortByEnum> resultProperties) {
         return orderDao.search(searchRequest,
                 resultProperties);
     }

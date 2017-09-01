@@ -9,7 +9,7 @@ package com.mycompany.flooringmasteryweb.dto;
  *
  * @author ATeg
  */
-public interface ResultSegement<T> {
+public interface ResultSegment<T> {
 
     /**
      * @return the pageNumber

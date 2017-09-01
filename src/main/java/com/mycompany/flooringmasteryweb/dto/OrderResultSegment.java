@@ -1,6 +1,6 @@
 package com.mycompany.flooringmasteryweb.dto;
 
-public class OrderResultSegment implements ResultSegement {
+public class OrderResultSegment implements ResultSegment {
 
     private final Integer pageNumber;
     private final Integer resultsPerPage;

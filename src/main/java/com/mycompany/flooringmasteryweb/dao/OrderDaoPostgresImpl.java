@@ -12,21 +12,16 @@ import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.ResultSegement;
+import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.dto.State;
-
-import static com.mycompany.flooringmasteryweb.utilities.DateUtilities.isSameDay;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -177,12 +172,12 @@ public class OrderDaoPostgresImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> list(ResultSegement<OrderSortByEnum> resultSegment) {
+    public List<Order> list(ResultSegment<OrderSortByEnum> resultSegment) {
         return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ORDER_LIST, resultSegment), new OrderMapper());
     }
 
     @Override
-    public List<Order> search(OrderSearchRequest searchRequest, ResultSegement<OrderSortByEnum> resultSegment) {
+    public List<Order> search(OrderSearchRequest searchRequest, ResultSegment<OrderSortByEnum> resultSegment) {
         if (searchRequest == null) {
             return list(resultSegment);
         }
@@ -192,7 +187,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
     private List<Order> search(String queryString,
                                OrderSearchByOptionEnum searchOption,
-                               ResultSegement<OrderSortByEnum> resultProperties) {
+                               ResultSegment<OrderSortByEnum> resultProperties) {
 
         List<Order> orders;
         String sqlSearchQuery;
@@ -207,7 +202,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return orders;
     }
 
-    private List<Order> search(String stringToSearchFor, String sqlQueryToUse, ResultSegement<OrderSortByEnum> resultProperties) {
+    private List<Order> search(String stringToSearchFor, String sqlQueryToUse, ResultSegment<OrderSortByEnum> resultProperties) {
         List<Order> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, resultProperties), new OrderMapper(), stringToSearchFor);
 
         return result;
@@ -277,7 +272,6 @@ public class OrderDaoPostgresImpl implements OrderDao {
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        //String dateString = year + "-" + String.format("%02d", month) + "-" + String.format("%02d", day);
         String dateString = year + "-" + month + "-" + day;
 
         return search(new OrderSearchRequest(dateString, OrderSearchByOptionEnum.DATE), new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, 0, Integer.MAX_VALUE));
@@ -632,7 +626,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return paginateQuery(sortQuery(query, sortByEnum), page, resultsPerPage);
     }
 
-    private String sortAndPaginateQuery(String query, ResultSegement<OrderSortByEnum> resultProperties) {
+    private String sortAndPaginateQuery(String query, ResultSegment<OrderSortByEnum> resultProperties) {
         if (resultProperties == null) {
             return query;
         }
