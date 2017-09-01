@@ -45,7 +45,7 @@ public interface OrderDao extends SizeableDao{
     List<Order> searchByProduct(Product product);
     List<Order> searchByState(State state);
     List<Order> searchByOrderNumber(Integer orderNumber);    
-    List<Order> search(OrderSearchRequest searchRequest, OrderResultSegment resultSegment);    
+    List<Order> search(OrderSearchRequest searchRequest, ResultSegement<OrderSortByEnum> resultSegment);    
 
     int size();    
 }

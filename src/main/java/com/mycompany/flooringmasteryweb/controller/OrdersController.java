@@ -396,6 +396,43 @@ public class OrdersController {
         return "order\\search";
     }
 
+    @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
+    @ResponseBody
+    public List<Order> search(
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @ModelAttribute OrderSearchRequest addressSearchRequest,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            HttpServletResponse response
+    ) {
+        ResultSegement<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+
+        List<Order> orders = searchDatabase(addressSearchRequest, resultProperties);
+
+        return orders;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public Order show(@PathVariable("id") Integer addressId) {
+        Order contact = orderDao.get(addressId);
+
+        return contact;
+    }
+
+    @RequestMapping(value = "/size", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public Integer size(HttpServletRequest request, HttpServletResponse response) {
+        String acceptHeader = request.getHeader("Accept");
+        if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase("application/json")) {
+            return orderDao.size();
+        } else {
+            response.setStatus(404);
+            return null;
+        }
+    }
+    
     private void loadOrdersToMap(Map model, ResultSegement resultSegment) {
         List<Order> orders = orderDao.list(resultSegment);
         model.put("orders", orders);
@@ -495,7 +532,7 @@ public class OrdersController {
         model.put("address", address);
     }
 
-    private List<Order> searchDatabase(OrderSearchRequest searchRequest, OrderResultSegment resultProperties) {
+    private List<Order> searchDatabase(OrderSearchRequest searchRequest, ResultSegement<OrderSortByEnum> resultProperties) {
         return orderDao.search(searchRequest,
                 resultProperties);
     }

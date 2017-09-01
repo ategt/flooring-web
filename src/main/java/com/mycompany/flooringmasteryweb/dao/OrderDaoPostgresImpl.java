@@ -180,7 +180,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> search(OrderSearchRequest searchRequest, OrderResultSegment resultSegment) {
+    public List<Order> search(OrderSearchRequest searchRequest, ResultSegement<OrderSortByEnum> resultSegment) {
         if (searchRequest == null) {
             return list(resultSegment);
         }
@@ -190,7 +190,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
 
     private List<Order> search(String queryString,
             OrderSearchByOptionEnum searchOption,
-            OrderResultSegment resultProperties) {
+            ResultSegement<OrderSortByEnum> resultProperties) {
 
         List<Order> orders;
         String sqlSearchQuery;
@@ -205,7 +205,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         return orders;
     }
 
-    private List<Order> search(String stringToSearchFor, String sqlQueryToUse, OrderResultSegment resultProperties) {
+    private List<Order> search(String stringToSearchFor, String sqlQueryToUse, ResultSegement<OrderSortByEnum> resultProperties) {
         List<Order> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, resultProperties), new OrderMapper(), stringToSearchFor);
 
         return result;

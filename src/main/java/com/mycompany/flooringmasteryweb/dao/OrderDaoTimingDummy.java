@@ -186,7 +186,7 @@ public class OrderDaoTimingDummy implements OrderDao {
     }
 
     @Override
-    public List<Order> search(OrderSearchRequest searchRequest, OrderResultSegment resultSegment) {
+    public List<Order> search(OrderSearchRequest searchRequest, ResultSegement<OrderSortByEnum> resultSegment) {
         try {
             Thread.sleep(timeToSleep);
         } catch (InterruptedException ex) {
