@@ -522,7 +522,7 @@ public class OrdersControllerIT {
 
             WebClient createOrderWebClient = new WebClient();
 
-            Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+            Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyyyy").create();
             String orderJson = gson.toJson(orderCommand);
 
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
@@ -552,14 +552,25 @@ public class OrdersControllerIT {
             Date orderReturnedDate = new Date(orderReturned.getDate().getTime());
             Date orderCommandDate = new Date(orderCommand.getDate().getTime());
 
+            Calendar orderReturnedCalendar = Calendar.getInstance();
+            orderReturnedCalendar.setTime(orderReturnedDate);
+
+            Calendar orderCommandCalendar = Calendar.getInstance();
+            orderCommandCalendar.setTime(orderCommandDate);
+
+
             orderReturned.setDate(orderReturnedDate);
             orderCommand.setDate(orderCommandDate);
 
             assertEquals("First Date: " + orderReturned.getDate() +
-                    ", Second Date: " + orderCommand.getDate() +
-                    ",  \n\t\tFirst Date Long: " + orderReturned.getDate().getTime() +
-                    ", \n\t\tSecond Date Long: " + orderCommand.getDate().getTime() +
-                    ", \n\t\tDifference: " + (orderReturned.getDate().getTime() - orderCommand.getDate().getTime()),
+                            ", Second Date: " + orderCommand.getDate() +
+                            "\n" +
+                            "\n\t\tOrder Returned Calendar: Era: " + orderReturnedCalendar.get(Calendar.ERA) + ", " + orderReturnedCalendar.toString() +
+                            "\n\t\tOrder Command Calendar: Era: " + orderCommandCalendar.get(Calendar.ERA) + ", " + orderCommandCalendar.toString() +
+                            "\n" +
+                            ",  \n\t\tFirst Date Long: " + orderReturned.getDate().getTime() +
+                            ", \n\t\tSecond Date Long: " + orderCommand.getDate().getTime() +
+                            ", \n\t\tDifference: " + (orderReturned.getDate().getTime() - orderCommand.getDate().getTime()),
                     orderReturned.getDate(),
                     orderCommand.getDate());
 
