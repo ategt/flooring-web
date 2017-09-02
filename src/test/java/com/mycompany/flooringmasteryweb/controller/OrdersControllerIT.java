@@ -31,10 +31,12 @@ import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.State;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -51,6 +53,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import okhttp3.HttpUrl;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -58,7 +61,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.validation.BindingResult;
@@ -66,7 +71,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.w3c.dom.Node;
 
 /**
- *
  * @author ATeg
  */
 public class OrdersControllerIT {
@@ -503,93 +507,125 @@ public class OrdersControllerIT {
 
     @Test
     public void createTest() throws IOException {
-        System.out.println("Create Test");
+        for (int i = 0; i < 50; i++) {
+            System.out.println("Create Test");
 
-        Order order = orderGenerator();
-        Assert.assertNotNull(order);
-        Assert.assertNull(order.getId());
+            Order order = orderGenerator();
+            Assert.assertNotNull(order);
+            Assert.assertNull(order.getId());
 
-        HttpUrl createUrl = getOrdersUrlBuilder()
-                .addPathSegment("")
-                .build();
+            OrderCommand orderCommand = OrderCommand.build(order);
 
-        WebClient createOrderWebClient = new WebClient();
+            HttpUrl createUrl = getOrdersUrlBuilder()
+                    .addPathSegment("")
+                    .build();
 
-        Gson gson = new GsonBuilder().create();
-        String orderJson = gson.toJson(order);
+            WebClient createOrderWebClient = new WebClient();
 
-        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
-        createRequest.setRequestBody(orderJson);
-        createRequest.setAdditionalHeader("Content-type", "application/json");
+            Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+            String orderJson = gson.toJson(orderCommand);
 
-        Page createPage = createOrderWebClient.getPage(createRequest);
+            WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
+            createRequest.setRequestBody(orderJson);
+            createRequest.setAdditionalHeader("Content-type", "application/json");
+            createRequest.setAdditionalHeader("Accept", "application/json");
 
-        String returnedOrderJson = createPage.getWebResponse().getContentAsString();
+            Page createPage = createOrderWebClient.getPage(createRequest);
 
-        Order orderReturned = gson.fromJson(returnedOrderJson, Order.class);
+            String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
-        Assert.assertNotNull(orderReturned);
-        Integer returnedOrderId = orderReturned.getId();
+            OrderCommand orderReturned = gson.fromJson(returnedOrderJson, OrderCommand.class);
 
-        Assert.assertTrue(returnedOrderId > 0);
+            Assert.assertNotNull(orderReturned);
+            Integer returnedOrderId = orderReturned.getId();
 
-        order.setId(returnedOrderId);
+            Assert.assertTrue(returnedOrderId > 0);
 
-        Assert.assertEquals(orderReturned, order);
+            orderCommand.setId(returnedOrderId);
 
-        int orderId = orderReturned.getId();
+            assertEquals(orderReturned.getArea(), orderCommand.getArea(), 0.0001);
 
-        HttpUrl showUrl = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(orderId))
-                .build();
+            orderReturned.setArea(orderCommand.getArea());
 
-        WebClient showOrderWebClient = new WebClient();
-        showOrderWebClient.addRequestHeader("Accept", "application/json");
+            Gson gsonVerbose = new GsonBuilder().create();
 
-        Page singleOrderPage = showOrderWebClient.getPage(showUrl.url());
-        WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
-        assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
-        assertTrue(jsonSingleOrderResponse.getContentLength() > 50);
+            Date orderReturnedDate = new Date(orderReturned.getDate().getTime());
+            Date orderCommandDate = new Date(orderCommand.getDate().getTime());
 
-        Order specificOrder = null;
+            assertEquals("First Date: " + orderReturned.getDate() +
+                    ", Second Date: " + orderCommand.getDate(),
+                    orderReturned.getDate(),h
+                    orderCommand.getDate());
 
-        if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
-            String json = jsonSingleOrderResponse.getContentAsString();
-            specificOrder = gson.fromJson(json, Order.class);
+            Assert.assertEquals("OrderReturned: " + gsonVerbose.toJson(orderReturned) +
+                            ", \nOrderCommand: " + gsonVerbose.toJson(orderCommand),
+                    orderReturned,
+                    orderCommand);
+
+            int orderId = orderReturned.getId();
+
+            HttpUrl showUrl = getOrdersUrlBuilder()
+                    .addPathSegment(Integer.toString(orderId))
+                    .build();
+
+            WebClient showOrderWebClient = new WebClient();
+            showOrderWebClient.addRequestHeader("Accept", "application/json");
+
+            Page singleOrderPage = showOrderWebClient.getPage(showUrl.url());
+            WebResponse jsonSingleOrderResponse = singleOrderPage.getWebResponse();
+            assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
+            assertTrue(jsonSingleOrderResponse.getContentLength() > 50);
+
+            Order specificOrder = null;
+
+            if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
+                String json = jsonSingleOrderResponse.getContentAsString();
+                specificOrder = gson.fromJson(json, Order.class);
+
+                Assert.assertNotNull(specificOrder);
+            } else {
+                fail("Should have been JSON.");
+            }
 
             Assert.assertNotNull(specificOrder);
-        } else {
-            fail("Should have been JSON.");
+
+            OrderCommand specificCommandOrder = OrderCommand.build(specificOrder);
+
+            assertEquals(specificCommandOrder.getArea(), orderReturned.getArea(), 0.0001);
+
+            orderReturned.setArea(specificCommandOrder.getArea());
+
+            Assert.assertEquals("SpecificCommandOrder: " + gsonVerbose.toJson(specificCommandOrder) +
+                            ", \nOrderCommand: " + gsonVerbose.toJson(orderReturned),
+                    specificCommandOrder,
+                    orderReturned);
+
+            Order storedOrder = null;
+
+            HttpUrl showUrl2 = getOrdersUrlBuilder()
+                    .addPathSegment(Integer.toString(orderId))
+                    .build();
+
+            WebClient showOrderWebClient2 = new WebClient();
+            showOrderWebClient2.addRequestHeader("Accept", "application/json");
+
+            Page singleOrderPage2 = showOrderWebClient2.getPage(showUrl2.url());
+            WebResponse jsonSingleOrderResponse2 = singleOrderPage2.getWebResponse();
+            assertEquals(jsonSingleOrderResponse2.getStatusCode(), 200);
+            assertTrue(jsonSingleOrderResponse2.getContentLength() > 50);
+
+            if (jsonSingleOrderResponse2.getContentType().equals("application/json")) {
+                String json = jsonSingleOrderResponse2.getContentAsString();
+                storedOrder = gson.fromJson(json, Order.class);
+
+                Assert.assertNotNull(storedOrder);
+            } else {
+                fail("Should have been JSON.");
+            }
+
+            assertNotNull(storedOrder);
+            Assert.assertEquals(OrderCommand.build(storedOrder), orderReturned);
         }
-
-        Assert.assertNotNull(specificOrder);
-        Assert.assertEquals(specificOrder, orderReturned);
-
-        Order storedOrder = null;
-
-        HttpUrl showUrl2 = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(orderId))
-                .build();
-
-        WebClient showOrderWebClient2 = new WebClient();
-        showOrderWebClient2.addRequestHeader("Accept", "application/json");
-
-        Page singleOrderPage2 = showOrderWebClient2.getPage(showUrl2.url());
-        WebResponse jsonSingleOrderResponse2 = singleOrderPage2.getWebResponse();
-        assertEquals(jsonSingleOrderResponse2.getStatusCode(), 200);
-        assertTrue(jsonSingleOrderResponse2.getContentLength() > 50);
-
-        if (jsonSingleOrderResponse2.getContentType().equals("application/json")) {
-            String json = jsonSingleOrderResponse2.getContentAsString();
-            storedOrder = gson.fromJson(json, Order.class);
-
-            Assert.assertNotNull(storedOrder);
-        } else {
-            fail("Should have been JSON.");
-        }
-
-        assertNotNull(storedOrder);
-        Assert.assertEquals(storedOrder, orderReturned);
     }
 
     /**
@@ -908,7 +944,7 @@ public class OrdersControllerIT {
 
         // Get Deleted Order By Company
         WebClient searchWebClient3 = new WebClient();
-         WebRequest searchByCityRequest3 = new WebRequest(searchUrl.url(), HttpMethod.POST);
+        WebRequest searchByCityRequest3 = new WebRequest(searchUrl.url(), HttpMethod.POST);
         searchByCityRequest3.setRequestBody(orderSearchRequestJson2);
 
         searchByCityRequest3.setAdditionalHeader("Accept", "application/json");
@@ -945,17 +981,17 @@ public class OrdersControllerIT {
     }
 
     private Order orderBuilder(String name,
-            double area,
-            double costPerFoot,
-            double laborCost,
-            double laborCostPerFoot,
-            double materialCost,
-            double tax,
-            double taxRate,
-            double total,
-            Date date,
-            Product product,
-            State state) {
+                               double area,
+                               double costPerFoot,
+                               double laborCost,
+                               double laborCostPerFoot,
+                               double materialCost,
+                               double tax,
+                               double taxRate,
+                               double total,
+                               Date date,
+                               Product product,
+                               State state) {
 
         Order order = new Order();
         order.setArea(area);
@@ -2210,11 +2246,11 @@ public class OrdersControllerIT {
         Calendar postgresSupportedCalendar = Calendar.getInstance();
         postgresSupportedCalendar.setTimeInMillis(0);
 
-        int year = -4713 + random.nextInt(294276);
+        int year = -4713 + random.nextInt(10276);
         int month = random.nextInt(12);
         int date = random.nextInt(32);
 
-        postgresSupportedCalendar.set(year, month, date);
+        postgresSupportedCalendar.set(year, month, date, 0, 0, 0);
 
         Date postgresSupportedDate = postgresSupportedCalendar.getTime();
 

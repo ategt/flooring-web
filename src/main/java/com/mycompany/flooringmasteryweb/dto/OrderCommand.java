@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 import java.util.Objects;
 import javax.validation.constraints.Min;
@@ -13,13 +14,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- *
  * @author apprentice
  */
 public class OrderCommand {
 
     @Min(0)
-    private int id;
+    private Integer id;
 
     @NotNull(message = "You Must Include A Name For This Order")
     @Size(min = 2, max = 45, message = "The Name For This Order Must Be Between 2 and 45 Characters")
@@ -62,20 +62,20 @@ public class OrderCommand {
 
     @Override
     public int hashCode() {
-        return id;
+        return Objects.isNull(id) ? 0 : id;
     }
 
     /**
      * @return the id
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -147,5 +147,40 @@ public class OrderCommand {
      */
     public void setArea(double area) {
         this.area = area;
+    }
+
+    public static OrderCommand build(Order order) {
+
+        if (order == null) {
+            return null;
+        }
+
+        OrderCommand orderCommand = new OrderCommand();
+
+        Double area = order.getArea();
+        State state = order.getState();
+        Date date = order.getDate();
+        Integer id = order.getId();
+        String name = order.getName();
+        Product product = order.getProduct();
+
+        String productName = "";
+        if (product != null) {
+            productName = product.getProductName();
+        }
+
+        String stateName = "";
+        if (state != null) {
+            stateName = state.getStateName();
+        }
+
+        orderCommand.setState(stateName);
+        orderCommand.setArea(area);
+        orderCommand.setDate(date);
+        orderCommand.setId(id);
+        orderCommand.setName(name);
+        orderCommand.setProduct(productName);
+
+        return orderCommand;
     }
 }
