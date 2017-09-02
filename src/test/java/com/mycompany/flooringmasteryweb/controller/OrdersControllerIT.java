@@ -522,7 +522,7 @@ public class OrdersControllerIT {
 
             WebClient createOrderWebClient = new WebClient();
 
-            Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyyyy").create();
+            Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
             String orderJson = gson.toJson(orderCommand);
 
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
@@ -2266,7 +2266,7 @@ public class OrdersControllerIT {
         postgresSupportedCalendar.setTimeInMillis(0);
 
         //int year = -4713 + random.nextInt(10276); // Postgres Supports this but Gson and Spring have trouble figuring out what 4000BC should be serialized as.
-        int year = random.nextInt(4000);
+        int year = random.nextInt(9000);
         int month = random.nextInt(12);
         int date = random.nextInt(32);
 
