@@ -552,8 +552,14 @@ public class OrdersControllerIT {
             Date orderReturnedDate = new Date(orderReturned.getDate().getTime());
             Date orderCommandDate = new Date(orderCommand.getDate().getTime());
 
+            orderReturned.setDate(orderReturnedDate);
+            orderCommand.setDate(orderCommandDate);
+
             assertEquals("First Date: " + orderReturned.getDate() +
-                    ", Second Date: " + orderCommand.getDate(),
+                    ", Second Date: " + orderCommand.getDate() +
+                    ",  \n\t\tFirst Date Long: " + orderReturned.getDate().getTime() +
+                    ", \n\t\tSecond Date Long: " + orderCommand.getDate().getTime() +
+                    ", \n\t\tDifference: " + (orderReturned.getDate().getTime() - orderCommand.getDate().getTime()),
                     orderReturned.getDate(),
                     orderCommand.getDate());
 
