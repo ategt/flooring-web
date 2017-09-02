@@ -558,9 +558,11 @@ public class OrdersControllerIT {
             Calendar orderCommandCalendar = Calendar.getInstance();
             orderCommandCalendar.setTime(orderCommandDate);
 
+            orderReturnedCalendar.set(Calendar.ERA, 1);
+            orderCommandCalendar.set(Calendar.ERA, 1);
 
-            orderReturned.setDate(orderReturnedDate);
-            orderCommand.setDate(orderCommandDate);
+            orderReturned.setDate(orderReturnedCalendar.getTime());
+            orderCommand.setDate(orderCommandCalendar.getTime());
 
             assertEquals("First Date: " + orderReturned.getDate() +
                             ", Second Date: " + orderCommand.getDate() +
