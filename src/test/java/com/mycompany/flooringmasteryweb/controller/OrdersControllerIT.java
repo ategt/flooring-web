@@ -554,7 +554,7 @@ public class OrdersControllerIT {
 
             assertEquals("First Date: " + orderReturned.getDate() +
                     ", Second Date: " + orderCommand.getDate(),
-                    orderReturned.getDate(),h
+                    orderReturned.getDate(),
                     orderCommand.getDate());
 
             Assert.assertEquals("OrderReturned: " + gsonVerbose.toJson(orderReturned) +
