@@ -13,7 +13,9 @@ import static org.junit.Assert.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
+import java.util.List;
+
+ /**
  *
  * @author apprentice
  */
@@ -414,5 +416,60 @@ public class ProductDaoDbImplTest {
         ProductDao thirdDao = ctx.getBean("productDao", ProductDao.class);
         assertEquals(thirdDao.get(productName), null);
 
+    }
+
+    @Test
+    public void bestGuessProductNameTest(){
+        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
+
+        Product product = productDao.create(productFactory());
+
+        String productName = product.getProductName();
+
+        String bestGuess = productDao.bestGuessProductName(productName);
+
+        assertEquals(productName, bestGuess);
+
+        bestGuess = productDao.bestGuessProductName(productName.substring(2));
+
+        assertEquals(productName, bestGuess);
+
+        bestGuess = productDao.bestGuessProductName(productName.substring(2, 7));
+
+        assertEquals(productName, bestGuess);
+    }
+
+    @Test
+    public void guessProductNameTest(){
+        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
+
+        Product product = productDao.create(productFactory());
+
+        String productName = product.getProductName();
+
+        List<String> productGuesses = productDao.guessProductName(productName);
+
+        assertTrue(!productGuesses.isEmpty());
+        assertEquals(productGuesses.size(), 1);
+        assertTrue(productGuesses.contains(productName));
+        assertEquals(productName, productGuesses.get(0));
+
+        productGuesses = productDao.guessProductName(productName.substring(4));
+
+        assertTrue(!productGuesses.isEmpty());
+        assertTrue(productGuesses.contains(productName));
+        assertEquals(productName, productGuesses.get(0));
+
+        productGuesses = productDao.guessProductName(productName.substring(2, 5));
+
+        assertTrue(!productGuesses.isEmpty());
+        assertTrue(productGuesses.contains(productName));
+        assertEquals(productName, productGuesses.get(0));
+
+        productGuesses = productDao.guessProductName(productName.substring(3, 4));
+
+        assertTrue(!productGuesses.isEmpty());
+        assertTrue(productGuesses.size() > 1);
+        assertTrue(productGuesses.contains(productName));
     }
 }

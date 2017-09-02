@@ -10,6 +10,7 @@ import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -39,9 +40,9 @@ public class ProductDaoPostgresImpl implements ProductDao {
     private static final String SQL_GUESS_PRODUCT_NAMES = "WITH inputQuery(n) AS (SELECT ?), "
             + "mainQuery AS ("
             + "              SELECT product_name, 1 AS rank FROM products WHERE product_name = (SELECT n FROM inputQuery) "
-            + "              UNION ALL SELECT product_name, 2 AS rank FROM products WHERE product_name = (SELECT LOWER(n) FROM inputQuery) "
-            + "              UNION ALL SELECT product_name, 3 AS rank FROM products WHERE product_name LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery) "
-            + "              UNION ALL SELECT product_name, 4 AS rank FROM products WHERE product_name LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)"
+            + "              UNION ALL SELECT product_name, 2 AS rank FROM products WHERE LOWER(product_name) = (SELECT LOWER(n) FROM inputQuery) "
+            + "              UNION ALL SELECT product_name, 3 AS rank FROM products WHERE LOWER(product_name) LIKE (SELECT LOWER(CONCAT(n, '%')) FROM inputQuery) "
+            + "              UNION ALL SELECT product_name, 4 AS rank FROM products WHERE LOWER(product_name) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)"
             + "          )"
             + " SELECT t1.product_name FROM mainQuery t1"
             + " JOIN ("
@@ -202,9 +203,13 @@ public class ProductDaoPostgresImpl implements ProductDao {
             return null;
         }
 
-        String[] productNames = jdbcTemplate.queryForObject(SQL_GUESS_PRODUCT_NAMES, String[].class, inputName);
+        try {
+            List<String> productNames = jdbcTemplate.queryForList(SQL_GUESS_PRODUCT_NAMES, String.class, inputName);
 
-        return Arrays.asList(productNames);
+            return productNames;
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex){
+            return Collections.emptyList();
+        }
     }
 
     @Override
