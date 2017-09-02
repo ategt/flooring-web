@@ -53,6 +53,8 @@ public class ProductDaoPostgresImpl implements ProductDao {
             + " ON t1.product_name = t2.product_name AND t1.rank = t2.min_rank"
             + " ORDER BY t1.rank ASC";
 
+    private static final String SQL_BEST_GUESS_PRODUCT_NAMES = SQL_GUESS_PRODUCT_NAMES + " LIMIT 1";
+
     @Inject
     public ProductDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -187,13 +189,12 @@ public class ProductDaoPostgresImpl implements ProductDao {
             return null;
         }
 
-        List<String> productGuesses = guessProductName(inputName);
-
-        if (productGuesses.isEmpty()) {
+        try {
+            String bestGuess = jdbcTemplate.queryForObject(SQL_BEST_GUESS_PRODUCT_NAMES, String.class, inputName);
+            return bestGuess;
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex){
             return null;
         }
-
-        return productGuesses.get(0);
     }
 
     @Override
