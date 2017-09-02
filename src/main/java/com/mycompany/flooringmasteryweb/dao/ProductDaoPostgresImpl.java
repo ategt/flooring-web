@@ -50,7 +50,7 @@ public class ProductDaoPostgresImpl implements ProductDao {
             + "	GROUP BY product_name"
             + ") t2"
             + " ON t1.product_name = t2.product_name AND t1.rank = t2.min_rank"
-            + " ORDER BY t1.rank DESC";
+            + " ORDER BY t1.rank ASC";
 
     @Inject
     public ProductDaoPostgresImpl(JdbcTemplate jdbcTemplate) {

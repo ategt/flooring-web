@@ -1015,6 +1015,7 @@ public class OrdersControllerIT {
         System.out.println("list");
 
         Order order = orderGenerator();
+        OrderCommand orderCommand = OrderCommand.build(order);
 
         // Create Generated Order
         HttpUrl createUrl = getOrdersUrlBuilder()
