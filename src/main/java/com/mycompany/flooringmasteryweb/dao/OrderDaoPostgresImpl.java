@@ -399,7 +399,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
         Double area = order.getArea();
         State state = order.getState();
         Date date = order.getDate();
-        int id = order.getId();
+        Integer id = order.getId();
         String name = order.getName();
         Product product = order.getProduct();
 
