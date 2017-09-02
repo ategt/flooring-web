@@ -634,12 +634,12 @@ public class AddressDaoPostgresImplMigratedTest {
 
             if (page == (size / resultsPerPage)) {
                 // This is the last page, it may contain a fraction of the expected results.
-                assertTrue("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size() <= resultsPerPage);
-                assertTrue("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size() > 0);
-                assertFalse(addresses.isEmpty());
+                assertTrue("Results returned should not exceed results per page. Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size() <= resultsPerPage);
+                assertTrue("Results should contain something. Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size() > 0);
+                assertFalse("Results empty when they should not be.", addresses.isEmpty());
             } else {
                 // This page should contain exactly the expected number of results.
-                assertEquals("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size(), resultsPerPage);
+                assertEquals("Wrong number of results. Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", Results:" + resultsPerPage, addresses.size(), resultsPerPage);
             }
 
             for (Address address : addresses) {
