@@ -33,6 +33,7 @@ $(document).ready(function () {
 
                 var tableRow = buildOrderRow(data);
                 $('#order-table').append($(tableRow));
+                displayShowDetailModal(data, status);
             },
             error: function (data, status) {
                 var errors = data.responseJSON.errors;
@@ -78,42 +79,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Accept", "application/json");
             },
             success: function (data, status) {
-
-                $('#order-name').text(data.name);
-                $('#order-date').text(data.date);
-                $('#order-area').text(data.area);
-                $('#order-id').text(data.id);
-                $('#order-labor-total-cost').text(formatDollar(data.laborCost));
-                $('#order-labor-unit-cost').text(formatDollar(data.laborCostPerSquareFoot));
-                $('#order-material-cost').text(formatDollar(data.materialCost));
-                $('#order-material-unit-cost').text(formatDollar(data.costPerSquareFoot));
-                $('#order-total-invoice').text(formatDollar(data.total));
-                $('#order-total-tax').text(formatDollar(data.tax));
-                $('#order-tax-rate').text(data.taxRate + " %");
-                var totalStr = data.total;
-                var taxStr = data.tax;
-                var total = parseInt(totalStr);
-                var tax = parseInt(taxStr);
-                var subTotal = eval(total - tax);
-                subTotal = formatDollar(subTotal);
-                $('#order-subtotal').text(subTotal);
-                var orderDate = data.date;
-                orderDate = new Date(orderDate);
-                if (orderDate === null) {
-                    orderDate = new Date();
-                }
-
-                $('#order-date-f').text(orderDate.toDateString());
-                var stateObj = data.state;
-                var displayState = "Error - Data Invalid";
-                if (stateObj !== null)
-                    displayState = stateObj.stateName;
-                $('#order-state').text(displayState);
-                var productObj = data.product;
-                var displayProduct = "Error - Data Invalid";
-                if (productObj !== null)
-                    displayProduct = productObj.productName;
-                $('#order-product').text(displayProduct);
+                displayShowDetailModal(data, status);
             },
             error: function (data, status) {
                 alert(status);
@@ -234,24 +200,6 @@ $(document).ready(function () {
         });
         $("#name-address").html("Searching for Contact Information...");
     });
-//    $(document).on('keypress', '.order-name', function (e) {
-//        var searchString = $("#name").val();
-//
-//        $.ajax({
-//            url: addressPath + searchString + "/name_completion",
-//            type: "GET",
-//            dataType: 'json',
-//            beforeSend: function (xhr) {
-//                xhr.setRequestHeader("Accept", "application/json");
-//            },
-//            success: function (data, status) {
-//                updateAddress(data);
-//            },
-//            error: function (data, status) {
-//                console.log("Autocomplete Status: " + status);
-//            }
-//        });
-//    });
 
     $('#name').autocomplete({
         source: addressPath + "name_completion",
@@ -308,4 +256,50 @@ $(document).ready(function () {
             return  num + (i && !(i % 3) ? "," : "") + acc;
         }, "") + "." + p[1];
     }
+
+    function displayShowDetailModal(data, status) {
+
+                $('#order-name').text(data.name);
+                $('#order-date').text(data.date);
+                $('#order-area').text(data.area);
+                $('#order-id').text(data.id);
+                $('#order-labor-total-cost').text(formatDollar(data.laborCost));
+                $('#order-labor-unit-cost').text(formatDollar(data.laborCostPerSquareFoot));
+                $('#order-material-cost').text(formatDollar(data.materialCost));
+                $('#order-material-unit-cost').text(formatDollar(data.costPerSquareFoot));
+                $('#order-total-invoice').text(formatDollar(data.total));
+                $('#order-total-tax').text(formatDollar(data.tax));
+                $('#order-tax-rate').text(data.taxRate + " %");
+                var totalStr = data.total;
+                var taxStr = data.tax;
+                var total = parseInt(totalStr);
+                var tax = parseInt(taxStr);
+                var subTotal = eval(total - tax);
+                subTotal = formatDollar(subTotal);
+                $('#order-subtotal').text(subTotal);
+                var orderDate = data.date;
+                orderDate = new Date(orderDate);
+
+                // This fixes the timezone conversion problem.
+                // Obviously not a good idea in a larger app, but
+                // reasonable for this demonstration.
+                var userOffset = orderDate.getTimezoneOffset() * 60000;
+                var orderDate = new Date(orderDate.getTime() + userOffset);
+
+                if (orderDate === null) {
+                    orderDate = new Date();
+                }
+
+                $('#order-date-f').text(orderDate.toDateString());
+                var stateObj = data.state;
+                var displayState = "Error - Data Invalid";
+                if (stateObj !== null)
+                    displayState = stateObj.stateName;
+                $('#order-state').text(displayState);
+                var productObj = data.product;
+                var displayProduct = "Error - Data Invalid";
+                if (productObj !== null)
+                    displayProduct = productObj.productName;
+                $('#order-product').text(displayProduct);
+               }
 });

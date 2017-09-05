@@ -150,6 +150,11 @@ public class OrdersControllerIT {
     }
 
     @Test
+    public void clickingASortLinkThenAPaginationLinkWillNotReverseTheSortingTest() {
+        fail("This is not implemented yet.");
+    }
+
+    @Test
     public void loadIndexPage() throws IOException {
         System.out.println("Load Index Page");
 
