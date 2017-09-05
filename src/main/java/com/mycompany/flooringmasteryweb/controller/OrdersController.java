@@ -201,7 +201,7 @@ public class OrdersController {
 
             Order orderTemp = order;
 
-            if (Objects.isNull(order.getId()) || order.getId() == 0) {
+            if (Objects.isNull(order.getId()) || Objects.equals(order.getId(),0)) {
                 orderTemp = orderDao.create(order);
             } else {
                 orderDao.update(order);
