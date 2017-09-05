@@ -92,7 +92,7 @@ public class OrdersController {
             HttpServletRequest request
     ) {
 
-        ResultSegment resultSegment = processResultPropertiesWithAllAsDefault(
+        ResultSegment<OrderSortByEnum> resultSegment = processResultPropertiesWithAllAsDefault(
                 sortBy,
                 response,
                 sortCookie,
@@ -115,7 +115,7 @@ public class OrdersController {
             HttpServletRequest request,
             Map model) {
 
-        ResultSegment resultSegment = processResultPropertiesWithContextDefaults(
+        ResultSegment<OrderSortByEnum> resultSegment = processResultPropertiesWithContextDefaults(
                 resultsPerPage,
                 resultsPerPageCookie,
                 page,
@@ -435,7 +435,7 @@ public class OrdersController {
         }
     }
 
-    private void loadOrdersToMap(Map model, ResultSegment resultSegment) {
+    private void loadOrdersToMap(Map model, ResultSegment<OrderSortByEnum> resultSegment) {
         List<Order> orders = orderDao.list(resultSegment);
         model.put("orders", orders);
     }
@@ -467,7 +467,7 @@ public class OrdersController {
         model.put("orderCommand", orderCommand);
     }
 
-    private ResultSegment processResultPropertiesWithContextDefaults(
+    private ResultSegment<OrderSortByEnum> processResultPropertiesWithContextDefaults(
             Integer resultsPerPage,
             Integer resultsPerPageCookie,
             Integer page,
@@ -478,11 +478,11 @@ public class OrdersController {
 
         resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
         page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
-        ResultSegment resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return resultProperties;
     }
 
-    private ResultSegment processResultPropertiesWithAllAsDefault(
+    private ResultSegment<OrderSortByEnum> processResultPropertiesWithAllAsDefault(
             String sortBy,
             HttpServletResponse response,
             String sortCookie,
@@ -492,14 +492,14 @@ public class OrdersController {
 
         resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
         page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
-        ResultSegment resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return resultProperties;
     }
 
-    private ResultSegment processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+    private ResultSegment<OrderSortByEnum> processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
         OrderSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
 
-        ResultSegment resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
+        ResultSegment<OrderSortByEnum> resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
 
         ControllerUtilities.updateResultsCookie(resultProperties.getResultsPerPage(), RESULTS_COOKIE_NAME, response);
         return resultProperties;
