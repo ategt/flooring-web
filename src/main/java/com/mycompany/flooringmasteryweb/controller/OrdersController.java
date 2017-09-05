@@ -105,7 +105,7 @@ public class OrdersController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id_reverse") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
             @RequestParam(name = "page", required = false) Integer page,
@@ -201,7 +201,7 @@ public class OrdersController {
 
             Order orderTemp = order;
 
-            if (order.getId() == 0) {
+            if (Objects.isNull(order.getId()) || order.getId() == 0) {
                 orderTemp = orderDao.create(order);
             } else {
                 orderDao.update(order);

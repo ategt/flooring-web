@@ -1182,7 +1182,7 @@ public class OrderDaoDbImplTest {
         Order returnedOrder = orderDao.create(builtOrder);
 
         // Record the orders id number.
-        int id = builtOrder.getId();
+        Integer id = builtOrder.getId();
 
         OrderCommand basicOrder = orderDao.resolveOrderCommand(builtOrder);
 

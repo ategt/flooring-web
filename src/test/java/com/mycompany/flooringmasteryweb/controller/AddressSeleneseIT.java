@@ -53,6 +53,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.annotation.Timed;
 import org.w3c.dom.Node;
 
 /**

@@ -191,7 +191,6 @@ public class OrdersControllerIT {
 
             WebClient createOrderWebClient = new WebClient();
 
-            //Gson gson = new GsonBuilder().create();
             String orderJson = gson.toJson(order);
 
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
