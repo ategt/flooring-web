@@ -180,6 +180,7 @@ public class OrdersControllerIT {
             fail("Should have been JSON.");
         }
 
+        // Generate some orders if the database does not have enough.
         for (int i = currentSize; i < minimumOrders; i++) {
             Order order = orderGenerator();
             Assert.assertNotNull(order);
@@ -201,6 +202,7 @@ public class OrdersControllerIT {
 
         }
 
+        // Get the first page of orders
         HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("page", Integer.toString(0))
@@ -233,18 +235,18 @@ public class OrdersControllerIT {
             assertEquals(orderCountFromIndex.intValue(), orderRows.size());
         }
 
-        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=first_name");
-        String linkText = sortByFirstName.getTextContent();
-        assertEquals(linkText, "First Name");
+        HtmlAnchor sortByName = htmlPage.getAnchorByHref("?sort_by=name");
+        String linkText = sortByName.getTextContent();
+        assertEquals(linkText, "Order Name");
 
-        Node classNode = sortByFirstName.getAttributes().getNamedItem("class");
+        Node classNode = sortByName.getAttributes().getNamedItem("class");
         String classValue = classNode.getNodeValue();
         assertEquals(classValue, "mask-link");
 
-        String tagName = sortByFirstName.getTagName();
+        String tagName = sortByName.getTagName();
         assertEquals(tagName, "a");
 
-        String href = sortByFirstName.getHrefAttribute();
+        String href = sortByName.getHrefAttribute();
 
         if (href.contains("?")) {
             href = href.replace("?", "");
@@ -255,11 +257,11 @@ public class OrdersControllerIT {
         URL urlWithQuery = HttpUrl.get(currentBaseUrl).newBuilder()
                 .query(href).build().url();
 
-        URL firstNameUrl = urlWithQuery;
+        URL nameUrl = urlWithQuery;
 
-        webClient.getPage(firstNameUrl);
+        webClient.getPage(nameUrl);
 
-        Set<Cookie> firstNameSortedCookies = webClient.getCookies(firstNameUrl);
+        Set<Cookie> firstNameSortedCookies = webClient.getCookies(nameUrl);
 
         String host = httpUrl.url().getHost();
 
@@ -275,7 +277,7 @@ public class OrdersControllerIT {
 
             assertEquals(domain, host);
             assertEquals(name, "sort_cookie");
-            assertEquals(value, "first_name");
+            assertEquals(value, "name");
 
         } else {
             fail("Sort Cookie Could Not Be Found.");
