@@ -21,5 +21,9 @@
     <import resource="testStateDb-ApplicationContext.xml" />
     <import resource="testProductDb-ApplicationContext.xml" />
     <import resource="testOrdersDb-ApplicationContext.xml" />
-    
+
+    <bean id="idOfAPatOrder" class="java.lang.Integer" >
+        <constructor-arg value="1483"/>
+    </bean>
+
 </beans>

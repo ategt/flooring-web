@@ -44,9 +44,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderDaoDbImplTest {
 
     ApplicationContext ctx;
+    Integer idOfAPatOrder;
 
     public OrderDaoDbImplTest() {
         ctx = new ClassPathXmlApplicationContext("test-OrdersSQLStateSQLProductSQL-applicationContext.xml");
+        idOfAPatOrder = ctx.getBean("idOfAPatOrder", Integer.class);
     }
 
     @Before
@@ -2232,7 +2234,7 @@ public class OrderDaoDbImplTest {
 
         assertTrue(orders.size() > 0);
 
-        Order aPatOrder = orderDao.get(1485);
+        Order aPatOrder = orderDao.get(idOfAPatOrder);
 
         assertTrue(orders.contains(aPatOrder));
     }
@@ -2250,7 +2252,7 @@ public class OrderDaoDbImplTest {
 
         assertTrue(orders.size() > 0);
 
-        Order aPatOrder = orderDao.get(1485);
+        Order aPatOrder = orderDao.get(idOfAPatOrder);
 
         assertTrue(orders.contains(aPatOrder));
     }
