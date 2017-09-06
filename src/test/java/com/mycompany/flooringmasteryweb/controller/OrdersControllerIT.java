@@ -198,6 +198,7 @@ public class OrdersControllerIT {
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
             createRequest.setRequestBody(orderJson);
             createRequest.setAdditionalHeader("Content-type", "application/json");
+            createRequest.setAdditionalHeader("Accept", "application/json");
 
             Page createPage = createOrderWebClient.getPage(createRequest);
 
