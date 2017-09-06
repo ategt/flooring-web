@@ -1165,6 +1165,18 @@ public class OrdersControllerIT {
 
         Integer createdOrderId = createdOrder.getId();
 
+        int sizee = list.size();
+        Order orderMatchCanidate = list.get(sizee - 1);
+
+        assertEquals(orderMatchCanidate.getId(), createdOrder.getId());
+        assertEquals(orderMatchCanidate.getName(), createdOrder.getName());
+        assertEquals(orderMatchCanidate.getArea(), createdOrder.getArea(), 0.001);
+        assertEquals(orderMatchCanidate.getDate(), createdOrder.getDate());
+        assertEquals( Objects.isNull(orderMatchCanidate.getProduct()) ? null : orderMatchCanidate.getProduct().getProductName(), createdOrder.getProduct() );
+        assertEquals( Objects.isNull(orderMatchCanidate.getState()) ? null : orderMatchCanidate.getState().getStateName(), createdOrder.getState() );
+
+
+
         //Order orderMatchCanidate = list.stream()
           Optional<Order> orderOptional = list.stream()
                 .filter(orderToFilter -> orderToFilter.getId() == createdOrderId)
@@ -1173,10 +1185,10 @@ public class OrdersControllerIT {
                 //        new org.aspectj.org.eclipse.jdt.internal.core.Assert.AssertionFailedException("This should have been present.")
                 //);
 
-        Order orderMatchCanidate = null;
-        if (orderOptional.isPresent()){
-            orderMatchCanidate = orderOptional.get();
-        }
+//        Order orderMatchCanidate = null;
+//        if (orderOptional.isPresent()){
+//            orderMatchCanidate = orderOptional.get();
+//        }
 
         assertEquals(orderMatchCanidate.getId(), createdOrder.getId());
         assertEquals(orderMatchCanidate.getName(), createdOrder.getName());
