@@ -491,8 +491,8 @@ public class OrdersController {
             Integer resultsPerPage,
             Integer resultsPerPageCookie) {
 
-        resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
-        page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
+        resultsPerPage = Integer.MAX_VALUE;
+        page = 0;
         ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return resultProperties;
     }
