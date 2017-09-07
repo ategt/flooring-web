@@ -46,6 +46,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import javax.activation.CommandObject;
+import javax.activation.DataHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -1202,10 +1204,10 @@ public class OrdersControllerIT {
 
         assertNotNull(createdOrder);
         //Integer createdOrderId = createdOrder.getId();
-        order.setId(createdOrderId);
+        orderCommand.setId(createdOrderId);
 
         assertNotNull(createdOrderId);
-        assertEquals(order, createdOrder);
+        assertEquals(orderCommand, createdOrder);
     }
 
     /**
