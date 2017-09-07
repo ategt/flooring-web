@@ -340,9 +340,9 @@ public class OrdersControllerIT {
 
         assertTrue(lastHref.contains("page="));
 
-        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=first_name");
+        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=name");
         String linkText = sortByFirstName.getTextContent();
-        assertEquals(linkText, "First Name");
+        assertEquals(linkText, "Order Name");
 
         Node classNode = sortByFirstName.getAttributes().getNamedItem("class");
         String classValue = classNode.getNodeValue();
