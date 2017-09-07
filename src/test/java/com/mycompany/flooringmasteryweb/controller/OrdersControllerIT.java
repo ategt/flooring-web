@@ -638,8 +638,10 @@ public class OrdersControllerIT {
         System.out.println("CRUD test");
 
         Order order = orderGenerator();
+        OrderCommand orderCommand = OrderCommand.build(order);
 
-        Gson gson = new GsonBuilder().create();
+        //Gson gson = new GsonBuilder().create();
+        Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
 
         // Get Size of Database before creation.
         HttpUrl sizeUrl = getOrdersUrlBuilder()
@@ -672,7 +674,7 @@ public class OrdersControllerIT {
 
         WebClient createOrderWebClient = new WebClient();
 
-        String orderJson = gson.toJson(order);
+        String orderJson = gson.toJson(orderCommand);
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
         createRequest.setRequestBody(orderJson);
@@ -684,7 +686,7 @@ public class OrdersControllerIT {
 
         String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
-        Order orderReturned = gson.fromJson(returnedOrderJson, Order.class);
+        OrderCommand orderReturned = gson.fromJson(returnedOrderJson, OrderCommand.class);
 
         assertNotNull(orderReturned.getId());
         assertTrue(orderReturned.getId() > 0);
@@ -744,12 +746,28 @@ public class OrdersControllerIT {
 
         Assert.assertNotNull(specificOrder);
 
-        assertEquals(orderReturned, specificOrder);
+        assertEquals(orderReturned.getId(), specificOrder.getId());
+
+        OrderCommand specificOrderCommand = OrderCommand.build(specificOrder);
+
+        assertEquals(specificOrderCommand.getArea(), orderReturned.getArea(), 0.001);
+        orderReturned.setArea(specificOrder.getArea());
+
+        assertEquals(specificOrderCommand, orderReturned);
+
+        assertEquals(orderReturned.getId(), specificOrder.getId());
+        assertEquals(orderReturned.getName(), specificOrder.getName());
+        assertEquals(orderReturned.getArea(), specificOrder.getArea(), 0.001);
+        assertEquals(orderReturned.getDate(), specificOrder.getDate());
+        assertEquals( Objects.isNull(specificOrder.getProduct()) ? null : specificOrder.getProduct().getProductName(), orderReturned.getProduct() );
+        assertEquals( Objects.isNull(specificOrder.getState()) ? null : specificOrder.getState().getStateName(), orderReturned.getState() );
 
         Order newOrder = orderGenerator();
 
         Integer id = orderReturned.getId();
         newOrder.setId(id);
+
+        OrderCommand newOrderCommand = OrderCommand.build(newOrder);
 
         // Update Order With Service PUT endpoint
         HttpUrl updateUrl = getOrdersUrlBuilder()
@@ -758,7 +776,7 @@ public class OrdersControllerIT {
 
         WebClient updateOrderWebClient = new WebClient();
 
-        String updatedOrderJson = gson.toJson(newOrder);
+        String updatedOrderJson = gson.toJson(newOrderCommand);
 
         WebRequest updateRequest = new WebRequest(updateUrl.url(), HttpMethod.PUT);
         updateRequest.setRequestBody(updatedOrderJson);
@@ -770,9 +788,12 @@ public class OrdersControllerIT {
 
         String returnedUpdatedOrderJson = updatePage.getWebResponse().getContentAsString();
 
-        Order returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, Order.class);
+        
 
-        assertEquals(newOrder, returnedUpdatedOrder);
+        OrderCommand returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, OrderCommand.class);
+
+        //assertEquals(newOrder, returnedUpdatedOrder);
+        assertEquals(returnedUpdatedOrder, newOrderCommand);
 
         // Get Order By Company
         HttpUrl searchUrl = getOrdersUrlBuilder()
@@ -796,7 +817,21 @@ public class OrdersControllerIT {
 
         String citySearchOrderJson = citySearchPage.getWebResponse().getContentAsString();
 
-        Order[] returnedCitySearchOrders = gson.fromJson(citySearchOrderJson, Order[].class);
+        GsonBuilder deserializeOrdersBuilder = new GsonBuilder();
+        deserializeOrdersBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            @Override
+            public Date deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+                try {
+                    return dateFormat.parse(jsonElement.getAsString());
+                } catch (ParseException e){
+                    return null;
+                }
+            }
+        });
+        Gson deserializeOrders = deserializeOrdersBuilder.create();
+
+        Order[] returnedCitySearchOrders = deserializeOrders.fromJson(citySearchOrderJson, Order[].class);
 
         assertEquals(returnedCitySearchOrders.length, 1);
 
