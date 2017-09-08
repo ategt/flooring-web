@@ -9,3 +9,6 @@ launch.bat
 .lnk
 *.lnk
 Test Results - com_mycompany_flooringmasteryweb_controller_in_FlooringMasteryWeb.xml
+Test Results - OrdersControllerIT.xml
+Test Results - *.xml
+
