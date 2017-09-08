@@ -60,6 +60,7 @@ import static org.junit.Assert.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.w3c.dom.Node;
 
@@ -628,13 +629,17 @@ public class OrdersControllerIT {
     @Test
     public void fakeStateUpdateIsRejectedWithExplanationTest() throws IOException {
 
-        Order newOrder = orderGenerator();
+        Order existingOrder = getRandomOrder();
+
+        Order updateableOrder = orderGenerator();
         Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
 
-        Integer id = orderReturned.getId();
-        newOrder.setId(id);
+        Integer id = existingOrder.getId();
+        updateableOrder.setId(id);
 
-        OrderCommand newOrderCommand = OrderCommand.build(newOrder);
+        OrderCommand updateableOrderCommand = OrderCommand.build(updateableOrder);
+
+        updateableOrderCommand.setState("HQ");
 
         // Update Order With Service PUT endpoint
         HttpUrl updateUrl = getOrdersUrlBuilder()
@@ -643,7 +648,7 @@ public class OrdersControllerIT {
 
         WebClient updateOrderWebClient = new WebClient();
 
-        String updatedOrderJson = gson.toJson(newOrderCommand);
+        String updatedOrderJson = gson.toJson(updateableOrderCommand);
 
         WebRequest updateRequest = new WebRequest(updateUrl.url(), HttpMethod.PUT);
         updateRequest.setRequestBody(updatedOrderJson);
@@ -651,20 +656,21 @@ public class OrdersControllerIT {
         updateRequest.setAdditionalHeader("Accept", "application/json");
         updateRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page updatePage = updateOrderWebClient.getPage(updateRequest);
+        String content = null;
 
-        WebResponse updatePageResponse = updatePage.getWebResponse();
-        assertEquals("Returned Status Code: " + updatePageResponse.getStatusCode(), updatePageResponse.getStatusCode(), 200);
+        try {
+            Page updatePage = updateOrderWebClient.getPage(updateRequest);
+            fail("This was supposed to come back with a bad request.");
+        }catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex){
+            assertEquals("Returned Status Code: " + ex.getStatusCode(), ex.getStatusCode(), 400);
+            WebResponse response = ex.getResponse();
+            assertEquals("Content Was Type: " + response.getContentType(), response.getContentType(), "application/json");
+            content = response.getContentAsString();
+        }
 
-        String returnedUpdatedOrderJson = updatePage.getWebResponse().getContentAsString();
+        FieldError[] fieldErrors = gson.fromJson(content, org.springframework.validation.FieldError[].class);
 
-        assertNotNull(returnedUpdatedOrderJson);
-        assertTrue("This is the JSON that failed: '" + returnedUpdatedOrderJson + "'", returnedUpdatedOrderJson.length() > 2);
-
-        OrderCommand returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, OrderCommand.class);
-
-        //assertEquals(newOrder, returnedUpdatedOrder);
-        assertEquals(returnedUpdatedOrder, newOrderCommand);
+        assertTrue(Arrays.stream(fieldErrors).anyMatch(fieldError -> Objects.equals(fieldError.getRejectedValue(), "HQ")));
 
     }
 
@@ -2479,7 +2485,7 @@ public class OrdersControllerIT {
     private Order getRandomOrder() throws IOException {
         Gson gson = new GsonBuilder().create();
 
-        // Get The List Of States
+        // Get The List Of Orders
         HttpUrl getListUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();

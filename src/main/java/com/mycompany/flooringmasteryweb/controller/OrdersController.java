@@ -6,6 +6,8 @@
 package com.mycompany.flooringmasteryweb.controller;
 
 import com.gargoylesoftware.htmlunit.WebResponse;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
@@ -22,6 +24,7 @@ import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -167,12 +170,15 @@ public class OrdersController {
     @ResponseBody
     public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand,
                                BindingResult bindingResult,
-                               HttpServletResponse response) {
+                               HttpServletResponse response) throws IOException {
 
         validateInputs(orderCommand, bindingResult);
 
         if (bindingResult.hasErrors()) {
+            Gson gson = new GsonBuilder().create();
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            response.getOutputStream().print(gson.toJson(bindingResult.getFieldErrors()));
             return null;
         } else {
             Order order = orderDao.orderBuilder(orderCommand);
