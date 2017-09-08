@@ -44,6 +44,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -170,16 +171,12 @@ public class OrdersController {
     @ResponseBody
     public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand,
                                BindingResult bindingResult,
-                               HttpServletResponse response) throws IOException {
+                               HttpServletResponse response) throws IOException, MethodArgumentNotValidException {
 
         validateInputs(orderCommand, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            Gson gson = new GsonBuilder().create();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json");
-            response.getOutputStream().print(gson.toJson(bindingResult.getFieldErrors()));
-            return null;
+            throw new MethodArgumentNotValidException(null, bindingResult);
         } else {
             Order order = orderDao.orderBuilder(orderCommand);
 

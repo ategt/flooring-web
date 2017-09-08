@@ -6,6 +6,8 @@
 package com.mycompany.flooringmasteryweb.validation;
 
 import java.util.List;
+
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -28,6 +30,7 @@ public class RestValidationHandler {
     public ValidationErrorContainer processValidationErrors(MethodArgumentNotValidException ex) {
 
         BindingResult result = ex.getBindingResult();
+        MethodParameter methodParameter = ex.getParameter();
 
         List<FieldError> fieldErrors = result.getFieldErrors();
 

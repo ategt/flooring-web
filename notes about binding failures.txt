@@ -1,0 +1,2 @@
+Exception Aspect errors returned - "{"errors":[{"fieldName":"product","message":"We Do not Carry That Product."}]}"
+My Home brewed version - "[{"field":"product","rejectedValue":"Cocaine","bindingFailure":false,"objectName":"orderCommand","codes":["error.user.orderCommand.product","error.user.product","error.user.java.lang.String","error.user"],"defaultMessage":"We Do not Carry That Product."}]"
