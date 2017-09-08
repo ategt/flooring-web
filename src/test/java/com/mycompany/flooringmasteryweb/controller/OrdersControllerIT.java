@@ -625,6 +625,49 @@ public class OrdersControllerIT {
         }
     }
 
+    @Test
+    public void fakeStateUpdateIsRejectedWithExplanationTest() throws IOException {
+
+        Order newOrder = orderGenerator();
+        Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+
+        Integer id = orderReturned.getId();
+        newOrder.setId(id);
+
+        OrderCommand newOrderCommand = OrderCommand.build(newOrder);
+
+        // Update Order With Service PUT endpoint
+        HttpUrl updateUrl = getOrdersUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient updateOrderWebClient = new WebClient();
+
+        String updatedOrderJson = gson.toJson(newOrderCommand);
+
+        WebRequest updateRequest = new WebRequest(updateUrl.url(), HttpMethod.PUT);
+        updateRequest.setRequestBody(updatedOrderJson);
+
+        updateRequest.setAdditionalHeader("Accept", "application/json");
+        updateRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page updatePage = updateOrderWebClient.getPage(updateRequest);
+
+        WebResponse updatePageResponse = updatePage.getWebResponse();
+        assertEquals("Returned Status Code: " + updatePageResponse.getStatusCode(), updatePageResponse.getStatusCode(), 200);
+
+        String returnedUpdatedOrderJson = updatePage.getWebResponse().getContentAsString();
+
+        assertNotNull(returnedUpdatedOrderJson);
+        assertTrue("This is the JSON that failed: '" + returnedUpdatedOrderJson + "'", returnedUpdatedOrderJson.length() > 2);
+
+        OrderCommand returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, OrderCommand.class);
+
+        //assertEquals(newOrder, returnedUpdatedOrder);
+        assertEquals(returnedUpdatedOrder, newOrderCommand);
+
+    }
+
     /**
      * Test of create method, of class OrderDaoPostgresImpl.
      */
@@ -781,10 +824,13 @@ public class OrdersControllerIT {
 
         Page updatePage = updateOrderWebClient.getPage(updateRequest);
 
+        WebResponse updatePageResponse = updatePage.getWebResponse();
+        assertEquals("Returned Status Code: " + updatePageResponse.getStatusCode(), updatePageResponse.getStatusCode(), 200);
+
         String returnedUpdatedOrderJson = updatePage.getWebResponse().getContentAsString();
 
         assertNotNull(returnedUpdatedOrderJson);
-        assertTrue(returnedUpdatedOrderJson.length() > 2);
+        assertTrue("This is the JSON that failed: '" + returnedUpdatedOrderJson + "'", returnedUpdatedOrderJson.length() > 2);
 
         OrderCommand returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, OrderCommand.class);
 

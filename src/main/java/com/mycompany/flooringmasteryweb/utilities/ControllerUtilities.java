@@ -60,6 +60,26 @@ public class ControllerUtilities {
         return resultsPerPage;
     }
 
+    public static Integer loadAllPageNumber(ApplicationContext ctx, Integer page) throws BeansException {
+        if (page == null) {
+            int defaultStartingPage = ctx.getBean("allStartingPage", Integer.class);
+            page = defaultStartingPage;
+        }
+        return page;
+    }
+
+    public static Integer loadAllResults(ApplicationContext ctx, Integer resultsPerPage, Integer resultsPerPageCookie) throws BeansException {
+        if (resultsPerPage == null) {
+            if (resultsPerPageCookie == null) {
+                int defaultResultsPerPage = ctx.getBean("allResultsPerPage", Integer.class);
+                resultsPerPage = defaultResultsPerPage;
+            } else {
+                resultsPerPage = resultsPerPageCookie;
+            }
+        }
+        return resultsPerPage;
+    }
+
     public static Integer updateResultsCookie(Integer resultsPerPage, String resultCookieName, HttpServletResponse response) {
         if (resultsPerPage != null && resultsPerPage > 0) {
             response.addCookie(new Cookie(resultCookieName, Integer.toString(resultsPerPage)));

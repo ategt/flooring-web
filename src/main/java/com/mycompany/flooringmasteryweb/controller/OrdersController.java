@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.controller;
 
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
@@ -164,11 +165,14 @@ public class OrdersController {
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
-    public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
+    public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand,
+                               BindingResult bindingResult,
+                               HttpServletResponse response) {
 
         validateInputs(orderCommand, bindingResult);
 
         if (bindingResult.hasErrors()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return null;
         } else {
             Order order = orderDao.orderBuilder(orderCommand);
@@ -491,8 +495,8 @@ public class OrdersController {
             Integer resultsPerPage,
             Integer resultsPerPageCookie) {
 
-        resultsPerPage = Integer.MAX_VALUE;
-        page = 0;
+        resultsPerPage = ControllerUtilities.loadAllResults(ctx, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadAllPageNumber(ctx, page);
         ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return resultProperties;
     }

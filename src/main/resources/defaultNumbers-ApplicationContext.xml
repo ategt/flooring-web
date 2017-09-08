@@ -24,6 +24,13 @@
 
     <bean id="defaultStartingPage" class="java.lang.Integer" > 
         <constructor-arg value="0"/>
-    </bean>    
+    </bean>
 
+    <bean id="allResultsPerPage" class="java.lang.Integer" >
+        <constructor-arg value="#{T(java.lang.Integer).MAX_VALUE}" />
+    </bean>
+
+    <bean id="allStartingPage" class="java.lang.Integer" >
+        <constructor-arg value="0"/>
+    </bean>
 </beans>
