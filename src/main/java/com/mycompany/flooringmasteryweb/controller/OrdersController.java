@@ -199,10 +199,10 @@ public class OrdersController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public OrderCommand create(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) {
+    public OrderCommand create(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) throws MethodArgumentNotValidException {
 
         if (bindingResult.hasErrors()) {
-            return null;
+            throw new MethodArgumentNotValidException(null, bindingResult);
         } else {
             Order order = orderDao.orderBuilder(orderCommand);
 

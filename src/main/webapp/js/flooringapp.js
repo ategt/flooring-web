@@ -40,7 +40,7 @@ $(document).ready(function () {
             error: function (data, status) {
                 var errors = data.responseJSON.errors;
                 $.each(errors, function (index, error) {
-                    $("#add-contact-validation-errors").append(error.fieldname + ":" + error.message + "<br />");
+                    $("#add-contact-validation-errors").append(error.fieldName + ":" + error.message + "<br />");
                 });
             }
         });

@@ -52,6 +52,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.mycompany.flooringmasteryweb.validation.ValidationError;
+import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
 import okhttp3.HttpUrl;
 import org.junit.*;
 
@@ -668,9 +670,11 @@ public class OrdersControllerIT {
             content = response.getContentAsString();
         }
 
-        FieldError[] fieldErrors = gson.fromJson(content, org.springframework.validation.FieldError[].class);
+        ValidationErrorContainer validationErrorContainer = gson.fromJson(content, ValidationErrorContainer.class);
 
-        assertTrue(Arrays.stream(fieldErrors).anyMatch(fieldError -> Objects.equals(fieldError.getRejectedValue(), "HQ")));
+        List<ValidationError> validationErrors = validationErrorContainer.getErrors();
+
+        assertTrue(validationErrors.stream().anyMatch(fieldError -> Objects.equals(fieldError.getFieldName(), "state") && Objects.equals(fieldError.getMessage(), "That State Does Not Exist.")));
 
     }
 
