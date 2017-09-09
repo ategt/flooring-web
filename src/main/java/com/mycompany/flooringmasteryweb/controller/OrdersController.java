@@ -41,6 +41,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -201,6 +202,8 @@ public class OrdersController {
     @ResponseBody
     public OrderCommand create(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) throws MethodArgumentNotValidException {
 
+        validateInputs(orderCommand, bindingResult);
+
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(null, bindingResult);
         } else {
@@ -208,7 +211,7 @@ public class OrdersController {
 
             Order orderTemp = order;
 
-            if (Objects.isNull(order.getId()) || Objects.equals(order.getId(),0)) {
+            if (Objects.isNull(order.getId()) || Objects.equals(order.getId(), 0)) {
                 orderTemp = orderDao.create(order);
             } else {
                 orderDao.update(order);
@@ -267,17 +270,18 @@ public class OrdersController {
         boolean productValid = productDao.validProductName(productInput);
 
         if (!productValid) {
-            bindingResult.rejectValue("product", "error.user", "We Do not Carry That Product.");
+            bindingResult.rejectValue("product", "product.custom", "-We Do not Carry This Item.");
         } else {
 
             String productGuess = productDao.bestGuessProductName(productInput);
 
             if (productDao.get(productGuess) == null) {
-                bindingResult.rejectValue("product", "error.user", "We Do not Carry That Product.");
+                bindingResult.rejectValue("product", "product.notFound", "-We Do not Carry That Item.");
             } else {
                 orderCommand.setProduct(productGuess);
             }
         }
+
     }
 
     private void validateState(OrderCommand orderCommand, BindingResult bindingResult) {
@@ -286,14 +290,14 @@ public class OrdersController {
         boolean stateValid = StateUtilities.validStateInput(stateInput);
 
         if (!stateValid) {
-            bindingResult.rejectValue("state", "error.user", "That State Does Not Exist.");
+            bindingResult.rejectValue("state", "state.doesNotExist", "-That State Does Not Exist.");
         } else {
 
             String stateGuess = StateUtilities.bestGuessStateName(stateInput);
             String stateAbbreviation = StateUtilities.abbrFromState(stateGuess);
 
             if (stateDao.get(stateAbbreviation) == null) {
-                bindingResult.rejectValue("state", "error.user", "The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
+                bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
             } else {
                 orderCommand.setState(stateAbbreviation);
             }
@@ -321,6 +325,7 @@ public class OrdersController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@ModelAttribute OrderCommand basicOrder) {
+
         Order order = orderDao.orderBuilder(basicOrder);
         orderDao.update(order);
 

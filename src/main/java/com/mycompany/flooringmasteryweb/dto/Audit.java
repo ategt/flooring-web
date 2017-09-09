@@ -15,17 +15,33 @@ import java.util.Objects;
  */
 public class Audit {
     
-    private int id;
+    private Integer id;
     private Date date;
-    private int orderid;
+    private Integer orderid;
     private String actionPerformed;
     private Date logDate;
     private String orderName;
     private double orderTotal;
-    
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getOrderid() {
+        return orderid;
+    }
+
+    public void setOrderid(Integer orderid) {
+        this.orderid = orderid;
+    }
+
     @Override
     public int hashCode(){
-        return id;
+        return id == null ? 0 : id;
     }
     
     @Override
@@ -70,19 +86,6 @@ public class Audit {
         this.date = date;
     }
 
-    /**
-     * @return the orderid
-     */
-    public int getOrderid() {
-        return orderid;
-    }
-
-    /**
-     * @param orderid the orderid to set
-     */
-    public void setOrderid(int orderid) {
-        this.orderid = orderid;
-    }
 
     /**
      * @return the actionPerformed
@@ -126,17 +129,5 @@ public class Audit {
         this.orderTotal = orderTotal;
     }
 
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
 }
