@@ -1,5 +1,7 @@
 package com.mycompany.flooringmasteryweb.validation;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +11,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
@@ -24,6 +29,79 @@ public class RestValidationHandlerTest {
 
     @After
     public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void deperationResourceTest() {
+
+        // This is me trying to make sense out of how the loader works.
+        // ReloadableRsourceBundleMessageSource.java: 494
+        //protected PropertiesHolder refreshProperties(String filename, PropertiesHolder propHolder) {
+
+        long cacheMillis = -1;
+        //PropertiesHolder propHolder = null;
+
+        long refreshTimestamp = (cacheMillis < 0 ? -1 : System.currentTimeMillis());
+
+
+        final String PROPERTIES_SUFFIX = ".properties";
+        final String XML_SUFFIX = ".xml";
+
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        Log logger = LogFactory.getLog(getClass());
+
+        //logger.
+        String filename = "messages";
+
+        Resource resource = resourceLoader.getResource(filename + PROPERTIES_SUFFIX);
+        if (!resource.exists()) {
+            resource = resourceLoader.getResource(filename + XML_SUFFIX);
+        }
+
+        if (resource.exists()) {
+            long fileTimestamp = -1;
+            if (cacheMillis >= 0) {
+                // Last-modified timestamp of file will just be read if caching with timeout.
+                try {
+                    fileTimestamp = resource.lastModified();
+                    fail("Not sure what this does yet.");
+//                    if (propHolder != null && propHolder.getFileTimestamp() == fileTimestamp) {
+//                        if (logger.isDebugEnabled()) {
+//                            logger.debug("Re-caching properties for filename [" + filename + "] - file hasn't been modified");
+//                        }
+//                        propHolder.setRefreshTimestamp(refreshTimestamp);
+//                        return propHolder;
+//                    }
+                } catch (IOException ex) {
+                    // Probably a class path resource: cache it forever.
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(resource + " could not be resolved in the file system - assuming that it hasn't changed", ex);
+                    }
+                    fileTimestamp = -1;
+                }
+            }
+            try {
+                //Properties props = loadProperties(resource, filename);
+                //propHolder = new ReloadableResourceBundleMessageSource.PropertiesHolder(props, fileTimestamp);
+                fail("This has not been implemented yet.");
+                throw new IOException();
+            } catch (IOException ex) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Could not parse properties file [" + resource.getFilename() + "]", ex);
+                }
+                // Empty holder representing "not valid".
+                //propHolder = new ReloadableResourceBundleMessageSource.PropertiesHolder();
+                fail("Execution should not reach this point.");
+            }
+        } else {
+            // Resource does not exist.
+            if (logger.isDebugEnabled()) {
+                logger.debug("No properties file found for [" + filename + "] - neither plain properties nor XML");
+            }
+            // Empty holder representing "not found".
+            //propHolder = new ReloadableResourceBundleMessageSource.PropertiesHolder();
+            fail("Execution should not reach this point.");
+        }
     }
 
     @Test
@@ -53,14 +131,13 @@ public class RestValidationHandlerTest {
 //                <value>/WEB-INF/messages</value>
 
         //messageSource.setBasename("classpath:messages");
-        messageSource.setBasename("messages");
+        messageSource.setBasename("/WEB-INF/messages");
         messageSource.setCacheSeconds(5);
         //messageSource.set
 
         ReloadableResourceBundleMessageSource messageSource2 = new ReloadableResourceBundleMessageSource();
         messageSource2.setBasename("TestMessages");
         messageSource2.setCacheSeconds(5);
-
 
 
         String messageBundleToString = messageSource.toString();
@@ -70,6 +147,39 @@ public class RestValidationHandlerTest {
         String goot = messageSource2.getMessage("error.test", null, locale);
 
         assertEquals(goot, "bill error");
+
+
+        for (String testString : new String[]{
+                "classpath:/resource/messages",
+                "classpath:/WEB-INF/messages",
+                "classpath:WEB-INF/messages",
+                "classpath:messages",
+                "/WEB-INF/messages",
+                "WEB-INF/messages",
+                "messages",
+                "WEB-INF/messages"
+        }) {
+
+            try {
+                ReloadableResourceBundleMessageSource messageSourceTest = new ReloadableResourceBundleMessageSource();
+
+                messageSourceTest.setBasename(testString);
+                messageSourceTest.setCacheSeconds(5);
+                messageSourceTest.clearCache();
+                messageSourceTest.clearCacheIncludingAncestors();
+
+                String message = messageSourceTest.getMessage("error.test", null, locale);
+
+                assertNotNull(message);
+
+            } catch (org.springframework.context.NoSuchMessageException ex) {
+
+                String trewq = ex.getMessage();
+                ex.getCause();
+
+            }
+
+        }
 
         String mess0 = messageSource.getMessage("error.test", null, locale);
         String mess1 = messageSource.getMessage("error.test", null, Locale.US);
@@ -82,7 +192,7 @@ public class RestValidationHandlerTest {
     }
 
     @Test
-    public void messageFromBundleBeanTest(){
+    public void messageFromBundleBeanTest() {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("messageBundleTests.xml");
 
         ReloadableResourceBundleMessageSource messageBundle = ctx.getBean("messageSource", ReloadableResourceBundleMessageSource.class);
@@ -102,7 +212,7 @@ public class RestValidationHandlerTest {
     }
 
     @Test
-    public void messageFromBundleTest(){
+    public void messageFromBundleTest() {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("messageBundleTests.xml");
 
         String message = ctx.getMessage("error.user.orderCommand.state", null, Locale.US);
