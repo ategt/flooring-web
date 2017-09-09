@@ -8,8 +8,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
+import java.io.IOException;
 import java.util.Locale;
+import java.util.Properties;
 
 import static org.junit.Assert.*;
 
@@ -20,6 +24,36 @@ public class RestValidationHandlerTest {
 
     @After
     public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void messageFromBundleBeanTheHardWayTest() throws IOException {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+
+        Properties props = new Properties();
+        //props.
+        Properties properties = PropertiesLoaderUtils.loadAllProperties("classpath:messages");
+        Properties properties1 = PropertiesLoaderUtils.loadAllProperties("TestMessages.properties");
+        Properties properties2 = PropertiesLoaderUtils.loadAllProperties("TestMessages");
+        Properties properties3 = PropertiesLoaderUtils.loadAllProperties("silly");
+        Properties properties4 = PropertiesLoaderUtils.loadAllProperties("silly.properties");
+
+        messageSource.setBasename("classpath:messages");
+        messageSource.setCacheSeconds(5);
+        //messageSource.set
+
+        String messageBundleToString = messageSource.toString();
+
+        Locale locale = LocaleContextHolder.getLocale();
+
+        String mess0 = messageSource.getMessage("error.test", null, locale);
+        String mess1 = messageSource.getMessage("error.test", null, Locale.US);
+        String mess2 = messageSource.getMessage("error.test", null, null);
+        String mess3 = messageSource.getMessage("error.test", null, Locale.getDefault());
+        String mess4 = messageSource.getMessage("error.test", null, "Failed to Resolve message.", Locale.US);
+        MessageSource messageSourceParent = messageSource.getParentMessageSource();
+
+        assertEquals("That State Can Not Be Added To That Order.", mess4);
     }
 
     @Test
