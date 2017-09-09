@@ -32,6 +32,41 @@ public class RestValidationHandlerTest {
     }
 
     @Test
+    public void simplerEquallyDesperateTest() {
+
+        // This is me trying to make sense out of how the loader works.
+        // ReloadableRsourceBundleMessageSource.java: 494
+        //protected PropertiesHolder refreshProperties(String filename, PropertiesHolder propHolder) {
+
+        final String PROPERTIES_SUFFIX = ".properties";
+        final String XML_SUFFIX = ".xml";
+
+        for (String filename : new String[]{
+                "classpath:/WEB-INF/messages",
+                "classpath:WEB-INF/messages",
+                "classpath:messages",
+                "/WEB-INF/messages",
+                "WEB-INF/messages",
+                "messages"
+        }) {
+            ResourceLoader resourceLoader = new DefaultResourceLoader();
+
+            Resource resource = resourceLoader.getResource(filename + PROPERTIES_SUFFIX);
+            if (!resource.exists()) {
+                resource = resourceLoader.getResource(filename + XML_SUFFIX);
+            }
+
+            if (resource.exists()) {
+                assertTrue("This is the desired outcome.", true);
+            } else {
+                //fail("This is what has been happening.");
+            }
+        }
+
+        fail("This is what has been happening.");
+    }
+
+    @Test
     public void deperationResourceTest() {
 
         // This is me trying to make sense out of how the loader works.
