@@ -290,7 +290,7 @@ public class OrdersController {
         boolean stateValid = StateUtilities.validStateInput(stateInput);
 
         if (!stateValid) {
-            bindingResult.rejectValue("state", "state.doesNotExist", "-That State Does Not Exist.");
+            bindingResult.reject("stateError");
         } else {
 
             String stateGuess = StateUtilities.bestGuessStateName(stateInput);

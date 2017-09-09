@@ -12,32 +12,41 @@
                            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd"> 
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
     <!-- Bean definitions go here -->
 
-    <import resource="SQLBase-applicationContext.xml" />
-    <import resource="stateDao-context.xml" />
-    <import resource="productDb-applicationContext.xml" />
-    <import resource="orderDb-ApplicationContext.xml" />
-        
-    <bean id="addressDao" class="com.mycompany.flooringmasteryweb.dao.AddressDaoPostgresImpl" > 
-        <constructor-arg ref="jdbcTemplate" />
-    </bean>    
-    
-    <bean id="timingDao" class="com.mycompany.flooringmasteryweb.dao.TimingDao" > 
-        <constructor-arg ref="jdbcTemplate" />
-    </bean>    
-    
-    <import resource="timingAspectContext.xml" />
-    <import resource="auditContext.xml" />
-    <import resource="productTitleCaseContext.xml" />
-    <import resource="defaultNumbers-ApplicationContext.xml" />
-    
+    <import resource="SQLBase-applicationContext.xml"/>
+    <import resource="stateDao-context.xml"/>
+    <import resource="productDb-applicationContext.xml"/>
+    <import resource="orderDb-ApplicationContext.xml"/>
+
+    <bean id="addressDao" class="com.mycompany.flooringmasteryweb.dao.AddressDaoPostgresImpl">
+        <constructor-arg ref="jdbcTemplate"/>
+    </bean>
+
+    <bean id="timingDao" class="com.mycompany.flooringmasteryweb.dao.TimingDao">
+        <constructor-arg ref="jdbcTemplate"/>
+    </bean>
+
+    <import resource="timingAspectContext.xml"/>
+    <import resource="auditContext.xml"/>
+    <import resource="productTitleCaseContext.xml"/>
+    <import resource="defaultNumbers-ApplicationContext.xml"/>
+
     <!-- Register the messages.properties -->
     <bean id="messageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        
-        <property name="basename" value="/WEB-INF/messages" /> 
-    </bean>    
+
+        <property name="basenames">
+            <list>
+                <value>ValidationMessages</value>
+                <value>ApplicationResources</value>
+                <value>messages</value>
+                <value>/WEB-INF/ValidationMessages</value>
+                <value>/WEB-INF/ApplicationResources</value>
+                <value>/WEB-INF/messages</value>
+            </list>
+        </property>
+    </bean>
 </beans>

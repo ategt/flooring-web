@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- *
  * @author apprentice
  */
 @ControllerAdvice
@@ -40,6 +39,35 @@ public class RestValidationHandler {
 
             ValidationError valError = new ValidationError();
             valError.setFieldName(error.getField());
+
+            String code = error.getCode();
+            String[] codes = error.getCodes();
+
+            String[] mess1 = result.resolveMessageCodes(code);
+
+            for (String asf : mess1) {
+                String[] mess2 = result.resolveMessageCodes(asf);
+                for (String mess : mess2) {
+                    ValidationError validationError = new ValidationError();
+                    validationError.setFieldName(error.getField());
+                    validationError.setMessage(mess);
+                    container.addError(validationError);
+                }
+            }
+
+            for (String acode : codes) {
+                String[] mess2 = result.resolveMessageCodes(acode);
+
+                for (String mess : mess2) {
+                    ValidationError validationError = new ValidationError();
+                    validationError.setFieldName(error.getField());
+                    validationError.setMessage(mess);
+                    container.addError(validationError);
+                }
+
+            }
+
+
             valError.setMessage(error.getDefaultMessage());
 
             container.addError(valError);
