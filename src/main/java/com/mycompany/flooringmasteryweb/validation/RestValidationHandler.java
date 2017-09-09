@@ -11,6 +11,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -72,6 +73,47 @@ public class RestValidationHandler {
 
             container.addError(valError);
         }
+
+        List<ObjectError> objectErrors = result.getGlobalErrors();
+
+        for (ObjectError error : objectErrors) {
+
+            ValidationError valError = new ValidationError();
+            valError.setFieldName(error.getObjectName());
+
+            String code = error.getCode();
+            String[] codes = error.getCodes();
+
+            String[] mess1 = result.resolveMessageCodes(code);
+
+            for (String asf : mess1) {
+                String[] mess2 = result.resolveMessageCodes(asf);
+                for (String mess : mess2) {
+                    ValidationError validationError = new ValidationError();
+                    validationError.setFieldName(error.getObjectName());
+                    validationError.setMessage(mess);
+                    container.addError(validationError);
+                }
+            }
+
+            for (String acode : codes) {
+                String[] mess2 = result.resolveMessageCodes(acode);
+
+                for (String mess : mess2) {
+                    ValidationError validationError = new ValidationError();
+                    validationError.setFieldName(error.getObjectName());
+                    validationError.setMessage(mess);
+                    container.addError(validationError);
+                }
+
+            }
+
+
+            valError.setMessage(error.getDefaultMessage());
+
+            container.addError(valError);
+        }
+
 
         return container;
     }
