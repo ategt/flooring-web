@@ -38,13 +38,38 @@ public class RestValidationHandlerTest {
         Properties properties3 = PropertiesLoaderUtils.loadAllProperties("silly");
         Properties properties4 = PropertiesLoaderUtils.loadAllProperties("silly.properties");
 
-        messageSource.setBasename("classpath:messages");
+        Properties properties5 = PropertiesLoaderUtils.loadAllProperties("ValidationMessages");
+        Properties properties6 = PropertiesLoaderUtils.loadAllProperties("ValidationMessages.properties");
+        Properties properties7 = PropertiesLoaderUtils.loadAllProperties("/WEB-INF/ValidationMessages");
+        Properties properties8 = PropertiesLoaderUtils.loadAllProperties("/WEB-INF/ValidationMessages.properties");
+        Properties properties9 = PropertiesLoaderUtils.loadAllProperties("WEB-INF/ValidationMessages");
+        Properties properties10 = PropertiesLoaderUtils.loadAllProperties("WEB-INF/ValidationMessages.properties");
+
+//                 <value>ValidationMessages</value>
+//                <value>ApplicationResources</value>
+//                <value>messages</value>
+//                <value>/WEB-INF/ValidationMessages</value>
+//                <value>/WEB-INF/ApplicationResources</value>
+//                <value>/WEB-INF/messages</value>
+
+        //messageSource.setBasename("classpath:messages");
+        messageSource.setBasename("messages");
         messageSource.setCacheSeconds(5);
         //messageSource.set
+
+        ReloadableResourceBundleMessageSource messageSource2 = new ReloadableResourceBundleMessageSource();
+        messageSource2.setBasename("TestMessages");
+        messageSource2.setCacheSeconds(5);
+
+
 
         String messageBundleToString = messageSource.toString();
 
         Locale locale = LocaleContextHolder.getLocale();
+
+        String goot = messageSource2.getMessage("error.test", null, locale);
+
+        assertEquals(goot, "bill error");
 
         String mess0 = messageSource.getMessage("error.test", null, locale);
         String mess1 = messageSource.getMessage("error.test", null, Locale.US);
