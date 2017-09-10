@@ -16,7 +16,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -32,7 +36,18 @@ public class RestValidationHandlerTest {
     }
 
     @Test
-    public void simplerEquallyDesperateTest() {
+    public void confusedAtThisPoint(){
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+
+        for(URL url: urls){
+            System.out.println(url.getFile());
+        }
+    }
+
+    @Test
+    public void simplerEquallyDesperateTest() throws IOException {
 
         // This is me trying to make sense out of how the loader works.
         // ReloadableRsourceBundleMessageSource.java: 494
@@ -42,19 +57,60 @@ public class RestValidationHandlerTest {
         final String XML_SUFFIX = ".xml";
 
         for (String filename : new String[]{
-                "classpath:/WEB-INF/messages",
-                "classpath:WEB-INF/messages",
-                "classpath:messages",
+//                "classpath:..\\webapp\\WEB-INF\\messages",
+//                "classpath:../webapp/WEB-INF/messages",
+//                "classpath:\\..\\webapp\\WEB-INF\\messages",
+//                "classpath:/../webapp/WEB-INF/messages",
+//                "classpath:.\\..\\webapp\\WEB-INF\\messages",
+//                "classpath:./../webapp/WEB-INF/messages",
+//                "classpath:/webapp/WEB-INF/messages",
+//                "classpath:webapp/WEB-INF/messages",
+//                "classpath:/WEB-INF/messages",
+                //"classpath:WEB-INF/messages",
+                //"classpath:messages",
+                "..\\webapp\\WEB-INF\\messages",
+                "../webapp/WEB-INF/messages",
+                "\\..\\webapp\\WEB-INF\\messages",
+                "/../webapp/WEB-INF/messages",
+                ".\\..\\webapp\\WEB-INF\\messages",
+                "./../webapp/WEB-INF/messages",
+                "/webapp/WEB-INF/messages",
+                "webapp/WEB-INF/messages",
                 "/WEB-INF/messages",
                 "WEB-INF/messages",
-                "messages"
+                "messages",
+                "TestMessages"
         }) {
             ResourceLoader resourceLoader = new DefaultResourceLoader();
+            ClassLoader classLoader = resourceLoader.getClassLoader();
+            //classLoader.
 
             Resource resource = resourceLoader.getResource(filename + PROPERTIES_SUFFIX);
             if (!resource.exists()) {
-                resource = resourceLoader.getResource(filename + XML_SUFFIX);
+            //    resource = resourceLoader.getResource(filename + XML_SUFFIX);
             }
+
+            String fileNameString = resource.getFilename();
+            File file;
+            try {
+                file = resource.getFile();
+                assertTrue(true);
+            } catch (java.io.FileNotFoundException ex) {
+            }
+            URL resourceUrl;
+            try {
+                resourceUrl = resource.getURL();
+                assertTrue(true);
+            } catch (java.io.FileNotFoundException ex) {
+            }
+
+            URI resourceURI;
+            try {
+                resourceURI = resource.getURI();
+                assertTrue(true);
+            } catch (java.io.FileNotFoundException ex) {
+            }
+
 
             if (resource.exists()) {
                 assertTrue("This is the desired outcome.", true);
