@@ -81,26 +81,14 @@ public class MessageBundleHandlerTest {
         String password = basicDataSource.getPassword();
         String userName = basicDataSource.getUsername();
 
-        Connection connection = basicDataSource.getConnection();
-        //connection.
-        //basicDataSource.
-
-        String datasourceUriCanidate = testDatabaseUrl;
-
         if (testDatabaseUrl.startsWith(JDBC_PORTION))
-            datasourceUriCanidate = testDatabaseUrl.substring(JDBC_PORTION.length());
+            testDatabaseUrl = testDatabaseUrl.substring(JDBC_PORTION.length());
 
-        URI uri = new URI(datasourceUriCanidate);
+        URI uri = new URI(testDatabaseUrl);
 
         String host = uri.getHost();
-        int port = uri.getPort();
-        String path = uri.getPath();
 
-        String piecedTogetherUri = datasourceUriCanidate.replace(host, userName + ":" + password + "@" + host);
-
-        //String piecedTogetherUri = uri.
-        //postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath()
-
+        String piecedTogetherUri = testDatabaseUrl.replace(host, userName + ":" + password + "@" + host);
 
         System.setProperty("DATABASE_URL", piecedTogetherUri);
 
