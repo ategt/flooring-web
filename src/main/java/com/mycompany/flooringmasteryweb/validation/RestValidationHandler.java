@@ -6,7 +6,10 @@
 package com.mycompany.flooringmasteryweb.validation;
 
 import java.util.List;
+import java.util.Locale;
 
+import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -41,35 +44,48 @@ public class RestValidationHandler {
             ValidationError valError = new ValidationError();
             valError.setFieldName(error.getField());
 
-            String code = error.getCode();
-            String[] codes = error.getCodes();
+//            String code = error.getCode();
+//            String[] codes = error.getCodes();
+//
+//            String[] mess1 = result.resolveMessageCodes(code);
+//
+//            for (String asf : mess1) {
+//                String[] mess2 = result.resolveMessageCodes(asf);
+//                for (String mess : mess2) {
+//                    ValidationError validationError = new ValidationError();
+//                    validationError.setFieldName(error.getField());
+//                    validationError.setMessage(mess);
+//                    container.addError(validationError);
+//                }
+//            }
+//
+//            for (String acode : codes) {
+//                String[] mess2 = result.resolveMessageCodes(acode);
+//
+//                for (String mess : mess2) {
+//                    ValidationError validationError = new ValidationError();
+//                    validationError.setFieldName(error.getField());
+//                    validationError.setMessage(mess);
+//                    container.addError(validationError);
+//                }
+//
+//            }
 
-            String[] mess1 = result.resolveMessageCodes(code);
 
-            for (String asf : mess1) {
-                String[] mess2 = result.resolveMessageCodes(asf);
-                for (String mess : mess2) {
-                    ValidationError validationError = new ValidationError();
-                    validationError.setFieldName(error.getField());
-                    validationError.setMessage(mess);
-                    container.addError(validationError);
-                }
-            }
-
-            for (String acode : codes) {
-                String[] mess2 = result.resolveMessageCodes(acode);
-
-                for (String mess : mess2) {
-                    ValidationError validationError = new ValidationError();
-                    validationError.setFieldName(error.getField());
-                    validationError.setMessage(mess);
-                    container.addError(validationError);
-                }
-
-            }
-
-
+            String defaultMessage = error.getDefaultMessage();
             valError.setMessage(error.getDefaultMessage());
+
+            String code = error.getCode();
+
+            ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+
+            String message = applicationContext.getMessage(code, error.getArguments(), Locale.getDefault());
+
+            if (message != null){
+                valError.setMessage(message);
+            }
+
+            String[] codes = result.resolveMessageCodes(code);
 
             container.addError(valError);
         }

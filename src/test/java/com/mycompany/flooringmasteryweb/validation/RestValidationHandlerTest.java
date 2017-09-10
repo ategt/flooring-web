@@ -60,6 +60,9 @@ public class RestValidationHandlerTest {
         List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
 
 
+
+        fail();
+
     }
 
     private ApplicationContext loadTheProductionContextWithTestDatabase() throws URISyntaxException {

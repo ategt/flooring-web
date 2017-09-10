@@ -8,4 +8,17 @@
     <bean id="restValidationHandler"
           class="com.mycompany.flooringmasteryweb.validation.RestValidationHandler" />
 
+    <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+
+        <property name="basenames">
+            <list>
+                <value>ValidationMessages</value>
+                <value>ApplicationResources</value>
+                <value>messages</value>
+            </list>
+        </property>
+    </bean>
 </beans>
