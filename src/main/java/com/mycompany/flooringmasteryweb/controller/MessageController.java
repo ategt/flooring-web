@@ -9,10 +9,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -36,6 +38,18 @@ public class MessageController implements MessageSourceAware {
     public String provideUriInfo(@PathVariable("messageCode") String messageCode) {
         Locale locale = LocaleContextHolder.getLocale();
         messageCode = messageCode.replace("-", ".");
+
+        XmlWebApplicationContext xmlWebApplicationContext = (XmlWebApplicationContext) messageSource;
+
+        boolean sourceGood = xmlWebApplicationContext.containsBean("messageSource");
+
+        ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
+
+        if (sourceGood)
+            reloadableResourceBundleMessageSource =
+                    xmlWebApplicationContext.getBean("messageSource", ReloadableResourceBundleMessageSource.class);
+
+
         return messageSource.getMessage(messageCode, null, locale);
     }
 

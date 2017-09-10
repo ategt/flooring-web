@@ -37,16 +37,20 @@
     <bean id="restValidationHandler"
           class="com.mycompany.flooringmasteryweb.validation.RestValidationHandler" />
 
-    <!-- Register the messages.properties -->
-    <bean id="messageSource"
-          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 
-        <property name="basenames">
-            <list>
-                <value>ValidationMessages</value>
-                <value>ApplicationResources</value>
-                <value>messages</value>
-            </list>
-        </property>
-    </bean>
+
+
+
+    <!--&lt;!&ndash; Register the messages.properties &ndash;&gt;-->
+    <!--<bean id="messageSource"-->
+          <!--class="org.springframework.context.support.ReloadableResourceBundleMessageSource">-->
+
+        <!--<property name="basenames">-->
+            <!--<list>-->
+                <!--<value>ValidationMessages</value>-->
+                <!--<value>ApplicationResources</value>-->
+                <!--<value>messages</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
 </beans>
