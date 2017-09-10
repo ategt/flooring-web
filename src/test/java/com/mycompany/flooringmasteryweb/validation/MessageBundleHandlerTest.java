@@ -92,10 +92,6 @@ public class MessageBundleHandlerTest {
 
         System.setProperty("DATABASE_URL", piecedTogetherUri);
 
-        String currentDataBaseUrl = System.getProperty("DATABASE_URL");
-
-        assertEquals(currentDataBaseUrl, "postgresql://myself:post@localhost:5432/flooring_master");
-
         ApplicationContext ctx = new ClassPathXmlApplicationContext("spring-persistence.xml");
 
         String message = ctx.getMessage("validation.orderCommand.state.null", null, Locale.US);
