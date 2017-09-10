@@ -36,17 +36,6 @@ public class RestValidationHandlerTest {
     }
 
     @Test
-    public void confusedAtThisPoint(){
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-        URL[] urls = ((URLClassLoader)cl).getURLs();
-
-        for(URL url: urls){
-            System.out.println(url.getFile());
-        }
-    }
-
-    @Test
     public void simplerEquallyDesperateTest() throws IOException {
 
         // This is me trying to make sense out of how the loader works.
@@ -120,79 +109,6 @@ public class RestValidationHandlerTest {
         }
 
         fail("This is what has been happening.");
-    }
-
-    @Test
-    public void deperationResourceTest() {
-
-        // This is me trying to make sense out of how the loader works.
-        // ReloadableRsourceBundleMessageSource.java: 494
-        //protected PropertiesHolder refreshProperties(String filename, PropertiesHolder propHolder) {
-
-        long cacheMillis = -1;
-        //PropertiesHolder propHolder = null;
-
-        long refreshTimestamp = (cacheMillis < 0 ? -1 : System.currentTimeMillis());
-
-
-        final String PROPERTIES_SUFFIX = ".properties";
-        final String XML_SUFFIX = ".xml";
-
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        Log logger = LogFactory.getLog(getClass());
-
-        //logger.
-        String filename = "messages";
-
-        Resource resource = resourceLoader.getResource(filename + PROPERTIES_SUFFIX);
-        if (!resource.exists()) {
-            resource = resourceLoader.getResource(filename + XML_SUFFIX);
-        }
-
-        if (resource.exists()) {
-            long fileTimestamp = -1;
-            if (cacheMillis >= 0) {
-                // Last-modified timestamp of file will just be read if caching with timeout.
-                try {
-                    fileTimestamp = resource.lastModified();
-                    fail("Not sure what this does yet.");
-//                    if (propHolder != null && propHolder.getFileTimestamp() == fileTimestamp) {
-//                        if (logger.isDebugEnabled()) {
-//                            logger.debug("Re-caching properties for filename [" + filename + "] - file hasn't been modified");
-//                        }
-//                        propHolder.setRefreshTimestamp(refreshTimestamp);
-//                        return propHolder;
-//                    }
-                } catch (IOException ex) {
-                    // Probably a class path resource: cache it forever.
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(resource + " could not be resolved in the file system - assuming that it hasn't changed", ex);
-                    }
-                    fileTimestamp = -1;
-                }
-            }
-            try {
-                //Properties props = loadProperties(resource, filename);
-                //propHolder = new ReloadableResourceBundleMessageSource.PropertiesHolder(props, fileTimestamp);
-                fail("This has not been implemented yet.");
-                throw new IOException();
-            } catch (IOException ex) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("Could not parse properties file [" + resource.getFilename() + "]", ex);
-                }
-                // Empty holder representing "not valid".
-                //propHolder = new ReloadableResourceBundleMessageSource.PropertiesHolder();
-                fail("Execution should not reach this point.");
-            }
-        } else {
-            // Resource does not exist.
-            if (logger.isDebugEnabled()) {
-                logger.debug("No properties file found for [" + filename + "] - neither plain properties nor XML");
-            }
-            // Empty holder representing "not found".
-            //propHolder = new ReloadableResourceBundleMessageSource.PropertiesHolder();
-            fail("Execution should not reach this point.");
-        }
     }
 
     @Test
