@@ -270,7 +270,7 @@ public class OrdersController {
         boolean productValid = productDao.validProductName(productInput);
 
         if (!productValid) {
-            bindingResult.rejectValue("product", "product.custom", "-We Do not Carry This Item.");
+            bindingResult.rejectValue("product", "product.invalid", "-We Do not Carry This Item.");
         } else {
 
             String productGuess = productDao.bestGuessProductName(productInput);
@@ -297,8 +297,7 @@ public class OrdersController {
             String stateAbbreviation = StateUtilities.abbrFromState(stateGuess);
 
             if (stateDao.get(stateAbbreviation) == null) {
-                //bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
-                bindingResult.rejectValue("state", "state.bad");
+                bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
             } else {
                 orderCommand.setState(stateAbbreviation);
             }
