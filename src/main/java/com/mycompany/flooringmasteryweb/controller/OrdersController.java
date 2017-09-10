@@ -290,7 +290,7 @@ public class OrdersController {
         boolean stateValid = StateUtilities.validStateInput(stateInput);
 
         if (!stateValid) {
-            bindingResult.reject("stateError");
+            bindingResult.rejectValue("state", "validation.orderCommand.state.invalid" , new String[]{stateInput}, "That Is Not A State.");
         } else {
 
             String stateGuess = StateUtilities.bestGuessStateName(stateInput);
