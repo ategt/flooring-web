@@ -29,7 +29,7 @@ public class RestValidationHandlerTest {
     }
 
     @Test
-    public void resolveMessageCorrectlyTest(){
+    public void resolveMessageCorrectlyTest() {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("RestValidationHandlerTestContext.xml");
         RestValidationHandler restValidationHandler = ctx.getBean("restValidationHandler", RestValidationHandler.class);
 
@@ -43,12 +43,49 @@ public class RestValidationHandlerTest {
         orderCommand.setProduct("Invalid Product");
 
         BindingResult bindingResult =
-            new BeanPropertyBindingResult(orderCommand,
-                    "orderCommand",
-                    true,
-                    256);
+                new BeanPropertyBindingResult(orderCommand,
+                        "orderCommand",
+                        true,
+                        256);
 
-        bindingResult.rejectValue("state", "validation.orderCommand.state.invalid" );
+        bindingResult.rejectValue("state", "validation.orderCommand.state.invalid");
+        bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
+        bindingResult.rejectValue("state", "state.bad");
+
+        bindingResult.rejectValue("product", "product.custom", "-We Do not Carry This Item.");
+        bindingResult.rejectValue("product", "product.notFound", "-We Do not Carry That Item.");
+
+        ValidationErrorContainer validationErrorContainer =
+                restValidationHandler.processValidationErrors(new MethodArgumentNotValidException(null, bindingResult));
+
+        List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
+
+        assertTrue(validationErrorList.stream()
+                .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
+        );
+    }
+
+    @Test
+    public void resolveMessageCorrectlyInProductionTest() throws URISyntaxException {
+        ApplicationContext ctx = loadTheProductionContextWithTestDatabase();
+        RestValidationHandler restValidationHandler = ctx.getBean("restValidationHandler", RestValidationHandler.class);
+
+        OrderCommand orderCommand = new OrderCommand();
+        orderCommand.setId(0);
+        orderCommand.setArea(100.0d);
+        orderCommand.setDate(new Date());
+        orderCommand.setName("Validation Test - Test Order");
+
+        orderCommand.setState("Invalid State");
+        orderCommand.setProduct("Invalid Product");
+
+        BindingResult bindingResult =
+                new BeanPropertyBindingResult(orderCommand,
+                        "orderCommand",
+                        true,
+                        256);
+
+        bindingResult.rejectValue("state", "validation.orderCommand.state.invalid");
         bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
         bindingResult.rejectValue("state", "state.bad");
 

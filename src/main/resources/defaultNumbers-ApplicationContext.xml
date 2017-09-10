@@ -33,4 +33,8 @@
     <bean id="allStartingPage" class="java.lang.Integer" >
         <constructor-arg value="0"/>
     </bean>
+
+    <bean id="defaultMessageCode" class="java.lang.String">
+        <constructor-arg value="default.message"/>
+    </bean>
 </beans>

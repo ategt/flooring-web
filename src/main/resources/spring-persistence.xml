@@ -34,6 +34,9 @@
     <import resource="productTitleCaseContext.xml"/>
     <import resource="defaultNumbers-ApplicationContext.xml"/>
 
+    <bean id="restValidationHandler"
+          class="com.mycompany.flooringmasteryweb.validation.RestValidationHandler" />
+
     <!-- Register the messages.properties -->
     <bean id="messageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
