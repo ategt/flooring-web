@@ -1,5 +1,6 @@
 package com.mycompany.flooringmasteryweb.validation;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -18,9 +19,9 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
@@ -65,5 +66,52 @@ public class MessageBundleHandlerTest {
 
         assertEquals(ERROR_TEST, message);
         assertTrue(message.startsWith(ERROR_TEST_2));
+    }
+
+    @Test
+    public void messageFromProductionBundleTest() throws SQLException, MalformedURLException, URISyntaxException {
+        final String ERROR_TEST = "You Must Include A State For This Order";
+        final String JDBC_PORTION = "jdbc:";
+
+        ApplicationContext testContext = new ClassPathXmlApplicationContext("test-SQLBase-applicationContext.xml");
+        BasicDataSource basicDataSource = testContext.getBean("dataSource", org.apache.commons.dbcp.BasicDataSource.class);
+
+        String testDatabaseUrl = basicDataSource.getUrl();
+
+        String password = basicDataSource.getPassword();
+        String userName = basicDataSource.getUsername();
+
+        Connection connection = basicDataSource.getConnection();
+        //connection.
+        //basicDataSource.
+
+        String datasourceUriCanidate = testDatabaseUrl;
+
+        if (testDatabaseUrl.startsWith(JDBC_PORTION))
+            datasourceUriCanidate = testDatabaseUrl.substring(JDBC_PORTION.length());
+
+        URI uri = new URI(datasourceUriCanidate);
+
+        String host = uri.getHost();
+        int port = uri.getPort();
+        String path = uri.getPath();
+
+        String piecedTogetherUri = datasourceUriCanidate.replace(host, userName + ":" + password + "@" + host);
+
+        //String piecedTogetherUri = uri.
+        //postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath()
+
+
+        System.setProperty("DATABASE_URL", piecedTogetherUri);
+
+        String currentDataBaseUrl = System.getProperty("DATABASE_URL");
+
+        assertEquals(currentDataBaseUrl, "postgresql://myself:post@localhost:5432/flooring_master");
+
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("spring-persistence.xml");
+
+        String message = ctx.getMessage("validation.orderCommand.state.null", null, Locale.US);
+
+        assertEquals(ERROR_TEST, message);
     }
 }
