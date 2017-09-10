@@ -5,10 +5,14 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
+    <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />
+
+    <bean id="defaultMessageCode" class="java.lang.String">
+        <constructor-arg value="default.message"/>
+    </bean>
+
     <bean id="restValidationHandler"
           class="com.mycompany.flooringmasteryweb.validation.RestValidationHandler" />
-
-    <bean id="applicationContext" class="com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider" />
 
     <bean id="messageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

@@ -1,5 +1,6 @@
 package com.mycompany.flooringmasteryweb.validation;
 
+import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
@@ -59,10 +60,9 @@ public class RestValidationHandlerTest {
 
         List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
 
-
-
-        fail();
-
+        assertTrue(validationErrorList.stream()
+                .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
+        );
     }
 
     private ApplicationContext loadTheProductionContextWithTestDatabase() throws URISyntaxException {
