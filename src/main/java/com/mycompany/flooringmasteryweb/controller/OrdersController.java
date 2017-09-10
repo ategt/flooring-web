@@ -290,14 +290,15 @@ public class OrdersController {
         boolean stateValid = StateUtilities.validStateInput(stateInput);
 
         if (!stateValid) {
-            bindingResult.rejectValue("state", "validation.orderCommand.state.invalid" , new String[]{stateInput}, "That Is Not A State.");
+            bindingResult.rejectValue("state", "validation.orderCommand.state.invalid" );
         } else {
 
             String stateGuess = StateUtilities.bestGuessStateName(stateInput);
             String stateAbbreviation = StateUtilities.abbrFromState(stateGuess);
 
             if (stateDao.get(stateAbbreviation) == null) {
-                bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
+                //bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
+                bindingResult.rejectValue("state", "state.bad");
             } else {
                 orderCommand.setState(stateAbbreviation);
             }
