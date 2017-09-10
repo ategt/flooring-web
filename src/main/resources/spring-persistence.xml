@@ -43,9 +43,6 @@
                 <value>ValidationMessages</value>
                 <value>ApplicationResources</value>
                 <value>messages</value>
-                <value>/WEB-INF/ValidationMessages</value>
-                <value>/WEB-INF/ApplicationResources</value>
-                <value>/WEB-INF/messages</value>
             </list>
         </property>
     </bean>

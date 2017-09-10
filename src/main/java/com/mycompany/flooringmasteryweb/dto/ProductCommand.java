@@ -15,7 +15,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class ProductCommand {
 
-    @NotEmpty(message = "You must enter a product name.")
+    @NotEmpty(message = "{validation.productCommand.productName.empty}")
     private String productName;
 
     @Min(0)
@@ -23,7 +23,9 @@ public class ProductCommand {
 
     @Min(0)
     private double laborCost;
-    private int id;
+
+    private Integer id;
+
 
     /**
      * @return the productName
@@ -95,20 +97,6 @@ public class ProductCommand {
         this.laborCost = laborCost;
     }
 
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public static ProductCommand buildProductCommand(Product product) {
         if (Objects.isNull(product))
             return null;
@@ -124,5 +112,13 @@ public class ProductCommand {
         Double laborCost = product.getLaborCost();
         productCommand.setLaborCost(laborCost);
         return productCommand;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

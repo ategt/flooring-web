@@ -21,20 +21,20 @@ public class OrderCommand {
     @Min(0)
     private Integer id;
 
-    @NotNull(message = "You Must Include A Name For This Order")
-    @Size(min = 2, max = 45, message = "The Name For This Order Must Be Between 2 and 45 Characters")
+    @NotNull(message = "{validation.orderCommand.name.null}")
+    @Size(min = 2, max = 45, message = "{validation.orderCommand.name.size}")
     private String name;
 
-    @NotNull(message = "You Must Include A State For This Order")
-    @Size(min = 2, max = 45, message = "The State For This Order Must Be Between 2 and 45 Characters")
+    @NotNull(message = "{validation.orderCommand.state.null}")
+    @Size(min = 2, max = 45, message = "{validation.orderCommand.state.size}")
     private String state;
 
-    @NotNull(message = "You Must Include A Product For This Order")
-    @Size(min = 2, max = 45, message = "The Product For This Order Must Be Between 2 and 45 Characters")
+    @NotNull(message = "{validation.orderCommand.product.null}")
+    @Size(min = 2, max = 45, message = "{validation.orderCommand.product.size}")
     private String product;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "EST")
-    @NotNull(message = "You Must Include A Date For This Order")
+    @NotNull(message = "{validation.orderCommand.date.null}")
     private Date date;
 
     @Min(0)
