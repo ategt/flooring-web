@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.validation;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author apprentice
  */
-@ControllerAdvice
+//@ControllerAdvice
 public class RestValidationHandler {
 
     private ApplicationContext applicationContext;
@@ -35,10 +36,14 @@ public class RestValidationHandler {
         applicationContext = ApplicationContextProvider.getApplicationContext();
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    //@ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationErrorContainer processValidationErrors(MethodArgumentNotValidException ex) {
+
+        if (Objects.isNull(applicationContext)) {
+            applicationContext = ApplicationContextProvider.getApplicationContext();
+        }
 
         BindingResult result = ex.getBindingResult();
         MethodParameter methodParameter = ex.getParameter();
@@ -85,22 +90,32 @@ public class RestValidationHandler {
     }
 
     private String produceMessage(ObjectError error) {
+        String resultMessage = null;
+
+        Locale locale = Locale.getDefault();
         String choosenCode = error.getCode();
         String[] codes = error.getCodes();
+        Object[] args = error.getArguments();
         for (String code : codes) {
             try {
-                String message = applicationContext.getMessage(error.getCode(), error.getArguments(), Locale.getDefault());
-                return Strings.isNullOrEmpty(message) ? error.getDefaultMessage() : message;
+                String message = applicationContext.getMessage(code, args, locale);
+                resultMessage = Strings.isNullOrEmpty(message) ? null : message;
             } catch (org.springframework.context.NoSuchMessageException ex) {
-                System.out.println("Message Failed To Process: \"" + ex.getMessage() + "\"");
+                System.out.println("Message Failed To Process: \"" + code + "\",  " + ex.getMessage());
             }
         }
-        String defaultMessage = error.getDefaultMessage();
 
-        if (Objects.isNull(defaultMessage)) {
-            String defaultMessageCode = applicationContext.getBean("defaultMessageCode", String.class);
-            defaultMessage = applicationContext.getMessage(defaultMessageCode, error.getArguments(), Locale.getDefault());
+        if (Objects.isNull(resultMessage)) {
+            String defaultMessage = error.getDefaultMessage();
+
+            if (Objects.nonNull(defaultMessage)) {
+                MessageFormat form = new MessageFormat(defaultMessage);
+                resultMessage = form.format(args);
+            } else {
+                String defaultMessageCode = applicationContext.getBean("defaultMessageCode", String.class);
+                resultMessage = applicationContext.getMessage(defaultMessageCode, error.getArguments(), Locale.getDefault());
+            }
         }
-        return defaultMessage;
+        return resultMessage;
     }
 }

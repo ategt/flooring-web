@@ -1,6 +1,7 @@
 package com.mycompany.flooringmasteryweb.validation;
 
 import com.google.common.base.Strings;
+import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
@@ -16,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.*;
 
@@ -100,6 +102,61 @@ public class RestValidationHandlerTest {
         assertTrue(validationErrorList.stream()
                 .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
         );
+    }
+
+    @Test
+    public void resolveImplossibleMessageCorrectlyInProductionTest() throws URISyntaxException {
+        ApplicationContext ctx = loadTheProductionContextWithTestDatabase();
+        RestValidationHandler restValidationHandler = ctx.getBean("restValidationHandler", RestValidationHandler.class);
+
+        OrderCommand orderCommand = new OrderCommand();
+        orderCommand.setId(0);
+        orderCommand.setArea(100.0d);
+        orderCommand.setDate(new Date());
+        orderCommand.setName("Validation Test - Test Order");
+
+        orderCommand.setState("Invalid State");
+        orderCommand.setProduct("Invalid Product");
+
+        BindingResult bindingResult =
+                new BeanPropertyBindingResult(orderCommand,
+                        "orderCommand",
+                        true,
+                        256);
+
+        bindingResult.rejectValue("state", "validation.orderCommand.state.invalid");
+        bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
+        bindingResult.rejectValue("state", "state.bad");
+        bindingResult.rejectValue("area", "valication.this.is.not.meant.to.be.a.real.thing");
+
+        bindingResult.rejectValue("product", "product.custom", "-We Do not Carry This Item.");
+        bindingResult.rejectValue("product", "product.notFound", "-We Do not Carry That Item.");
+
+        ValidationErrorContainer validationErrorContainer =
+                restValidationHandler.processValidationErrors(new MethodArgumentNotValidException(null, bindingResult));
+
+        List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
+
+        assertTrue(validationErrorList.stream()
+                .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
+        );
+    }
+
+    @Test
+    public void resolveDefaultMessageInProductionTest() throws URISyntaxException {
+        ApplicationContext ctx = loadTheProductionContextWithTestDatabase();
+
+        ApplicationContext providedContext = ApplicationContextProvider.getApplicationContext();
+        String appCtxId = providedContext.getId();
+
+        assertEquals(appCtxId, ctx.getId());
+        assertEquals(providedContext.getStartupDate(), ctx.getStartupDate());
+
+        String defaultMessageCode = ctx.getBean("defaultMessageCode", String.class);
+        String resultMessage = ctx.getMessage(defaultMessageCode, null, Locale.getDefault());
+
+        assertNotNull(resultMessage);
+        assertFalse(Strings.isNullOrEmpty(resultMessage));
     }
 
     private ApplicationContext loadTheProductionContextWithTestDatabase() throws URISyntaxException {

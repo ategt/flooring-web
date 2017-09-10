@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.mycompany.flooringmasteryweb.validation.RestValidationHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -67,6 +68,7 @@ public class OrdersController {
     private final ProductDao productDao;
     private final StateDao stateDao;
     private final OrderDao orderDao;
+    private final RestValidationHandler restValidationHandler;
 
     private final ApplicationContext ctx;
 
@@ -77,11 +79,13 @@ public class OrdersController {
     public OrdersController(
             ProductDao productDao,
             StateDao stateDao,
-            OrderDao orderDao
+            OrderDao orderDao,
+            RestValidationHandler restValidationHandler
     ) {
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
+        this.restValidationHandler = restValidationHandler;
         ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
     }
 
@@ -170,14 +174,16 @@ public class OrdersController {
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
-    public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand,
+    public Object update(@Valid @RequestBody OrderCommand orderCommand,
                                BindingResult bindingResult,
                                HttpServletResponse response) throws IOException, MethodArgumentNotValidException {
 
         validateInputs(orderCommand, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            throw new MethodArgumentNotValidException(null, bindingResult);
+            //throw new MethodArgumentNotValidException(null, bindingResult);
+            return restValidationHandler.processValidationErrors(new MethodArgumentNotValidException(null, bindingResult));
+
         } else {
             Order order = orderDao.orderBuilder(orderCommand);
 
