@@ -7,6 +7,7 @@ package com.mycompany.flooringmasteryweb.validation;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
@@ -30,7 +31,7 @@ public class RestValidationHandler {
 
     private ApplicationContext applicationContext;
 
-    public RestValidationHandler(){
+    public RestValidationHandler() {
         applicationContext = ApplicationContextProvider.getApplicationContext();
     }
 
@@ -84,12 +85,22 @@ public class RestValidationHandler {
     }
 
     private String produceMessage(ObjectError error) {
-        try {
-            String message = applicationContext.getMessage(error.getCode(), error.getArguments(), Locale.getDefault());
-            return Strings.isNullOrEmpty(message) ? error.getDefaultMessage() : message;
-        } catch (org.springframework.context.NoSuchMessageException ex){
-            String defaultMessageCode = applicationContext.getBean("defaultMessageCode", String.class);
-            return applicationContext.getMessage(defaultMessageCode, error.getArguments(), Locale.getDefault());
+        String choosenCode = error.getCode();
+        String[] codes = error.getCodes();
+        for (String code : codes) {
+            try {
+                String message = applicationContext.getMessage(error.getCode(), error.getArguments(), Locale.getDefault());
+                return Strings.isNullOrEmpty(message) ? error.getDefaultMessage() : message;
+            } catch (org.springframework.context.NoSuchMessageException ex) {
+                System.out.println("Message Failed To Process: \"" + ex.getMessage() + "\"");
+            }
         }
+        String defaultMessage = error.getDefaultMessage();
+
+        if (Objects.isNull(defaultMessage)) {
+            String defaultMessageCode = applicationContext.getBean("defaultMessageCode", String.class);
+            defaultMessage = applicationContext.getMessage(defaultMessageCode, error.getArguments(), Locale.getDefault());
+        }
+        return defaultMessage;
     }
 }
