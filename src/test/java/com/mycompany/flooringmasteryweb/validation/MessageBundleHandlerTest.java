@@ -131,16 +131,22 @@ public class MessageBundleHandlerTest {
         final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master";
         final String DATABASE_KEY = "DATABASE_URL";
 
+        //System.setProperty(DATABASE_KEY, DATABASE_URL);
+
         ApplicationContext ctx = new ClassPathXmlApplicationContext("test-SetupSimulatedProductionEnvironment.xml");
 
         String dbUrl = System.getProperty(DATABASE_KEY);
         assertEquals(DATABASE_URL, dbUrl);
+
+        String dbString = ctx.getBean("dbStr", String.class);
+
+        assertNotNull(dbString);
 
         URI uri = ctx.getBean("dbUrl", java.net.URI.class);
 
         assertNotNull(uri);
 
         String uriString = uri.toString();
-        assertEquals(uriString, "asdf");
+        assertEquals(uriString, DATABASE_URL);
     }
 }
