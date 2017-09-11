@@ -133,20 +133,32 @@ public class MessageBundleHandlerTest {
 
         //System.setProperty(DATABASE_KEY, DATABASE_URL);
 
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("test-SetupSimulatedProductionEnvironment.xml");
-
         String dbUrl = System.getProperty(DATABASE_KEY);
+        assertNotEquals(DATABASE_URL, dbUrl);
+
+        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext("test-SetupSimulatedProductionEnvironment.xml");
+
+        dbUrl = System.getProperty(DATABASE_KEY);
         assertEquals(DATABASE_URL, dbUrl);
 
         String dbString = ctx.getBean("dbStr", String.class);
 
         assertNotNull(dbString);
 
-        URI uri = ctx.getBean("dbUrl", java.net.URI.class);
+        ctx.close();
+
+        dbUrl = System.getProperty(DATABASE_KEY);
+        assertEquals(DATABASE_URL, dbUrl);
+
+        ConfigurableApplicationContext nctx = new ClassPathXmlApplicationContext("test-SimulatedProductionEnvironment.xml");
+
+        URI uri = nctx.getBean("dbUrl", URI.class);
 
         assertNotNull(uri);
 
         String uriString = uri.toString();
         assertEquals(uriString, DATABASE_URL);
     }
+
+    //test-SetupSimulatedProductionEnvironment.xml",
 }

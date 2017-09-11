@@ -59,6 +59,8 @@
         <constructor-arg ref="dbPropFromSystem" />
     </bean>
 
+
+
     <!--<bean class="java.net.URI" id="dbUrl">-->
         <!--<constructor-arg value="${DATABASE_URL}"/>-->
     <!--</bean>-->
