@@ -35,20 +35,9 @@ public class MessageController implements MessageSourceAware {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, value = "/{messageCode}")
-    public String provideUriInfo(@PathVariable("messageCode") String messageCode) {
+    public String show(@PathVariable("messageCode") String messageCode) {
         Locale locale = LocaleContextHolder.getLocale();
         messageCode = messageCode.replace("-", ".");
-
-        XmlWebApplicationContext xmlWebApplicationContext = (XmlWebApplicationContext) messageSource;
-
-        boolean sourceGood = xmlWebApplicationContext.containsBean("messageSource");
-
-        ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
-
-        if (sourceGood)
-            reloadableResourceBundleMessageSource =
-                    xmlWebApplicationContext.getBean("messageSource", ReloadableResourceBundleMessageSource.class);
-
 
         return messageSource.getMessage(messageCode, null, locale);
     }

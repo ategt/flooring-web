@@ -174,16 +174,14 @@ public class OrdersController {
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
-    public Object update(@Valid @RequestBody OrderCommand orderCommand,
+    public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand,
                                BindingResult bindingResult,
                                HttpServletResponse response) throws IOException, MethodArgumentNotValidException {
 
         validateInputs(orderCommand, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            //throw new MethodArgumentNotValidException(null, bindingResult);
-            return restValidationHandler.processValidationErrors(new MethodArgumentNotValidException(null, bindingResult));
-
+            throw new MethodArgumentNotValidException(null, bindingResult);
         } else {
             Order order = orderDao.orderBuilder(orderCommand);
 

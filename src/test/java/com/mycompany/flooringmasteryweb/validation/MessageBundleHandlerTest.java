@@ -1,5 +1,6 @@
 package com.mycompany.flooringmasteryweb.validation;
 
+import com.google.common.base.Strings;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -7,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -16,9 +18,11 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -97,5 +101,46 @@ public class MessageBundleHandlerTest {
         String message = ctx.getMessage("validation.orderCommand.state.null", null, Locale.US);
 
         assertEquals(ERROR_TEST, message);
+    }
+
+    @Test
+    public void mockMvcMessageTest() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException {
+
+        final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master";
+        final String DATABASE_KEY = "DATABASE_URL";
+
+        org.springframework.beans.factory.config.MethodInvokingFactoryBean mifb = new org.springframework.beans.factory.config.MethodInvokingFactoryBean();
+        mifb.setTargetClass(java.lang.System.class);
+        mifb.setTargetMethod("setProperty");
+        mifb.setArguments(new Object[]{DATABASE_KEY,DATABASE_URL});
+
+        String dbUrl = System.getProperty(DATABASE_KEY);
+
+        assertTrue(Strings.isNullOrEmpty(dbUrl));
+
+        mifb.prepare();
+        mifb.invoke();
+
+        dbUrl = System.getProperty(DATABASE_KEY);
+        assertEquals(DATABASE_URL, dbUrl);
+    }
+
+    @Test
+    public void contextInvokationTest(){
+
+        final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master";
+        final String DATABASE_KEY = "DATABASE_URL";
+
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("test-SetupSimulatedProductionEnvironment.xml");
+
+        String dbUrl = System.getProperty(DATABASE_KEY);
+        assertEquals(DATABASE_URL, dbUrl);
+
+        URI uri = ctx.getBean("dbUrl", java.net.URI.class);
+
+        assertNotNull(uri);
+
+        String uriString = uri.toString();
+        assertEquals(uriString, "asdf");
     }
 }
