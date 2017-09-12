@@ -87,4 +87,20 @@ public class MessageControllerTest {
                 });
     }
 
+    @Test
+    public void showProductInvalidMessageTest() throws Exception {
+        final String MESSAGE_EXPECTED = "If You Are Seeing This Message, Then We No Longer Carry That Product. ";
+
+        mvc.perform(get("/message/product-invalid"))
+                .andExpect(new ResultMatcher() {
+                    @Override
+                    public void match(MvcResult mvcResult) throws Exception {
+                        String responseString = mvcResult.getResponse()
+                                .getContentAsString();
+
+                        assertEquals("Default message code response: " + responseString, responseString, MESSAGE_EXPECTED);
+                    }
+                });
+    }
+
 }
