@@ -5,9 +5,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
-import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.AddressTest;
+import com.mycompany.flooringmasteryweb.dto.*;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -65,7 +66,6 @@ public class AddressControllerTest {
         addressController.setApplicationContext(webApplicationContext);
 
         mvc = MockMvcBuilders
-//                .webAppContextSetup(webApplicationContext)
                 .standaloneSetup(addressController)
                 .build();
     }
@@ -76,6 +76,17 @@ public class AddressControllerTest {
 
     @Test
     public void indexTest() throws Exception {
+
+        List<Address> addressList = new ArrayList<>();
+        for (int i = 0 ; i < 20 ; i++) {
+            addressList.add(AddressTest.addressGenerator());
+        }
+
+        ResultProperties[] lastResultPropertiesUsed = new ResultProperties[1];
+
+        Mockito.when(addressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(addressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+
         MvcResult mvcResult = mvc.perform(get("/address/"))
                 .andExpect(new ResultMatcher() {
                     @Override
@@ -100,6 +111,91 @@ public class AddressControllerTest {
                 })
                 .andExpect(status().isOk())
                 .andReturn();
+
+        Map<String, Object> model = mvcResult.getModelAndView().getModel();
+
+        assertTrue(model.containsKey("addresses"));
+
+        List<Address> addressListModel = (List<Address>) model.get("addresses");
+
+        assertEquals(addressListModel.size(), addressList.size());
+
+        for (Address address : addressList){
+            assertTrue(addressListModel.contains(address));
+        }
+    }
+
+    @Test
+    public void indexTestWithResultProperties() throws Exception {
+
+        List<Address> addressList = new ArrayList<>();
+        for (int i = 0 ; i < 20 ; i++) {
+            addressList.add(AddressTest.addressGenerator());
+        }
+
+        ResultProperties[] lastResultPropertiesUsed = new ResultProperties[1];
+
+        Mockito.when(addressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(addressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+
+        MvcResult mvcResult = mvc.perform(get("/address/")
+        .param("page", "20")
+        .param("results", "90")
+        .param("sort_by", "last_name"))
+                .andExpect(new ResultMatcher() {
+                    @Override
+                    public void match(MvcResult mvcResult) throws Exception {
+                        MockHttpServletResponse response = mvcResult.getResponse();
+
+                        assertEquals(200, response.getStatus());
+
+                        ModelAndView modelAndView = mvcResult.getModelAndView();
+
+                        Map<String, Object> model = modelAndView.getModel();
+
+                        assertFalse(modelAndView.isEmpty());
+                        assertTrue(modelAndView.hasView());
+
+                        String viewName = modelAndView.getViewName();
+
+                        assertEquals(viewName, "address\\index");
+
+                        assertTrue(model.containsKey("addresses"));
+                    }
+                })
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Map<String, Object> model = mvcResult.getModelAndView().getModel();
+
+        assertTrue(model.containsKey("addresses"));
+
+        List<Address> addressListModel = (List<Address>) model.get("addresses");
+
+        assertEquals(addressListModel.size(), addressList.size());
+
+        for (Address address : addressList){
+            assertTrue(addressListModel.contains(address));
+        }
+
+        ResultProperties resultProperties = lastResultPropertiesUsed[0];
+
+        AddressSortByEnum sortByEnum = resultProperties.getSortByEnum();
+
+        assertEquals(sortByEnum, AddressSortByEnum.SORT_BY_LAST_NAME);
+
+        assertEquals(Integer.valueOf(90), resultProperties.getResultsPerPage());
+        assertEquals(Integer.valueOf(20), resultProperties.getPageNumber());
+    }
+
+    private ResultProperties getResultProperties(ResultProperties[] lastResultPropertiesUsed) {
+        return ArgumentMatchers.argThat(new ArgumentMatcher<ResultProperties>() {
+            @Override
+            public boolean matches(ResultProperties resultProperties) {
+                lastResultPropertiesUsed[0] = resultProperties;
+                return true;
+            }
+        });
     }
 
     @Test
@@ -199,10 +295,7 @@ public class AddressControllerTest {
 
         Integer id = addressReturned.getId();
 
-        assertNotNull(id);
-        assertTrue(id > 0);
-
-        address.setId(id);
+        assertNull(id);
 
         assertEquals(address, addressReturned);
     }
