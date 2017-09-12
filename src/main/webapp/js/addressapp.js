@@ -82,27 +82,29 @@ $(document).ready(function () {
     });
 
     function populateModal(addressId) {
-        $.ajax({
-            url: addressPath + addressId,
-            type: "GET",
-            dataType: 'json',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Accept", "application/json");
-            },
-            success: function (data, status) {
-                $('#address-first-name').text(data.firstName);
-                $('#address-last-name').text(data.lastName);
-                $('#address-company').text(data.company);
-                $('#address-street-name').text(data.streetName);
-                $('#address-street-number').text(data.streetNumber);
-                $('#address-city').text(data.city);
-                $('#address-state').text(data.state);
-                $('#address-zipcode').text(data.zip);
-            },
-            error: function (data, status) {
+        if (addressId){
+            $.ajax({
+                url: addressPath + addressId,
+                type: "GET",
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Accept", "application/json");
+                },
+                success: function (data, status) {
+                    $('#address-first-name').text(data.firstName);
+                    $('#address-last-name').text(data.lastName);
+                    $('#address-company').text(data.company);
+                    $('#address-street-name').text(data.streetName);
+                    $('#address-street-number').text(data.streetNumber);
+                    $('#address-city').text(data.city);
+                    $('#address-state').text(data.state);
+                    $('#address-zipcode').text(data.zip);
+                },
+                error: function (data, status) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     $('#editDetailModal').on('show.bs.modal', function (e) {
