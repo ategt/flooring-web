@@ -1,5 +1,7 @@
 package com.mycompany.flooringmasteryweb.controller;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -7,6 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -14,11 +19,15 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import sun.rmi.server.LoaderHandler;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -51,21 +60,18 @@ public class MessageControllerTest {
     }
 
     @Test
-    @Ignore
     public void showMessageFromNonsenseCodeTest() throws Exception {
-        try {
             mvc.perform(get("/message/" + UUID.randomUUID().toString()))
+                    .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                    .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                     .andExpect(new ResultMatcher() {
                         @Override
-                        public void match(MvcResult mvcResult) throws Exception {
-                            String responseString = mvcResult.getResponse()
-                                    .getContentAsString();
-                            fail(responseString);
+                        public void match(MvcResult result) throws Exception {
+                            MockHttpServletResponse response = result.getResponse();
+                            String content = response.getContentAsString();
+                            assertTrue("Message Returned Was: " + content, content.contains("No message found"));
                         }
                     });
-        } catch (org.springframework.context.NoSuchMessageException ex) {
-            assertTrue("No such message Found Exception Thrown.", true);
-        }
     }
 
     @Test
@@ -103,5 +109,4 @@ public class MessageControllerTest {
                     }
                 });
     }
-
 }

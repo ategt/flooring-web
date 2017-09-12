@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author apprentice
  */
-//@ControllerAdvice
+@ControllerAdvice
 public class RestValidationHandler {
 
     private ApplicationContext applicationContext;
@@ -36,7 +36,7 @@ public class RestValidationHandler {
         applicationContext = ApplicationContextProvider.getApplicationContext();
     }
 
-    //@ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationErrorContainer processValidationErrors(MethodArgumentNotValidException ex) {
