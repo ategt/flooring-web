@@ -1,5 +1,8 @@
 package com.mycompany.flooringmasteryweb.controller;
 
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLDocument;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import com.google.gson.Gson;
@@ -18,20 +21,22 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockJspWriter;
+import org.springframework.mock.web.portlet.MockRenderResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.*;
+import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
+import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -71,33 +76,30 @@ public class AddressControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+//    @Mock
     @Autowired
     private AddressDao addressDao;
 
-    @Autowired
-    private InternalResourceViewResolver viewResolver;
+//    @InjectMocks
+//    private AddressController addressController;
 
     private MockMvc mvc;
 
-    private List<Address> addressList;
-
     @Before
     public void setUp() throws Exception {
-        addressList = Arrays.asList(new Address[]{AddressTest.addressGenerator(),
-                                                    AddressTest.addressGenerator(),
-                                                    AddressTest.addressGenerator()
-                                    });
 
-        Mockito.when(addressDao.list(ArgumentMatchers.argThat(new ArgumentMatcher<ResultProperties>() {
-            @Override
-            public boolean matches(ResultProperties resultProperties) {
-                return false;
-            }
-        }))).thenReturn(addressList);
+        //MockitoAnnotations.initMocks(this);
+        //Mockito.when(addressDao.list(ArgumentMatchers.any(ResultProperties.class))).thenReturn(new ArrayList<Address>());
 
         mvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .build();
+
+//        mvc = MockMvcBuilders
+//                .standaloneSetup(addressController)
+//                .build();
+
+        //Mock
     }
 
     @After
@@ -106,58 +108,77 @@ public class AddressControllerTest {
 
     @Test
     public void indexTest() throws Exception {
-            MvcResult mvcResult = mvc.perform(get("/address/"))
-                    .andExpect(new ResultMatcher() {
-                        @Override
-                        public void match(MvcResult mvcResult) throws Exception {
-                            MockHttpServletResponse response = mvcResult.getResponse();
+        MvcResult mvcResult = mvc.perform(get("/address/"))
+                .andExpect(new ResultMatcher() {
+                    @Override
+                    public void match(MvcResult mvcResult) throws Exception {
+                        MockHttpServletResponse response = mvcResult.getResponse();
 
-                            assertEquals(200, response.getStatus());
+                        assertEquals(200, response.getStatus());
 
-                            ModelAndView modelAndView = mvcResult.getModelAndView();
+                        ModelAndView modelAndView = mvcResult.getModelAndView();
 
-                            Map<String, Object> model = modelAndView.getModel();
+                        Map<String, Object> model = modelAndView.getModel();
 
-                            assertFalse(modelAndView.isEmpty());
-                            assertTrue(modelAndView.hasView());
+                        assertFalse(modelAndView.isEmpty());
+                        assertTrue(modelAndView.hasView());
 
-                            String viewName = modelAndView.getViewName();
+                        String viewName = modelAndView.getViewName();
 
-                            assertEquals(viewName, "address\\index");
+                        assertEquals(viewName, "address\\index");
 
-                            assertTrue(model.containsKey("addresses"));
-                        }
-                    })
-            .andExpect(status().isOk())
-            .andReturn();
+                        assertTrue(model.containsKey("addresses"));
+                    }
+                })
+                .andExpect(status().isOk())
+                .andReturn();
+    }
 
-            Map<String, Object> model = mvcResult.getModelAndView().getModel();
+    @Test
+    @Ignore
+    public void localDeployTest() throws IOException {
 
-            assertEquals(model.size(), addressList.size());
+        //WebClient webClient = new WebClient();
+        //new MockJspWriter()
+
+        MockMvcWebClientBuilder mockMvcWebClientBuilder = MockMvcWebClientBuilder.mockMvcSetup(mvc);
+
+        WebClient webClient = mockMvcWebClientBuilder.build();
+
+        webClient.setWebConnection(new MockMvcWebConnection(mvc));
+
+        HtmlPage page = webClient.getPage("http://localhost/FlooringMasteryWeb/");
+
+        assertTrue(page.isHtmlPage());
+
+        HtmlPage htmlPage = (HtmlPage) page;
+
+        String title = htmlPage.getTitleText();
+
     }
 
     @Test
     public void indexJsonFull() throws Exception {
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/address/")
-                    .accept(MediaType.APPLICATION_JSON_UTF8)
-                    .param("results", Integer.toString(Integer.MAX_VALUE))
-                )
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .param("results", Integer.toString(Integer.MAX_VALUE))
+        )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andReturn();
 
-                        MockHttpServletResponse response = mvcResult.getResponse();
+        MockHttpServletResponse response = mvcResult.getResponse();
 
-                        assertEquals(200, response.getStatus());
+        assertEquals(200, response.getStatus());
 
-                        String content = response.getContentAsString();
+        String content = response.getContentAsString();
 
-                        Gson gson = new GsonBuilder().create();
+        Gson gson = new GsonBuilder().create();
 
-                        Address[] addresses = gson.fromJson(content, Address[].class);
+        Address[] addresses = gson.fromJson(content, Address[].class);
 
-                        assertEquals(addresses.length, addressDao.size(new AddressSearchRequest()));
+        assertEquals(addresses.length, addressDao.size(new AddressSearchRequest()));
 
     }
 
@@ -184,24 +205,9 @@ public class AddressControllerTest {
         assertTrue(addresses.length > 1);
     }
 
-    private class CustomCharWriter extends HttpServletResponseWrapper{
-
-        private final CharArrayWriter charArrayWriter = new CharArrayWriter();
-        public CustomCharWriter(HttpServletResponse response) {
-            super(response);
-        }
-
-        @Override
-        public PrintWriter getWriter() throws IOException {
-            return new PrintWriter(charArrayWriter);
-        }
-        public String getOutput(){
-            return charArrayWriter.toString();
-        }
-    }
-
     @Test
-    public void adf() throws Exception {
+    @Ignore
+    public void tryToLoadAJsp() throws Exception {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/jsp/");
         viewResolver.setSuffix(".jsp");
@@ -212,11 +218,22 @@ public class AddressControllerTest {
                 .setViewResolvers(viewResolver)
                 .build();
 
+        WebClient webClient = new WebClient();
+        webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
+
+        HtmlPage page = webClient.getPage("http://localhost/FlooringMasteryWeb/");
+
+        assertTrue(page.isHtmlPage());
+
+        HtmlPage htmlPage = (HtmlPage) page;
+
+        String title = htmlPage.getTitleText();
+
         MvcResult mvcResult = mockMvc.perform(get("/address/")
                 .param("results", "20")
                 .param("page", "0")
-            )
-            .andReturn();
+        )
+                .andReturn();
 
         MockHttpServletResponse response = mvcResult.getResponse();
 
@@ -283,7 +300,6 @@ public class AddressControllerTest {
                 .andReturn();
 
 
-
         //mvcResult.
 
         MockHttpServletResponse response2 = resultgb.getResponse();
@@ -308,9 +324,25 @@ public class AddressControllerTest {
     @Test
     public void create() throws Exception {
 
+        Address address = AddressTest.addressGenerator();
+
+        AddressDao addressDao = Mockito.mock(AddressDao.class);
+
+        Mockito.when(addressDao.get(5)).thenReturn(address);
+
+        Mockito.when(addressDao.get(ArgumentMatchers.anyInt())).thenReturn(address);
+
+        Mockito.when(addressDao.create(address)).thenReturn(address);
+
+        Mockito.when(addressDao.create(ArgumentMatchers.any())).thenReturn(address);
+
+        Mockito.when(addressDao.create(address)).thenReturn(address);
+
         mvc.perform(post("/address/")
-                    .content("sadf=bill")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"firstName\":\"Patrick\",\"lastName\":\"Toner\",\"company\":\"SWG\",\"streetNumber\":\"1\",\"streetName\":\"AGBA Rd\",\"city\":\"Akron\",\"state\":\"Oh\",\"zip\":\"44687\",\"id\":0}")
         )
+                .andExpect(status().isOk())
                 .andExpect(new ResultMatcher() {
                     @Override
                     public void match(MvcResult mvcResult) throws Exception {
@@ -318,22 +350,11 @@ public class AddressControllerTest {
 
                         assertEquals(200, response.getStatus());
 
-                        ModelAndView modelAndView = mvcResult.getModelAndView();
+                        String responseContent = mvcResult.getResponse().getContentAsString();
 
-                        Map<String, Object> model = modelAndView.getModel();
 
-                        assertFalse(modelAndView.isEmpty());
-                        assertTrue(modelAndView.hasView());
-
-                        String viewName = modelAndView.getViewName();
-
-                        assertEquals(viewName, "address\\index");
-
-                        assertTrue(model.containsKey("addresses"));
                     }
-                })
-                .andExpect(status().isOk())
-        .andExpect(MockMvcResultMatchers.model().hasNoErrors());
+                });
     }
 
     @Test
