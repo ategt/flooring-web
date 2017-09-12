@@ -19,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.results.ResultMatchers;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -76,30 +77,16 @@ public class AddressControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-//    @Mock
     @Autowired
     private AddressDao addressDao;
-
-//    @InjectMocks
-//    private AddressController addressController;
 
     private MockMvc mvc;
 
     @Before
     public void setUp() throws Exception {
-
-        //MockitoAnnotations.initMocks(this);
-        //Mockito.when(addressDao.list(ArgumentMatchers.any(ResultProperties.class))).thenReturn(new ArrayList<Address>());
-
         mvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .build();
-
-//        mvc = MockMvcBuilders
-//                .standaloneSetup(addressController)
-//                .build();
-
-        //Mock
     }
 
     @After
@@ -206,155 +193,35 @@ public class AddressControllerTest {
     }
 
     @Test
-    @Ignore
-    public void tryToLoadAJsp() throws Exception {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/jsp/");
-        viewResolver.setSuffix(".jsp");
-
-        AddressController addressController = new AddressController(addressDao);
-
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(addressController)
-                .setViewResolvers(viewResolver)
-                .build();
-
-        WebClient webClient = new WebClient();
-        webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
-
-        HtmlPage page = webClient.getPage("http://localhost/FlooringMasteryWeb/");
-
-        assertTrue(page.isHtmlPage());
-
-        HtmlPage htmlPage = (HtmlPage) page;
-
-        String title = htmlPage.getTitleText();
-
-        MvcResult mvcResult = mockMvc.perform(get("/address/")
-                .param("results", "20")
-                .param("page", "0")
-        )
-                .andReturn();
-
-        MockHttpServletResponse response = mvcResult.getResponse();
-
-        assertEquals(200, response.getStatus());
-
-        ModelAndView modelAndView = mvcResult.getModelAndView();
-
-        assertFalse(modelAndView.isEmpty());
-        assertTrue(modelAndView.hasView());
-
-        String viewName = modelAndView.getViewName();
-        Map<String, Object> model = modelAndView.getModel();
-
-        String forward = response.getForwardedUrl();
-        String inc = response.getIncludedUrl();
-        String redir = response.getRedirectedUrl();
-
-        //CustomCharWriter customCharWriter = new CustomCharWriter(response);
-
-        MockHttpServletRequest mockHttpServletRequest = mvcResult.getRequest();
-        //String template = mockHttpServletRequest.getParameter("tmpl");
-        //RequestDispatcher requestDispatcher = mockHttpServletRequest.getRequestDispatcher(template);
-        //requestDispatcher.forward(mockHttpServletRequest, response);
-
-        //String output = customCharWriter.getOutput();
-
-        PrintWriter printWriter = response.getWriter();
-        String pasdf = printWriter.toString();
-
-        ServletOutputStream servletOutputStream = response.getOutputStream();
-        String asf = servletOutputStream.toString();
-
-        HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response) {
-            private final StringWriter sw = new StringWriter();
-
-            @Override
-            public PrintWriter getWriter() throws IOException {
-                return new PrintWriter(sw);
-            }
-
-            @Override
-            public String toString() {
-                return sw.toString();
-            }
-        };
-        mockHttpServletRequest.getRequestDispatcher("test.jsp").include(mockHttpServletRequest, responseWrapper);
-        String content = responseWrapper.toString();
-        System.out.println("Output : " + content);
-        response.getWriter().write(content);
-
-        //servletOutputStream.
-
-        //new org.apache.commons.io.output.ByteArrayOutputStream()
-
-        //new ByteArrayOutputStream(servletOutputStream);
-
-        //servletOutputStream.write();
-
-        //HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response);
-        //responseWrapper.getO
-        //responseWrapper.get
-
-        MvcResult resultgb = mockMvc.perform(get(forward))
-                .andReturn();
-
-
-        //mvcResult.
-
-        MockHttpServletResponse response2 = resultgb.getResponse();
-
-        assertEquals(200, response2.getStatus());
-
-        ModelAndView modelAndView2 = resultgb.getModelAndView();
-
-        assertFalse(modelAndView2.isEmpty());
-        assertTrue(modelAndView2.hasView());
-
-        String viewName2 = modelAndView2.getViewName();
-        Map<String, Object> mode2l = modelAndView2.getModel();
-
-        String forward2 = response2.getForwardedUrl();
-        String inc2 = response2.getIncludedUrl();
-        String redir2 = response2.getRedirectedUrl();
-
-    }
-
-
-    @Test
     public void create() throws Exception {
 
         Address address = AddressTest.addressGenerator();
 
-        AddressDao addressDao = Mockito.mock(AddressDao.class);
+        Gson gson = new GsonBuilder().create();
 
-        Mockito.when(addressDao.get(5)).thenReturn(address);
+        String addressJson = gson.toJson(address);
 
-        Mockito.when(addressDao.get(ArgumentMatchers.anyInt())).thenReturn(address);
-
-        Mockito.when(addressDao.create(address)).thenReturn(address);
-
-        Mockito.when(addressDao.create(ArgumentMatchers.any())).thenReturn(address);
-
-        Mockito.when(addressDao.create(address)).thenReturn(address);
-
-        mvc.perform(post("/address/")
+        MvcResult mvcResult = mvc.perform(post("/address/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"firstName\":\"Patrick\",\"lastName\":\"Toner\",\"company\":\"SWG\",\"streetNumber\":\"1\",\"streetName\":\"AGBA Rd\",\"city\":\"Akron\",\"state\":\"Oh\",\"zip\":\"44687\",\"id\":0}")
+                .content(addressJson)
         )
                 .andExpect(status().isOk())
-                .andExpect(new ResultMatcher() {
-                    @Override
-                    public void match(MvcResult mvcResult) throws Exception {
-                        MockHttpServletResponse response = mvcResult.getResponse();
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
 
-                        assertEquals(200, response.getStatus());
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        Address addressReturned = gson.fromJson(responseContent, Address.class);
 
-                        String responseContent = mvcResult.getResponse().getContentAsString();
+        assertNotNull(addressReturned);
 
+        Integer id = addressReturned.getId();
 
-                    }
-                });
+        assertNotNull(id);
+        assertTrue(id > 0);
+
+        address.setId(id);
+
+        assertEquals(address, addressReturned);
     }
 
     @Test
