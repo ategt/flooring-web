@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,10 +25,13 @@ import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\test\\resources\\test-SetupSimulatedProductionEnvironment.xml",
-        "file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\webapp\\WEB-INF\\spring-dispatcher-servlet.xml",
-        "file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\resources\\spring-persistence.xml"})
-@WebAppConfiguration
+@WebAppConfiguration()
+@ContextHierarchy({
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\test\\resources\\test-SetupSimulatedProductionEnvironment.xml"}),
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\resources\\spring-persistence.xml"}),
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\webapp\\WEB-INF\\spring-dispatcher-servlet.xml"})
+})
+
 public class MessageControllerTest {
 
     @Autowired
@@ -39,7 +43,6 @@ public class MessageControllerTest {
     public void setUp() throws Exception {
         mvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
-                //.apply(SecurityMockMvcConfigureres.springSecurity())
                 .build();
     }
 
@@ -58,7 +61,6 @@ public class MessageControllerTest {
                             String responseString = mvcResult.getResponse()
                                     .getContentAsString();
                             fail(responseString);
-                            //assertEquals("UUID message code response: " + responseString, responseString, "asdf");
                         }
                     });
         } catch (org.springframework.context.NoSuchMessageException ex) {

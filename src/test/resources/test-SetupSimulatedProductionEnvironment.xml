@@ -13,6 +13,12 @@
     <context:property-placeholder />
     <mvc:annotation-driven />
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>classpath:TestResources.properties</value>
+        </property>
+    </bean>
+
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass" value="java.lang.System" />
         <property name="targetMethod" value="setProperty" />
@@ -38,5 +44,4 @@
     <bean id="dbStr" class="java.lang.String">
         <constructor-arg ref="dbPropFromSystem" />
     </bean>
-
 </beans>
