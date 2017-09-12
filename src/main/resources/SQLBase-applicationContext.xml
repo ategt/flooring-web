@@ -18,12 +18,26 @@
         http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
-   
-    <context:property-placeholder />
+
     <mvc:annotation-driven />
-    
+
+    <bean id="dbPropFromSystem"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="java.lang.System" />
+        <property name="targetMethod" value="getProperty" />
+        <property name="arguments">
+            <list>
+                <value>DATABASE_URL</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dbStr" class="java.lang.String">
+        <constructor-arg ref="dbPropFromSystem" />
+    </bean>
+
     <bean class="java.net.URI" id="dbUrl">
-        <constructor-arg value="${DATABASE_URL}"/>
+        <constructor-arg ref="dbStr" />
     </bean>
     
     <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">

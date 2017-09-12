@@ -44,6 +44,11 @@
         </property>
     </bean>
 
+    <bean id="dbStr" class="java.lang.String">
+        <constructor-arg ref="dbPropFromSystem" />
+    </bean>
+
+
     <!--<bean id="dbProp"-->
           <!--class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
         <!--<property name="targetObject" ref="dbPropFromSystem" />-->
@@ -55,9 +60,6 @@
         <!--</property>-->
     <!--</bean>-->
 
-    <bean id="dbStr" class="java.lang.String">
-        <constructor-arg ref="dbPropFromSystem" />
-    </bean>
 
 
 

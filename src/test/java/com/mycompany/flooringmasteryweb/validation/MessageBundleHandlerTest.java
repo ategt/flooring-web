@@ -20,6 +20,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -160,5 +161,85 @@ public class MessageBundleHandlerTest {
         assertEquals(uriString, DATABASE_URL);
     }
 
-    //test-SetupSimulatedProductionEnvironment.xml",
+    @Test
+    public void sqlEnvironmentHandlingTest() throws SQLException {
+        final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master";
+        final String DATABASE_KEY = "DATABASE_URL";
+
+        String dbUrl = System.getProperty(DATABASE_KEY);
+        assertNotEquals(DATABASE_URL, dbUrl);
+
+        System.setProperty(DATABASE_KEY, DATABASE_URL);
+
+        dbUrl = System.getProperty(DATABASE_KEY);
+        assertEquals(DATABASE_URL, dbUrl);
+
+        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext("SQLBase-applicationContext.xml");
+
+        dbUrl = System.getProperty(DATABASE_KEY);
+        assertEquals(DATABASE_URL, dbUrl);
+
+        org.springframework.jdbc.core.JdbcTemplate jdbcTemplate = ctx.getBean("jdbcTemplate", org.springframework.jdbc.core.JdbcTemplate.class);
+
+        assertNotNull(jdbcTemplate);
+
+        DataSource dataSource = jdbcTemplate.getDataSource();
+
+        assertNotNull(dataSource);
+
+        assertTrue(dataSource instanceof BasicDataSource);
+        BasicDataSource basicDataSource = (BasicDataSource) dataSource;
+
+        String userName = basicDataSource.getUsername();
+        String password = basicDataSource.getPassword();
+        String url = basicDataSource.getUrl();
+
+        assertEquals("myself", userName);
+        assertEquals("post", password);
+
+        Connection connection = dataSource.getConnection();
+
+        assertNotNull(connection);
+    }
+
+    @Test
+    public void sqlProductionEnvironmentHandlingTest() throws SQLException {
+        final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master";
+        final String DATABASE_KEY = "DATABASE_URL";
+
+        String dbUrl = System.getProperty(DATABASE_KEY);
+        assertNotEquals(DATABASE_URL, dbUrl);
+
+        System.setProperty(DATABASE_KEY, DATABASE_URL);
+
+        dbUrl = System.getProperty(DATABASE_KEY);
+        assertEquals(DATABASE_URL, dbUrl);
+
+        ConfigurableApplicationContext ctx = new ClassPathXmlApplicationContext("spring-persistence.xml");
+
+        dbUrl = System.getProperty(DATABASE_KEY);
+        assertEquals(DATABASE_URL, dbUrl);
+
+        org.springframework.jdbc.core.JdbcTemplate jdbcTemplate = ctx.getBean("jdbcTemplate", org.springframework.jdbc.core.JdbcTemplate.class);
+
+        assertNotNull(jdbcTemplate);
+
+        DataSource dataSource = jdbcTemplate.getDataSource();
+
+        assertNotNull(dataSource);
+
+        assertTrue(dataSource instanceof BasicDataSource);
+        BasicDataSource basicDataSource = (BasicDataSource) dataSource;
+
+        String userName = basicDataSource.getUsername();
+        String password = basicDataSource.getPassword();
+        String url = basicDataSource.getUrl();
+
+        assertEquals("myself", userName);
+        assertEquals("post", password);
+
+        Connection connection = dataSource.getConnection();
+
+        assertNotNull(connection);
+    }
 }

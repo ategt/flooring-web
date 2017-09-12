@@ -2,9 +2,11 @@ package com.mycompany.flooringmasteryweb.controller;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -13,7 +15,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import sun.rmi.server.LoaderHandler;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -45,15 +49,40 @@ public class MessageControllerTest {
     }
 
     @Test
-    public void show() throws Exception {
-        mvc.perform(get("/message/" + UUID.randomUUID().toString()))
+    @Ignore
+    public void showMessageFromNonsenseCodeTest() throws Exception {
+        try {
+            mvc.perform(get("/message/" + UUID.randomUUID().toString()))
+                    .andExpect(new ResultMatcher() {
+                        @Override
+                        public void match(MvcResult mvcResult) throws Exception {
+                            String responseString = mvcResult.getResponse()
+                                    .getContentAsString();
+                            fail(responseString);
+                            //assertEquals("UUID message code response: " + responseString, responseString, "asdf");
+                        }
+                    });
+        } catch (org.springframework.context.NoSuchMessageException ex) {
+            assertTrue("No such message Found Exception Thrown.", true);
+        }
+    }
+
+    @Test
+    public void showMessageFromDefaultMessageCodeTest() throws Exception {
+        String defaultMessageCode = webApplicationContext.getBean("defaultMessageCode", String.class);
+
+        String defaultMessage = webApplicationContext.getMessage(defaultMessageCode, null, Locale.getDefault());
+
+        assertEquals(defaultMessage.trim(), "No message is defined for this situation.");
+
+        mvc.perform(get("/message/default-message"))
                 .andExpect(new ResultMatcher() {
                     @Override
                     public void match(MvcResult mvcResult) throws Exception {
                         String responseString = mvcResult.getResponse()
                                 .getContentAsString();
 
-                        assertEquals("UUID message code response: " + responseString, responseString, "asdf");
+                        assertEquals("Default message code response: " + responseString, responseString, defaultMessage);
                     }
                 });
     }
