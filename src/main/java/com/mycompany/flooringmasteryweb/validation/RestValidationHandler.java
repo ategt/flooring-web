@@ -12,7 +12,9 @@ import java.util.Objects;
 
 import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -28,22 +30,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author apprentice
  */
 @ControllerAdvice
-public class RestValidationHandler {
+public class RestValidationHandler implements ApplicationContextAware{
 
     private ApplicationContext applicationContext;
-
-    public RestValidationHandler() {
-        applicationContext = ApplicationContextProvider.getApplicationContext();
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationErrorContainer processValidationErrors(MethodArgumentNotValidException ex) {
-
-        if (Objects.isNull(applicationContext)) {
-            applicationContext = ApplicationContextProvider.getApplicationContext();
-        }
 
         BindingResult result = ex.getBindingResult();
         MethodParameter methodParameter = ex.getParameter();
@@ -52,11 +46,11 @@ public class RestValidationHandler {
 
         ValidationErrorContainer container = new ValidationErrorContainer();
 
-        populateFieldErrors(fieldErrors, container);
+        container = populateFieldErrors(fieldErrors, container);
 
         List<ObjectError> objectErrors = result.getGlobalErrors();
 
-        populateObjectErrors(objectErrors, container);
+        container = populateObjectErrors(objectErrors, container);
 
         return container;
     }
@@ -100,6 +94,7 @@ public class RestValidationHandler {
             try {
                 String message = applicationContext.getMessage(code, args, locale);
                 resultMessage = Strings.isNullOrEmpty(message) ? null : message;
+                break;
             } catch (org.springframework.context.NoSuchMessageException ex) {
                 System.out.println("Message Failed To Process: \"" + code + "\",  " + ex.getMessage());
             }
@@ -117,5 +112,10 @@ public class RestValidationHandler {
             }
         }
         return resultMessage;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
