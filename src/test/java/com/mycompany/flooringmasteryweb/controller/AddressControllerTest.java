@@ -57,16 +57,33 @@ public class AddressControllerTest {
     @InjectMocks
     private AddressController addressController;
 
-    private MockMvc mvc;
+    private MockMvc mockMvc, realMvc;
+    private Random random = new Random();
+    private ResultProperties[] lastResultPropertiesUsed = null;
+    private List<Address> addressList;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
+        addressList = new ArrayList<>();
+        for (int i = 0; i < random.nextInt(20) + 10; i++) {
+            addressList.add(AddressTest.addressGenerator());
+        }
+
+        lastResultPropertiesUsed = new ResultProperties[1];
+
+        Mockito.when(addressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(addressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+
         addressController.setApplicationContext(webApplicationContext);
 
-        mvc = MockMvcBuilders
+        mockMvc = MockMvcBuilders
                 .standaloneSetup(addressController)
+                .build();
+
+        realMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
                 .build();
     }
 
@@ -76,18 +93,7 @@ public class AddressControllerTest {
 
     @Test
     public void indexTest() throws Exception {
-
-        List<Address> addressList = new ArrayList<>();
-        for (int i = 0 ; i < 20 ; i++) {
-            addressList.add(AddressTest.addressGenerator());
-        }
-
-        ResultProperties[] lastResultPropertiesUsed = new ResultProperties[1];
-
-        Mockito.when(addressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
-        Mockito.when(addressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
-
-        MvcResult mvcResult = mvc.perform(get("/address/"))
+        MvcResult mvcResult = mockMvc.perform(get("/address/"))
                 .andExpect(new ResultMatcher() {
                     @Override
                     public void match(MvcResult mvcResult) throws Exception {
@@ -120,7 +126,7 @@ public class AddressControllerTest {
 
         assertEquals(addressListModel.size(), addressList.size());
 
-        for (Address address : addressList){
+        for (Address address : addressList) {
             assertTrue(addressListModel.contains(address));
         }
     }
@@ -129,7 +135,7 @@ public class AddressControllerTest {
     public void indexTestWithResultProperties() throws Exception {
 
         List<Address> addressList = new ArrayList<>();
-        for (int i = 0 ; i < 20 ; i++) {
+        for (int i = 0; i < 20; i++) {
             addressList.add(AddressTest.addressGenerator());
         }
 
@@ -138,10 +144,10 @@ public class AddressControllerTest {
         Mockito.when(addressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
         Mockito.when(addressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
 
-        MvcResult mvcResult = mvc.perform(get("/address/")
-        .param("page", "20")
-        .param("results", "90")
-        .param("sort_by", "last_name"))
+        MvcResult mvcResult = mockMvc.perform(get("/address/")
+                .param("page", "20")
+                .param("results", "90")
+                .param("sort_by", "last_name"))
                 .andExpect(new ResultMatcher() {
                     @Override
                     public void match(MvcResult mvcResult) throws Exception {
@@ -174,7 +180,7 @@ public class AddressControllerTest {
 
         assertEquals(addressListModel.size(), addressList.size());
 
-        for (Address address : addressList){
+        for (Address address : addressList) {
             assertTrue(addressListModel.contains(address));
         }
 
@@ -205,11 +211,11 @@ public class AddressControllerTest {
         //WebClient webClient = new WebClient();
         //new MockJspWriter()
 
-        MockMvcWebClientBuilder mockMvcWebClientBuilder = MockMvcWebClientBuilder.mockMvcSetup(mvc);
+        MockMvcWebClientBuilder mockMvcWebClientBuilder = MockMvcWebClientBuilder.mockMvcSetup(mockMvc);
 
         WebClient webClient = mockMvcWebClientBuilder.build();
 
-        webClient.setWebConnection(new MockMvcWebConnection(mvc));
+        webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
 
         HtmlPage page = webClient.getPage("http://localhost/FlooringMasteryWeb/");
 
@@ -223,7 +229,8 @@ public class AddressControllerTest {
 
     @Test
     public void indexJsonFull() throws Exception {
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/address/")
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/address/")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .param("results", Integer.toString(Integer.MAX_VALUE))
         )
@@ -248,7 +255,7 @@ public class AddressControllerTest {
 
     @Test
     public void indexJson() throws Exception {
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/address/")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/address/")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -280,7 +287,7 @@ public class AddressControllerTest {
 
         String addressJson = gson.toJson(address);
 
-        MvcResult mvcResult = mvc.perform(post("/address/")
+        MvcResult mvcResult = mockMvc.perform(post("/address/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addressJson)
         )
@@ -346,14 +353,92 @@ public class AddressControllerTest {
 
     @Test
     public void show() throws Exception {
+        Address address = AddressTest.addressGenerator();
+
+        address.setId(random.nextInt());
+
+        Mockito.when(addressDao.get(5)).thenReturn(address);
+
+        Gson gson = new GsonBuilder().create();
+
+        String addressJson = gson.toJson(address);
+
+        MvcResult mvcResult = mockMvc.perform(get("/address/5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(addressJson)
+        )
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        Address addressReturned = gson.fromJson(responseContent, Address.class);
+
+        assertNotNull(addressReturned);
+
+        Integer id = addressReturned.getId();
+
+        assertNull(id);
+
+        assertEquals(address, addressReturned);
     }
 
     @Test
     public void show1() throws Exception {
+        Address address = AddressTest.addressGenerator();
+
+        address.setId(random.nextInt());
+
+        Mockito.when(addressDao.get(5)).thenReturn(address);
+
+        Gson gson = new GsonBuilder().create();
+
+        String addressJson = gson.toJson(address);
+
+        MvcResult mvcResult = mockMvc.perform(get("/address/5")
+                .content(addressJson)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Map<String, Object> model = mvcResult.getModelAndView().getModel();
+
+        assertTrue(model.containsKey("address"));
+
+        Address addressReturned = (Address) model.get("address");
+
+        assertNotNull(addressReturned);
+
+        Integer id = addressReturned.getId();
+
+        assertNull(id);
+
+        assertEquals(address, addressReturned);
     }
 
     @Test
     public void size() throws Exception {
+        Integer expectedSize = addressList.size();
+
+        MvcResult mvcResult = mockMvc.perform(get("/size").accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        assertEquals(Integer.parseInt(content), (long) expectedSize);
+    }
+
+    @Test
+    public void sizeRefuse() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/size"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        assertEquals(content, "");
     }
 
 }
