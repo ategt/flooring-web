@@ -43,9 +43,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.descriptor.JspConfigDescriptor;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -208,14 +206,14 @@ public class AddressControllerTest {
         String inc = response.getIncludedUrl();
         String redir = response.getRedirectedUrl();
 
-        CustomCharWriter customCharWriter = new CustomCharWriter(response);
+        //CustomCharWriter customCharWriter = new CustomCharWriter(response);
 
         MockHttpServletRequest mockHttpServletRequest = mvcResult.getRequest();
-        String template = mockHttpServletRequest.getParameter("tmpl");
-        RequestDispatcher requestDispatcher = mockHttpServletRequest.getRequestDispatcher(template);
-        requestDispatcher.forward(mockHttpServletRequest, response);
+        //String template = mockHttpServletRequest.getParameter("tmpl");
+        //RequestDispatcher requestDispatcher = mockHttpServletRequest.getRequestDispatcher(template);
+        //requestDispatcher.forward(mockHttpServletRequest, response);
 
-        String output = customCharWriter.getOutput();
+        //String output = customCharWriter.getOutput();
 
         PrintWriter printWriter = response.getWriter();
         String pasdf = printWriter.toString();
@@ -223,9 +221,33 @@ public class AddressControllerTest {
         ServletOutputStream servletOutputStream = response.getOutputStream();
         String asf = servletOutputStream.toString();
 
+        HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response) {
+            private final StringWriter sw = new StringWriter();
+
+            @Override
+            public PrintWriter getWriter() throws IOException {
+                return new PrintWriter(sw);
+            }
+
+            @Override
+            public String toString() {
+                return sw.toString();
+            }
+        };
+        mockHttpServletRequest.getRequestDispatcher("test.jsp").include(mockHttpServletRequest, responseWrapper);
+        String content = responseWrapper.toString();
+        System.out.println("Output : " + content);
+        response.getWriter().write(content);
+
+        //servletOutputStream.
+
+        //new org.apache.commons.io.output.ByteArrayOutputStream()
+
+        //new ByteArrayOutputStream(servletOutputStream);
+
         //servletOutputStream.write();
 
-        HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response);
+        //HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response);
         //responseWrapper.getO
         //responseWrapper.get
 
