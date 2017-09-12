@@ -7,7 +7,6 @@ package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
@@ -23,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -42,10 +42,10 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @Controller
 @RequestMapping(value = "/address")
-public class AddressController {
+public class AddressController  implements ApplicationContextAware {
 
     private final AddressDao addressDao;
-    private ApplicationContext ctx;
+    private ApplicationContext applicationContext;
 
     private final String RESULTS_COOKIE_NAME = "results_cookie";
     private final String SORT_COOKIE_NAME = "sort_cookie";
@@ -53,7 +53,6 @@ public class AddressController {
     @Inject
     public AddressController(AddressDao addressDao) {
         this.addressDao = addressDao;
-        ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -72,7 +71,7 @@ public class AddressController {
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
 
-        ControllerUtilities.generatePagingLinks(ctx, addressDao.size(), resultProperties, request, uriComponentsBuilder, model);
+        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(), resultProperties, request, uriComponentsBuilder, model);
 
         model.put("addresses", addresses);
         return "address\\index";
@@ -244,7 +243,7 @@ public class AddressController {
 
         List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
 
-        ControllerUtilities.generatePagingLinks(ctx, addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 
@@ -275,7 +274,7 @@ public class AddressController {
             addresses = searchDatabase(addressSearchRequest, resultProperties);
         }
 
-        ControllerUtilities.generatePagingLinks(ctx, addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 
@@ -331,8 +330,8 @@ public class AddressController {
             String sortCookie
     ) throws BeansException {
 
-        resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
-        page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
+        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
         ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return resultProperties;
     }
@@ -345,8 +344,8 @@ public class AddressController {
             Integer resultsPerPage,
             Integer resultsPerPageCookie) {
 
-        resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
-        page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
+        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
         ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return resultProperties;
     }
@@ -399,5 +398,10 @@ public class AddressController {
     private List<Address> searchDatabase(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
         return addressDao.search(searchRequest,
                 resultProperties);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
