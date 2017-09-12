@@ -17,23 +17,20 @@
 
     <!-- Bean definitions go here -->
 
-    <context:property-placeholder />
-    <mvc:annotation-driven />
+    <!--<context:property-override location="classpath:TestResources.properties" />-->
 
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
-            init-method="prepare;invoke">
-        <property name="targetClass" value="java.lang.System" />
-        <property name="targetMethod" value="setProperty" />
-        <property name="arguments">
-            <list>
-                <value>DATABASE_URL</value>
-                <value>postgres://myself:post@localhost:5432/flooring_master</value>
-            </list>
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>classpath:TestResources.properties</value>
         </property>
     </bean>
 
+    <context:property-placeholder />
+    <mvc:annotation-driven />
+
     <bean class="java.net.URI" id="dbUrl">
         <constructor-arg value="${DATABASE_URL}"/>
+        <!--<constructor-arg value="${billy}"/>-->
     </bean>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
