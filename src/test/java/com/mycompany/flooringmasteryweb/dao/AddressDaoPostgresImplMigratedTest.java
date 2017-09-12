@@ -25,6 +25,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.mycompany.flooringmasteryweb.dto.AddressTest;
 
 /**
  *
@@ -64,7 +65,7 @@ public class AddressDaoPostgresImplMigratedTest {
         System.out.println("search By Last Name Using New Way");
         String lastName = UUID.randomUUID().toString();
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         address.setLastName(lastName);
         addressDao.create(address);
 
@@ -101,7 +102,7 @@ public class AddressDaoPostgresImplMigratedTest {
 
                 String searchString = null;
 
-                Address address = addressGenerator();
+                Address address = AddressTest.addressGenerator();
 
                 switch (addressSearchByOptionEnum) {
                     case FIRST_NAME:
@@ -200,7 +201,7 @@ public class AddressDaoPostgresImplMigratedTest {
                 randomStrings[i] = UUID.randomUUID().toString();
             }
 
-            Address address = addressBuilder(randomStrings[0],
+            Address address = AddressTest.addressBuilder(randomStrings[0],
                     randomStrings[1],
                     randomStrings[2],
                     randomStrings[3],
@@ -229,7 +230,7 @@ public class AddressDaoPostgresImplMigratedTest {
                 randomStrings[i] = caseRandomizer(random, randomStrings[i]);
             }
 
-            Address address = addressBuilder(randomStrings[0],
+            Address address = AddressTest.addressBuilder(randomStrings[0],
                     randomStrings[1],
                     randomStrings[2],
                     randomStrings[3],
@@ -285,7 +286,7 @@ public class AddressDaoPostgresImplMigratedTest {
     @Test
     public void getSortDoesNotReturnErrors() {
 
-        Address testAddress = addressGenerator();
+        Address testAddress = AddressTest.addressGenerator();
 
         for (int i = 0; i < 10; i++) {
             testAddress.setFirstName(UUID.randomUUID().toString());
@@ -781,30 +782,4 @@ public class AddressDaoPostgresImplMigratedTest {
         return input;
     }
 
-    private Address addressBuilder(String city, String company, String firstName, String lastName, String state, String streetName, String streetNumber, String zip) {
-        Address address = new Address();
-        address.setCity(city);
-        address.setCompany(company);
-        address.setFirstName(firstName);
-        address.setLastName(lastName);
-        address.setState(state);
-        address.setStreetName(streetName);
-        address.setStreetNumber(streetNumber);
-        address.setZip(zip);
-        return address;
-    }
-
-    private Address addressGenerator() {
-        String city = UUID.randomUUID().toString();
-        String firstName = UUID.randomUUID().toString();
-        String lastName = UUID.randomUUID().toString();
-        String state = UUID.randomUUID().toString();
-        String zip = UUID.randomUUID().toString();
-        String company = UUID.randomUUID().toString();
-        String streetNumber = UUID.randomUUID().toString();
-        String streetName = UUID.randomUUID().toString();
-
-        Address address = addressBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
-        return address;
-    }
 }

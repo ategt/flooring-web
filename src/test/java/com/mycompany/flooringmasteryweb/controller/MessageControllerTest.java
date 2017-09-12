@@ -40,7 +40,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
         @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\resources\\spring-persistence.xml"}),
         @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\webapp\\WEB-INF\\spring-dispatcher-servlet.xml"})
 })
-
 public class MessageControllerTest {
 
     @Autowired

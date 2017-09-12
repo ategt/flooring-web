@@ -6,11 +6,8 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.google.common.base.Strings;
-import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import com.mycompany.flooringmasteryweb.dto.*;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -78,7 +75,7 @@ public class AddressDaoPostgresImplTest {
         String streetNumber = UUID.randomUUID().toString();
         String streetName = UUID.randomUUID().toString();
 
-        Address address = addressBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
+        Address address = AddressTest.addressBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
 
         int beforeCreation = addressDao.size();
         Address result = addressDao.create(address);
@@ -119,19 +116,6 @@ public class AddressDaoPostgresImplTest {
         assertNull(alsoDeleted2);
     }
 
-    private Address addressBuilder(String city, String company, String firstName, String lastName, String state, String streetName, String streetNumber, String zip) {
-        Address address = new Address();
-        address.setCity(city);
-        address.setCompany(company);
-        address.setFirstName(firstName);
-        address.setLastName(lastName);
-        address.setState(state);
-        address.setStreetName(streetName);
-        address.setStreetNumber(streetNumber);
-        address.setZip(zip);
-        return address;
-    }
-
     /**
      * Test of list method, of class AddressDaoPostgresImpl.
      */
@@ -139,7 +123,7 @@ public class AddressDaoPostgresImplTest {
     public void testList() {
         System.out.println("list");
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         addressDao.create(address);
 
         List<Address> list = addressDao.list(null);
@@ -157,7 +141,7 @@ public class AddressDaoPostgresImplTest {
         System.out.println("searchByLastName");
         String lastName = UUID.randomUUID().toString();
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         address.setLastName(lastName);
         addressDao.create(address);
 
@@ -194,7 +178,7 @@ public class AddressDaoPostgresImplTest {
 
         String firstName = UUID.randomUUID().toString();
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         address.setFirstName(firstName);
         addressDao.create(address);
 
@@ -234,7 +218,7 @@ public class AddressDaoPostgresImplTest {
 
         String fullName = firstName + " " + lastName;
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         address.setFirstName(firstName);
         address.setLastName(lastName);
         address = addressDao.create(address);
@@ -274,7 +258,7 @@ public class AddressDaoPostgresImplTest {
         AddressSearchByOptionEnum searchEnum = AddressSearchByOptionEnum.COMPANY;
         AddressSearchRequest addressSearchRequest;
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         address.setCompany(company);
         addressDao.create(address);
 
@@ -330,7 +314,7 @@ public class AddressDaoPostgresImplTest {
         System.out.println("searchByCity");
         String city = UUID.randomUUID().toString();
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         address.setCity(city);
         addressDao.create(address);
 
@@ -367,7 +351,7 @@ public class AddressDaoPostgresImplTest {
 
         String state = UUID.randomUUID().toString();
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         address.setState(state);
         addressDao.create(address);
 
@@ -403,7 +387,7 @@ public class AddressDaoPostgresImplTest {
 
         String zip = UUID.randomUUID().toString();
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
         address.setZip(zip);
         addressDao.create(address);
 
@@ -438,7 +422,7 @@ public class AddressDaoPostgresImplTest {
     public void testSearchByParam() {
         System.out.println("searchByStreetName By Param");
 
-        Address address = addressGenerator();
+        Address address = AddressTest.addressGenerator();
 
         String streetName = address.getStreetName();
         address = addressDao.create(address);
@@ -496,7 +480,7 @@ public class AddressDaoPostgresImplTest {
         AddressSearchByOptionEnum[] searchOptionEnum = AddressSearchByOptionEnum.values();
         for (AddressSearchByOptionEnum searchOption : searchOptionEnum) {
 
-            Address address = addressGenerator();
+            Address address = AddressTest.addressGenerator();
 
             String queryString = null;
             AddressSearchRequest addressSearchRequest;
@@ -639,7 +623,7 @@ public class AddressDaoPostgresImplTest {
         AddressSearchByOptionEnum[] searchOptionEnum = AddressSearchByOptionEnum.values();
         for (AddressSearchByOptionEnum searchOption : searchOptionEnum) {
 
-            Address address = addressGenerator();
+            Address address = AddressTest.addressGenerator();
 
             String queryString = null;
             AddressSearchRequest addressSearchRequest;
@@ -787,7 +771,7 @@ public class AddressDaoPostgresImplTest {
         AddressSearchByOptionEnum[] searchOptionEnum = AddressSearchByOptionEnum.values();
         for (AddressSearchByOptionEnum searchOption : searchOptionEnum) {
 
-            Address address = addressGenerator();
+            Address address = AddressTest.addressGenerator();
 
             String queryString = null;
             AddressSearchRequest addressSearchRequest;
@@ -935,7 +919,7 @@ public class AddressDaoPostgresImplTest {
                 randomStrings[i] = UUID.randomUUID().toString();
             }
 
-            Address address = addressBuilder(randomStrings[0],
+            Address address = AddressTest.addressBuilder(randomStrings[0],
                     randomStrings[1],
                     randomStrings[2],
                     randomStrings[3],
@@ -964,7 +948,7 @@ public class AddressDaoPostgresImplTest {
                 randomStrings[i] = caseRandomizer(random, randomStrings[i]);
             }
 
-            Address address = addressBuilder(randomStrings[0],
+            Address address = AddressTest.addressBuilder(randomStrings[0],
                     randomStrings[1],
                     randomStrings[2],
                     randomStrings[3],
@@ -1275,17 +1259,4 @@ public class AddressDaoPostgresImplTest {
         return input;
     }
 
-    private Address addressGenerator() {
-        String city = UUID.randomUUID().toString();
-        String firstName = UUID.randomUUID().toString();
-        String lastName = UUID.randomUUID().toString();
-        String state = UUID.randomUUID().toString();
-        String zip = UUID.randomUUID().toString();
-        String company = UUID.randomUUID().toString();
-        String streetNumber = UUID.randomUUID().toString();
-        String streetName = UUID.randomUUID().toString();
-
-        Address address = addressBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
-        return address;
-    }
 }

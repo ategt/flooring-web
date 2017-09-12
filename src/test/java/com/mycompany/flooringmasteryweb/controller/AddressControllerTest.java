@@ -7,6 +7,8 @@ import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressTest;
+import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -14,7 +16,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.Result;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -22,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.*;
@@ -53,10 +60,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\test\\resources\\test-SetupSimulatedProductionEnvironment.xml",
-        "file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\webapp\\WEB-INF\\spring-dispatcher-servlet.xml",
-        "file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\resources\\spring-persistence.xml"})
-@WebAppConfiguration
+@WebAppConfiguration()
+@ContextHierarchy({
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\test\\resources\\test-SetupSimulatedProductionEnvironment.xml"}),
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\resources\\spring-persistence.xml"}),
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\webapp\\WEB-INF\\spring-dispatcher-servlet.xml"})
+})
 public class AddressControllerTest {
 
     @Autowired
@@ -70,8 +79,22 @@ public class AddressControllerTest {
 
     private MockMvc mvc;
 
+    private List<Address> addressList;
+
     @Before
     public void setUp() throws Exception {
+        addressList = Arrays.asList(new Address[]{AddressTest.addressGenerator(),
+                                                    AddressTest.addressGenerator(),
+                                                    AddressTest.addressGenerator()
+                                    });
+
+        Mockito.when(addressDao.list(ArgumentMatchers.argThat(new ArgumentMatcher<ResultProperties>() {
+            @Override
+            public boolean matches(ResultProperties resultProperties) {
+                return false;
+            }
+        }))).thenReturn(addressList);
+
         mvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .build();
@@ -83,7 +106,7 @@ public class AddressControllerTest {
 
     @Test
     public void indexTest() throws Exception {
-            mvc.perform(get("/address/"))
+            MvcResult mvcResult = mvc.perform(get("/address/"))
                     .andExpect(new ResultMatcher() {
                         @Override
                         public void match(MvcResult mvcResult) throws Exception {
@@ -105,7 +128,12 @@ public class AddressControllerTest {
                             assertTrue(model.containsKey("addresses"));
                         }
                     })
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andReturn();
+
+            Map<String, Object> model = mvcResult.getModelAndView().getModel();
+
+            assertEquals(model.size(), addressList.size());
     }
 
     @Test

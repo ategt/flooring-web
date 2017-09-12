@@ -174,4 +174,32 @@ public class AddressTest {
         
         assertTrue(instance.hashCode() > -1);
     }
+
+
+    public static Address addressBuilder(String city, String company, String firstName, String lastName, String state, String streetName, String streetNumber, String zip) {
+        Address address = new Address();
+        address.setCity(city);
+        address.setCompany(company);
+        address.setFirstName(firstName);
+        address.setLastName(lastName);
+        address.setState(state);
+        address.setStreetName(streetName);
+        address.setStreetNumber(streetNumber);
+        address.setZip(zip);
+        return address;
+    }
+
+    public static Address addressGenerator() {
+        String city = UUID.randomUUID().toString();
+        String firstName = UUID.randomUUID().toString();
+        String lastName = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+        String zip = UUID.randomUUID().toString();
+        String company = UUID.randomUUID().toString();
+        String streetNumber = UUID.randomUUID().toString();
+        String streetName = UUID.randomUUID().toString();
+
+        Address address = addressBuilder(city, company, firstName, lastName, state, streetName, streetNumber, zip);
+        return address;
+    }
 }
