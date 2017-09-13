@@ -41,7 +41,7 @@ public class MessageControllerIT {
     @Test
     public void show() throws Exception {
 
-        final String MESSAGE_CODE_TO_TEST = "default.message";
+        final String MESSAGE_CODE_TO_TEST = "default-message";
         final String MESSAGE_EXPECTED = "No message is defined for this situation.";
 
         URL showUrl = HttpUrl.get(uriToTest).newBuilder()
@@ -61,7 +61,7 @@ public class MessageControllerIT {
         String messageResponded = null;
 
         if (showMessageResponse.getContentType().equals("application/json")) {
-           messageResponded = showMessageResponse.getContentAsString();
+            messageResponded = showMessageResponse.getContentAsString();
 
             Assert.assertNotNull(messageResponded);
             assertFalse(Strings.isNullOrEmpty(messageResponded));
@@ -69,13 +69,13 @@ public class MessageControllerIT {
             fail("Should have been JSON.");
         }
 
-        assertEquals(messageResponded, MESSAGE_EXPECTED);
+        assertEquals(messageResponded.trim(), MESSAGE_EXPECTED.trim());
     }
 
     @Test
     public void showValidationMessage() throws Exception {
 
-        final String MESSAGE_CODE_TO_TEST = "product.invalid";
+        final String MESSAGE_CODE_TO_TEST = "product-invalid";
         final String MESSAGE_EXPECTED = "If You Are Seeing This Message, Then We No Longer Carry That Product.";
 
         URL showUrl = HttpUrl.get(uriToTest).newBuilder()
@@ -103,7 +103,7 @@ public class MessageControllerIT {
             fail("Should have been JSON.");
         }
 
-        assertEquals(messageResponded, MESSAGE_EXPECTED);
+        assertEquals(messageResponded.trim(), MESSAGE_EXPECTED.trim());
     }
 
     @Test
@@ -121,9 +121,15 @@ public class MessageControllerIT {
         WebClient showMessageWebClient = new WebClient();
         showMessageWebClient.addRequestHeader("Accept", "application/json");
 
-        Page showMessagePage = showMessageWebClient.getPage(showUrl);
-        WebResponse showMessageResponse = showMessagePage.getWebResponse();
-        assertEquals(showMessageResponse.getStatusCode(), 200);
+        WebResponse showMessageResponse;
+        try {
+            Page showMessagePage = showMessageWebClient.getPage(showUrl);
+            showMessageResponse = showMessagePage.getWebResponse();
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
+            showMessageResponse = ex.getResponse();
+        }
+
+        assertEquals(showMessageResponse.getStatusCode(), 400);
         assertTrue("Content Length: " + showMessageResponse.getContentLength(), showMessageResponse.getContentLength() > 2);
 
         String messageResponded = null;
@@ -137,6 +143,6 @@ public class MessageControllerIT {
             fail("Should have been JSON.");
         }
 
-        assertEquals(messageResponded, MESSAGE_EXPECTED);
+        assertTrue(messageResponded.contains("No message found under code"));
     }
 }
