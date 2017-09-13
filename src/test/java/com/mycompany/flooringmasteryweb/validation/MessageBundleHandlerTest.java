@@ -48,17 +48,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration()
-@ContextHierarchy({
-        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\test\\resources\\test-SetupSimulatedProductionEnvironment.xml"}),
-        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\resources\\spring-persistence.xml"}),
-        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\webapp\\WEB-INF\\spring-dispatcher-servlet.xml"})
-})
 public class MessageBundleHandlerTest {
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
 
     @Before
     public void setUp() throws Exception {
@@ -123,7 +113,33 @@ public class MessageBundleHandlerTest {
 
         testContext.close();
 
+        System.out.println("");
+        System.out.println(Strings.repeat("-", 25));
+        System.out.println("");
+        System.out.println("        Closed one context and opening another.");
+        System.out.println("");
+        System.out.println(Strings.repeat("-", 25));
+        System.out.println("");
+
+
+        File springDispatcherServlet = new File("src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml");
+        File springPersistance = new File("src/main/resources/spring-persistence.xml");
+
+        String springDispatcherServletPath = springDispatcherServlet.getAbsolutePath();
+
+        boolean afd = springDispatcherServlet.exists();
+
+        File fadf = new File("");
+
         System.setProperty("DATABASE_URL", piecedTogetherUri);
+
+        ApplicationContext webApplicationContext = new ClassPathXmlApplicationContext(
+                new String[]{"file:" + springPersistance.getAbsolutePath(),
+                "file:" + springDispatcherServletPath});
+
+        ReloadableResourceBundleMessageSource rewa = webApplicationContext.getBean("messageSource", ReloadableResourceBundleMessageSource.class);
+
+        String asfdasrewr = rewa.getMessage("validation.orderCommand.state.null", null, Locale.US);
 
         String message = webApplicationContext.getMessage("validation.orderCommand.state.null", null, Locale.US);
 
