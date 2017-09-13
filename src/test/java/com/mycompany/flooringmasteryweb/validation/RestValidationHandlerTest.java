@@ -7,11 +7,18 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,7 +28,18 @@ import java.util.Locale;
 
 import static org.junit.Assert.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration()
+@ContextHierarchy({
+        @ContextConfiguration(locations = {"/test-SetupSimulatedProductionEnvironment.xml"}),
+        @ContextConfiguration(locations = {"/spring-persistence.xml"}),
+        @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml"})
+})
 public class RestValidationHandlerTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     @Before
     public void setUp() throws Exception {
     }
@@ -146,12 +164,6 @@ public class RestValidationHandlerTest {
     public void resolveDefaultMessageInProductionTest() throws URISyntaxException {
         ApplicationContext ctx = loadTheProductionContextWithTestDatabase();
 
-        ApplicationContext providedContext = ApplicationContextProvider.getApplicationContext();
-        String appCtxId = providedContext.getId();
-
-        assertEquals(appCtxId, ctx.getId());
-        assertEquals(providedContext.getStartupDate(), ctx.getStartupDate());
-
         String defaultMessageCode = ctx.getBean("defaultMessageCode", String.class);
         String resultMessage = ctx.getMessage(defaultMessageCode, null, Locale.getDefault());
 
@@ -159,29 +171,7 @@ public class RestValidationHandlerTest {
         assertFalse(Strings.isNullOrEmpty(resultMessage));
     }
 
-    private ApplicationContext loadTheProductionContextWithTestDatabase() throws URISyntaxException {
-        final String JDBC_PORTION = "jdbc:";
-
-        ApplicationContext testContext = new ClassPathXmlApplicationContext("test-SQLBase-applicationContext.xml");
-        BasicDataSource basicDataSource = testContext.getBean("dataSource", org.apache.commons.dbcp.BasicDataSource.class);
-
-        String testDatabaseUrl = basicDataSource.getUrl();
-
-        String password = basicDataSource.getPassword();
-        String userName = basicDataSource.getUsername();
-
-        if (testDatabaseUrl.startsWith(JDBC_PORTION))
-            testDatabaseUrl = testDatabaseUrl.substring(JDBC_PORTION.length());
-
-        URI uri = new URI(testDatabaseUrl);
-
-        String host = uri.getHost();
-
-        String piecedTogetherUri = testDatabaseUrl.replace(host, userName + ":" + password + "@" + host);
-
-        System.setProperty("DATABASE_URL", piecedTogetherUri);
-
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("spring-persistence.xml");
-        return ctx;
+    private ApplicationContext loadTheProductionContextWithTestDatabase() {
+        return webApplicationContext;
     }
 }
