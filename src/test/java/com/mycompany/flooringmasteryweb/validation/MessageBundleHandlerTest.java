@@ -48,7 +48,17 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration()
+@ContextHierarchy({
+        @ContextConfiguration(locations = {"/test-SetupSimulatedProductionEnvironment.xml"}),
+        @ContextConfiguration(locations = {"/spring-persistence.xml"}),
+        @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml"})
+})
 public class MessageBundleHandlerTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Before
     public void setUp() throws Exception {
@@ -114,80 +124,18 @@ public class MessageBundleHandlerTest {
         testContext.close();
 
         System.out.println("");
-        System.out.println(Strings.repeat("-", 25));
+        System.out.println(Strings.repeat("-", 35));
         System.out.println("");
-        System.out.println("        Closed one context and opening another.");
+        System.out.println("        Closed one context and switching to another.");
         System.out.println("");
-        System.out.println(Strings.repeat("-", 25));
+        System.out.println(Strings.repeat("-", 35));
         System.out.println("");
-
-
-        File springDispatcherServlet = new File("src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml");
-        File springPersistance = new File("src/main/resources/spring-persistence.xml");
-
-        String springDispatcherServletPath = springDispatcherServlet.getAbsolutePath();
-
-        boolean afd = springDispatcherServlet.exists();
-
-        File fadf = new File("");
 
         System.setProperty("DATABASE_URL", piecedTogetherUri);
-
-        ApplicationContext webApplicationContext = new ClassPathXmlApplicationContext(
-                new String[]{"file:" + springPersistance.getAbsolutePath(),
-                "file:" + springDispatcherServletPath});
-
-        ReloadableResourceBundleMessageSource rewa = webApplicationContext.getBean("messageSource", ReloadableResourceBundleMessageSource.class);
-
-        String asfdasrewr = rewa.getMessage("validation.orderCommand.state.null", null, Locale.US);
 
         String message = webApplicationContext.getMessage("validation.orderCommand.state.null", null, Locale.US);
 
         assertEquals(ERROR_TEST, message);
-    }
-
-    private void afdafd(){
-        //servletContext.get
-
-        MockServletContext mockServletContext =
-            new MockServletContext("/WEB-INF/spring-dispatcher-servlet.xml classpath:spring-persistence.xml");
-
-        //mockServletContext.mes
-
-        //mockServletContext.
-
-
-
-        //DispatcherServlet dispatcherServlet = new DispatcherServlet(); //  new ContextConfigurationAttributes()
-
-        //dispatcherServlet.
-        //new org.springframework.web.SpringServletContainerInitializer().onStartup();
-
-        XmlWebApplicationContext ctx = new XmlWebApplicationContext();
-
-        ctx.setServletContext(mockServletContext);
-//        ctx.refresh();
-        //new DefaultResourceLoader().
-
-        //WebApplicationContexthtx = WebApplicationContextUtils.
-
-        //ApplicationContext ctx = new ClassPathXmlApplicationContext("spring-persistence.xml");
-
-        //ApplicationContext servletContext = new ClassPathXmlApplicationContext(new String[]{"/WEB-INF/spring-dispatcher-servlet.xml",
-          //      "classpath:spring-persistence.xml"});
-        //file:/C:/Users/ATeg/Documents/_repos/flooringmasteryweb/target/tomcat.8080/webapps/expanded/META-INF/context.xml
-        //new SpringServletContainerInitializer()
-
-        //ctx.setServletContext(servletContext);
-
-//        new ServletContext()
-//
-//        ctx.setServletContext();
-//        ctx.refresh();
-
-        String message = ctx.getMessage("validation.orderCommand.state.null", null, Locale.US);
-
-        //assertEquals(ERROR_TEST, message);
     }
 
     @Test
