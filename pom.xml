@@ -9,8 +9,8 @@
     <url>http://maven.apache.org</url>
   
     <properties>
-        <spring.version>4.2.5.RELEASE</spring.version>
-        <junit.version>4.11</junit.version>
+        <spring.version>4.3.11.RELEASE</spring.version>
+        <junit.version>4.12</junit.version>
     </properties>
  
     <dependencies>
