@@ -6,8 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.*;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,7 +25,6 @@ import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -52,7 +49,7 @@ public class AddressControllerTest {
     private WebApplicationContext webApplicationContext;
 
     @Mock
-    private AddressDao addressDao;
+    private AddressDao mockAddressDao;
 
     @InjectMocks
     private AddressController addressController;
@@ -73,17 +70,13 @@ public class AddressControllerTest {
 
         lastResultPropertiesUsed = new ResultProperties[1];
 
-        Mockito.when(addressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
-        Mockito.when(addressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(mockAddressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
 
         addressController.setApplicationContext(webApplicationContext);
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(addressController)
-                .build();
-
-        realMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)
                 .build();
     }
 
@@ -141,8 +134,8 @@ public class AddressControllerTest {
 
         ResultProperties[] lastResultPropertiesUsed = new ResultProperties[1];
 
-        Mockito.when(addressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
-        Mockito.when(addressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(mockAddressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
 
         MvcResult mvcResult = mockMvc.perform(get("/address/")
                 .param("page", "20")
@@ -249,14 +242,15 @@ public class AddressControllerTest {
 
         Address[] addresses = gson.fromJson(content, Address[].class);
 
-        assertEquals(addresses.length, addressDao.size(new AddressSearchRequest()));
-
+        assertEquals(addresses.length, addressList.size());
     }
 
     @Test
     public void indexJson() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/address/")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
+                .param("results", "5")
+                .param("page", "4")
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -274,6 +268,11 @@ public class AddressControllerTest {
 
         assertNotNull(addresses);
         assertTrue(addresses.length > 1);
+
+        ResultProperties resultProperties = lastResultPropertiesUsed[0];
+
+        assertEquals(Integer.valueOf(5), resultProperties.getResultsPerPage());
+        assertEquals(Integer.valueOf(4), resultProperties.getPageNumber());
     }
 
     @Test
@@ -281,7 +280,7 @@ public class AddressControllerTest {
 
         Address address = AddressTest.addressGenerator();
 
-        Mockito.when(addressDao.create(ArgumentMatchers.any(Address.class))).thenReturn(address);
+        Mockito.when(mockAddressDao.create(ArgumentMatchers.any(Address.class))).thenReturn(address);
 
         Gson gson = new GsonBuilder().create();
 
@@ -357,7 +356,7 @@ public class AddressControllerTest {
 
         address.setId(random.nextInt());
 
-        Mockito.when(addressDao.get(5)).thenReturn(address);
+        Mockito.when(mockAddressDao.get(5)).thenReturn(address);
 
         Gson gson = new GsonBuilder().create();
 
@@ -379,8 +378,6 @@ public class AddressControllerTest {
 
         Integer id = addressReturned.getId();
 
-        assertNull(id);
-
         assertEquals(address, addressReturned);
     }
 
@@ -390,13 +387,15 @@ public class AddressControllerTest {
 
         address.setId(random.nextInt());
 
-        Mockito.when(addressDao.get(5)).thenReturn(address);
+        int randomId = random.nextInt();
+
+        Mockito.when(mockAddressDao.get(randomId)).thenReturn(address);
 
         Gson gson = new GsonBuilder().create();
 
         String addressJson = gson.toJson(address);
 
-        MvcResult mvcResult = mockMvc.perform(get("/address/5")
+        MvcResult mvcResult = mockMvc.perform(get("/address/{0}", randomId)
                 .content(addressJson)
         )
                 .andExpect(status().isOk())
@@ -412,27 +411,28 @@ public class AddressControllerTest {
 
         Integer id = addressReturned.getId();
 
-        assertNull(id);
-
         assertEquals(address, addressReturned);
     }
 
     @Test
     public void size() throws Exception {
-        Integer expectedSize = addressList.size();
 
-        MvcResult mvcResult = mockMvc.perform(get("/size").accept(MediaType.APPLICATION_JSON))
+        Integer dbSize = random.nextInt(Integer.MAX_VALUE);
+
+        Mockito.when(mockAddressDao.size()).thenReturn(dbSize);
+
+        MvcResult mvcResult = mockMvc.perform(get("/address/size").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();
 
-        assertEquals(Integer.parseInt(content), (long) expectedSize);
+        assertEquals(Integer.parseInt(content), dbSize.intValue());
     }
 
     @Test
     public void sizeRefuse() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/size"))
+        MvcResult mvcResult = mockMvc.perform(get("/address/size"))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
 
