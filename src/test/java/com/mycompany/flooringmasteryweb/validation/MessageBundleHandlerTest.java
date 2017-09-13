@@ -7,6 +7,8 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
@@ -18,8 +20,20 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextConfigurationAttributes;
+import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.SpringServletContainerInitializer;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.context.support.XmlWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +44,22 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration()
+@ContextHierarchy({
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\test\\resources\\test-SetupSimulatedProductionEnvironment.xml"}),
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\resources\\spring-persistence.xml"}),
+        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\webapp\\WEB-INF\\spring-dispatcher-servlet.xml"})
+})
 public class MessageBundleHandlerTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     @Before
     public void setUp() throws Exception {
     }
@@ -78,7 +104,7 @@ public class MessageBundleHandlerTest {
         final String ERROR_TEST = "You Must Include A State For This Order";
         final String JDBC_PORTION = "jdbc:";
 
-        ApplicationContext testContext = new ClassPathXmlApplicationContext("test-SQLBase-applicationContext.xml");
+        ClassPathXmlApplicationContext testContext = new ClassPathXmlApplicationContext("test-SQLBase-applicationContext.xml");
         BasicDataSource basicDataSource = testContext.getBean("dataSource", org.apache.commons.dbcp.BasicDataSource.class);
 
         String testDatabaseUrl = basicDataSource.getUrl();
@@ -95,25 +121,70 @@ public class MessageBundleHandlerTest {
 
         String piecedTogetherUri = testDatabaseUrl.replace(host, userName + ":" + password + "@" + host);
 
+        testContext.close();
+
         System.setProperty("DATABASE_URL", piecedTogetherUri);
 
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("spring-persistence.xml");
-
-        String message = ctx.getMessage("validation.orderCommand.state.null", null, Locale.US);
+        String message = webApplicationContext.getMessage("validation.orderCommand.state.null", null, Locale.US);
 
         assertEquals(ERROR_TEST, message);
     }
 
+    private void afdafd(){
+        //servletContext.get
+
+        MockServletContext mockServletContext =
+            new MockServletContext("/WEB-INF/spring-dispatcher-servlet.xml classpath:spring-persistence.xml");
+
+        //mockServletContext.mes
+
+        //mockServletContext.
+
+
+
+        //DispatcherServlet dispatcherServlet = new DispatcherServlet(); //  new ContextConfigurationAttributes()
+
+        //dispatcherServlet.
+        //new org.springframework.web.SpringServletContainerInitializer().onStartup();
+
+        XmlWebApplicationContext ctx = new XmlWebApplicationContext();
+
+        ctx.setServletContext(mockServletContext);
+//        ctx.refresh();
+        //new DefaultResourceLoader().
+
+        //WebApplicationContexthtx = WebApplicationContextUtils.
+
+        //ApplicationContext ctx = new ClassPathXmlApplicationContext("spring-persistence.xml");
+
+        //ApplicationContext servletContext = new ClassPathXmlApplicationContext(new String[]{"/WEB-INF/spring-dispatcher-servlet.xml",
+          //      "classpath:spring-persistence.xml"});
+        //file:/C:/Users/ATeg/Documents/_repos/flooringmasteryweb/target/tomcat.8080/webapps/expanded/META-INF/context.xml
+        //new SpringServletContainerInitializer()
+
+        //ctx.setServletContext(servletContext);
+
+//        new ServletContext()
+//
+//        ctx.setServletContext();
+//        ctx.refresh();
+
+        String message = ctx.getMessage("validation.orderCommand.state.null", null, Locale.US);
+
+        //assertEquals(ERROR_TEST, message);
+    }
+
     @Test
-    public void mockMvcMessageTest() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException {
+    public void mockMvcMessageTest() throws
+            InvocationTargetException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException {
 
         final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master";
-        final String DATABASE_KEY = "DATABASE_URL";
+        final String DATABASE_KEY = "DATABASE_TEST_URL";
 
         org.springframework.beans.factory.config.MethodInvokingFactoryBean mifb = new org.springframework.beans.factory.config.MethodInvokingFactoryBean();
         mifb.setTargetClass(java.lang.System.class);
         mifb.setTargetMethod("setProperty");
-        mifb.setArguments(new Object[]{DATABASE_KEY,DATABASE_URL});
+        mifb.setArguments(new Object[]{DATABASE_KEY, DATABASE_URL});
 
         String dbUrl = System.getProperty(DATABASE_KEY);
 
@@ -127,12 +198,12 @@ public class MessageBundleHandlerTest {
     }
 
     @Test
-    public void contextInvokationTest(){
+    public void contextInvokationTest() {
 
         final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master";
         final String DATABASE_KEY = "DATABASE_URL";
 
-        //System.setProperty(DATABASE_KEY, DATABASE_URL);
+        System.setProperty(DATABASE_KEY, UUID.randomUUID().toString());
 
         String dbUrl = System.getProperty(DATABASE_KEY);
         assertNotEquals(DATABASE_URL, dbUrl);
@@ -163,7 +234,7 @@ public class MessageBundleHandlerTest {
 
     @Test
     public void sqlEnvironmentHandlingTest() throws SQLException {
-        final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master";
+        final String DATABASE_URL = "postgres://myself:post@localhost:5432/flooring_master_random_test";
         final String DATABASE_KEY = "DATABASE_URL";
 
         String dbUrl = System.getProperty(DATABASE_KEY);
@@ -192,14 +263,9 @@ public class MessageBundleHandlerTest {
 
         String userName = basicDataSource.getUsername();
         String password = basicDataSource.getPassword();
-        String url = basicDataSource.getUrl();
 
         assertEquals("myself", userName);
         assertEquals("post", password);
-
-        Connection connection = dataSource.getConnection();
-
-        assertNotNull(connection);
     }
 
     @Test
