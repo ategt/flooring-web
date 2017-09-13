@@ -75,7 +75,7 @@ public class AddressController  implements ApplicationContextAware {
         ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(), resultProperties, request, uriComponentsBuilder, model);
 
         model.put("addresses", addresses);
-        return "address\\index";
+        return "address/index";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")

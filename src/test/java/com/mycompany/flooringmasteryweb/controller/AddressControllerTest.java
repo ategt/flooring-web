@@ -42,9 +42,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration()
 @ContextHierarchy({
-        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\test\\resources\\test-SetupSimulatedProductionEnvironment.xml"}),
-        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\resources\\spring-persistence.xml"}),
-        @ContextConfiguration(locations = {"file:C:\\Users\\ATeg\\Documents\\_repos\\flooringmasteryweb\\src\\main\\webapp\\WEB-INF\\spring-dispatcher-servlet.xml"})
+        @ContextConfiguration(locations = {"/test-SetupSimulatedProductionEnvironment.xml"}),
+        @ContextConfiguration(locations = {"/spring-persistence.xml"}),
+        @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml"})
 })
 public class AddressControllerTest {
 
@@ -57,7 +57,7 @@ public class AddressControllerTest {
     @InjectMocks
     private AddressController addressController;
 
-    private MockMvc mockMvc, realMvc;
+    private MockMvc mockMvc;
     private Random random = new Random();
     private ResultProperties[] lastResultPropertiesUsed = null;
     private List<Address> addressList;
@@ -198,29 +198,6 @@ public class AddressControllerTest {
                 return true;
             }
         });
-    }
-
-    @Test
-    @Ignore
-    public void localDeployTest() throws IOException {
-
-        //WebClient webClient = new WebClient();
-        //new MockJspWriter()
-
-        MockMvcWebClientBuilder mockMvcWebClientBuilder = MockMvcWebClientBuilder.mockMvcSetup(mockMvc);
-
-        WebClient webClient = mockMvcWebClientBuilder.build();
-
-        webClient.setWebConnection(new MockMvcWebConnection(mockMvc));
-
-        HtmlPage page = webClient.getPage("http://localhost/FlooringMasteryWeb/");
-
-        assertTrue(page.isHtmlPage());
-
-        HtmlPage htmlPage = (HtmlPage) page;
-
-        String title = htmlPage.getTitleText();
-
     }
 
     @Test
