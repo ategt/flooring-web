@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.descriptor.JspConfigDescriptor;
 import java.io.IOException;
 import java.net.URL;
 
@@ -67,6 +68,16 @@ public class AddressLocalIT {
                         dispatcherServlet.setDetectAllHandlerMappings(true);
                     })
                 .build();
+
+        JspConfigDescriptor jspConfigDescriptor =
+                webApplicationContext.getServletContext().getJspConfigDescriptor();
+        
+        jspConfigDescriptor.getTaglibs();
+
+//        org.springframework.web.servlet.DispatcherServlet dispatcherServlet =
+//                new org.springframework.web.servlet.DispatcherServlet();
+
+        //dispatcherServlet.set
 
 //        htmlUnitDriver = MockMvcHtmlUnitDriverBuilder
 //                .mockMvcSetup(mockMvc)
