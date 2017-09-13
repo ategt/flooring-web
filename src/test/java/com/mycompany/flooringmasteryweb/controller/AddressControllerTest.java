@@ -315,13 +315,13 @@ public class AddressControllerTest {
         Address address = AddressTest.addressGenerator();
         address.setId(random.nextInt());
 
-        Mockito.when(mockAddressDao.create(ArgumentMatchers.any(Address.class))).thenReturn(address);
+        //Mockito.when(mockAddressDao.create(ArgumentMatchers.any(Address.class))).thenReturn(address);
 
         Gson gson = new GsonBuilder().create();
 
         String addressJson = gson.toJson(address);
 
-        MvcResult mvcResult = mockMvc.perform(put("/address/")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/address/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addressJson)
         )
@@ -348,12 +348,8 @@ public class AddressControllerTest {
 
         Gson gson = new GsonBuilder().create();
 
-        String addressJson = gson.toJson(address);
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/address/{}", idToDelete)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(addressJson)
+        MvcResult mvcResult = mockMvc.perform(
+                MockMvcRequestBuilders.delete("/address/{0}", idToDelete)
         )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
