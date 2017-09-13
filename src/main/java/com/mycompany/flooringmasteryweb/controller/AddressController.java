@@ -11,14 +11,15 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultProperties;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
+import java.io.IOException;
+import java.util.*;
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import javax.validation.Valid;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -169,8 +170,8 @@ public class AddressController  implements ApplicationContextAware {
         return "address\\edit";
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
-    public String update(@PathVariable("id") Integer contactId, @ModelAttribute Address address, Map model, BindingResult bindingResult) {
+    @RequestMapping(value = "/edit/{showOnFail}", method = RequestMethod.POST)
+    public String update(@PathVariable("showOnFail") Integer contactNumber, @ModelAttribute Address address, Map model, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             bindingResult.getErrorCount();
             List<ObjectError> errors = bindingResult.getAllErrors();
@@ -182,7 +183,7 @@ public class AddressController  implements ApplicationContextAware {
 
             model.put("errors", errorString);
 
-            loadAddress(contactId, model);
+            loadAddress(contactNumber, model);
             return "address\\edit";
         } else {
             addressDao.update(address);

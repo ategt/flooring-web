@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,6 +36,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -307,47 +310,61 @@ public class AddressControllerTest {
     }
 
     @Test
-    public void guessWithAjax() throws Exception {
+    public void updateTest() throws Exception {
+
+        Address address = AddressTest.addressGenerator();
+        address.setId(random.nextInt());
+
+        Mockito.when(mockAddressDao.create(ArgumentMatchers.any(Address.class))).thenReturn(address);
+
+        Gson gson = new GsonBuilder().create();
+
+        String addressJson = gson.toJson(address);
+
+        MvcResult mvcResult = mockMvc.perform(put("/address/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(addressJson)
+        )
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        Address addressReturned = gson.fromJson(responseContent, Address.class);
+
+        assertNotNull(addressReturned);
+
+        assertEquals(address, addressReturned);
     }
 
     @Test
-    public void listNamesWithAjax() throws Exception {
-    }
+    public void delete() throws Exception {
+        int idToDelete = random.nextInt();
 
-    @Test
-    public void altListNamesWithAjax() throws Exception {
-    }
+        Address address = AddressTest.addressGenerator();
+        address.setId(idToDelete);
 
-    @Test
-    public void editSubmitWithAjax() throws Exception {
-    }
+        Mockito.when(mockAddressDao.delete(idToDelete)).thenReturn(address);
 
-    @Test
-    public void deleteWithAjax() throws Exception {
-    }
+        Gson gson = new GsonBuilder().create();
 
-    @Test
-    public void edit() throws Exception {
-    }
+        String addressJson = gson.toJson(address);
 
-    @Test
-    public void update() throws Exception {
-    }
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/address/{}", idToDelete)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(addressJson)
+        )
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
 
-    @Test
-    public void search() throws Exception {
-    }
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        Address addressReturned = gson.fromJson(responseContent, Address.class);
 
-    @Test
-    public void search1() throws Exception {
-    }
+        assertNotNull(addressReturned);
 
-    @Test
-    public void search2() throws Exception {
-    }
-
-    @Test
-    public void search3() throws Exception {
+        assertEquals(address, addressReturned);
     }
 
     @Test
@@ -412,6 +429,61 @@ public class AddressControllerTest {
         Integer id = addressReturned.getId();
 
         assertEquals(address, addressReturned);
+    }
+
+    @Test
+    public void editHtmlForm() throws Exception {
+        Address address = AddressTest.addressGenerator();
+
+        address.setId(random.nextInt());
+
+        int randomId = random.nextInt();
+
+        // Update currently returns void.
+        //Mockito.when(mockAddressDao.update());
+        Mockito.when(mockAddressDao.get(randomId)).thenReturn(address);
+
+        MvcResult mvcResult = mockMvc.perform(get("/address/edit/{0}", randomId)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Map<String, Object> model = mvcResult.getModelAndView().getModel();
+
+        assertTrue(model.containsKey("address"));
+
+        Address addressReturned = (Address) model.get("address");
+
+        assertNotNull(addressReturned);
+
+        Integer id = addressReturned.getId();
+
+        assertEquals(address, addressReturned);
+    }
+
+    @Test
+    public void edit() throws Exception {
+        int randomId = random.nextInt();
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("id", "25");
+
+        params.add("firstName", "Pat");
+        params.add("lastName", "Toner");
+        params.add("company", "SWG");
+        params.add("streetNumber", "8");
+        params.add("streetName", "AGBA Rd");
+        params.add("city", "Akron");
+        params.add("state", "OH");
+        params.add("zip", "25795");
+
+        mockMvc.perform(post("/address/edit/{0}", randomId)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.ALL_VALUE)
+                .params(params)
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/address/25"));
     }
 
     @Test
