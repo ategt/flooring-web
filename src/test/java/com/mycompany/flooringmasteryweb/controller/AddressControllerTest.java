@@ -313,7 +313,7 @@ public class AddressControllerTest {
     public void updateTest() throws Exception {
 
         Address address = AddressTest.addressGenerator();
-        address.setId(random.nextInt());
+        address.setId(random.nextInt(Integer.MAX_VALUE));
 
         //Mockito.when(mockAddressDao.create(ArgumentMatchers.any(Address.class))).thenReturn(address);
 
@@ -325,6 +325,12 @@ public class AddressControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(addressJson)
         )
+                .andExpect(new ResultMatcher() {
+                    @Override
+                    public void match(MvcResult result) throws Exception {
+                        MvcResult asdf = result;
+                    }
+                })
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
