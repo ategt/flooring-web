@@ -8,22 +8,18 @@ package com.mycompany.flooringmasteryweb.aop;
 import com.mycompany.flooringmasteryweb.dao.AuditDao;
 import com.mycompany.flooringmasteryweb.dto.Audit;
 import com.mycompany.flooringmasteryweb.dto.Order;
-import javax.inject.Inject;
 import org.aspectj.lang.JoinPoint;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  *
  * @author apprentice
  */
-public class AuditAspect {
+public class AuditAspect implements ApplicationContextAware{
 
-    private ApplicationContext ctx;
-
-    @Inject
-    public AuditAspect(ApplicationContextProvider applicationContext) {
-        ctx = ApplicationContextProvider.getApplicationContext();
-    }
+    private ApplicationContext applicationContext;
 
     private Order processJoinPoint(JoinPoint jp) {
 
@@ -31,13 +27,6 @@ public class AuditAspect {
         Order order = null;
         if (args[0] instanceof Order) {
             order = (Order) args[0];
-        }
-
-        if (args.length > 0) {
-            System.out.print("Arguments passed: ");
-            for (int i = 0; i < args.length; i++) {
-                System.out.print("Arg" + (i + 1) + ":" + args[i]);
-            }
         }
 
         return order;
@@ -50,7 +39,7 @@ public class AuditAspect {
         if (order != null) {
             String actionName = jp.getSignature().getName();
             Audit audit = buildAuditObject(order, actionName);
-            AuditDao auditDao = ctx.getBean("auditDao", AuditDao.class);
+            AuditDao auditDao = applicationContext.getBean("auditDao", AuditDao.class);
             auditDao.create(audit);
         }
     }
@@ -69,11 +58,8 @@ public class AuditAspect {
         return audit;
     }
 
-    public ApplicationContext getCtx() {
-        return ctx;
-    }
-
-    public void setCtx(ApplicationContext ctx) {
-        this.ctx = ctx;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
