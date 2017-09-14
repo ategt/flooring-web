@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
+import com.mycompany.flooringmasteryweb.dao.ProductDao;
+import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
 import org.junit.After;
 import org.junit.Before;
@@ -28,10 +30,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,6 +52,12 @@ public class OrdersControllerTest {
     @Mock
     private OrderDao mockOrdersDao;
 
+    @Mock
+    private StateDao mockStateDao;
+
+    @Mock
+    private ProductDao mockProductDao;
+
     @InjectMocks
     private OrdersController ordersController;
 
@@ -60,10 +65,26 @@ public class OrdersControllerTest {
     private Random random = new Random();
     private OrderResultSegment[] lastOrderResultSegmentUsed = null;
     private List<Order> orderList;
+    private List<State> stateList;
+    private List<ProductCommand> productCommandList;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
+        stateList = Arrays.asList(new State[]{StateTest.nonsenseStateGenerator(),
+                StateTest.nonsenseStateGenerator(),
+                StateTest.nonsenseStateGenerator(),
+                StateTest.nonsenseStateGenerator(),
+                StateTest.nonsenseStateGenerator(),
+                StateTest.nonsenseStateGenerator()});
+
+        productCommandList = Arrays.asList(new ProductCommand[]{
+                ProductCommand.buildProductCommand(ProductTest.productGenerator()),
+                ProductCommand.buildProductCommand(ProductTest.productGenerator()),
+                ProductCommand.buildProductCommand(ProductTest.productGenerator()),
+                ProductCommand.buildProductCommand(ProductTest.productGenerator())
+        });
 
         orderList = new ArrayList<>();
         for (int i = 0; i < random.nextInt(20) + 10; i++) {
@@ -73,7 +94,9 @@ public class OrdersControllerTest {
         lastOrderResultSegmentUsed = new OrderResultSegment[1];
 
         Mockito.when(mockOrdersDao.list(getOrderResultSegment(lastOrderResultSegmentUsed))).thenReturn(orderList);
-        
+        Mockito.when(mockStateDao.getListOfStates()).thenReturn(stateList);
+        Mockito.when(mockProductDao.buildCommandProductList()).thenReturn(productCommandList);
+
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
                 .build();
@@ -85,36 +108,24 @@ public class OrdersControllerTest {
 
     @Test
     public void indexTest() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/order/"))
-                .andExpect(new ResultMatcher() {
-                    @Override
-                    public void match(MvcResult mvcResult) throws Exception {
-                        MockHttpServletResponse response = mvcResult.getResponse();
-
-                        assertEquals(200, response.getStatus());
-
-                        ModelAndView modelAndView = mvcResult.getModelAndView();
-
-                        Map<String, Object> model = modelAndView.getModel();
-
-                        assertFalse(modelAndView.isEmpty());
-                        assertTrue(modelAndView.hasView());
-
-                        String viewName = modelAndView.getViewName();
-
-                        assertEquals(viewName, "order\\index");
-
-                        assertTrue(model.containsKey("orderes"));
-                    }
-                })
+        MvcResult mvcResult = mockMvc.perform(get("/orders/"))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Map<String, Object> model = mvcResult.getModelAndView().getModel();
+        ModelAndView modelAndView = mvcResult.getModelAndView();
 
-        assertTrue(model.containsKey("orderes"));
+        Map<String, Object> model = modelAndView.getModel();
 
-        List<Order> orderListModel = (List<Order>) model.get("orderes");
+        assertFalse(modelAndView.isEmpty());
+        assertTrue(modelAndView.hasView());
+
+        String viewName = modelAndView.getViewName();
+
+        assertEquals(viewName, "order\\index");
+
+        assertTrue(model.containsKey("orders"));
+
+        List<Order> orderListModel = (List<Order>) model.get("orders");
 
         assertEquals(orderListModel.size(), orderList.size());
 
@@ -135,37 +146,28 @@ public class OrdersControllerTest {
 
         Mockito.when(mockOrdersDao.list(getOrderResultSegment(lastOrderResultSegmentUsed))).thenReturn(orderList);
 
-        MvcResult mvcResult = mockMvc.perform(get("/order/")
+        MvcResult mvcResult = mockMvc.perform(get("/orders/")
                 .param("page", "20")
                 .param("results", "90")
                 .param("sort_by", "last_name"))
-                .andExpect(new ResultMatcher() {
-                    @Override
-                    public void match(MvcResult mvcResult) throws Exception {
-                        MockHttpServletResponse response = mvcResult.getResponse();
-
-                        assertEquals(200, response.getStatus());
-
-                        ModelAndView modelAndView = mvcResult.getModelAndView();
-
-                        Map<String, Object> model = modelAndView.getModel();
-
-                        assertFalse(modelAndView.isEmpty());
-                        assertTrue(modelAndView.hasView());
-
-                        String viewName = modelAndView.getViewName();
-
-                        assertEquals(viewName, "order\\index");
-
-                        assertTrue(model.containsKey("orderes"));
-                    }
-                })
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Map<String, Object> model = mvcResult.getModelAndView().getModel();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertFalse(modelAndView.isEmpty());
+        assertTrue(modelAndView.hasView());
+
+        String viewName = modelAndView.getViewName();
+
+        assertEquals(viewName, "order\\index");
 
         assertTrue(model.containsKey("orderes"));
+
+        assertTrue(model.containsKey("orders"));
 
         List<Order> orderListModel = (List<Order>) model.get("orderes");
 
@@ -179,7 +181,7 @@ public class OrdersControllerTest {
 
         OrderSortByEnum sortByEnum = orderResultSegment.getSortByEnum();
 
-        assertEquals(sortByEnum, OrderSortByEnum.SORT_BY_LAST_NAME);
+        assertEquals(sortByEnum, OrderSortByEnum.SORT_BY_NAME);
 
         assertEquals(Integer.valueOf(90), orderResultSegment.getResultsPerPage());
         assertEquals(Integer.valueOf(20), orderResultSegment.getPageNumber());
@@ -198,7 +200,7 @@ public class OrdersControllerTest {
     @Test
     public void indexJsonFull() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/order/")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/orders/")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .param("results", Integer.toString(Integer.MAX_VALUE))
         )
@@ -222,7 +224,7 @@ public class OrdersControllerTest {
 
     @Test
     public void indexJson() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/order/")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/orders/")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .param("results", "5")
                 .param("page", "4")
@@ -261,7 +263,7 @@ public class OrdersControllerTest {
 
         String orderJson = gson.toJson(order);
 
-        MvcResult mvcResult = mockMvc.perform(post("/order/")
+        MvcResult mvcResult = mockMvc.perform(post("/orders/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(orderJson)
         )
@@ -291,7 +293,7 @@ public class OrdersControllerTest {
 
         String orderJson = gson.toJson(order);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/order/")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/orders/")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(orderJson)
                 )
@@ -319,7 +321,7 @@ public class OrdersControllerTest {
         Gson gson = new GsonBuilder().create();
 
         MvcResult mvcResult = mockMvc.perform(
-                MockMvcRequestBuilders.delete("/order/{0}", idToDelete)
+                MockMvcRequestBuilders.delete("/orders/{0}", idToDelete)
         )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -345,7 +347,7 @@ public class OrdersControllerTest {
 
         String orderJson = gson.toJson(order);
 
-        MvcResult mvcResult = mockMvc.perform(get("/order/5")
+        MvcResult mvcResult = mockMvc.perform(get("/orders/5")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(orderJson)
@@ -378,7 +380,7 @@ public class OrdersControllerTest {
 
         String orderJson = gson.toJson(order);
 
-        MvcResult mvcResult = mockMvc.perform(get("/order/{0}", randomId)
+        MvcResult mvcResult = mockMvc.perform(get("/orders/{0}", randomId)
                 .content(orderJson)
         )
                 .andExpect(status().isOk())
@@ -409,7 +411,7 @@ public class OrdersControllerTest {
         //Mockito.when(mockOrdersDao.update());
         Mockito.when(mockOrdersDao.get(randomId)).thenReturn(order);
 
-        MvcResult mvcResult = mockMvc.perform(get("/order/edit/{0}", randomId)
+        MvcResult mvcResult = mockMvc.perform(get("/orders/edit/{0}", randomId)
         )
                 .andExpect(status().isOk())
                 .andReturn();
@@ -443,13 +445,13 @@ public class OrdersControllerTest {
         params.add("state", "OH");
         params.add("zip", "25795");
 
-        mockMvc.perform(post("/order/edit/{0}", randomId)
+        mockMvc.perform(post("/orders/edit/{0}", randomId)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.ALL_VALUE)
                 .params(params)
         )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/order/25"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/orders/25"));
     }
 
     @Test
@@ -459,7 +461,7 @@ public class OrdersControllerTest {
 
         Mockito.when(mockOrdersDao.size()).thenReturn(dbSize);
 
-        MvcResult mvcResult = mockMvc.perform(get("/order/size").accept(MediaType.APPLICATION_JSON))
+        MvcResult mvcResult = mockMvc.perform(get("/orders/size").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -470,7 +472,7 @@ public class OrdersControllerTest {
 
     @Test
     public void sizeRefuse() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/order/size"))
+        MvcResult mvcResult = mockMvc.perform(get("/orders/size"))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
 

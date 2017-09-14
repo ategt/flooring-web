@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Product;
+import com.mycompany.flooringmasteryweb.dto.ProductTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,7 +80,7 @@ public class ProductDaoDbImplTest {
     public void testCreate() {
         // Create should not accept a product with no name.
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = null;
         product.setProductName(null);
@@ -103,7 +104,7 @@ public class ProductDaoDbImplTest {
     public void testCreateC() {
         // This one should work, and return that same product back again.
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("Product1");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
@@ -115,7 +116,7 @@ public class ProductDaoDbImplTest {
     public void testCreateE() {
         // This test tests the overloaded method.
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("Product2");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
@@ -127,7 +128,7 @@ public class ProductDaoDbImplTest {
     public void testCreateF() {
         // This test tests the overloaded method.
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("Product7");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
@@ -139,7 +140,7 @@ public class ProductDaoDbImplTest {
     public void testCreateWithDifferentCase() {
         // This test tests the overloaded method.
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType(fakeProducts[3].toUpperCase());
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product result = instance.create(product);
@@ -152,7 +153,7 @@ public class ProductDaoDbImplTest {
     public void testCreateThenUpdateWithDifferentCase() {
         // This test tests the overloaded method.
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType(fakeProducts[4].toUpperCase());
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product result = instance.create(product);
@@ -171,7 +172,7 @@ public class ProductDaoDbImplTest {
     public void testCreateThenGetWithCosts() {
         
         System.out.println("Create Then Get With Costs");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType(fakeProducts[4]);
         product.setCost(05.25d);
         product.setLaborCost(09.509d);
@@ -194,7 +195,7 @@ public class ProductDaoDbImplTest {
     public void testGetA() {
         // This test tests the overloaded method.
         System.out.println("get");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         String productName = null;
         product.setType("BEST Product ever");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
@@ -208,7 +209,7 @@ public class ProductDaoDbImplTest {
     public void testCreateByUpdate() {
         // This test tests the overloaded method.
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         String productName = "Fake Product That I have Not Used Yet";
         product.setType(productName);
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
@@ -225,7 +226,7 @@ public class ProductDaoDbImplTest {
     public void testCreateByUpdateB() {
         // This test tests the overloaded method.
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         String productName = null;
         product.setType(productName);
         product.setLaborCost(5.0d);
@@ -241,7 +242,7 @@ public class ProductDaoDbImplTest {
     @Test
     public void testDelete() {
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("Fancy New Product");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
@@ -260,7 +261,7 @@ public class ProductDaoDbImplTest {
     @Test
     public void testGet() {
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("Better Flooring");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
@@ -281,7 +282,7 @@ public class ProductDaoDbImplTest {
     @Test
     public void testGetWithDifferentCase() {
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("Worlds Best Floor");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
@@ -301,7 +302,7 @@ public class ProductDaoDbImplTest {
     @Test
     public void testGet3() {
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("floor1");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
@@ -321,7 +322,7 @@ public class ProductDaoDbImplTest {
     @Test
     public void testGet4() {
         System.out.println("create");
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("FLOOR5");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
@@ -340,15 +341,15 @@ public class ProductDaoDbImplTest {
 
     @Test
     public void testSize() {
-        Product product = productFactory();
+        Product product = ProductTest.productFactory();
         product.setType("best floor");
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
 
-        Product secondProduct = productFactory();
+        Product secondProduct = ProductTest.productFactory();
 
         secondProduct.setType("Good floor");
 
-        Product thirdProduct = productFactory();
+        Product thirdProduct = ProductTest.productFactory();
         thirdProduct.setType("BETTER FLOOR");
 
         instance.create(product);
@@ -361,20 +362,12 @@ public class ProductDaoDbImplTest {
         assertTrue(instance.getList().contains("Better Floor"));
         assertTrue(instance.getList().contains("Best Floor"));
     }
-
-    private Product productFactory() {
-        Product secondProduct = new Product();
-        secondProduct.setType("Generic floor");
-        secondProduct.setCost(0.0d);
-        secondProduct.setLaborCost(0.0d);
-        return secondProduct;
-    }
-
+     
     @Test
     public void testEncodeAndDecode() {
         // The true parameter in the ProductDao constructor signifies a test.
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        Product testProduct = productFactory();
+        Product testProduct = ProductTest.productFactory();
 
         String productName = "German Bamboo";
         testProduct.setType(productName);
@@ -422,7 +415,7 @@ public class ProductDaoDbImplTest {
     public void bestGuessProductNameTest(){
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
 
-        Product product = productDao.create(productFactory());
+        Product product = productDao.create(ProductTest.productFactory());
 
         String productName = product.getProductName();
 
@@ -443,7 +436,7 @@ public class ProductDaoDbImplTest {
     public void guessProductNameTest(){
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
 
-        Product product = productDao.create(productFactory());
+        Product product = productDao.create(ProductTest.productFactory());
 
         String productName = product.getProductName();
 

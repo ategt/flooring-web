@@ -113,7 +113,7 @@ public class ProductTest {
         assertEquals(expResult, result);
     }
 
-    private Product productGenerator() {
+    public static Product productGenerator() {
         Product instance = new Product();
         Random random = new Random();
         instance.setCost(random.nextDouble());
@@ -204,5 +204,13 @@ public class ProductTest {
         
         Product returnedProduct = Product.buildProduct(null);
         assertNull(returnedProduct);
+    }
+
+    public static Product productFactory() {
+        Product secondProduct = new Product();
+        secondProduct.setType("Generic floor");
+        secondProduct.setCost(0.0d);
+        secondProduct.setLaborCost(0.0d);
+        return secondProduct;
     }
 }

@@ -175,4 +175,11 @@ public class StateTest {
 
         assertEquals(audita, auditb);
     }
+
+    public static State nonsenseStateGenerator(){
+        State state = new State();
+        state.setStateTax(new Random().nextDouble());
+        state.setState(UUID.randomUUID().toString());
+        return state;
+    }
 }
