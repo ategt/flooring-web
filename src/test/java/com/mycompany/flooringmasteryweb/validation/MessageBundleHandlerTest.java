@@ -122,13 +122,14 @@ public class MessageBundleHandlerTest {
         String piecedTogetherUri = testDatabaseUrl.replace(host, userName + ":" + password + "@" + host);
 
         testContext.close();
+        int numberOfDashes = 75;
 
         System.out.println("");
-        System.out.println(Strings.repeat("-", 35));
+        System.out.println(Strings.repeat("-", numberOfDashes));
         System.out.println("");
         System.out.println("        Closed one context and switching to another.");
         System.out.println("");
-        System.out.println(Strings.repeat("-", 35));
+        System.out.println(Strings.repeat("-", numberOfDashes));
         System.out.println("");
 
         System.setProperty("DATABASE_URL", piecedTogetherUri);

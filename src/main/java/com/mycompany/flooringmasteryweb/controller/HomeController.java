@@ -40,7 +40,7 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String home(Map model, HttpServletRequest httpServletRequest) {
+    public String home() {
 
         return "redirect:/orders/";
     }
