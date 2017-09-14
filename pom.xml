@@ -118,8 +118,8 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <version>2.1</version>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>2.3.2-b02</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -150,7 +150,6 @@
             <artifactId>guava</artifactId>
             <version>12.0.1</version>
         </dependency>
-
     </dependencies>
 
     <build>
