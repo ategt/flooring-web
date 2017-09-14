@@ -124,6 +124,10 @@ public class OrdersControllerTest {
         assertEquals(viewName, "order\\index");
 
         assertTrue(model.containsKey("orders"));
+        assertTrue(model.containsKey("productCommands"));
+        assertTrue(model.containsKey("stateCommands"));
+
+        assertTrue(model.containsKey("orderCommand"));
 
         List<Order> orderListModel = (List<Order>) model.get("orders");
 
@@ -131,6 +135,22 @@ public class OrdersControllerTest {
 
         for (Order order : orderList) {
             assertTrue(orderListModel.contains(order));
+        }
+
+        List<ProductCommand> productCommandListModel = (List<ProductCommand>) model.get("productCommands");
+
+        assertEquals(productCommandListModel.size(), productCommandList.size());
+
+        for (ProductCommand productCommand : productCommandList) {
+            assertTrue(productCommandListModel.contains(productCommand));
+        }
+
+        List<StateCommand> stateListModel = (List<StateCommand>) model.get("stateCommands");
+
+        assertEquals(stateListModel.size(), stateList.size());
+
+        for (State state : stateList) {
+            assertTrue(stateListModel.contains(StateCommand.buildCommandState(state)));
         }
     }
 
@@ -165,7 +185,6 @@ public class OrdersControllerTest {
 
         assertEquals(viewName, "order\\index");
 
-        assertTrue(model.containsKey("orderes"));
 
         assertTrue(model.containsKey("orders"));
 
