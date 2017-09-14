@@ -124,10 +124,11 @@ public class OrdersControllerTest {
         assertEquals(viewName, "order\\index");
 
         assertTrue(model.containsKey("orders"));
-        assertTrue(model.containsKey("productCommands"));
-        assertTrue(model.containsKey("stateCommands"));
 
         assertTrue(model.containsKey("orderCommand"));
+
+        OrderCommand orderCommand = (OrderCommand) model.get("orderCommand");
+        assertNotNull(orderCommand);
 
         List<Order> orderListModel = (List<Order>) model.get("orders");
 
@@ -137,13 +138,12 @@ public class OrdersControllerTest {
             assertTrue(orderListModel.contains(order));
         }
 
-        List<ProductCommand> productCommandListModel = (List<ProductCommand>) model.get("productCommands");
+        checkForProductsInModel(model);
+        checkForStatesInModel(model);
+    }
 
-        assertEquals(productCommandListModel.size(), productCommandList.size());
-
-        for (ProductCommand productCommand : productCommandList) {
-            assertTrue(productCommandListModel.contains(productCommand));
-        }
+    public void checkForStatesInModel(Map<String, Object> model) {
+        assertTrue(model.containsKey("stateCommands"));
 
         List<StateCommand> stateListModel = (List<StateCommand>) model.get("stateCommands");
 
@@ -151,6 +151,17 @@ public class OrdersControllerTest {
 
         for (State state : stateList) {
             assertTrue(stateListModel.contains(StateCommand.buildCommandState(state)));
+        }
+    }
+
+    public void checkForProductsInModel(Map<String, Object> model) {
+        assertTrue(model.containsKey("productCommands"));
+        List<ProductCommand> productCommandListModel = (List<ProductCommand>) model.get("productCommands");
+
+        assertEquals(productCommandListModel.size(), productCommandList.size());
+
+        for (ProductCommand productCommand : productCommandList) {
+            assertTrue(productCommandListModel.contains(productCommand));
         }
     }
 
@@ -169,7 +180,7 @@ public class OrdersControllerTest {
         MvcResult mvcResult = mockMvc.perform(get("/orders/")
                 .param("page", "20")
                 .param("results", "90")
-                .param("sort_by", "last_name"))
+                .param("sort_by", "name"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -188,7 +199,7 @@ public class OrdersControllerTest {
 
         assertTrue(model.containsKey("orders"));
 
-        List<Order> orderListModel = (List<Order>) model.get("orderes");
+        List<Order> orderListModel = (List<Order>) model.get("orders");
 
         assertEquals(orderListModel.size(), orderList.size());
 
@@ -204,6 +215,20 @@ public class OrdersControllerTest {
 
         assertEquals(Integer.valueOf(90), orderResultSegment.getResultsPerPage());
         assertEquals(Integer.valueOf(20), orderResultSegment.getPageNumber());
+
+        assertTrue(model.containsKey("orderCommand"));
+
+        OrderCommand orderCommand = (OrderCommand) model.get("orderCommand");
+        assertNotNull(orderCommand);
+
+        assertEquals(orderListModel.size(), orderList.size());
+
+        for (Order order : orderList) {
+            assertTrue(orderListModel.contains(order));
+        }
+
+        checkForProductsInModel(model);
+        checkForStatesInModel(model);
     }
 
     private OrderResultSegment getOrderResultSegment(OrderResultSegment[] lastOrderResultSegmentUsed) {
