@@ -46,6 +46,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.activation.CommandObject;
 import javax.activation.DataHandler;
 import javax.servlet.http.HttpServletRequest;
@@ -533,7 +534,16 @@ public class OrdersControllerIT {
             createRequest.setAdditionalHeader("Content-type", "application/json");
             createRequest.setAdditionalHeader("Accept", "application/json");
 
-            Page createPage = createOrderWebClient.getPage(createRequest);
+            Page createPage = null;
+
+            try {
+                createPage = createOrderWebClient.getPage(createRequest);
+            }catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex){
+                WebResponse webResponse = ex.getResponse();
+                String requestBody = webResponse.getWebRequest().getRequestBody();
+                System.out.println("RequestBody: " + requestBody);
+                throw ex;
+            }
 
             String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
@@ -2545,7 +2555,7 @@ public class OrdersControllerIT {
         assertEquals(getListWebResponse.getStatusCode(), 200);
         assertTrue(getListWebResponse.getContentLength() > 100);
 
-        State[] list = null;
+        List<State> list = null;
 
         if (getListWebResponse.getContentType().equals("application/json")) {
             String json = getListWebResponse.getContentAsString();
@@ -2553,12 +2563,17 @@ public class OrdersControllerIT {
 
             assertTrue(states.length > 0);
 
-            list = states;
+            list = new ArrayList<>(Arrays.asList(states));
         } else {
             fail("Should have been JSON.");
         }
 
-        return list[random.nextInt(list.length)];
+        boolean anythingRemoved = list.removeIf(state -> state.getStateName().equalsIgnoreCase("HQ")
+                || state.getState().equalsIgnoreCase("HQ"));
+
+        System.out.println("Results of the 'RemoveIf' Operation: " + anythingRemoved);
+
+        return list.get(random.nextInt(list.size()));
     }
 
     private Order getRandomOrder() throws IOException {
