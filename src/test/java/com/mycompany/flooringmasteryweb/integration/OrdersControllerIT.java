@@ -683,16 +683,6 @@ public class OrdersControllerIT {
 
     }
 
-    @Test
-    public void regExCheck(){
-        assertFalse("state does not exist".matches("state.*Not.*exist"));
-        assertFalse("state does not exist.".matches("state.*not.*exist"));
-        assertFalse("that state does not exist".matches("state.*Not.*exist"));
-        assertTrue("State Does Not Exist".matches(".*State.*Not.*Exist.*"));
-        assertTrue("State Does Not Exist.".matches(".*State.*Not.*Exist.*"));
-        assertTrue("State Does Not Exist.".matches(".*(State).*(Not).*(Exist).*"));
-    }
-
     /**
      * Test of create method, of class OrderDaoPostgresImpl.
      */
