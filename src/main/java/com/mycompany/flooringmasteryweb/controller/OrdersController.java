@@ -27,10 +27,7 @@ import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
@@ -294,7 +291,7 @@ public class OrdersController {
         boolean stateValid = StateUtilities.validStateInput(stateInput);
 
         if (!stateValid) {
-            bindingResult.rejectValue("state", "validation.orderCommand.state.invalid" );
+            bindingResult.rejectValue("state", "validation.orderCommand.state.invalid");
         } else {
 
             String stateGuess = StateUtilities.bestGuessStateName(stateInput);
@@ -367,59 +364,29 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public java.lang.String searchSubmit(@RequestParam("searchBy") String searchBy, @RequestParam("searchText") String searchText, Map model) {
-        List<Order> orders = orderDao.getList();
+    public String search(
+            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
+            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @ModelAttribute OrderSearchRequest addressSearchRequest,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            HttpServletResponse response,
+            Map model) {
+
         Boolean error = false;
         Boolean dateError = false;
 
-        if ("searchByOrderNumber".equalsIgnoreCase(searchBy)) {
-            try {
-                Integer inputInt = Integer.parseInt(searchText);
-                orders = orderDao.searchByOrderNumber(inputInt);
-            } catch (NumberFormatException numberFormatException) {
-                error = true;
-            }
+        ResultSegment<OrderSortByEnum> resultProperties = processResultPropertiesWithAllAsDefault(sortBy, response, sortCookie, page, resultsPerPage, resultsPerPageCookie);
 
-        } else if ("searchByDate".equalsIgnoreCase(searchBy)) {
-            try {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-                Date orderDate = simpleDateFormat.parse(searchText);
-                orders = orderDao.searchByDate(orderDate);
-            } catch (ParseException ex) {
-                error = true;
-                dateError = true;
-            }
-
-        } else if ("searchByName".equalsIgnoreCase(searchBy)) {
-            orders = orderDao.searchByName(searchText);
-        } else if ("searchByProduct".equalsIgnoreCase(searchBy)) {
-            String productGuess = productDao.bestGuessProductName(searchText);
-
-            if (productGuess == null) {
-                error = true;
-            } else {
-                Product product = productDao.get(productGuess);
-                orders = orderDao.searchByProduct(product);
-            }
-
-        } else if ("searchByState".equalsIgnoreCase(searchBy)) {
-
-            String stateGuess = StateUtilities.bestGuessStateName(searchText);
-
-            if (stateGuess == null) {
-                error = true;
-            } else {
-                State state = stateDao.get(stateGuess);
-                orders = orderDao.searchByState(state);
-            }
-        }
+        List<Order> orders = searchDatabase(addressSearchRequest, resultProperties);
 
         model.put("orders", orders);
         model.put("error", error);
         model.put("dateError", dateError);
 
         return "order\\search";
+
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")

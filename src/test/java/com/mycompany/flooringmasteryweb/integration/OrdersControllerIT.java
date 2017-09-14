@@ -880,7 +880,13 @@ public class OrdersControllerIT {
         // Check search using json object.
         WebClient jsonSearchWebClient = new WebClient();
 
-        String orderSearchRequestJson = "{\"OrderSearchByOptionEnum\":\"EVERYTHING\",\"searchText\":\"" + newOrder.getName() + "\"}";
+        String orderSearchRequestJson = "{\"searchBy\":\"EVERYTHING\",\"searchText\":\"" + newOrder.getName() + "\"}";
+
+//        OrderSearchRequest preSerializedOrderSearchRequest = new OrderSearchRequest();
+//        preSerializedOrderSearchRequest.setSearchBy(OrderSearchByOptionEnum.EVERYTHING);
+//        preSerializedOrderSearchRequest.setSearchText(newOrder.getName());
+//
+//        String orderSearchRequestJson = gson.toJson(preSerializedOrderSearchRequest);
 
         WebRequest searchByCityRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
         searchByCityRequest.setRequestBody(orderSearchRequestJson);
@@ -2568,10 +2574,8 @@ public class OrdersControllerIT {
             fail("Should have been JSON.");
         }
 
-        boolean anythingRemoved = list.removeIf(state -> state.getStateName().equalsIgnoreCase("HQ")
+        list.removeIf(state -> state.getStateName().equalsIgnoreCase("HQ")
                 || state.getState().equalsIgnoreCase("HQ"));
-
-        System.out.println("Results of the 'RemoveIf' Operation: " + anythingRemoved);
 
         return list.get(random.nextInt(list.size()));
     }

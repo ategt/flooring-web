@@ -2217,7 +2217,7 @@ public class OrderDaoDbImplTest {
 
             orders = orderDao.search(null, null);
             assertNotNull(orders);
-            assertEquals(orders.size(), orderDao.size());
+            assertTrue(orders.isEmpty());
         }
     }
 

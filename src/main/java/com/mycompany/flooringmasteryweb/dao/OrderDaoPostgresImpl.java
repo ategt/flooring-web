@@ -17,11 +17,7 @@ import com.mycompany.flooringmasteryweb.dto.State;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import javax.inject.Inject;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -179,7 +175,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
     @Override
     public List<Order> search(OrderSearchRequest searchRequest, ResultSegment<OrderSortByEnum> resultSegment) {
         if (searchRequest == null) {
-            return list(resultSegment);
+            return Collections.emptyList();
         }
 
         return search(searchRequest.getSearchText(), searchRequest.getSearchBy(), resultSegment);
@@ -193,11 +189,10 @@ public class OrderDaoPostgresImpl implements OrderDao {
         String sqlSearchQuery;
 
         if (null == searchOption) {
-            orders = list(resultProperties);
+            orders = Collections.emptyList();
         } else {
             sqlSearchQuery = determineSqlSearchQuery(searchOption);
             orders = search(queryString, sqlSearchQuery, resultProperties);
-
         }
         return orders;
     }
