@@ -364,8 +364,5 @@ public class StateUtilitiesTest {
         boolean expResult = true;
         boolean result = StateUtilities.validStateInput(input);
         assertEquals(expResult, result);
-
-        //public static Map<String, String> stringMapReverser(Map<String, String> stringMap)
     }
-
 }

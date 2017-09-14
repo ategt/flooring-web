@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.flooringmasteryweb.controller;
+package com.mycompany.flooringmasteryweb.integration;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -663,7 +663,7 @@ public class OrdersControllerIT {
         try {
             Page updatePage = updateOrderWebClient.getPage(updateRequest);
             fail("This was supposed to come back with a bad request.");
-        }catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex){
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
             assertEquals("Returned Status Code: " + ex.getStatusCode(), ex.getStatusCode(), 400);
             WebResponse response = ex.getResponse();
             assertEquals("Content Was Type: " + response.getContentType(), response.getContentType(), "application/json");
@@ -674,8 +674,23 @@ public class OrdersControllerIT {
 
         List<ValidationError> validationErrors = validationErrorContainer.getErrors();
 
-        assertTrue(validationErrors.stream().anyMatch(fieldError -> Objects.equals(fieldError.getFieldName(), "state") && Objects.equals(fieldError.getMessage(), "That State Does Not Exist.")));
+        assertTrue(validationErrors.stream().anyMatch(
+                fieldError ->
+                        Objects.equals(fieldError.getFieldName(), "state")
+                                && fieldError.getMessage().matches(".*State.*Not.*Exist.*")
+                )
+        );
 
+    }
+
+    @Test
+    public void regExCheck(){
+        assertFalse("state does not exist".matches("state.*Not.*exist"));
+        assertFalse("state does not exist.".matches("state.*not.*exist"));
+        assertFalse("that state does not exist".matches("state.*Not.*exist"));
+        assertTrue("State Does Not Exist".matches(".*State.*Not.*Exist.*"));
+        assertTrue("State Does Not Exist.".matches(".*State.*Not.*Exist.*"));
+        assertTrue("State Does Not Exist.".matches(".*(State).*(Not).*(Exist).*"));
     }
 
     /**
@@ -730,7 +745,17 @@ public class OrdersControllerIT {
         createRequest.setAdditionalHeader("Accept", "application/json");
         createRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page createPage = createOrderWebClient.getPage(createRequest);
+        Page createPage;
+
+        try {
+            createPage = createOrderWebClient.getPage(createRequest);
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
+            WebResponse webResponse = ex.getResponse();
+            WebRequest webRequest = webResponse.getWebRequest();
+            String requestBody = webRequest.getRequestBody();
+            System.out.println("RequestBody: " + requestBody);
+            throw ex;
+        }
 
         String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
@@ -1111,6 +1136,57 @@ public class OrdersControllerIT {
         return order;
     }
 
+    @Test
+    public void testCreateOrderWithInvalidStateIsRejected() throws IOException {
+        System.out.println("fake State");
+
+        Order order = orderGenerator();
+        OrderCommand orderCommand = OrderCommand.build(order);
+
+        orderCommand.setState("HQ");
+
+        // Create Generated Order
+        HttpUrl createUrl = getOrdersUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient createOrderWebClient = new WebClient();
+
+        Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+        String orderJson = gson.toJson(orderCommand);
+
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
+        createRequest.setRequestBody(orderJson);
+        createRequest.setAdditionalHeader("Accept", "application/json");
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+
+        WebResponse webResponse = null;
+
+        try {
+            createOrderWebClient.getPage(createRequest);
+            fail("This was supposed to return a failing status code.");
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
+            webResponse = ex.getResponse();
+        }
+        WebRequest webRequest = webResponse.getWebRequest();
+        String requestBody = webRequest.getRequestBody();
+        System.out.println("RequestBody: " + requestBody);
+
+        ValidationErrorContainer validationErrorContainer =
+                gson.fromJson(webResponse.getContentAsString(), ValidationErrorContainer.class);
+
+        List<ValidationError> validationErrors = validationErrorContainer.getErrors();
+
+        assertEquals(validationErrors.size(), 1);
+        ValidationError validationError = validationErrors.get(0);
+
+        String message = validationError.getMessage();
+        String fieldName = validationError.getFieldName();
+
+        assertEquals(message.trim(), "That State Does Not Appear To Exist. ".trim());
+        assertEquals(fieldName, "state");
+    }
+
     /**
      * Test of list method, of class OrderDaoPostgresImpl.
      */
@@ -1136,7 +1212,16 @@ public class OrdersControllerIT {
         createRequest.setAdditionalHeader("Accept", "application/json");
         createRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page createdOrderPage = createOrderWebClient.getPage(createRequest);
+        Page createdOrderPage;
+        try {
+            createdOrderPage = createOrderWebClient.getPage(createRequest);
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
+            WebResponse webResponse = ex.getResponse();
+            WebRequest webRequest = webResponse.getWebRequest();
+            String requestBody = webRequest.getRequestBody();
+            System.out.println("RequestBody: " + requestBody);
+            throw ex;
+        }
 
         WebResponse createOrderWebResponse = createdOrderPage.getWebResponse();
         assertEquals(createOrderWebResponse.getStatusCode(), 200);
