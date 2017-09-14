@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
+import com.mycompany.flooringmasteryweb.dto.Order;
 import com.mycompany.flooringmasteryweb.dto.Timing;
 import java.util.Date;
 import java.util.Random;
@@ -94,7 +95,7 @@ public class OrderDaoTimingDummyTest {
         OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
 
         long startTime = new Date().getTime();
-        dummyOrderDao.delete(null);
+        dummyOrderDao.delete((Order)null);
         long stopTime = new Date().getTime();
 
         Timing timing = instance.getLast();

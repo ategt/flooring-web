@@ -5,14 +5,20 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+
+import com.mycompany.flooringmasteryweb.dao.OrderDao;
+import com.mycompany.flooringmasteryweb.dao.ProductDao;
+import com.mycompany.flooringmasteryweb.dao.StateDao;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import static org.junit.Assert.*;
 
 /**
@@ -113,7 +119,7 @@ public class OrderTest {
         assertEquals(expResult, result);
     }
 
-    private Order orderGenerator() {
+    public static Order orderGenerator() {
         Order instance = new Order();
         Random random = new Random();
         instance.setArea(random.nextDouble());
@@ -249,5 +255,131 @@ public class OrderTest {
         orderb.setTotal(ordera.getTotal());
 
         assertEquals(ordera, orderb);
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public static Order orderFactory(ApplicationContext ctx) {
+
+        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
+        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
+        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+
+        com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
+        ohio.setState("CA");
+        ohio.setStateTax(6.25);
+
+        if (stateDao.get(ohio.getStateName()) == null) {
+            stateDao.create(ohio);
+        } else {
+            stateDao.update(ohio);
+        }
+
+        com.mycompany.flooringmasteryweb.dto.Product product = new com.mycompany.flooringmasteryweb.dto.Product();
+        product.setType("Test Steel");
+        product.setCost(5);
+        product.setLaborCost(3);
+
+        if (productDao.get(product.getProductName()) == null) {
+            productDao.create(product);
+        } else {
+            productDao.update(product);
+        }
+
+        // Make some data for the dto.
+        // 1,Wise,OH,6.25,Wood,100.00,5.15,4.75,515.00,475.00,61.88,1051.88
+        String name = "SWC Guild, Test.";
+        double area = 100.00;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2000, Calendar.JANUARY, 10);
+
+        Date orderDate = calendar.getTime();
+
+        OrderCommand orderCommand = new OrderCommand();
+
+        orderCommand.setName(name);
+        orderCommand.setArea(area);
+        orderCommand.setProduct(product.getProductName());
+        orderCommand.setState(ohio.getStateName());
+        orderCommand.setDate(orderDate);
+
+        Order builtOrder = orderDao.orderBuilder(orderCommand);
+
+        return builtOrder;
+    }
+
+    public static Boolean isOrderInList(Order order, List<Order> orderList) {
+
+        Order testedOrder = getTheOrderFromTheList(order, orderList);
+
+        return verifyOrder(testedOrder, order);
+    }
+
+    public static Boolean verifyOrder(Order unresolvedOrder, Order builtOrder) {
+
+        if (unresolvedOrder == null && builtOrder == null) {
+            return true;
+        }
+
+        if (unresolvedOrder == null || builtOrder == null) {
+            return false;
+        }
+
+        assertEquals(unresolvedOrder.getId(), builtOrder.getId());
+        assertNotNull(unresolvedOrder);
+        assertNotNull(builtOrder);
+
+        assertEquals(builtOrder.getArea(), unresolvedOrder.getArea(), 0.0005);
+        assertEquals(builtOrder.getClass(), unresolvedOrder.getClass());
+        assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.0005);
+
+        assertTrue(isSameDay(builtOrder.getDate(), unresolvedOrder.getDate()));
+
+        assertEquals(builtOrder.getId(), unresolvedOrder.getId());
+        assertEquals(builtOrder.getLaborCost(), unresolvedOrder.getLaborCost(), 0.0005);
+        assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
+        assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
+        assertEquals(builtOrder.getName(), unresolvedOrder.getName());
+        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
+        assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
+        assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
+        assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
+
+        return (true);
+    }
+
+    public static boolean isSameDay(java.util.Date date1, java.util.Date date2) {
+        if (date1 == null && date2 == null) {
+            return true;
+        }
+        java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyyMMdd");
+
+        if (date1 == null || date2 == null) {
+            return false;
+        }
+        return fmt.format(date1).equals(fmt.format(date2));
+    }
+
+    public static Order getTheOrderFromTheList(Order order, List<Order> orderList) {
+
+        if (order == null) {
+            return null;
+        }
+
+        Integer id = order.getId();
+
+        Order choosenOrder = null;
+
+        for (Order testOrder : orderList) {
+            if (Objects.equals(testOrder.getId(), id)) {
+                choosenOrder = testOrder;
+                break;
+            }
+
+        }
+
+        return choosenOrder;
     }
 }

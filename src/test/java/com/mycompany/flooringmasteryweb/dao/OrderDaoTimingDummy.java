@@ -12,23 +12,23 @@ import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.dto.State;
+
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author ATeg
  */
 public class OrderDaoTimingDummy implements OrderDao {
 
     long timeToSleep;
-    
-    public OrderDaoTimingDummy(long timeToSleep){
+
+    public OrderDaoTimingDummy(long timeToSleep) {
         this.timeToSleep = timeToSleep;
     }
-    
+
     @Override
     public Order create(Order order) {
         try {
@@ -41,6 +41,16 @@ public class OrderDaoTimingDummy implements OrderDao {
 
     @Override
     public Order delete(Order order) {
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public Order delete(Integer id) {
         try {
             Thread.sleep(timeToSleep);
         } catch (InterruptedException ex) {

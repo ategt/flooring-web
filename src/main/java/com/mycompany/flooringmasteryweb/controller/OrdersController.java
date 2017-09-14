@@ -343,7 +343,7 @@ public class OrdersController {
     public String delete(@PathVariable("id") Integer orderId,
                          Map model) {
 
-        orderDao.delete(orderDao.get(orderId));
+        orderDao.delete(orderId);
 
         return "redirect:/";
     }

@@ -158,8 +158,13 @@ public class OrderDaoPostgresImpl implements OrderDao {
             return null;
         }
 
-        int id = order.getId();
+        Integer id = order.getId();
 
+        return delete(id);
+    }
+
+    @Override
+    public Order delete(Integer id) {
         try {
             return jdbcTemplate.queryForObject(SQL_DELETE_ORDER, new OrderMapper(), id);
         } catch (EmptyResultDataAccessException ignored) {

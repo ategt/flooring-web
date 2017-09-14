@@ -25,6 +25,7 @@ public interface OrderDao extends SizeableDao{
     Order create(Order order);
     Order update(Order order);
     Order delete(Order order);
+    Order delete(Integer id);
 
     @Deprecated
     List<Order> getList();

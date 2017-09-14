@@ -58,7 +58,7 @@ public class OrdersControllerTest {
 
     private MockMvc mockMvc;
     private Random random = new Random();
-    private ResultProperties[] lastResultPropertiesUsed = null;
+    private OrderResultSegment[] lastOrderResultSegmentUsed = null;
     private List<Order> orderList;
 
     @Before
@@ -70,13 +70,10 @@ public class OrdersControllerTest {
             orderList.add(OrderTest.orderGenerator());
         }
 
-        lastResultPropertiesUsed = new ResultProperties[1];
+        lastOrderResultSegmentUsed = new OrderResultSegment[1];
 
-        Mockito.when(mockOrdersDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(orderList);
-        Mockito.when(mockOrdersDao.getOrderesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(orderList);
-
-        ordersController.setApplicationContext(webApplicationContext);
-
+        Mockito.when(mockOrdersDao.list(getOrderResultSegment(lastOrderResultSegmentUsed))).thenReturn(orderList);
+        
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
                 .build();
@@ -127,17 +124,16 @@ public class OrdersControllerTest {
     }
 
     @Test
-    public void indexTestWithResultProperties() throws Exception {
+    public void indexTestWithOrderResultSegment() throws Exception {
 
         List<Order> orderList = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             orderList.add(OrderTest.orderGenerator());
         }
 
-        ResultProperties[] lastResultPropertiesUsed = new ResultProperties[1];
+        OrderResultSegment[] lastOrderResultSegmentUsed = new OrderResultSegment[1];
 
-        Mockito.when(mockOrdersDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(orderList);
-        Mockito.when(mockOrdersDao.getOrderesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(orderList);
+        Mockito.when(mockOrdersDao.list(getOrderResultSegment(lastOrderResultSegmentUsed))).thenReturn(orderList);
 
         MvcResult mvcResult = mockMvc.perform(get("/order/")
                 .param("page", "20")
@@ -179,21 +175,21 @@ public class OrdersControllerTest {
             assertTrue(orderListModel.contains(order));
         }
 
-        ResultProperties resultProperties = lastResultPropertiesUsed[0];
+        OrderResultSegment orderResultSegment = lastOrderResultSegmentUsed[0];
 
-        OrderSortByEnum sortByEnum = resultProperties.getSortByEnum();
+        OrderSortByEnum sortByEnum = orderResultSegment.getSortByEnum();
 
         assertEquals(sortByEnum, OrderSortByEnum.SORT_BY_LAST_NAME);
 
-        assertEquals(Integer.valueOf(90), resultProperties.getResultsPerPage());
-        assertEquals(Integer.valueOf(20), resultProperties.getPageNumber());
+        assertEquals(Integer.valueOf(90), orderResultSegment.getResultsPerPage());
+        assertEquals(Integer.valueOf(20), orderResultSegment.getPageNumber());
     }
 
-    private ResultProperties getResultProperties(ResultProperties[] lastResultPropertiesUsed) {
-        return ArgumentMatchers.argThat(new ArgumentMatcher<ResultProperties>() {
+    private OrderResultSegment getOrderResultSegment(OrderResultSegment[] lastOrderResultSegmentUsed) {
+        return ArgumentMatchers.argThat(new ArgumentMatcher<OrderResultSegment>() {
             @Override
-            public boolean matches(ResultProperties resultProperties) {
-                lastResultPropertiesUsed[0] = resultProperties;
+            public boolean matches(OrderResultSegment orderResultSegment) {
+                lastOrderResultSegmentUsed[0] = orderResultSegment;
                 return true;
             }
         });
@@ -248,10 +244,10 @@ public class OrdersControllerTest {
         assertNotNull(orderes);
         assertTrue(orderes.length > 1);
 
-        ResultProperties resultProperties = lastResultPropertiesUsed[0];
+        OrderResultSegment orderResultSegment = lastOrderResultSegmentUsed[0];
 
-        assertEquals(Integer.valueOf(5), resultProperties.getResultsPerPage());
-        assertEquals(Integer.valueOf(4), resultProperties.getPageNumber());
+        assertEquals(Integer.valueOf(5), orderResultSegment.getResultsPerPage());
+        assertEquals(Integer.valueOf(4), orderResultSegment.getPageNumber());
     }
 
     @Test
