@@ -644,6 +644,27 @@ public class OrdersControllerTest {
 
     @Test
     public void searchPost() throws Exception {
+
+        //Mockito.verify();
+
+        //ArgumentCaptor
+
+
+//        Mockito.when(mockOrdersDao.search(ArgumentMatchers.argThat(new ArgumentMatcher<OrderSearchRequest>() {
+//            @Override
+//            public boolean matches(OrderSearchRequest searchRequest) {
+//                return false;
+//            }
+//        }), ArgumentMatchers.argThat(new ArgumentMatcher<ResultSegment<OrderSortByEnum>>() {
+//            @Override
+//            public boolean matches(ResultSegment<OrderSortByEnum> orderSortByEnumResultSegment) {
+//                return false;
+//            }
+//        })))
+
+        Mockito.when(mockOrdersDao.search(ArgumentMatchers.any(OrderSearchRequest.class), ArgumentMatchers.any(ResultSegment.class)))
+                .thenReturn()
+
         MvcResult mvcResult = mockMvc.perform(post("/orders/search")
                     .param("searchBy", "searchByEverything")
                     .param("searchText", "This is what I am Searching For")

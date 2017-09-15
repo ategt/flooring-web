@@ -307,16 +307,11 @@ public class OrdersController {
             HttpServletResponse response,
             Map model) {
 
-        Boolean error = false;
-        Boolean dateError = false;
-
         ResultSegment<OrderSortByEnum> resultProperties = processResultPropertiesWithAllAsDefault(sortBy, response, sortCookie, page, resultsPerPage, resultsPerPageCookie);
 
         List<Order> orders = searchDatabase(addressSearchRequest, resultProperties);
 
         model.put("orders", orders);
-        model.put("error", error);
-        model.put("dateError", dateError);
 
         return "order\\search";
 
