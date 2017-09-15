@@ -16,8 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 
@@ -124,7 +122,6 @@ public class OrderTest {
         Random random = new Random();
         instance.setArea(random.nextDouble());
         instance.setCostPerSquareFoot(random.nextDouble());
-        instance.setDate(new Date(random.nextLong()));
         instance.setId(random.nextInt());
         instance.setLaborCost(random.nextDouble());
         instance.setLaborCostPerSquareFoot(random.nextDouble());
@@ -135,6 +132,13 @@ public class OrderTest {
         instance.setTax(random.nextDouble());
         instance.setTaxRate(random.nextDouble());
         instance.setTotal(random.nextDouble());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date(random.nextLong()));
+        calendar.set(Calendar.YEAR, random.nextInt(9000));
+
+        instance.setDate(calendar.getTime());
+
         return instance;
     }
 
@@ -257,8 +261,6 @@ public class OrderTest {
         assertEquals(ordera, orderb);
     }
 
-
-    @Transactional(propagation = Propagation.REQUIRED)
     public static Order orderFactory(ApplicationContext ctx) {
 
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);

@@ -201,7 +201,7 @@ public class OrdersController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public OrderCommand create(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) throws MethodArgumentNotValidException {
+    public Order create(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) throws MethodArgumentNotValidException {
 
         validateInputs(orderCommand, bindingResult);
 
@@ -210,15 +210,10 @@ public class OrdersController {
         } else {
             Order order = orderDao.orderBuilder(orderCommand);
 
-            Order orderTemp = order;
+            if (Objects.nonNull(order))
+                order = orderDao.create(order);
 
-            if (Objects.isNull(order.getId()) || Objects.equals(order.getId(), 0)) {
-                orderTemp = orderDao.create(order);
-            } else {
-                orderDao.update(order);
-            }
-
-            return orderDao.resolveOrderCommand(orderTemp);
+            return order;
         }
     }
 
