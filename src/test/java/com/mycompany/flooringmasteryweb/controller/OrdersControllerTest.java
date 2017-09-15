@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -33,6 +35,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -330,23 +333,30 @@ public class OrdersControllerTest {
         assertTrue(OrderTest.verifyOrder(outputOrder, orderReturned));
     }
 
-    public int getEra(Order outputOrder) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(outputOrder.getDate());
-        return calendar.get(Calendar.ERA);
-    }
-
     @Test
-    public void updateTest() throws Exception {
+    public void update() throws Exception {
 
-        Order order = OrderTest.orderGenerator();
-        order.setId(random.nextInt(Integer.MAX_VALUE));
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
 
-        Gson gson = new GsonBuilder().create();
+        commandOrder.setState("MN");
+        commandOrder.setProduct("Product");
 
-        String orderJson = gson.toJson(order);
+        Order reconstructedOrder = OrderTest.orderGenerator();
+        Order outputOrder = OrderTest.orderGenerator();
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/orders/")
+        Mockito.when(mockProductDao.validProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn(true);
+        Mockito.when(mockProductDao.bestGuessProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn("Product Name");
+        Mockito.when(mockProductDao.get(ArgumentMatchers.eq("Product Name"))).thenReturn(new Product());
+        Mockito.when(mockStateDao.get(ArgumentMatchers.anyString())).thenReturn(new State());
+
+        Mockito.when(mockOrdersDao.orderBuilder(ArgumentMatchers.any(OrderCommand.class))).thenReturn(reconstructedOrder);
+        Mockito.when(mockOrdersDao.update(ArgumentMatchers.eq(reconstructedOrder))).thenReturn(outputOrder);
+        Mockito.when(mockOrdersDao.create(ArgumentMatchers.any())).thenThrow(new AssertionError("This was not the create endpoint."));
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        MvcResult mvcResult = mockMvc.perform(put("/orders/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(orderJson)
         )
@@ -355,11 +365,92 @@ public class OrdersControllerTest {
                 .andReturn();
 
         String responseContent = mvcResult.getResponse().getContentAsString();
-        Order orderReturned = gson.fromJson(responseContent, Order.class);
+        Order orderReturned = gsonDeserializer.fromJson(responseContent, Order.class);
 
         assertNotNull(orderReturned);
+        assertTrue(OrderTest.verifyOrder(outputOrder, orderReturned));
+    }
 
-        assertEquals(order, orderReturned);
+    @Test
+    public void updateWithoutId() throws Exception {
+
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
+
+        commandOrder.setState("MN");
+        commandOrder.setProduct("Product");
+        commandOrder.setId(null);
+
+        Order reconstructedOrder = OrderTest.orderGenerator();
+        reconstructedOrder.setId(null);
+
+        Order outputOrder = OrderTest.orderGenerator();
+
+        Mockito.when(mockProductDao.validProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn(true);
+        Mockito.when(mockProductDao.bestGuessProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn("Product Name");
+        Mockito.when(mockProductDao.get(ArgumentMatchers.eq("Product Name"))).thenReturn(new Product());
+        Mockito.when(mockStateDao.get(ArgumentMatchers.anyString())).thenReturn(new State());
+
+        Mockito.when(mockOrdersDao.orderBuilder(ArgumentMatchers.any(OrderCommand.class))).thenReturn(reconstructedOrder);
+        Mockito.when(mockOrdersDao.create(ArgumentMatchers.eq(reconstructedOrder))).thenReturn(outputOrder);
+        Mockito.when(mockOrdersDao.update(ArgumentMatchers.any())).thenThrow(new AssertionError("This was supposed to be handled by create method."));
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        MvcResult mvcResult = mockMvc.perform(put("/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderJson)
+        )
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        Order orderReturned = gsonDeserializer.fromJson(responseContent, Order.class);
+
+        assertNotNull(orderReturned);
+        assertTrue(OrderTest.verifyOrder(outputOrder, orderReturned));
+    }
+
+    @Test
+    public void updateWithIdZero() throws Exception {
+
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
+
+        commandOrder.setState("MN");
+        commandOrder.setProduct("Product");
+        commandOrder.setId(0);
+
+        Order reconstructedOrder = OrderTest.orderGenerator();
+        reconstructedOrder.setId(0);
+
+        Order outputOrder = OrderTest.orderGenerator();
+
+        Mockito.when(mockProductDao.validProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn(true);
+        Mockito.when(mockProductDao.bestGuessProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn("Product Name");
+        Mockito.when(mockProductDao.get(ArgumentMatchers.eq("Product Name"))).thenReturn(new Product());
+        Mockito.when(mockStateDao.get(ArgumentMatchers.anyString())).thenReturn(new State());
+
+        Mockito.when(mockOrdersDao.orderBuilder(ArgumentMatchers.any(OrderCommand.class))).thenReturn(reconstructedOrder);
+        Mockito.when(mockOrdersDao.create(ArgumentMatchers.eq(reconstructedOrder))).thenReturn(outputOrder);
+        Mockito.when(mockOrdersDao.update(ArgumentMatchers.any())).thenThrow(new AssertionError("This was supposed to be handled by create method."));
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        MvcResult mvcResult = mockMvc.perform(put("/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderJson)
+        )
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        Order orderReturned = gsonDeserializer.fromJson(responseContent, Order.class);
+
+        assertNotNull(orderReturned);
+        assertTrue(OrderTest.verifyOrder(outputOrder, orderReturned));
     }
 
     @Test
@@ -371,21 +462,46 @@ public class OrdersControllerTest {
 
         Mockito.when(mockOrdersDao.delete(idToDelete)).thenReturn(order);
 
-        Gson gson = new GsonBuilder().create();
-
         MvcResult mvcResult = mockMvc.perform(
                 MockMvcRequestBuilders.delete("/orders/{0}", idToDelete)
+                        .accept(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String responseContent = mvcResult.getResponse().getContentAsString();
-        Order orderReturned = gson.fromJson(responseContent, Order.class);
+        Order orderReturned = gsonDeserializer.fromJson(responseContent, Order.class);
 
         assertNotNull(orderReturned);
 
-        assertEquals(order, orderReturned);
+        assertTrue(OrderTest.verifyOrder(order, orderReturned));
+    }
+
+    @Test
+    public void deleteByHtml() throws Exception {
+        int idToDelete = random.nextInt();
+
+        Order order = OrderTest.orderGenerator();
+        order.setId(idToDelete);
+
+        boolean[] orderDeleted = new boolean[]{false};
+
+        Mockito.when(mockOrdersDao.delete(idToDelete)).then(new Answer<Order>() {
+            @Override
+            public Order answer(InvocationOnMock invocationOnMock) throws Throwable {
+                orderDeleted[0] = true;
+                return order;
+            }
+        });
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/orders/delete/{0}", idToDelete)
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/orders/"));
+
+        assertTrue(orderDeleted[0]);
     }
 
     @Test
@@ -396,9 +512,7 @@ public class OrdersControllerTest {
 
         Mockito.when(mockOrdersDao.get(5)).thenReturn(order);
 
-        Gson gson = new GsonBuilder().create();
-
-        String orderJson = gson.toJson(order);
+        String orderJson = gsonDeserializer.toJson(order);
 
         MvcResult mvcResult = mockMvc.perform(get("/orders/5")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -410,13 +524,13 @@ public class OrdersControllerTest {
                 .andReturn();
 
         String responseContent = mvcResult.getResponse().getContentAsString();
-        Order orderReturned = gson.fromJson(responseContent, Order.class);
+        Order orderReturned = gsonDeserializer.fromJson(responseContent, Order.class);
 
         assertNotNull(orderReturned);
 
-        Integer id = orderReturned.getId();
+        assertNotNull(orderReturned.getId());
 
-        assertEquals(order, orderReturned);
+        assertTrue(OrderTest.verifyOrder(order, orderReturned));
     }
 
     @Test
@@ -429,9 +543,7 @@ public class OrdersControllerTest {
 
         Mockito.when(mockOrdersDao.get(randomId)).thenReturn(order);
 
-        Gson gson = new GsonBuilder().create();
-
-        String orderJson = gson.toJson(order);
+        String orderJson = gsonDeserializer.toJson(order);
 
         MvcResult mvcResult = mockMvc.perform(get("/orders/{0}", randomId)
                 .content(orderJson)
@@ -447,9 +559,9 @@ public class OrdersControllerTest {
 
         assertNotNull(orderReturned);
 
-        Integer id = orderReturned.getId();
+        assertNotNull(orderReturned.getId());
 
-        assertEquals(order, orderReturned);
+        assertTrue(OrderTest.verifyOrder(order, orderReturned));
     }
 
     @Test
@@ -463,48 +575,90 @@ public class OrdersControllerTest {
         // Update currently returns void.
         //Mockito.when(mockOrdersDao.update());
         Mockito.when(mockOrdersDao.get(randomId)).thenReturn(order);
+        Mockito.when(mockOrdersDao.resolveOrderCommand(ArgumentMatchers.eq(order))).thenReturn(OrderCommand.build(order));
 
         MvcResult mvcResult = mockMvc.perform(get("/orders/edit/{0}", randomId)
         )
                 .andExpect(status().isOk())
                 .andReturn();
 
+        String viewName = mvcResult.getModelAndView().getViewName();
+        assertEquals(viewName, "order\\index");
+
         Map<String, Object> model = mvcResult.getModelAndView().getModel();
 
-        assertTrue(model.containsKey("order"));
+        assertTrue(model.containsKey("orderCommand"));
 
-        Order orderReturned = (Order) model.get("order");
+        OrderCommand orderReturned = (OrderCommand) model.get("orderCommand");
 
         assertNotNull(orderReturned);
 
-        Integer id = orderReturned.getId();
+        assertNotNull(orderReturned.getId());
 
-        assertEquals(order, orderReturned);
+        assertEquals(OrderCommand.build(order), orderReturned);
     }
 
     @Test
     public void edit() throws Exception {
         int randomId = random.nextInt();
 
+        final OrderCommand orderCommand = new OrderCommand();
+        orderCommand.setProduct("Wood");
+        orderCommand.setState("SW");
+        orderCommand.setName("Toner");
+        orderCommand.setArea(25.01d);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2016, Calendar.DECEMBER, 25);
+
+        orderCommand.setDate(calendar.getTime());
+
+        boolean[] updateCalled = new boolean[]{false};
+
+        Mockito.when(mockOrdersDao.orderBuilder(ArgumentMatchers.argThat(new ArgumentMatcher<OrderCommand>() {
+            @Override
+            public boolean matches(OrderCommand inputOrderCommand) {
+                assertNotNull(inputOrderCommand.getDate());
+                equalityTest(inputOrderCommand, orderCommand);
+                return true;
+            }
+        }))).thenReturn(new Order());
+
+        Mockito.when(mockOrdersDao.update(ArgumentMatchers.any(Order.class))).then(new Answer<Order>() {
+            @Override
+            public Order answer(InvocationOnMock invocationOnMock) throws Throwable {
+                updateCalled[0] = true;
+                return new Order();
+            }
+        });
+
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("id", "25");
 
-        params.add("firstName", "Pat");
-        params.add("lastName", "Toner");
-        params.add("company", "SWG");
-        params.add("streetNumber", "8");
-        params.add("streetName", "AGBA Rd");
-        params.add("city", "Akron");
-        params.add("state", "OH");
-        params.add("zip", "25795");
+        params.add("name", "Toner");
+        params.add("dateb", "12/25/2016");
+        params.add("state", "SW");
+        params.add("product", "Wood");
+        params.add("area", "25.01");
 
-        mockMvc.perform(post("/orders/edit/{0}", randomId)
+        mockMvc.perform(post("/orders/update", randomId)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.ALL_VALUE)
                 .params(params)
         )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/orders/25"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/"));
+
+        assertTrue(updateCalled[0]);
+    }
+
+    public void equalityTest(OrderCommand inputOrderCommand, OrderCommand orderCommand) {
+        assertTrue(OrderTest.isSameDay(orderCommand.getDate(), inputOrderCommand.getDate()));
+        assertEquals(orderCommand.getId(), inputOrderCommand.getId());
+        assertEquals(orderCommand.getState(), inputOrderCommand.getState());
+        assertEquals(orderCommand.getArea(), inputOrderCommand.getArea(), 0.00001);
+        assertEquals(orderCommand.getProduct(), inputOrderCommand.getProduct());
+        assertEquals(orderCommand.getName(), inputOrderCommand.getName());
     }
 
     @Test

@@ -171,9 +171,8 @@ public class OrdersController {
 
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
-    public OrderCommand update(@Valid @RequestBody OrderCommand orderCommand,
-                               BindingResult bindingResult,
-                               HttpServletResponse response) throws IOException, MethodArgumentNotValidException {
+    public Order update(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult)
+            throws  MethodArgumentNotValidException {
 
         validateInputs(orderCommand, bindingResult);
 
@@ -182,15 +181,13 @@ public class OrdersController {
         } else {
             Order order = orderDao.orderBuilder(orderCommand);
 
-            Order orderTemp = order;
-
-            if (order.getId() == 0) {
-                orderTemp = orderDao.create(order);
+            if (Objects.isNull(order.getId()) || order.getId() == 0) {
+                order = orderDao.create(order);
             } else {
-                orderDao.update(order);
+                order = orderDao.update(order);
             }
 
-            return orderDao.resolveOrderCommand(orderTemp);
+            return order;
         }
     }
 
@@ -320,7 +317,14 @@ public class OrdersController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute OrderCommand basicOrder) {
+    public String update(@ModelAttribute OrderCommand basicOrder, @RequestParam("dateb") String dateb) {
+
+        try {
+            if (basicOrder.getDate() == null) {
+                Date date = new SimpleDateFormat("MM/dd/yyyy").parse(dateb);
+                basicOrder.setDate(date);
+            }
+        }catch (ParseException ex){}
 
         Order order = orderDao.orderBuilder(basicOrder);
         orderDao.update(order);
@@ -331,7 +335,7 @@ public class OrdersController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
     @ResponseBody
     public Order delete(@PathVariable("id") Integer orderId) {
-        return orderDao.delete(orderDao.get(orderId));
+        return orderDao.delete(orderId);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
@@ -340,7 +344,7 @@ public class OrdersController {
 
         orderDao.delete(orderId);
 
-        return "redirect:/";
+        return "redirect:/orders/";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
