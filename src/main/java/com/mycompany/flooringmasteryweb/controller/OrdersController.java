@@ -214,49 +214,6 @@ public class OrdersController {
         }
     }
 
-    @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
-    public String update(
-            @Valid @ModelAttribute("orderCommand") OrderCommand orderCommand,
-            BindingResult bindingResult,
-            Map model,
-            HttpSession session
-    ) {
-
-        validateInputs(orderCommand, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-
-            String[] fields = {"name", "state", "area", "date", "product"};
-
-            java.util.List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
-                for (String testField : fields) {
-                    if (fieldError.getField().equalsIgnoreCase(testField)) {
-                        model.put(testField + "Error", true);
-                    }
-                }
-            }
-
-            int errorCount = bindingResult.getErrorCount();
-
-            loadTheOrdersList(model);
-
-            model.put("orderCommand", orderCommand);
-
-            return "order\\index";
-        } else {
-
-            Order order = orderDao.orderBuilder(orderCommand);
-            if (order.getId() == 0) {
-                orderDao.create(order);
-            } else {
-                orderDao.update(order);
-            }
-
-            return "redirect:/";
-        }
-    }
-
     private void validateProduct(OrderCommand orderCommand, BindingResult bindingResult) {
         String productInput = orderCommand.getProduct();
 
@@ -316,22 +273,6 @@ public class OrdersController {
         return "order\\index";
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute OrderCommand basicOrder, @RequestParam("dateb") String dateb) {
-
-        try {
-            if (basicOrder.getDate() == null) {
-                Date date = new SimpleDateFormat("MM/dd/yyyy").parse(dateb);
-                basicOrder.setDate(date);
-            }
-        }catch (ParseException ex){}
-
-        Order order = orderDao.orderBuilder(basicOrder);
-        orderDao.update(order);
-
-        return "redirect:/";
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
     @ResponseBody
     public Order delete(@PathVariable("id") Integer orderId) {
@@ -345,13 +286,6 @@ public class OrdersController {
         orderDao.delete(orderId);
 
         return "redirect:/orders/";
-    }
-
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String editSubmit(@ModelAttribute OrderCommand basicOrder) {
-        Order order = orderDao.orderBuilder(basicOrder);
-        orderDao.update(order);
-        return "redirect:/";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)

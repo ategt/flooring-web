@@ -598,60 +598,6 @@ public class OrdersControllerTest {
         assertEquals(OrderCommand.build(order), orderReturned);
     }
 
-    @Test
-    public void edit() throws Exception {
-        int randomId = random.nextInt();
-
-        final OrderCommand orderCommand = new OrderCommand();
-        orderCommand.setProduct("Wood");
-        orderCommand.setState("SW");
-        orderCommand.setName("Toner");
-        orderCommand.setArea(25.01d);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2016, Calendar.DECEMBER, 25);
-
-        orderCommand.setDate(calendar.getTime());
-
-        boolean[] updateCalled = new boolean[]{false};
-
-        Mockito.when(mockOrdersDao.orderBuilder(ArgumentMatchers.argThat(new ArgumentMatcher<OrderCommand>() {
-            @Override
-            public boolean matches(OrderCommand inputOrderCommand) {
-                assertNotNull(inputOrderCommand.getDate());
-                equalityTest(inputOrderCommand, orderCommand);
-                return true;
-            }
-        }))).thenReturn(new Order());
-
-        Mockito.when(mockOrdersDao.update(ArgumentMatchers.any(Order.class))).then(new Answer<Order>() {
-            @Override
-            public Order answer(InvocationOnMock invocationOnMock) throws Throwable {
-                updateCalled[0] = true;
-                return new Order();
-            }
-        });
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("id", "25");
-
-        params.add("name", "Toner");
-        params.add("dateb", "12/25/2016");
-        params.add("state", "SW");
-        params.add("product", "Wood");
-        params.add("area", "25.01");
-
-        mockMvc.perform(post("/orders/update", randomId)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.ALL_VALUE)
-                .params(params)
-        )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/"));
-
-        assertTrue(updateCalled[0]);
-    }
-
     public void equalityTest(OrderCommand inputOrderCommand, OrderCommand orderCommand) {
         assertTrue(OrderTest.isSameDay(orderCommand.getDate(), inputOrderCommand.getDate()));
         assertEquals(orderCommand.getId(), inputOrderCommand.getId());
@@ -686,6 +632,11 @@ public class OrdersControllerTest {
         String content = mvcResult.getResponse().getContentAsString();
 
         assertEquals(content, "");
+    }
+
+    @Test
+    public void searchGet(){
+        fail("This test needs implemented yet.");
     }
 
 }
