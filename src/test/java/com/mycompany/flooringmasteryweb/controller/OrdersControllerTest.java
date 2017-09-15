@@ -635,8 +635,34 @@ public class OrdersControllerTest {
     }
 
     @Test
-    public void searchGet(){
-        fail("This test needs implemented yet.");
+    public void searchGet() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/orders/search"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
     }
+
+    @Test
+    public void searchPost() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(post("/orders/search")
+                    .param("searchBy", "searchByEverything")
+                    .param("searchText", "This is what I am Searching For")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        List<Order> orders = (List<Order>)model.get("orders");
+
+
+
+
+    }
+
 
 }

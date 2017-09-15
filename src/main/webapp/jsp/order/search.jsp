@@ -61,7 +61,8 @@
                             <div class="form-group">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-6">
-                                    <input class="form-control" type="text" name="searchText" id="searchText" placeholder="Type Search Criteria Here" />
+                                    <input class="form-control" type="text" name="searchText" id="searchText"
+                                                                            placeholder="Type Search Criteria Here" />
                                 </div>
                             </div>
                             <div class="form-group">
