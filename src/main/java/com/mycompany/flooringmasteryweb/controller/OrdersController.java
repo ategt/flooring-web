@@ -301,7 +301,7 @@ public class OrdersController {
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
-            @ModelAttribute OrderSearchRequest addressSearchRequest,
+            OrderSearchRequest addressSearchRequest,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response,
