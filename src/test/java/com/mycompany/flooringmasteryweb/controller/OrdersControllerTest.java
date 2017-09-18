@@ -100,6 +100,7 @@ public class OrdersControllerTest {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
                 .setCustomArgumentResolvers(new OrderSearchRequestResolver())
+                //.webAppContextSetup(webApplicationContext)
                 .build();
     }
 
@@ -644,23 +645,6 @@ public class OrdersControllerTest {
     @Test
     public void searchPost() throws Exception {
 
-        //Mockito.verify();
-
-        //ArgumentCaptor
-
-
-//        Mockito.when(mockOrdersDao.search(ArgumentMatchers.argThat(new ArgumentMatcher<OrderSearchRequest>() {
-//            @Override
-//            public boolean matches(OrderSearchRequest searchRequest) {
-//                return false;
-//            }
-//        }), ArgumentMatchers.argThat(new ArgumentMatcher<ResultSegment<OrderSortByEnum>>() {
-//            @Override
-//            public boolean matches(ResultSegment<OrderSortByEnum> orderSortByEnumResultSegment) {
-//                return false;
-//            }
-//        })))
-
         final String SEARCH_STRING = UUID.randomUUID().toString();
         final String SEARCH_BY = "Order_number";
 
@@ -672,8 +656,8 @@ public class OrdersControllerTest {
                 .param("searchBy", SEARCH_BY)
                 .param("searchText", SEARCH_STRING)
         )
-                //.andExpect(MockMvcResultMatchers.status().isOk())
-               // .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
                 .andReturn();
 
         ModelAndView modelAndView = mvcResult.getModelAndView();
