@@ -9,7 +9,7 @@ package com.mycompany.flooringmasteryweb.dto;
  *
  * @author ATeg
  */
-public interface ResultSegment<T> {
+public interface ResultSegment<T extends Enum> {
 
     /**
      * @return the pageNumber
