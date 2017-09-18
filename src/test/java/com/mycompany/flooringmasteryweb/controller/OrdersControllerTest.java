@@ -6,6 +6,7 @@ import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
+import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,6 +99,7 @@ public class OrdersControllerTest {
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
+                .setCustomArgumentResolvers(new OrderSearchRequestResolver())
                 .build();
     }
 
@@ -660,7 +662,7 @@ public class OrdersControllerTest {
 //        })))
 
         final String SEARCH_STRING = UUID.randomUUID().toString();
-        final String SEARCH_BY = "EVERYTHING";
+        final String SEARCH_BY = "Order_number";
 
         Mockito.when(mockOrdersDao.search(ArgumentMatchers.any(OrderSearchRequest.class),
                                     ArgumentMatchers.any(ResultSegment.class)))
@@ -697,7 +699,7 @@ public class OrdersControllerTest {
         //assertEquals(resultSegment.getSortByEnum().ordinal(), OrderSortByEnum.SORT_BY_STATE_INVERSE.ordinal());
 
         OrderSearchRequest orderSearchRequest = orderSearchRequestArgumentCaptor.getValue();
-        assertEquals(orderSearchRequest.getSearchBy().ordinal(), OrderSearchByOptionEnum.EVERYTHING.ordinal());
+        assertEquals(orderSearchRequest.getSearchBy().ordinal(), OrderSearchByOptionEnum.ORDER_NUMBER.ordinal());
         assertEquals(orderSearchRequest.getSearchText(), SEARCH_STRING);
     }
 

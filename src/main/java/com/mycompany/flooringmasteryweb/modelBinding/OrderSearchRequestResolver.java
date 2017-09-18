@@ -1,5 +1,6 @@
 package com.mycompany.flooringmasteryweb.modelBinding;
 
+import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -21,15 +22,28 @@ public class OrderSearchRequestResolver implements HandlerMethodArgumentResolver
                                   NativeWebRequest nativeWebRequest,
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
 
-        OrderSearchRequest orderSearchRequest = null;
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
+
+        Map<String, String[]> params;
 
         if (methodParameter.getParameterType().equals(OrderSearchRequest.class)){
 
-            Map<String, String[]> params = nativeWebRequest.getParameterMap();
+            params = nativeWebRequest.getParameterMap();
 
+            System.out.println(params.size());
 
+            if (params.containsKey("searchText")){
+                String searchText = params.get("searchText")[0];
+                orderSearchRequest.setSearchText(searchText);
+            }
+
+            if (params.containsKey("searchBy")){
+                String searchBy = params.get("searchBy")[0];
+
+                OrderSearchByOptionEnum orderSearchByOptionEnum = OrderSearchByOptionEnum.parse(searchBy);
+                orderSearchRequest.setSearchBy(orderSearchByOptionEnum);
+            }
         }
-
 
         return orderSearchRequest;
     }
