@@ -5,58 +5,31 @@
  */
 package com.mycompany.flooringmasteryweb.controller;
 
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
-import com.mycompany.flooringmasteryweb.dto.Order;
-import com.mycompany.flooringmasteryweb.dto.OrderCommand;
-import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
-import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.ProductCommand;
-import com.mycompany.flooringmasteryweb.dto.ResultSegment;
-import com.mycompany.flooringmasteryweb.dto.State;
-import com.mycompany.flooringmasteryweb.dto.StateCommand;
-import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestAnotation;
-import com.mycompany.flooringmasteryweb.modelBinding.ResultSegmentProcessor;
+import com.mycompany.flooringmasteryweb.dto.*;
+import com.mycompany.flooringmasteryweb.modelBinding.CustomModelBinder;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
 import com.mycompany.flooringmasteryweb.validation.RestValidationHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author apprentice
@@ -86,7 +59,7 @@ public class OrdersController implements ApplicationContextAware{
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public List<Order> index(
-            @ResultSegmentProcessor OrderResultSegment resultSegment,
+            @CustomModelBinder OrderResultSegment resultSegment,
             UriComponentsBuilder uriComponentsBuilder,
             HttpServletResponse response,
             HttpServletRequest request
@@ -97,7 +70,7 @@ public class OrdersController implements ApplicationContextAware{
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(
-            @ResultSegmentProcessor OrderResultSegment resultSegment,
+            @CustomModelBinder OrderResultSegment resultSegment,
             UriComponentsBuilder uriComponentsBuilder,
             HttpServletResponse response,
             HttpServletRequest request,
@@ -271,8 +244,8 @@ public class OrdersController implements ApplicationContextAware{
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
-            @ResultSegmentProcessor OrderResultSegment resultSegment,
-            @OrderSearchRequestAnotation OrderSearchRequest addressSearchRequest,
+            @CustomModelBinder OrderResultSegment resultSegment,
+            @CustomModelBinder OrderSearchRequest addressSearchRequest,
             HttpServletResponse response,
             Map model) {
 
@@ -286,8 +259,8 @@ public class OrdersController implements ApplicationContextAware{
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Order> search(
-            @ResultSegmentProcessor OrderResultSegment resultSegment,
-            @OrderSearchRequestAnotation OrderSearchRequest addressSearchRequest,
+            @CustomModelBinder OrderResultSegment resultSegment,
+            @CustomModelBinder OrderSearchRequest addressSearchRequest,
             HttpServletResponse response
     ) {
         List<Order> orders = searchDatabase(addressSearchRequest, resultSegment);
