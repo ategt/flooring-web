@@ -328,7 +328,7 @@ public class AddressController  implements ApplicationContextAware {
             String sortCookie
     ) throws BeansException {
 
-        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, null);
         page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
         AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return addressResultSegment;
@@ -342,7 +342,7 @@ public class AddressController  implements ApplicationContextAware {
             Integer resultsPerPage,
             Integer resultsPerPageCookie) {
 
-        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, null);
         page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
         AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         return addressResultSegment;

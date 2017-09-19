@@ -10,18 +10,20 @@ import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.dto.SearchRequest;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.dto.ValueEnum;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
- *
  * @author ATeg
  */
 public class ControllerUtilities {
@@ -48,13 +50,23 @@ public class ControllerUtilities {
         return page;
     }
 
-    public static Integer loadDefaultResults(ApplicationContext ctx, Integer resultsPerPage, Integer resultsPerPageCookie) throws BeansException {
+    public static Integer loadDefaultResults(ApplicationContext ctx, Integer resultsPerPage, Cookie resultsPerPageCookie) throws BeansException {
+        final String DEFAULT_RESULTS_PER_PAGE = "defaultResultsPerPage";
+        return getIntegerWithContext(ctx, resultsPerPage, resultsPerPageCookie, DEFAULT_RESULTS_PER_PAGE);
+    }
+
+    private static Integer getIntegerWithContext(ApplicationContext ctx, Integer resultsPerPage, Cookie resultsPerPageCookie, String DEFAULT_RESULTS_PER_PAGE) {
         if (resultsPerPage == null) {
             if (resultsPerPageCookie == null) {
-                int defaultResultsPerPage = ctx.getBean("defaultResultsPerPage", Integer.class);
+                int defaultResultsPerPage = ctx.getBean(DEFAULT_RESULTS_PER_PAGE, Integer.class);
                 resultsPerPage = defaultResultsPerPage;
             } else {
-                resultsPerPage = resultsPerPageCookie;
+                if (Objects.nonNull(resultsPerPageCookie))
+                    try {
+                    resultsPerPage = Integer.parseInt(resultsPerPageCookie.getValue());
+                    } catch (NumberFormatException ex){
+                    resultsPerPage = null;
+                    }
             }
         }
         return resultsPerPage;
@@ -68,16 +80,9 @@ public class ControllerUtilities {
         return page;
     }
 
-    public static Integer loadAllResults(ApplicationContext ctx, Integer resultsPerPage, Integer resultsPerPageCookie) throws BeansException {
-        if (resultsPerPage == null) {
-            if (resultsPerPageCookie == null) {
-                int defaultResultsPerPage = ctx.getBean("allResultsPerPage", Integer.class);
-                resultsPerPage = defaultResultsPerPage;
-            } else {
-                resultsPerPage = resultsPerPageCookie;
-            }
-        }
-        return resultsPerPage;
+    public static Integer loadAllResults(ApplicationContext ctx, Integer resultsPerPage, Cookie resultsPerPageCookie) throws BeansException {
+        final String DEFAULT_RESULTS_PER_PAGE = "allResultsPerPage";
+        return getIntegerWithContext(ctx, resultsPerPage, resultsPerPageCookie, DEFAULT_RESULTS_PER_PAGE);
     }
 
     public static Integer updateResultsCookie(Integer resultsPerPage, String resultCookieName, HttpServletResponse response) {

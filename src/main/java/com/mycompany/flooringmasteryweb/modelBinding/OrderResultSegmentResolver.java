@@ -45,19 +45,19 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         HttpServletRequest httpServletRequest = (HttpServletRequest) nativeRequest;
         HttpServletResponse response = (HttpServletResponse) nativeResponse;
 
-        String resultsPerPageCookieString = null;
-        String sortByCookieString = null;
+        Cookie resultsPerPageCookie = null;
+        Cookie sortByCookie = null;
 
         Cookie[] cookies = httpServletRequest.getCookies();
 
         if (Objects.nonNull(cookies))
             for (Cookie cookie : cookies) {
                 if (Objects.equals(cookie.getName(), SORT_COOKIE_NAME)) {
-                    sortByCookieString = cookie.getValue();
+                    sortByCookie = cookie;
                 }
 
                 if (Objects.equals(cookie.getName(), RESULTS_COOKIE_NAME)) {
-                    resultsPerPageCookieString = cookie.getValue();
+                    resultsPerPageCookie = cookie;
                 }
             }
 
@@ -68,12 +68,6 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         Integer page = null;
         try {
             page = Integer.parseInt(pageString);
-        } catch (NumberFormatException ex) {
-        }
-
-        Integer resultsPerPageCookie = null;
-        try {
-            resultsPerPageCookie = Integer.parseInt(resultsPerPageCookieString);
         } catch (NumberFormatException ex) {
         }
 
@@ -92,19 +86,18 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         }
 
         ResultSegment<OrderSortByEnum> resultProperties
-                = processResultProperties(sortByString, response, sortByCookieString, page, resultsPerPage);
+                = processResultProperties(sortByString, response, sortByCookie, page, resultsPerPage);
 
-        //OrderSortByEnum orderSortByEnum = OrderSortByEnum.parse(sortByString);
         return new OrderResultSegment(resultProperties);
     }
 
     private ResultSegment<OrderSortByEnum> processResultPropertiesWithContextDefaults(
             Integer resultsPerPage,
-            Integer resultsPerPageCookie,
+            Cookie resultsPerPageCookie,
             Integer page,
             String sortBy,
             HttpServletResponse response,
-            String sortCookie
+            Cookie sortCookie
     ) throws BeansException {
 
         resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
@@ -116,10 +109,10 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
     private ResultSegment<OrderSortByEnum> processResultPropertiesWithAllAsDefault(
             String sortBy,
             HttpServletResponse response,
-            String sortCookie,
+            Cookie sortCookie,
             Integer page,
             Integer resultsPerPage,
-            Integer resultsPerPageCookie) {
+            Cookie resultsPerPageCookie) {
 
         resultsPerPage = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
         page = ControllerUtilities.loadAllPageNumber(applicationContext, page);
@@ -127,7 +120,7 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         return resultProperties;
     }
 
-    private ResultSegment<OrderSortByEnum> processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+    private ResultSegment<OrderSortByEnum> processResultProperties(String sortBy, HttpServletResponse response, Cookie sortCookie, Integer page, Integer resultsPerPage) {
         OrderSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
 
         ResultSegment<OrderSortByEnum> resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
@@ -136,21 +129,21 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         return resultProperties;
     }
 
-    private OrderSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, String sortCookie) {
+    private OrderSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, Cookie sortCookie) {
         sortBy = checkForReverseRequest(sortBy, sortCookie);
 
         if (sortBy != null) {
             response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
-        } else if (sortCookie != null) {
-            sortBy = sortCookie;
+        } else if (sortCookie != null && sortCookie.getValue() != null) {
+            sortBy = sortCookie.getValue();
         }
 
         return OrderSortByEnum.parse(sortBy);
     }
 
-    private static String checkForReverseRequest(String sortBy, String sortCookie) {
-        if (Objects.nonNull(sortBy)) {
-            OrderSortByEnum sortOld = OrderSortByEnum.parse(sortCookie);
+    private static String checkForReverseRequest(String sortBy, Cookie sortCookie) {
+        if (Objects.nonNull(sortBy) && Objects.nonNull(sortCookie)) {
+            OrderSortByEnum sortOld = OrderSortByEnum.parse(sortCookie.getValue());
             OrderSortByEnum sortNew = OrderSortByEnum.parse(sortBy);
 
             if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
