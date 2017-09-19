@@ -66,12 +66,9 @@ public class OrdersController {
     private final ProductDao productDao;
     private final StateDao stateDao;
     private final OrderDao orderDao;
-    private final RestValidationHandler restValidationHandler;
 
     private final ApplicationContext ctx;
 
-    private final String RESULTS_COOKIE_NAME = "results_cookie";
-    private final String SORT_COOKIE_NAME = "sort_cookie";
 
     @Inject
     public OrdersController(
@@ -83,7 +80,6 @@ public class OrdersController {
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
-        this.restValidationHandler = restValidationHandler;
         ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
     }
 
@@ -299,6 +295,7 @@ public class OrdersController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
+            @ResultSegmentProcessor
             @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
             @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
             @RequestParam(name = "sort_by", required = false) String sortBy,
@@ -378,68 +375,6 @@ public class OrdersController {
         orderCommand.setId(0);
 
         model.put("orderCommand", orderCommand);
-    }
-
-    private ResultSegment<OrderSortByEnum> processResultPropertiesWithContextDefaults(
-            Integer resultsPerPage,
-            Integer resultsPerPageCookie,
-            Integer page,
-            String sortBy,
-            HttpServletResponse response,
-            String sortCookie
-    ) throws BeansException {
-
-        resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
-        page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
-        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return resultProperties;
-    }
-
-    private ResultSegment<OrderSortByEnum> processResultPropertiesWithAllAsDefault(
-            String sortBy,
-            HttpServletResponse response,
-            String sortCookie,
-            Integer page,
-            Integer resultsPerPage,
-            Integer resultsPerPageCookie) {
-
-        resultsPerPage = ControllerUtilities.loadAllResults(ctx, resultsPerPage, resultsPerPageCookie);
-        page = ControllerUtilities.loadAllPageNumber(ctx, page);
-        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return resultProperties;
-    }
-
-    private ResultSegment<OrderSortByEnum> processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
-        OrderSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
-
-        ResultSegment<OrderSortByEnum> resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
-
-        ControllerUtilities.updateResultsCookie(resultProperties.getResultsPerPage(), RESULTS_COOKIE_NAME, response);
-        return resultProperties;
-    }
-
-    private OrderSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, String sortCookie) {
-        sortBy = checkForReverseRequest(sortBy, sortCookie);
-
-        if (sortBy != null) {
-            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
-        } else if (sortCookie != null) {
-            sortBy = sortCookie;
-        }
-
-        return OrderSortByEnum.parse(sortBy);
-    }
-
-    private static String checkForReverseRequest(String sortBy, String sortCookie) {
-        if (Objects.nonNull(sortBy)) {
-            OrderSortByEnum sortOld = OrderSortByEnum.parse(sortCookie);
-            OrderSortByEnum sortNew = OrderSortByEnum.parse(sortBy);
-
-            if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
-                sortBy = sortOld.reverse().toString();
-            }
-        }
-        return sortBy;
     }
 
     private void loadOrder(Integer contactId, Map model) {
