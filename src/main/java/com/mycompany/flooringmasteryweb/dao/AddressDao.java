@@ -6,10 +6,8 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import java.util.List;
 import java.util.Set;
 
@@ -28,22 +26,22 @@ public interface AddressDao extends SizeableDao {
 
     public int size(AddressSearchRequest addressSearchRequest);
     
-    public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties);
+    public List<Address> getAddressesSortedByParameter(AddressResultSegment addressResultSegment);
     public Set<String> getCompletionGuesses(String input, int limit);    
-    public List<Address> list(ResultProperties resultProperties);
-    public List<Address> searchByFirstName(String firstName, ResultProperties resultProperties);
-    public List<Address> searchByLastName(String lastName, ResultProperties resultProperties);
-    public List<Address> searchByFullName(String fullName, ResultProperties resultProperties);
-    public List<Address> searchByCity(String city, ResultProperties resultProperties);
-    public List<Address> searchByCompany(String company, ResultProperties resultProperties);
-    public List<Address> searchByState(String state, ResultProperties resultProperties);
-    public List<Address> searchByZip(String zip, ResultProperties resultProperties);
-    public List<Address> searchByStreetAddress(String streetAddress, ResultProperties resultProperties);
-    public List<Address> searchByStreet(String street, ResultProperties resultProperties);
-    public List<Address> searchByStreetName(String streetName, ResultProperties resultProperties);
-    public List<Address> searchByStreetNumber(String streetNumber, ResultProperties resultProperties);
-    public List<Address> searchByName(String name, ResultProperties resultProperties);
-    public List<Address> searchByNameOrCompany(String input, ResultProperties resultProperties);
-    public List<Address> searchByAll(String input, ResultProperties resultProperties);
-    public List<Address> search(AddressSearchRequest addressSearchRequest, ResultProperties resultProperties);
+    public List<Address> list(AddressResultSegment addressResultSegment);
+    public List<Address> searchByFirstName(String firstName, AddressResultSegment addressResultSegment);
+    public List<Address> searchByLastName(String lastName, AddressResultSegment addressResultSegment);
+    public List<Address> searchByFullName(String fullName, AddressResultSegment addressResultSegment);
+    public List<Address> searchByCity(String city, AddressResultSegment addressResultSegment);
+    public List<Address> searchByCompany(String company, AddressResultSegment addressResultSegment);
+    public List<Address> searchByState(String state, AddressResultSegment addressResultSegment);
+    public List<Address> searchByZip(String zip, AddressResultSegment addressResultSegment);
+    public List<Address> searchByStreetAddress(String streetAddress, AddressResultSegment addressResultSegment);
+    public List<Address> searchByStreet(String street, AddressResultSegment addressResultSegment);
+    public List<Address> searchByStreetName(String streetName, AddressResultSegment addressResultSegment);
+    public List<Address> searchByStreetNumber(String streetNumber, AddressResultSegment addressResultSegment);
+    public List<Address> searchByName(String name, AddressResultSegment addressResultSegment);
+    public List<Address> searchByNameOrCompany(String input, AddressResultSegment addressResultSegment);
+    public List<Address> searchByAll(String input, AddressResultSegment addressResultSegment);
+    public List<Address> search(AddressSearchRequest addressSearchRequest, AddressResultSegment addressResultSegment);
 }

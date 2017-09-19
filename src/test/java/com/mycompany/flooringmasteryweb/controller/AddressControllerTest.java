@@ -1,14 +1,11 @@
 package com.mycompany.flooringmasteryweb.controller;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.*;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -20,8 +17,6 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.*;
-import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
-import org.springframework.test.web.servlet.htmlunit.MockMvcWebConnection;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -30,7 +25,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.*;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -59,7 +53,7 @@ public class AddressControllerTest {
 
     private MockMvc mockMvc;
     private Random random = new Random();
-    private ResultProperties[] lastResultPropertiesUsed = null;
+    private AddressResultSegment[] lastAddressResultSegmentUsed = null;
     private List<Address> addressList;
 
     @Before
@@ -71,10 +65,10 @@ public class AddressControllerTest {
             addressList.add(AddressTest.addressGenerator());
         }
 
-        lastResultPropertiesUsed = new ResultProperties[1];
+        lastAddressResultSegmentUsed = new AddressResultSegment[1];
 
-        Mockito.when(mockAddressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
-        Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(mockAddressDao.list(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
+        Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
 
         addressController.setApplicationContext(webApplicationContext);
 
@@ -135,10 +129,10 @@ public class AddressControllerTest {
             addressList.add(AddressTest.addressGenerator());
         }
 
-        ResultProperties[] lastResultPropertiesUsed = new ResultProperties[1];
+        AddressResultSegment[] lastAddressResultSegmentUsed = new AddressResultSegment[1];
 
-        Mockito.when(mockAddressDao.list(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
-        Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastResultPropertiesUsed))).thenReturn(addressList);
+        Mockito.when(mockAddressDao.list(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
+        Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
 
         MvcResult mvcResult = mockMvc.perform(get("/address/")
                 .param("page", "20")
@@ -180,21 +174,21 @@ public class AddressControllerTest {
             assertTrue(addressListModel.contains(address));
         }
 
-        ResultProperties resultProperties = lastResultPropertiesUsed[0];
+        AddressResultSegment addressResultSegment = lastAddressResultSegmentUsed[0];
 
-        AddressSortByEnum sortByEnum = resultProperties.getSortByEnum();
+        AddressSortByEnum sortByEnum = addressResultSegment.getSortByEnum();
 
         assertEquals(sortByEnum, AddressSortByEnum.SORT_BY_LAST_NAME);
 
-        assertEquals(Integer.valueOf(90), resultProperties.getResultsPerPage());
-        assertEquals(Integer.valueOf(20), resultProperties.getPageNumber());
+        assertEquals(Integer.valueOf(90), addressResultSegment.getResultsPerPage());
+        assertEquals(Integer.valueOf(20), addressResultSegment.getPageNumber());
     }
 
-    private ResultProperties getResultProperties(ResultProperties[] lastResultPropertiesUsed) {
-        return ArgumentMatchers.argThat(new ArgumentMatcher<ResultProperties>() {
+    private AddressResultSegment getResultProperties(AddressResultSegment[] lastAddressResultSegmentUsed) {
+        return ArgumentMatchers.argThat(new ArgumentMatcher<AddressResultSegment>() {
             @Override
-            public boolean matches(ResultProperties resultProperties) {
-                lastResultPropertiesUsed[0] = resultProperties;
+            public boolean matches(AddressResultSegment addressResultSegment) {
+                lastAddressResultSegmentUsed[0] = addressResultSegment;
                 return true;
             }
         });
@@ -249,10 +243,10 @@ public class AddressControllerTest {
         assertNotNull(addresses);
         assertTrue(addresses.length > 1);
 
-        ResultProperties resultProperties = lastResultPropertiesUsed[0];
+        AddressResultSegment addressResultSegment = lastAddressResultSegmentUsed[0];
 
-        assertEquals(Integer.valueOf(5), resultProperties.getResultsPerPage());
-        assertEquals(Integer.valueOf(4), resultProperties.getPageNumber());
+        assertEquals(Integer.valueOf(5), addressResultSegment.getResultsPerPage());
+        assertEquals(Integer.valueOf(4), addressResultSegment.getPageNumber());
     }
 
     @Test

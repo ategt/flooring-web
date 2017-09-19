@@ -9,7 +9,7 @@ import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -468,12 +468,12 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     public List<Address> list(Integer page, Integer resultsPerPage) {
-        return list(new ResultProperties(AddressSortByEnum.SORT_BY_LAST_NAME, page, resultsPerPage));
+        return list(new AddressResultSegment(AddressSortByEnum.SORT_BY_LAST_NAME, page, resultsPerPage));
     }
 
     @Override
-    public List<Address> list(ResultProperties resultProperties) {
-        return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ADDRESS_LIST, resultProperties), new AddressMapper());
+    public List<Address> list(AddressResultSegment addressResultSegment) {
+        return jdbcTemplate.query(sortAndPaginateQuery(SQL_GET_ADDRESS_LIST, addressResultSegment), new AddressMapper());
     }
 
     @Override
@@ -481,98 +481,98 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_COUNT, Integer.class);
     }
 
-    private List<Address> search(String stringToSearchFor, String sqlQueryToUse, ResultProperties resultProperties) {
-        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, resultProperties), new AddressMapper(), stringToSearchFor);
+    private List<Address> search(String stringToSearchFor, String sqlQueryToUse, AddressResultSegment addressResultSegment) {
+        List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, addressResultSegment), new AddressMapper(), stringToSearchFor);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByFirstName(String firstName, ResultProperties resultProperties) {
-        List<Address> result = search(firstName, SQL_SEARCH_ADDRESS_BY_FIRST_NAME, resultProperties);
+    public List<Address> searchByFirstName(String firstName, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(firstName, SQL_SEARCH_ADDRESS_BY_FIRST_NAME, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByLastName(String lastName, ResultProperties resultProperties) {
-        List<Address> result = search(lastName, SQL_SEARCH_ADDRESS_BY_LAST_NAME, resultProperties);
+    public List<Address> searchByLastName(String lastName, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(lastName, SQL_SEARCH_ADDRESS_BY_LAST_NAME, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByCity(String city, ResultProperties resultProperties) {
-        List<Address> result = search(city, SQL_SEARCH_ADDRESS_BY_CITY, resultProperties);
+    public List<Address> searchByCity(String city, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(city, SQL_SEARCH_ADDRESS_BY_CITY, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByCompany(String company, ResultProperties resultProperties) {
-        List<Address> result = search(company, SQL_SEARCH_ADDRESS_BY_COMPANY, resultProperties);
+    public List<Address> searchByCompany(String company, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(company, SQL_SEARCH_ADDRESS_BY_COMPANY, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByState(String state, ResultProperties resultProperties) {
-        List<Address> result = search(state, SQL_SEARCH_ADDRESS_BY_STATE, resultProperties);
+    public List<Address> searchByState(String state, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(state, SQL_SEARCH_ADDRESS_BY_STATE, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByZip(String zip, ResultProperties resultProperties) {
-        List<Address> result = search(zip, SQL_SEARCH_ADDRESS_BY_ZIP, resultProperties);
+    public List<Address> searchByZip(String zip, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(zip, SQL_SEARCH_ADDRESS_BY_ZIP, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByStreetAddress(String streetAddress, ResultProperties resultProperties) {
-        List<Address> result = search(streetAddress, SQL_SEARCH_ADDRESS_BY_STREET, resultProperties);
+    public List<Address> searchByStreetAddress(String streetAddress, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(streetAddress, SQL_SEARCH_ADDRESS_BY_STREET, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByStreetNumber(String streetNumber, ResultProperties resultProperties) {
-        List<Address> result = search(streetNumber, SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, resultProperties);
+    public List<Address> searchByStreetNumber(String streetNumber, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(streetNumber, SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByName(String name, ResultProperties resultProperties) {
-        List<Address> result = search(name, SQL_SEARCH_ADDRESS_BY_NAME, resultProperties);
+    public List<Address> searchByName(String name, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(name, SQL_SEARCH_ADDRESS_BY_NAME, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByStreet(String street, ResultProperties resultProperties) {
-        List<Address> result = search(street, SQL_SEARCH_ADDRESS_BY_STREET, resultProperties);
+    public List<Address> searchByStreet(String street, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(street, SQL_SEARCH_ADDRESS_BY_STREET, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByNameOrCompany(String input, ResultProperties resultProperties) {
-        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY, resultProperties);
+    public List<Address> searchByNameOrCompany(String input, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> searchByAll(String input, ResultProperties resultProperties) {
-        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_ALL, resultProperties);
+    public List<Address> searchByAll(String input, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_ALL, addressResultSegment);
 
         return result;
     }
 
-    public List<Address> searchByAny(String input, ResultProperties resultProperties) {
-        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_ANY, resultProperties);
+    public List<Address> searchByAny(String input, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_ANY, addressResultSegment);
 
         return result;
     }
@@ -617,39 +617,39 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public List<Address> searchByFullName(String fullName, ResultProperties resultProperties) {
-        return searchByName(fullName, resultProperties);
+    public List<Address> searchByFullName(String fullName, AddressResultSegment addressResultSegment) {
+        return searchByName(fullName, addressResultSegment);
     }
 
     @Override
-    public List<Address> searchByStreetName(String streetName, ResultProperties resultProperties) {
-        List<Address> result = search(streetName, SQL_SEARCH_ADDRESS_BY_STREET_NAME, resultProperties);
+    public List<Address> searchByStreetName(String streetName, AddressResultSegment addressResultSegment) {
+        List<Address> result = search(streetName, SQL_SEARCH_ADDRESS_BY_STREET_NAME, addressResultSegment);
 
         return result;
     }
 
     @Override
-    public List<Address> getAddressesSortedByParameter(ResultProperties resultProperties) {
-        return list(resultProperties);
+    public List<Address> getAddressesSortedByParameter(AddressResultSegment addressResultSegment) {
+        return list(addressResultSegment);
     }
 
     @Override
-    public List<Address> search(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
-        return search(searchRequest.getSearchText(), searchRequest.searchBy(), resultProperties);
+    public List<Address> search(AddressSearchRequest searchRequest, AddressResultSegment addressResultSegment) {
+        return search(searchRequest.getSearchText(), searchRequest.searchBy(), addressResultSegment);
     }
 
     public List<Address> search(String queryString,
             AddressSearchByOptionEnum searchOption,
-            ResultProperties resultProperties) {
+            AddressResultSegment addressResultSegment) {
 
         List<Address> addresses;
         String sqlSearchQuery;
 
         if (null == searchOption) {
-            addresses = list(resultProperties);
+            addresses = list(addressResultSegment);
         } else {
             sqlSearchQuery = determineSqlSearchQuery(searchOption);
-            addresses = search(queryString, sqlSearchQuery, resultProperties);
+            addresses = search(queryString, sqlSearchQuery, addressResultSegment);
 
         }
         return addresses;
@@ -778,10 +778,10 @@ public class AddressDaoPostgresImpl implements AddressDao {
         return paginateQuery(sortQuery(query, sortByEnum), page, resultsPerPage);
     }
 
-    private String sortAndPaginateQuery(String query, ResultProperties resultProperties) {
-        if (resultProperties == null) {
+    private String sortAndPaginateQuery(String query, AddressResultSegment addressResultSegment) {
+        if (addressResultSegment == null) {
             return query;
         }
-        return sortAndPaginateQuery(query, resultProperties.getSortByEnum(), resultProperties.getPageNumber(), resultProperties.getResultsPerPage());
+        return sortAndPaginateQuery(query, addressResultSegment.getSortByEnum(), addressResultSegment.getPageNumber(), addressResultSegment.getResultsPerPage());
     }
 }

@@ -9,11 +9,6 @@
                             http://www.springframework.org/schema/mvc
                             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <!-- Uncomment this to move to annotation driven configuration -->
-    <!--<mvc:annotation-driven>-->
-        <!--<mvc:argument-resolvers>-->
-            <!--<bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver" />-->
-        <!--</mvc:argument-resolvers>-->
-    <!--</mvc:annotation-driven>-->
 
     <mvc:annotation-driven />
 
@@ -43,38 +38,10 @@
         </property>
     </bean>
 
-    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
-        <!--<property name="messageConverters">-->
-            <!--<bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestWebArgumentResolver"/>-->
-        <!--</property>-->
-    <!--</bean>-->
-
-    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
-        <!--<property name="messageConverters">-->
-            <!--<list>-->
-                <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
-                    <!--<property name="supportedMediaTypes">-->
-                        <!--<list>-->
-                            <!--<value>text/html;charset=UTF-8</value>-->
-                            <!--<value>text/plain;charset=UTF-8</value>-->
-                            <!--<value>application/json;charset=UTF-8</value>-->
-                        <!--</list>-->
-                    <!--</property>-->
-                <!--</bean>-->
-            <!--</list>-->
-        <!--</property>-->
-        <!--<property name="customArgumentResolvers">-->
-            <!--<list>-->
-                <!--<bean id="orderSearchRequestResolver"-->
-                      <!--class="com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver"/>-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
-
     <mvc:annotation-driven>
         <mvc:argument-resolvers>
             <bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver"/>
-            <bean class="com.mycompany.flooringmasteryweb.modelBinding.ResultSegmentResolver"/>
+            <bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver"/>
         </mvc:argument-resolvers>
     </mvc:annotation-driven>
  </beans>

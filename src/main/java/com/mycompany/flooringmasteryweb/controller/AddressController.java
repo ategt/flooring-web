@@ -9,17 +9,14 @@ import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 
-import java.io.IOException;
 import java.util.*;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import javax.validation.Valid;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -68,11 +65,11 @@ public class AddressController  implements ApplicationContextAware {
             HttpServletRequest request,
             Map model) {
 
-        ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
+        AddressResultSegment addressResultSegment = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
 
-        List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
+        List<Address> addresses = addressDao.getAddressesSortedByParameter(addressResultSegment);
 
-        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(), resultProperties, request, uriComponentsBuilder, model);
+        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(), addressResultSegment, request, uriComponentsBuilder, model);
 
         model.put("addresses", addresses);
         return "address\\index";
@@ -88,7 +85,7 @@ public class AddressController  implements ApplicationContextAware {
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response) {
 
-        ResultProperties resultProperties = processResultPropertiesWithAllAsDefault(
+        AddressResultSegment addressResultSegment = processResultPropertiesWithAllAsDefault(
                 sortBy,
                 response,
                 sortCookie,
@@ -96,7 +93,7 @@ public class AddressController  implements ApplicationContextAware {
                 resultsPerPage,
                 resultsPerPageCookie);
 
-        List<Address> addresses = addressDao.getAddressesSortedByParameter(resultProperties);
+        List<Address> addresses = addressDao.getAddressesSortedByParameter(addressResultSegment);
 
         return addresses.toArray(new Address[addresses.size()]);
     }
@@ -202,9 +199,9 @@ public class AddressController  implements ApplicationContextAware {
             HttpServletResponse response,
             HttpServletRequest request
     ) {
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
 
-        List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
+        List<Address> addresses = searchDatabase(addressSearchRequest, addressResultSegment);
 
         return addresses;
     }
@@ -219,9 +216,9 @@ public class AddressController  implements ApplicationContextAware {
             @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response
     ) {
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
 
-        List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
+        List<Address> addresses = searchDatabase(addressSearchRequest, addressResultSegment);
 
         return addresses;
     }
@@ -240,11 +237,11 @@ public class AddressController  implements ApplicationContextAware {
             Map model
     ) {
 
-        ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
+        AddressResultSegment addressResultSegment = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
 
-        List<Address> addresses = searchDatabase(addressSearchRequest, resultProperties);
+        List<Address> addresses = searchDatabase(addressSearchRequest, addressResultSegment);
 
-        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(addressSearchRequest), addressResultSegment, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 
@@ -265,17 +262,17 @@ public class AddressController  implements ApplicationContextAware {
             HttpServletRequest request,
             Map model) {
 
-        ResultProperties resultProperties = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
+        AddressResultSegment addressResultSegment = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
 
         List<Address> addresses;
 
         if (addressSearchRequest == null) {
-            addresses = addressDao.list(resultProperties);
+            addresses = addressDao.list(addressResultSegment);
         } else {
-            addresses = searchDatabase(addressSearchRequest, resultProperties);
+            addresses = searchDatabase(addressSearchRequest, addressResultSegment);
         }
 
-        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(addressSearchRequest), resultProperties, request, uriComponentsBuilder, model, addressSearchRequest);
+        ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(addressSearchRequest), addressResultSegment, request, uriComponentsBuilder, model, addressSearchRequest);
 
         model.put("addresses", addresses);
 
@@ -293,8 +290,8 @@ public class AddressController  implements ApplicationContextAware {
 
         Address address = addressDao.get(addressId);
 
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        List<Address> addresses = addressDao.list(resultProperties);
+        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        List<Address> addresses = addressDao.list(addressResultSegment);
 
         model.put("address", address);
         model.put("addresses", addresses);
@@ -322,7 +319,7 @@ public class AddressController  implements ApplicationContextAware {
         }
     }
 
-    private ResultProperties processResultPropertiesWithContextDefaults(
+    private AddressResultSegment processResultPropertiesWithContextDefaults(
             Integer resultsPerPage,
             Integer resultsPerPageCookie,
             Integer page,
@@ -333,11 +330,11 @@ public class AddressController  implements ApplicationContextAware {
 
         resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
         page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return resultProperties;
+        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return addressResultSegment;
     }
 
-    private ResultProperties processResultPropertiesWithAllAsDefault(
+    private AddressResultSegment processResultPropertiesWithAllAsDefault(
             String sortBy,
             HttpServletResponse response,
             String sortCookie,
@@ -347,17 +344,17 @@ public class AddressController  implements ApplicationContextAware {
 
         resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
         page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
-        ResultProperties resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return resultProperties;
+        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return addressResultSegment;
     }
 
-    private ResultProperties processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+    private AddressResultSegment processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
         AddressSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
 
-        ResultProperties resultProperties = new ResultProperties(sortEnum, page, resultsPerPage);
+        AddressResultSegment addressResultSegment = new AddressResultSegment(sortEnum, page, resultsPerPage);
 
-        updateResultsCookie(resultProperties.getResultsPerPage(), response);
-        return resultProperties;
+        updateResultsCookie(addressResultSegment.getResultsPerPage(), response);
+        return addressResultSegment;
     }
 
     private AddressSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, String sortCookie) {
@@ -396,9 +393,9 @@ public class AddressController  implements ApplicationContextAware {
         model.put("address", address);
     }
 
-    private List<Address> searchDatabase(AddressSearchRequest searchRequest, ResultProperties resultProperties) {
+    private List<Address> searchDatabase(AddressSearchRequest searchRequest, AddressResultSegment addressResultSegment) {
         return addressDao.search(searchRequest,
-                resultProperties);
+                addressResultSegment);
     }
 
     @Override

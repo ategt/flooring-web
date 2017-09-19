@@ -15,7 +15,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -44,7 +43,7 @@ public class OrderSearchRequestResolver implements HandlerMethodArgumentResolver
 
         if (httpServletRequest.getReader() != null){
             Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                    .setDateFormat("MM/dd/yyyy")
                     .create();
 
             orderSearchRequest = gson.fromJson(httpServletRequest.getReader(), OrderSearchRequest.class);

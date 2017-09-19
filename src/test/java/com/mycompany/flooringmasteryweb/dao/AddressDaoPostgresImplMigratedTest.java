@@ -10,7 +10,7 @@ import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.ResultProperties;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -273,8 +273,8 @@ public class AddressDaoPostgresImplMigratedTest {
 
     @Test
     public void getSortedByIdUsingSortByParam() {
-        List<Address> addresses = addressDao.list(new ResultProperties(AddressSortByEnum.SORT_BY_ID, 0, Integer.MAX_VALUE));
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new ResultProperties(AddressSortByEnum.SORT_BY_ID, 0, Integer.MAX_VALUE));
+        List<Address> addresses = addressDao.list(new AddressResultSegment(AddressSortByEnum.SORT_BY_ID, 0, Integer.MAX_VALUE));
+        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new AddressResultSegment(AddressSortByEnum.SORT_BY_ID, 0, Integer.MAX_VALUE));
 
         for (int i = 0; i < addresses.size(); i++) {
 
@@ -317,7 +317,7 @@ public class AddressDaoPostgresImplMigratedTest {
         int size = addressDao.size();
 
         for (AddressSortByEnum addressSortByEnum : AddressSortByEnum.values()) {
-            List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, addressSortByEnum));
+            List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, addressSortByEnum));
 
             assertNotNull(addressesFromDb);
             assertEquals(addressesFromDb.size(), size);
@@ -327,7 +327,7 @@ public class AddressDaoPostgresImplMigratedTest {
     @Test
     public void getSortedById() {
         List<Address> addresses = addressDao.list(null);
-        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_ID));
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_ID));
 
         addresses.sort((Object o1, Object o2) -> {
 
@@ -345,7 +345,7 @@ public class AddressDaoPostgresImplMigratedTest {
     @Test
     public void getSortedByIdReverse() {
         List<Address> addresses = addressDao.list(null);
-        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_ID_INVERSE));
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_ID_INVERSE));
 
         addresses.sort((Object o1, Object o2) -> {
 
@@ -363,7 +363,7 @@ public class AddressDaoPostgresImplMigratedTest {
     @Test
     public void getSortedByLastName() {
         List<Address> addresses = addressDao.list(null);
-        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_LAST_NAME));
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_LAST_NAME));
 
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
@@ -438,7 +438,7 @@ public class AddressDaoPostgresImplMigratedTest {
     @Test
     public void getSortedByLastNameReverse() {
         List<Address> addresses = addressDao.list(null);
-        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_LAST_NAME_INVERSE));
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_LAST_NAME_INVERSE));
 
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
@@ -477,7 +477,7 @@ public class AddressDaoPostgresImplMigratedTest {
     @Test
     public void getSortedByFirstNameReverse() {
         List<Address> addresses = addressDao.list(null);
-        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_FIRST_NAME_INVERSE));
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_FIRST_NAME_INVERSE));
 
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
@@ -516,7 +516,7 @@ public class AddressDaoPostgresImplMigratedTest {
     @Test
     public void getSortedByCompany() {
         List<Address> addresses = addressDao.list(null);
-        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_COMPANY));
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_COMPANY));
 
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
@@ -555,7 +555,7 @@ public class AddressDaoPostgresImplMigratedTest {
     @Test
     public void getSortedByCompanyReverse() {
         List<Address> addresses = addressDao.list(null);
-        List<Address> addressesFromDb = addressDao.list(new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_COMPANY_INVERSE));
+        List<Address> addressesFromDb = addressDao.list(new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_COMPANY_INVERSE));
 
         List<Address> removables = getLocaleSpecificAddresses(addressesFromDb);
 
@@ -593,7 +593,7 @@ public class AddressDaoPostgresImplMigratedTest {
 
     @Test
     public void getFirstPage() {
-        ResultProperties resultSegment = new ResultProperties(0, 50, AddressSortByEnum.SORT_BY_LAST_NAME);
+        AddressResultSegment resultSegment = new AddressResultSegment(0, 50, AddressSortByEnum.SORT_BY_LAST_NAME);
         List<Address> addresses = addressDao.list(resultSegment);
 
         assertNotNull(addresses);
@@ -602,7 +602,7 @@ public class AddressDaoPostgresImplMigratedTest {
 
     @Test
     public void getLargeList() {
-        ResultProperties resultSegment = new ResultProperties(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_LAST_NAME);
+        AddressResultSegment resultSegment = new AddressResultSegment(0, Integer.MAX_VALUE, AddressSortByEnum.SORT_BY_LAST_NAME);
         List<Address> addresses = addressDao.list(resultSegment);
 
         List<Address> allAddresses = addressDao.list(null);
@@ -630,7 +630,7 @@ public class AddressDaoPostgresImplMigratedTest {
         List<Address> cumulativeAddress = new ArrayList<>();
 
         for (int page = 0; page < (size / resultsPerPage) + 1; page++) {
-            ResultProperties resultSegment = new ResultProperties(page, resultsPerPage, AddressSortByEnum.SORT_BY_LAST_NAME);
+            AddressResultSegment resultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.SORT_BY_LAST_NAME);
             List<Address> addresses = addressDao.list(resultSegment);
 
             if (page == (size / resultsPerPage)) {
@@ -684,7 +684,7 @@ public class AddressDaoPostgresImplMigratedTest {
 
         for (Integer page : pages) {
 
-            ResultProperties resultSegment = new ResultProperties(page, resultsPerPage, AddressSortByEnum.SORT_BY_LAST_NAME);
+            AddressResultSegment resultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.SORT_BY_LAST_NAME);
             List<Address> addresses = addressDao.list(resultSegment);
 
             if (totalPages < page + 1) {
@@ -711,7 +711,7 @@ public class AddressDaoPostgresImplMigratedTest {
 
             System.out.println("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", - From " + (resultsPerPage * page) + " to " + lastIndex + " while size is " + size);
 
-            List<Address> matchingList = addressDao.list(new ResultProperties(AddressSortByEnum.SORT_BY_LAST_NAME, 0, Integer.MAX_VALUE)).subList(resultsPerPage * page, lastIndex);
+            List<Address> matchingList = addressDao.list(new AddressResultSegment(AddressSortByEnum.SORT_BY_LAST_NAME, 0, Integer.MAX_VALUE)).subList(resultsPerPage * page, lastIndex);
 
             assertEquals("Page:" + page + ", ResultsPerPage:" + resultsPerPage + ", Addresses:" + addresses.size() + ", MatchingList:" + matchingList.size(), addresses.size(), matchingList.size());
 
@@ -740,7 +740,7 @@ public class AddressDaoPostgresImplMigratedTest {
     public void emptyPageShouldBeEmpty() {
         int size = addressDao.size();
 
-        List<Address> emptyResults = addressDao.list(new ResultProperties(1, size, AddressSortByEnum.SORT_BY_COMPANY));
+        List<Address> emptyResults = addressDao.list(new AddressResultSegment(1, size, AddressSortByEnum.SORT_BY_COMPANY));
 
         assertTrue(emptyResults.isEmpty());
     }

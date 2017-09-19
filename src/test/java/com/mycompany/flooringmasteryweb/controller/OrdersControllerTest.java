@@ -7,7 +7,7 @@ import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
-import com.mycompany.flooringmasteryweb.modelBinding.ResultSegmentResolver;
+import com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -109,12 +109,12 @@ public class OrdersControllerTest {
         Mockito.when(mockStateDao.getListOfStates()).thenReturn(stateList);
         Mockito.when(mockProductDao.buildCommandProductList()).thenReturn(productCommandList);
 
-        ResultSegmentResolver resultSegmentResolver = new ResultSegmentResolver();
-        resultSegmentResolver.setApplicationContext(webApplicationContext);
+        OrderResultSegmentResolver orderResultSegmentResolver = new OrderResultSegmentResolver();
+        orderResultSegmentResolver.setApplicationContext(webApplicationContext);
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
-                .setCustomArgumentResolvers(new OrderSearchRequestResolver(), resultSegmentResolver)
+                .setCustomArgumentResolvers(new OrderSearchRequestResolver(), orderResultSegmentResolver)
                 .build();
 
         webMvc = MockMvcBuilders

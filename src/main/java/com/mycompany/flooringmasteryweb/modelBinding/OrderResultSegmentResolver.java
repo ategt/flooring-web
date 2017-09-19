@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Objects;
 
-public class ResultSegmentResolver implements HandlerMethodArgumentResolver, ApplicationContextAware {
+public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver, ApplicationContextAware {
 
     private final String RESULTS_COOKIE_NAME = "results_cookie";
     private final String SORT_COOKIE_NAME = "sort_cookie";

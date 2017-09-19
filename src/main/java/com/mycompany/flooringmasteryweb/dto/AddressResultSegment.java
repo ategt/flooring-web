@@ -9,17 +9,17 @@ package com.mycompany.flooringmasteryweb.dto;
  *
  * @author ATeg
  */
-public class ResultProperties implements ResultSegment {
+public class AddressResultSegment implements ResultSegment {
 
     private final Integer pageNumber;
     private final Integer resultsPerPage;
     private final AddressSortByEnum sortByEnum;
 
-    public ResultProperties(AddressSortByEnum sortByEnum, Integer pageNumber, Integer resultsPerPage) {
+    public AddressResultSegment(AddressSortByEnum sortByEnum, Integer pageNumber, Integer resultsPerPage) {
         this(pageNumber, resultsPerPage, sortByEnum);
     }
 
-    public ResultProperties(Integer pageNumber, Integer resultsPerPage, AddressSortByEnum sortByEnum) {
+    public AddressResultSegment(Integer pageNumber, Integer resultsPerPage, AddressSortByEnum sortByEnum) {
         this.pageNumber = pageNumber;
         this.resultsPerPage = resultsPerPage;
         this.sortByEnum = sortByEnum;
