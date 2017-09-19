@@ -16,6 +16,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Objects;
@@ -39,12 +40,30 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         String acceptHeader = nativeWebRequest.getHeader("Accept");
 
         Object nativeRequest = nativeWebRequest.getNativeRequest();
+        Object nativeResponse = nativeWebRequest.getNativeResponse();
+
+        HttpServletRequest httpServletRequest = (HttpServletRequest) nativeRequest;
+        HttpServletResponse response = (HttpServletResponse) nativeResponse;
+
+        String resultsPerPageCookieString = null;
+        String sortByCookieString = null;
+
+        Cookie[] cookies = httpServletRequest.getCookies();
+
+        if (Objects.nonNull(cookies))
+            for (Cookie cookie : cookies) {
+                if (Objects.equals(cookie.getName(), SORT_COOKIE_NAME)) {
+                    sortByCookieString = cookie.getValue();
+                }
+
+                if (Objects.equals(cookie.getName(), RESULTS_COOKIE_NAME)) {
+                    resultsPerPageCookieString = cookie.getValue();
+                }
+            }
 
         String pageString = nativeWebRequest.getParameter("page");
-        String resultsPerPageCookieString = nativeWebRequest.getParameter("resultsPerPageCookieString");
         String resultsPerPageString = nativeWebRequest.getParameter("results");
-
-        Integer defaultResultsPerPageCount = null;
+        String sortByString = nativeWebRequest.getParameter("sort_by");
 
         Integer page = null;
         try {
@@ -72,9 +91,11 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
             page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
         }
 
-        String sortByString = nativeWebRequest.getParameter("sort_by");
-        OrderSortByEnum orderSortByEnum = OrderSortByEnum.parse(sortByString);
-        return new OrderResultSegment(orderSortByEnum, page, resultsPerPage);
+        ResultSegment<OrderSortByEnum> resultProperties
+                = processResultProperties(sortByString, response, sortByCookieString, page, resultsPerPage);
+
+        //OrderSortByEnum orderSortByEnum = OrderSortByEnum.parse(sortByString);
+        return new OrderResultSegment(resultProperties);
     }
 
     private ResultSegment<OrderSortByEnum> processResultPropertiesWithContextDefaults(

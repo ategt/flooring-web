@@ -12,6 +12,12 @@ public class OrderResultSegment implements ResultSegment {
         this.sortByEnum = orderSortByEnum;
     }
 
+    public OrderResultSegment(ResultSegment<OrderSortByEnum> resultSegment){
+        this.pageNumber = resultSegment.getPageNumber();
+        this.resultsPerPage = resultSegment.getResultsPerPage();
+        this.sortByEnum = resultSegment.getSortByEnum();
+    }
+
     /**
      * @return the pageNumber
      */

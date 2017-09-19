@@ -42,6 +42,7 @@
         <mvc:argument-resolvers>
             <bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver"/>
             <bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver"/>
+            <bean class="com.mycompany.flooringmasteryweb.modelBinding.AddressResultSegmentResolver"/>
         </mvc:argument-resolvers>
     </mvc:annotation-driven>
  </beans>

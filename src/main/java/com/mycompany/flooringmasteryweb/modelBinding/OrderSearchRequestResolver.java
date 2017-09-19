@@ -5,16 +5,12 @@ import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import org.springframework.core.MethodParameter;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,13 +27,7 @@ public class OrderSearchRequestResolver implements HandlerMethodArgumentResolver
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
 
         Object object = nativeWebRequest.getNativeRequest();
-
         HttpServletRequest httpServletRequest = (HttpServletRequest) object;
-
-        String contentType = httpServletRequest.getHeader("content-type");
-
-        Cookie[] cookies = httpServletRequest.getCookies();
-        String contentType1 = httpServletRequest.getContentType();
 
         OrderSearchRequest orderSearchRequest = null;
 
@@ -72,21 +62,5 @@ public class OrderSearchRequestResolver implements HandlerMethodArgumentResolver
             }
         }
         return orderSearchRequest;
-    }
-
-
-    public String readContent(HttpServletRequest httpServletRequest) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader reader = httpServletRequest.getReader();
-        try {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line).append(System.lineSeparator());
-            }
-        } finally {
-            reader.close();
-        }
-
-        return stringBuilder.toString();
     }
 }
