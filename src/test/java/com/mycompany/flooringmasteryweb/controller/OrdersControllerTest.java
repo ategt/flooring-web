@@ -102,7 +102,6 @@ public class OrdersControllerTest {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
                 .setCustomArgumentResolvers(new OrderSearchRequestResolver())
-                //.webAppContextSetup(webApplicationContext)
                 .build();
 
         webMvc = MockMvcBuilders
@@ -192,7 +191,6 @@ public class OrdersControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-
         ModelAndView modelAndView = mvcResult.getModelAndView();
 
         Map<String, Object> model = modelAndView.getModel();
@@ -203,7 +201,6 @@ public class OrdersControllerTest {
         String viewName = modelAndView.getViewName();
 
         assertEquals(viewName, "order\\index");
-
 
         assertTrue(model.containsKey("orders"));
 
@@ -266,8 +263,6 @@ public class OrdersControllerTest {
         assertEquals(200, response.getStatus());
 
         String content = response.getContentAsString();
-
-        Gson gson = new GsonBuilder().create();
 
         Order[] orders = gsonDeserializer.fromJson(content, Order[].class);
 
@@ -580,6 +575,7 @@ public class OrdersControllerTest {
 
         // Update currently returns void.
         //Mockito.when(mockOrdersDao.update());
+        // TODO: make order dao update return updated order then mock it up in this test.
         Mockito.when(mockOrdersDao.get(randomId)).thenReturn(order);
         Mockito.when(mockOrdersDao.resolveOrderCommand(ArgumentMatchers.eq(order))).thenReturn(OrderCommand.build(order));
 
@@ -615,7 +611,6 @@ public class OrdersControllerTest {
 
     @Test
     public void size() throws Exception {
-
         Integer dbSize = random.nextInt(Integer.MAX_VALUE);
 
         Mockito.when(mockOrdersDao.size()).thenReturn(dbSize);
@@ -684,9 +679,6 @@ public class OrdersControllerTest {
         Mockito.verify(mockOrdersDao, times(1)).search(orderSearchRequestArgumentCaptor.capture(), resultSegmentArgumentCaptor.capture());
 
         ResultSegment<OrderSortByEnum> resultSegment = resultSegmentArgumentCaptor.getValue();
-        //assertEquals(resultSegment.getPageNumber().intValue(), 4 );
-        //assertEquals(resultSegment.getResultsPerPage().intValue(), 20);
-        //assertEquals(resultSegment.getSortByEnum().ordinal(), OrderSortByEnum.SORT_BY_STATE_INVERSE.ordinal());
 
         OrderSearchRequest orderSearchRequest = orderSearchRequestArgumentCaptor.getValue();
         assertEquals(orderSearchRequest.getSearchBy().ordinal(), OrderSearchByOptionEnum.ORDER_NUMBER.ordinal());
