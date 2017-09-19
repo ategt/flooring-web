@@ -41,6 +41,7 @@ import javax.validation.Valid;
 import com.mycompany.flooringmasteryweb.validation.RestValidationHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -62,14 +63,13 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @Controller
 @RequestMapping(value = "/orders")
-public class OrdersController {
+public class OrdersController implements ApplicationContextAware{
 
     private final ProductDao productDao;
     private final StateDao stateDao;
     private final OrderDao orderDao;
 
-    private final ApplicationContext ctx;
-
+    private ApplicationContext applicationContext;
 
     @Inject
     public OrdersController(
@@ -81,7 +81,6 @@ public class OrdersController {
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
-        ctx = com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider.getApplicationContext();
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
@@ -104,7 +103,7 @@ public class OrdersController {
             HttpServletRequest request,
             Map model) {
 
-        ControllerUtilities.generatePagingLinks(ctx, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
+        ControllerUtilities.generatePagingLinks(applicationContext, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
 
         loadOrdersToMap(model, resultSegment);
 
@@ -348,5 +347,10 @@ public class OrdersController {
     private List<Order> searchDatabase(OrderSearchRequest searchRequest, OrderResultSegment resultProperties) {
         return orderDao.search(searchRequest,
                 resultProperties);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

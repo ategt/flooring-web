@@ -65,10 +65,10 @@ public class ResultSegmentResolver implements HandlerMethodArgumentResolver, App
         }
 
         if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)){
-            defaultResultsPerPageCount = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+            resultsPerPage = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
             page = ControllerUtilities.loadAllPageNumber(applicationContext, page);
         } else {
-            defaultResultsPerPageCount = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+            resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
             page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
         }
 

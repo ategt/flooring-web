@@ -97,14 +97,19 @@ public class OrdersControllerTest {
         Mockito.when(mockStateDao.getListOfStates()).thenReturn(stateList);
         Mockito.when(mockProductDao.buildCommandProductList()).thenReturn(productCommandList);
 
+        ResultSegmentResolver resultSegmentResolver = new ResultSegmentResolver();
+        resultSegmentResolver.setApplicationContext(webApplicationContext);
+
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
-                .setCustomArgumentResolvers(new OrderSearchRequestResolver(), new ResultSegmentResolver())
+                .setCustomArgumentResolvers(new OrderSearchRequestResolver(), resultSegmentResolver)
                 .build();
 
         webMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .build();
+
+        ordersController.setApplicationContext(webApplicationContext);
     }
 
     @After

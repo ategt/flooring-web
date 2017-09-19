@@ -5,6 +5,8 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import com.google.common.base.Strings;
+
 /**
  *
  * @author ATeg
@@ -22,9 +24,7 @@ public enum OrderSortByEnum {
     SORT_BY_DATE_INVERSE;
 
     public static OrderSortByEnum parse(String input) {
-        if (input == null) {
-            return null;
-        }
+        input = Strings.nullToEmpty(input);
 
         OrderSortByEnum currentEnum = null;
 
