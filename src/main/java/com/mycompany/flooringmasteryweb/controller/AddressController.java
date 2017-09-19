@@ -10,6 +10,7 @@ import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
+import com.mycompany.flooringmasteryweb.modelBinding.CustomModelBinder;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 
 import java.util.*;
@@ -18,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -35,18 +37,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
- *
  * @author ATeg
  */
 @Controller
 @RequestMapping(value = "/address")
-public class AddressController  implements ApplicationContextAware {
+public class AddressController implements ApplicationContextAware {
 
     private final AddressDao addressDao;
     private ApplicationContext applicationContext;
-
-    private final String RESULTS_COOKIE_NAME = "results_cookie";
-    private final String SORT_COOKIE_NAME = "sort_cookie";
 
     @Inject
     public AddressController(AddressDao addressDao) {
@@ -55,17 +53,11 @@ public class AddressController  implements ApplicationContextAware {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @CustomModelBinder AddressResultSegment addressResultSegment,
             UriComponentsBuilder uriComponentsBuilder,
             HttpServletResponse response,
             HttpServletRequest request,
             Map model) {
-
-        AddressResultSegment addressResultSegment = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(addressResultSegment);
 
@@ -78,20 +70,8 @@ public class AddressController  implements ApplicationContextAware {
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public Address[] index(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @CustomModelBinder AddressResultSegment addressResultSegment,
             HttpServletResponse response) {
-
-        AddressResultSegment addressResultSegment = processResultPropertiesWithAllAsDefault(
-                sortBy,
-                response,
-                sortCookie,
-                page,
-                resultsPerPage,
-                resultsPerPageCookie);
 
         List<Address> addresses = addressDao.getAddressesSortedByParameter(addressResultSegment);
 
@@ -168,7 +148,7 @@ public class AddressController  implements ApplicationContextAware {
     }
 
     @RequestMapping(value = "/edit/{showOnFail}", method = RequestMethod.POST)
-    public String update(@PathVariable("showOnFail") Integer contactNumber, @ModelAttribute Address address, Map model, BindingResult bindingResult){
+    public String update(@PathVariable("showOnFail") Integer contactNumber, @ModelAttribute Address address, Map model, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             bindingResult.getErrorCount();
             List<ObjectError> errors = bindingResult.getAllErrors();
@@ -191,16 +171,11 @@ public class AddressController  implements ApplicationContextAware {
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = {"Content-type=application/json", "Accept=application/json"})
     @ResponseBody
     public List<Address> search(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @CustomModelBinder AddressResultSegment addressResultSegment,
             @Valid @RequestBody AddressSearchRequest addressSearchRequest,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response,
             HttpServletRequest request
     ) {
-        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-
         List<Address> addresses = searchDatabase(addressSearchRequest, addressResultSegment);
 
         return addresses;
@@ -209,15 +184,10 @@ public class AddressController  implements ApplicationContextAware {
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Address> search(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @CustomModelBinder AddressResultSegment addressResultSegment,
             @ModelAttribute AddressSearchRequest addressSearchRequest,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response
     ) {
-        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-
         List<Address> addresses = searchDatabase(addressSearchRequest, addressResultSegment);
 
         return addresses;
@@ -225,19 +195,13 @@ public class AddressController  implements ApplicationContextAware {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @CustomModelBinder AddressResultSegment addressResultSegment,
             @ModelAttribute AddressSearchRequest addressSearchRequest,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response,
             HttpServletRequest request,
             UriComponentsBuilder uriComponentsBuilder,
             Map model
     ) {
-
-        AddressResultSegment addressResultSegment = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
 
         List<Address> addresses = searchDatabase(addressSearchRequest, addressResultSegment);
 
@@ -251,18 +215,12 @@ public class AddressController  implements ApplicationContextAware {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
+            @CustomModelBinder AddressResultSegment addressResultSegment,
             @Valid @ModelAttribute AddressSearchRequest addressSearchRequest,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
             UriComponentsBuilder uriComponentsBuilder,
             HttpServletResponse response,
             HttpServletRequest request,
             Map model) {
-
-        AddressResultSegment addressResultSegment = processResultPropertiesWithContextDefaults(resultsPerPage, resultsPerPageCookie, page, sortBy, response, sortCookie);
 
         List<Address> addresses;
 
@@ -281,16 +239,12 @@ public class AddressController  implements ApplicationContextAware {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("id") Integer addressId,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
-            HttpServletResponse response,
-            Map model) {
+                       @CustomModelBinder AddressResultSegment addressResultSegment,
+                       HttpServletResponse response,
+                       Map model) {
 
         Address address = addressDao.get(addressId);
 
-        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
         List<Address> addresses = addressDao.list(addressResultSegment);
 
         model.put("address", address);
@@ -317,75 +271,6 @@ public class AddressController  implements ApplicationContextAware {
             response.setStatus(404);
             return null;
         }
-    }
-
-    private AddressResultSegment processResultPropertiesWithContextDefaults(
-            Integer resultsPerPage,
-            Integer resultsPerPageCookie,
-            Integer page,
-            String sortBy,
-            HttpServletResponse response,
-            String sortCookie
-    ) throws BeansException {
-
-        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, null);
-        page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
-        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return addressResultSegment;
-    }
-
-    private AddressResultSegment processResultPropertiesWithAllAsDefault(
-            String sortBy,
-            HttpServletResponse response,
-            String sortCookie,
-            Integer page,
-            Integer resultsPerPage,
-            Integer resultsPerPageCookie) {
-
-        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, null);
-        page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
-        AddressResultSegment addressResultSegment = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return addressResultSegment;
-    }
-
-    private AddressResultSegment processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
-        AddressSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
-
-        AddressResultSegment addressResultSegment = new AddressResultSegment(sortEnum, page, resultsPerPage);
-
-        updateResultsCookie(addressResultSegment.getResultsPerPage(), response);
-        return addressResultSegment;
-    }
-
-    private AddressSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, String sortCookie) {
-        sortBy = checkForReverseRequest(sortBy, sortCookie);
-
-        if (sortBy != null) {
-            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
-        } else if (sortCookie != null) {
-            sortBy = sortCookie;
-        }
-
-        return AddressSortByEnum.parse(sortBy);
-    }
-
-    private static String checkForReverseRequest(String sortBy, String sortCookie) {
-        if (Objects.nonNull(sortBy)) {
-            AddressSortByEnum sortOld = AddressSortByEnum.parse(sortCookie);
-            AddressSortByEnum sortNew = AddressSortByEnum.parse(sortBy);
-
-            if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
-                sortBy = sortOld.reverse().toString();
-            }
-        }
-        return sortBy;
-    }
-
-    private Integer updateResultsCookie(Integer resultsPerPage, HttpServletResponse response) {
-        if (resultsPerPage != null) {
-            response.addCookie(new Cookie(RESULTS_COOKIE_NAME, Integer.toString(resultsPerPage)));
-        }
-        return resultsPerPage;
     }
 
     private void loadAddress(Integer contactId, Map model) {

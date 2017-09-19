@@ -27,6 +27,8 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author ATeg
  */
 public class ControllerUtilities {
+    public static final String RESULTS_COOKIE_NAME = "results_cookie";
+    public static final String SORT_COOKIE_NAME = "sort_cookie";
 
     public static void loadStateCommandsToMap(StateDao stateDao, Map model) {
         List<StateCommand> stateCommands = stateDao.getListOfStates().stream()

@@ -25,6 +25,12 @@ public class AddressResultSegment implements ResultSegment {
         this.sortByEnum = sortByEnum;
     }
 
+    public AddressResultSegment(ResultSegment<AddressSortByEnum> resultSegment){
+        this.pageNumber = resultSegment.getPageNumber();
+        this.resultsPerPage = resultSegment.getResultsPerPage();
+        this.sortByEnum = resultSegment.getSortByEnum();
+    }
+
     /**
      * @return the pageNumber
      */

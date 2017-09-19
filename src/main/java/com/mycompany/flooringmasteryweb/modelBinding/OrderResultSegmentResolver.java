@@ -1,7 +1,6 @@
 package com.mycompany.flooringmasteryweb.modelBinding;
 
 import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
-import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
@@ -18,13 +17,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.Objects;
 
 public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver, ApplicationContextAware {
 
-    private final String RESULTS_COOKIE_NAME = "results_cookie";
-    private final String SORT_COOKIE_NAME = "sort_cookie";
     private ApplicationContext applicationContext;
 
     @Override
@@ -52,11 +48,9 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
 
         if (Objects.nonNull(cookies))
             for (Cookie cookie : cookies) {
-                if (Objects.equals(cookie.getName(), SORT_COOKIE_NAME)) {
+                if (Objects.equals(cookie.getName(), ControllerUtilities.SORT_COOKIE_NAME)) {
                     sortByCookie = cookie;
-                }
-
-                if (Objects.equals(cookie.getName(), RESULTS_COOKIE_NAME)) {
+                } else if (Objects.equals(cookie.getName(), ControllerUtilities.RESULTS_COOKIE_NAME)) {
                     resultsPerPageCookie = cookie;
                 }
             }
@@ -91,41 +85,12 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         return new OrderResultSegment(resultProperties);
     }
 
-    private ResultSegment<OrderSortByEnum> processResultPropertiesWithContextDefaults(
-            Integer resultsPerPage,
-            Cookie resultsPerPageCookie,
-            Integer page,
-            String sortBy,
-            HttpServletResponse response,
-            Cookie sortCookie
-    ) throws BeansException {
-
-        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
-        page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
-        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return resultProperties;
-    }
-
-    private ResultSegment<OrderSortByEnum> processResultPropertiesWithAllAsDefault(
-            String sortBy,
-            HttpServletResponse response,
-            Cookie sortCookie,
-            Integer page,
-            Integer resultsPerPage,
-            Cookie resultsPerPageCookie) {
-
-        resultsPerPage = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
-        page = ControllerUtilities.loadAllPageNumber(applicationContext, page);
-        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-        return resultProperties;
-    }
-
     private ResultSegment<OrderSortByEnum> processResultProperties(String sortBy, HttpServletResponse response, Cookie sortCookie, Integer page, Integer resultsPerPage) {
         OrderSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
 
         ResultSegment<OrderSortByEnum> resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
 
-        ControllerUtilities.updateResultsCookie(resultProperties.getResultsPerPage(), RESULTS_COOKIE_NAME, response);
+        ControllerUtilities.updateResultsCookie(resultProperties.getResultsPerPage(), ControllerUtilities.RESULTS_COOKIE_NAME, response);
         return resultProperties;
     }
 
@@ -133,7 +98,7 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         sortBy = checkForReverseRequest(sortBy, sortCookie);
 
         if (sortBy != null) {
-            response.addCookie(new Cookie(SORT_COOKIE_NAME, sortBy));
+            response.addCookie(new Cookie(ControllerUtilities.SORT_COOKIE_NAME, sortBy));
         } else if (sortCookie != null && sortCookie.getValue() != null) {
             sortBy = sortCookie.getValue();
         }

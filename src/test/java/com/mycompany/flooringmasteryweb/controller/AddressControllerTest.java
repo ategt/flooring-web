@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
 import com.mycompany.flooringmasteryweb.dto.*;
+import com.mycompany.flooringmasteryweb.modelBinding.AddressResultSegmentResolver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,9 +72,12 @@ public class AddressControllerTest {
         Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
 
         addressController.setApplicationContext(webApplicationContext);
+        AddressResultSegmentResolver addressResultSegmentResolver = new AddressResultSegmentResolver();
+        addressResultSegmentResolver.setApplicationContext(webApplicationContext);
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(addressController)
+                .setCustomArgumentResolvers(addressResultSegmentResolver)
                 .build();
     }
 
