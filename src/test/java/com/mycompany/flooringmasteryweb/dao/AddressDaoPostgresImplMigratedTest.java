@@ -11,24 +11,27 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.mycompany.flooringmasteryweb.dto.AddressTest;
 
 /**
- *
  * @author ATeg
  */
 public class AddressDaoPostgresImplMigratedTest {
@@ -147,14 +150,14 @@ public class AddressDaoPostgresImplMigratedTest {
                     case ANY:
                     case DEFAULT:
                         String[] allOptions = {address.getFirstName(),
-                            address.getLastName(),
-                            address.getFullName(),
-                            address.getCompany(),
-                            address.getCity(),
-                            address.getState(),
-                            address.getStreetName(),
-                            address.getStreetNumber(),
-                            address.getZip()};
+                                address.getLastName(),
+                                address.getFullName(),
+                                address.getCompany(),
+                                address.getCity(),
+                                address.getState(),
+                                address.getStreetName(),
+                                address.getStreetNumber(),
+                                address.getZip()};
                         searchString = allOptions[new Random().nextInt(allOptions.length)];
                         break;
                     default:
@@ -622,7 +625,6 @@ public class AddressDaoPostgresImplMigratedTest {
 
     @Test
     public void getSeveralSegments() {
-
         int size = addressDao.size();
 
         int resultsPerPage = 50;
