@@ -31,14 +31,12 @@ public class AddressResultSegmentResolver implements HandlerMethodArgumentResolv
                                   ModelAndViewContainer modelAndViewContainer,
                                   NativeWebRequest nativeWebRequest,
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
-
-        String acceptHeader = nativeWebRequest.getHeader("Accept");
-
+        
         Object nativeRequest = nativeWebRequest.getNativeRequest();
-        Object nativeResponse = nativeWebRequest.getNativeResponse();
-
         HttpServletRequest httpServletRequest = (HttpServletRequest) nativeRequest;
-        HttpServletResponse response = (HttpServletResponse) nativeResponse;
+
+        Object nativeResponse = nativeWebRequest.getNativeResponse();
+        HttpServletResponse httpServletResponse = (HttpServletResponse) nativeResponse;
 
         Cookie resultsPerPageCookie = null;
         Cookie sortByCookie = null;
@@ -69,6 +67,8 @@ public class AddressResultSegmentResolver implements HandlerMethodArgumentResolv
             resultsPerPage = Integer.parseInt(resultsPerPageString);
         } catch (NumberFormatException ex) {
         }
+        
+        String acceptHeader = nativeWebRequest.getHeader("Accept");
 
         if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
             resultsPerPage = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
@@ -79,7 +79,7 @@ public class AddressResultSegmentResolver implements HandlerMethodArgumentResolv
         }
 
         ResultSegment<AddressSortByEnum> resultProperties
-                = processResultProperties(sortByString, response, sortByCookie, page, resultsPerPage);
+                = processResultProperties(sortByString, httpServletResponse, sortByCookie, page, resultsPerPage);
 
         return new AddressResultSegment(resultProperties);
     }
@@ -107,8 +107,8 @@ public class AddressResultSegmentResolver implements HandlerMethodArgumentResolv
 
     private static String checkForReverseRequest(String sortBy, Cookie sortCookie) {
         if (Objects.nonNull(sortBy) && Objects.nonNull(sortCookie)) {
-            OrderSortByEnum sortOld = OrderSortByEnum.parse(sortCookie.getValue());
-            OrderSortByEnum sortNew = OrderSortByEnum.parse(sortBy);
+            AddressSortByEnum sortOld = AddressSortByEnum.parse(sortCookie.getValue());
+            AddressSortByEnum sortNew = AddressSortByEnum.parse(sortBy);
 
             if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
                 sortBy = sortOld.reverse().toString();
