@@ -782,8 +782,7 @@ public class OrdersControllerTest {
     }
 
     @Test
-    @Ignore
-    public void searchPostByIdToWeb1() throws Exception {
+    public void searchPostByIdToWebWithPagination() throws Exception {
 
         final String SEARCH_STRING = "1";
         final String SEARCH_BY = "Order_number";
@@ -791,6 +790,9 @@ public class OrdersControllerTest {
         MvcResult mvcResult = webMvc.perform(post("/orders/search")
                 .param("searchBy", SEARCH_BY)
                 .param("searchText", SEARCH_STRING)
+                .param("page", "2")
+                .param("results", "8")
+                .param("sort_by", "date")
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("order\\search"))
@@ -803,12 +805,38 @@ public class OrdersControllerTest {
 
         List<Order> orders = (List<Order>) model.get("orders");
 
-        assertEquals(orders.size(), 1);
+        assertEquals(orders.size(), 0);
     }
 
     @Test
-    @Ignore
-    public void searchPostRandomToWeb1() throws Exception {
+    public void searchPostByIdToWebWithPaginationOnWrongPage() throws Exception {
+
+        final String SEARCH_STRING = "1";
+        final String SEARCH_BY = "Order_number";
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+                .param("page", "2")
+                .param("results", "8")
+                .param("sort_by", "date")
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 0);
+    }
+    
+    @Test
+    public void searchPostRandomToWebWithPagination() throws Exception {
 
         final String SEARCH_STRING = UUID.randomUUID().toString();
         final String SEARCH_BY = "everything";
@@ -816,6 +844,8 @@ public class OrdersControllerTest {
         MvcResult mvcResult = webMvc.perform(post("/orders/search")
                 .param("searchBy", SEARCH_BY)
                 .param("searchText", SEARCH_STRING)
+                .param("results", "8")
+                .param("sort_by", "date")
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("order\\search"))
