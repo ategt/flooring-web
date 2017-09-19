@@ -30,8 +30,6 @@ public class OrderSearchRequestResolver implements HandlerMethodArgumentResolver
 
             params = nativeWebRequest.getParameterMap();
 
-            System.out.println(params.size());
-
             if (params.containsKey("searchText")){
                 String searchText = params.get("searchText")[0];
                 orderSearchRequest.setSearchText(searchText);
