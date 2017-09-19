@@ -694,30 +694,18 @@ public class OrdersControllerTest {
     }
 
     @Test
-    public void searchPostByWeb() throws Exception {
+    public void searchPostByIdToWeb() throws Exception {
 
-        final String SEARCH_STRING = UUID.randomUUID().toString();
+        final String SEARCH_STRING = "1";
         final String SEARCH_BY = "Order_number";
-
-//        Mockito.when(mockOrdersDao.search(ArgumentMatchers.any(OrderSearchRequest.class),
-//                ArgumentMatchers.any(ResultSegment.class)))
-//                .thenReturn(orderList.subList(0, 10));
 
         MvcResult mvcResult = webMvc.perform(post("/orders/search")
                 .param("searchBy", SEARCH_BY)
                 .param("searchText", SEARCH_STRING)
         )
-                //.andExpect(MockMvcResultMatchers.status().isOk())
-                //.andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
                 .andReturn();
-
-        int status = mvcResult.getResponse().getStatus();
-        String errorMessage = mvcResult.getResponse().getErrorMessage();
-        Exception ex = mvcResult.getResolvedException();
-        if (ex != null) {
-            String message = ex.getMessage();
-            System.out.println(message);
-        }
 
         ModelAndView modelAndView = mvcResult.getModelAndView();
         Map<String, Object> model = modelAndView.getModel();
@@ -726,23 +714,30 @@ public class OrdersControllerTest {
 
         List<Order> orders = (List<Order>) model.get("orders");
 
-        assertEquals(orders.size(), 10);
+        assertEquals(orders.size(), 1);
+    }
 
-        for (Order order : orders) {
-            assertEquals(order, orderList.get(orders.indexOf(order)));
-        }
+    @Test
+    public void searchPostRandomToWeb() throws Exception {
 
-        ArgumentCaptor<OrderSearchRequest> orderSearchRequestArgumentCaptor = ArgumentCaptor.forClass(OrderSearchRequest.class);
-        ArgumentCaptor<ResultSegment> resultSegmentArgumentCaptor = ArgumentCaptor.forClass(ResultSegment.class);
-        Mockito.verify(mockOrdersDao, times(1)).search(orderSearchRequestArgumentCaptor.capture(), resultSegmentArgumentCaptor.capture());
+        final String SEARCH_STRING = UUID.randomUUID().toString();
+        final String SEARCH_BY = "everything";
 
-        ResultSegment<OrderSortByEnum> resultSegment = resultSegmentArgumentCaptor.getValue();
-        //assertEquals(resultSegment.getPageNumber().intValue(), 4 );
-        //assertEquals(resultSegment.getResultsPerPage().intValue(), 20);
-        //assertEquals(resultSegment.getSortByEnum().ordinal(), OrderSortByEnum.SORT_BY_STATE_INVERSE.ordinal());
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
 
-        OrderSearchRequest orderSearchRequest = orderSearchRequestArgumentCaptor.getValue();
-        assertEquals(orderSearchRequest.getSearchBy().ordinal(), OrderSearchByOptionEnum.ORDER_NUMBER.ordinal());
-        assertEquals(orderSearchRequest.getSearchText(), SEARCH_STRING);
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 0);
     }
 }
