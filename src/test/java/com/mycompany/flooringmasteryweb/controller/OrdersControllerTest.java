@@ -757,8 +757,7 @@ public class OrdersControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("order\\search"))
                 .andReturn();
 
-        ModelAndView modelAndView = mvcResult.getModelAndView();
-        Map<String, Object> model = modelAndView.getModel();
+        Map<String, Object> model = mvcResult.getModelAndView().getModel();
 
         assertTrue(model.containsKey("orders"));
 
@@ -834,7 +833,7 @@ public class OrdersControllerTest {
 
         assertEquals(orders.size(), 0);
     }
-    
+
     @Test
     public void searchPostRandomToWebWithPagination() throws Exception {
 
@@ -857,6 +856,233 @@ public class OrdersControllerTest {
         assertTrue(model.containsKey("orders"));
 
         List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 0);
+    }
+
+    @Test
+    public void searchPostWithJson() throws Exception {
+
+        final String SEARCH_STRING = UUID.randomUUID().toString();
+
+        Mockito.when(mockOrdersDao.search(ArgumentMatchers.any(OrderSearchRequest.class),
+                ArgumentMatchers.any(ResultSegment.class)))
+                .thenReturn(orderList.subList(0, 10));
+
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
+        orderSearchRequest.setSearchBy(OrderSearchByOptionEnum.ORDER_NUMBER);
+        orderSearchRequest.setSearchText(SEARCH_STRING);
+
+        String orderSearchJson = gsonDeserializer.toJson(orderSearchRequest);
+
+        MvcResult mvcResult = mockMvc.perform(post("/orders/search")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderSearchJson)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        Order[] ordersArray = gsonDeserializer.fromJson(content, Order[].class);
+        List<Order> orders = Arrays.asList(ordersArray);
+
+        assertEquals(orders.size(), 10);
+
+        for (Order order : orders) {
+            assertTrue(OrderTest.verifyOrder(order, orderList.get(orders.indexOf(order))));
+        }
+
+        ArgumentCaptor<OrderSearchRequest> orderSearchRequestArgumentCaptor = ArgumentCaptor.forClass(OrderSearchRequest.class);
+        ArgumentCaptor<ResultSegment> resultSegmentArgumentCaptor = ArgumentCaptor.forClass(ResultSegment.class);
+        Mockito.verify(mockOrdersDao, times(1)).search(orderSearchRequestArgumentCaptor.capture(), resultSegmentArgumentCaptor.capture());
+
+        ResultSegment<OrderSortByEnum> resultSegment = resultSegmentArgumentCaptor.getValue();
+
+        OrderSearchRequest remoteOrderSearchRequest = orderSearchRequestArgumentCaptor.getValue();
+        assertEquals(remoteOrderSearchRequest.getSearchBy().ordinal(), OrderSearchByOptionEnum.ORDER_NUMBER.ordinal());
+        assertEquals(remoteOrderSearchRequest.getSearchText(), SEARCH_STRING);
+    }
+
+    @Test
+    public void searchPostByIdToWebUsingJson() throws Exception {
+
+        final String SEARCH_STRING = "1";
+        final String SEARCH_BY = "Order_number";
+
+        String orderSearchJson = gsonDeserializer.toJson(new OrderSearchRequest(SEARCH_STRING, OrderSearchByOptionEnum.ORDER_NUMBER));
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderSearchJson)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        Order[] ordersArray = gsonDeserializer.fromJson(content, Order[].class);
+        List<Order> orders = Arrays.asList(ordersArray);
+
+        assertEquals(orders.size(), 1);
+    }
+
+    @Test
+    public void searchPostRandomToWebWithJson() throws Exception {
+
+        final String SEARCH_STRING = UUID.randomUUID().toString();
+        final String SEARCH_BY = "everything";
+
+        String orderSearchJson = gsonDeserializer.toJson(new OrderSearchRequest(SEARCH_STRING, OrderSearchByOptionEnum.EVERYTHING));
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderSearchJson)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        Order[] ordersArray = gsonDeserializer.fromJson(content, Order[].class);
+        List<Order> orders = Arrays.asList(ordersArray);
+
+        assertEquals(orders.size(), 0);
+    }
+
+    @Test
+    public void searchPostWithPagingUsingJson() throws Exception {
+
+        final String SEARCH_STRING = UUID.randomUUID().toString();
+        final String SEARCH_BY = "Order_number";
+
+        Mockito.when(mockOrdersDao.search(ArgumentMatchers.any(OrderSearchRequest.class),
+                ArgumentMatchers.any(ResultSegment.class)))
+                .thenReturn(orderList.subList(0, 10));
+
+        String orderSearchJson = gsonDeserializer.toJson(new OrderSearchRequest(SEARCH_STRING, OrderSearchByOptionEnum.ORDER_NUMBER));
+
+        MvcResult mvcResult = mockMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+                .param("page", "2")
+                .param("results", "8")
+                .param("sort_by", "date")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderSearchJson)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        Order[] ordersArray = gsonDeserializer.fromJson(content, Order[].class);
+        List<Order> orders = Arrays.asList(ordersArray);
+
+        assertEquals(orders.size(), 10);
+
+        for (Order order : orders) {
+            assertEquals(order, orderList.get(orders.indexOf(order)));
+        }
+
+        ArgumentCaptor<OrderSearchRequest> orderSearchRequestArgumentCaptor = ArgumentCaptor.forClass(OrderSearchRequest.class);
+        ArgumentCaptor<ResultSegment> resultSegmentArgumentCaptor = ArgumentCaptor.forClass(ResultSegment.class);
+        Mockito.verify(mockOrdersDao, times(1)).search(orderSearchRequestArgumentCaptor.capture(), resultSegmentArgumentCaptor.capture());
+
+        ResultSegment<OrderSortByEnum> resultSegment = resultSegmentArgumentCaptor.getValue();
+
+        OrderSearchRequest orderSearchRequest = orderSearchRequestArgumentCaptor.getValue();
+        assertEquals(orderSearchRequest.getSearchBy().ordinal(), OrderSearchByOptionEnum.ORDER_NUMBER.ordinal());
+        assertEquals(orderSearchRequest.getSearchText(), SEARCH_STRING);
+    }
+
+    @Test
+    public void searchPostByIdToWebWithPaginationUsingJson() throws Exception {
+
+        final String SEARCH_STRING = "1";
+        final String SEARCH_BY = "Order_number";
+
+        String orderSearchJson = gsonDeserializer.toJson(new OrderSearchRequest(SEARCH_STRING, OrderSearchByOptionEnum.ORDER_NUMBER));
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+                .param("page", "2")
+                .param("results", "8")
+                .param("sort_by", "date")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderSearchJson)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        Order[] ordersArray = gsonDeserializer.fromJson(content, Order[].class);
+        List<Order> orders = Arrays.asList(ordersArray);
+
+        assertEquals(orders.size(), 0);
+    }
+
+    @Test
+    public void searchPostByIdToWebWithPaginationOnWrongPageUsingJson() throws Exception {
+
+        final String SEARCH_STRING = "1";
+        final String SEARCH_BY = "Order_number";
+
+        String orderSearchJson = gsonDeserializer.toJson(new OrderSearchRequest(SEARCH_STRING, OrderSearchByOptionEnum.ORDER_NUMBER));
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+                .param("page", "2")
+                .param("results", "8")
+                .param("sort_by", "date")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderSearchJson)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        Order[] ordersArray = gsonDeserializer.fromJson(content, Order[].class);
+        List<Order> orders = Arrays.asList(ordersArray);
+
+        assertEquals(orders.size(), 0);
+    }
+
+    @Test
+    public void searchPostRandomToWebWithPaginationUsingJson() throws Exception {
+
+        final String SEARCH_STRING = UUID.randomUUID().toString();
+        final String SEARCH_BY = "everything";
+
+        String orderSearchJson = gsonDeserializer.toJson(new OrderSearchRequest(SEARCH_STRING, OrderSearchByOptionEnum.EVERYTHING));
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+                .param("results", "8")
+                .param("sort_by", "date")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderSearchJson)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        Order[] ordersArray = gsonDeserializer.fromJson(content, Order[].class);
+        List<Order> orders = Arrays.asList(ordersArray);
 
         assertEquals(orders.size(), 0);
     }

@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Objects;
 
-public class ResultSegmentResolver implements HandlerMethodArgumentResolver, ApplicationContextAware{
+public class ResultSegmentResolver implements HandlerMethodArgumentResolver, ApplicationContextAware {
 
     private final String RESULTS_COOKIE_NAME = "results_cookie";
     private final String SORT_COOKIE_NAME = "sort_cookie";
@@ -40,31 +40,31 @@ public class ResultSegmentResolver implements HandlerMethodArgumentResolver, App
 
         Object nativeRequest = nativeWebRequest.getNativeRequest();
 
-        String pageString=nativeWebRequest.getParameter("page");
+        String pageString = nativeWebRequest.getParameter("page");
         String resultsPerPageCookieString = nativeWebRequest.getParameter("resultsPerPageCookieString");
         String resultsPerPageString = nativeWebRequest.getParameter("results");
 
-        Integer defaultResultsPerPageCount=null;
+        Integer defaultResultsPerPageCount = null;
 
         Integer page = null;
         try {
             page = Integer.parseInt(pageString);
-        }catch(NumberFormatException ex){
+        } catch (NumberFormatException ex) {
         }
 
         Integer resultsPerPageCookie = null;
         try {
             resultsPerPageCookie = Integer.parseInt(resultsPerPageCookieString);
-        }catch(NumberFormatException ex){
+        } catch (NumberFormatException ex) {
         }
 
         Integer resultsPerPage = null;
         try {
             resultsPerPage = Integer.parseInt(resultsPerPageString);
-        }catch(NumberFormatException ex){
+        } catch (NumberFormatException ex) {
         }
 
-        if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)){
+        if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)) {
             resultsPerPage = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
             page = ControllerUtilities.loadAllPageNumber(applicationContext, page);
         } else {
@@ -77,43 +77,43 @@ public class ResultSegmentResolver implements HandlerMethodArgumentResolver, App
         return new OrderResultSegment(orderSortByEnum, page, resultsPerPage);
     }
 
-        private ResultSegment<OrderSortByEnum> processResultPropertiesWithContextDefaults(
-                Integer resultsPerPage,
-                Integer resultsPerPageCookie,
-                Integer page,
-                String sortBy,
-                HttpServletResponse response,
-                String sortCookie
+    private ResultSegment<OrderSortByEnum> processResultPropertiesWithContextDefaults(
+            Integer resultsPerPage,
+            Integer resultsPerPageCookie,
+            Integer page,
+            String sortBy,
+            HttpServletResponse response,
+            String sortCookie
     ) throws BeansException {
 
-            resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
-            page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
-            ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-            return resultProperties;
-        }
+        resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
+        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return resultProperties;
+    }
 
-        private ResultSegment<OrderSortByEnum> processResultPropertiesWithAllAsDefault(
-                String sortBy,
-                HttpServletResponse response,
-                String sortCookie,
-                Integer page,
-                Integer resultsPerPage,
-                Integer resultsPerPageCookie) {
+    private ResultSegment<OrderSortByEnum> processResultPropertiesWithAllAsDefault(
+            String sortBy,
+            HttpServletResponse response,
+            String sortCookie,
+            Integer page,
+            Integer resultsPerPage,
+            Integer resultsPerPageCookie) {
 
-            resultsPerPage = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
-            page = ControllerUtilities.loadAllPageNumber(applicationContext, page);
-            ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
-            return resultProperties;
-        }
+        resultsPerPage = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+        page = ControllerUtilities.loadAllPageNumber(applicationContext, page);
+        ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
+        return resultProperties;
+    }
 
-        private ResultSegment<OrderSortByEnum> processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
-            OrderSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
+    private ResultSegment<OrderSortByEnum> processResultProperties(String sortBy, HttpServletResponse response, String sortCookie, Integer page, Integer resultsPerPage) {
+        OrderSortByEnum sortEnum = updateSortEnum(sortBy, response, sortCookie);
 
-            ResultSegment<OrderSortByEnum> resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
+        ResultSegment<OrderSortByEnum> resultProperties = new OrderResultSegment(sortEnum, page, resultsPerPage);
 
-            ControllerUtilities.updateResultsCookie(resultProperties.getResultsPerPage(), RESULTS_COOKIE_NAME, response);
-            return resultProperties;
-        }
+        ControllerUtilities.updateResultsCookie(resultProperties.getResultsPerPage(), RESULTS_COOKIE_NAME, response);
+        return resultProperties;
+    }
 
     private OrderSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, String sortCookie) {
         sortBy = checkForReverseRequest(sortBy, sortCookie);

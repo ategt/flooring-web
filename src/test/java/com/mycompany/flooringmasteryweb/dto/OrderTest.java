@@ -336,7 +336,9 @@ public class OrderTest {
         assertEquals(builtOrder.getClass(), unresolvedOrder.getClass());
         assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.0005);
 
-        assertTrue(isSameDay(builtOrder.getDate(), unresolvedOrder.getDate()));
+        assertTrue("\nBuildOrder: \t"+ builtOrder.getDate().toString() + "\n"+
+                "UnresolvedOrder: \t" + unresolvedOrder.getDate().toString(),
+                isSameDay(builtOrder.getDate(), unresolvedOrder.getDate()));
 
         assertEquals(builtOrder.getId(), unresolvedOrder.getId());
         assertEquals(builtOrder.getLaborCost(), unresolvedOrder.getLaborCost(), 0.0005);
