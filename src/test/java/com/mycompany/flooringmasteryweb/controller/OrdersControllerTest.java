@@ -7,10 +7,8 @@ import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.mycompany.flooringmasteryweb.modelBinding.ResultSegmentResolver;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
@@ -101,7 +99,7 @@ public class OrdersControllerTest {
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
-                .setCustomArgumentResolvers(new OrderSearchRequestResolver())
+                .setCustomArgumentResolvers(new OrderSearchRequestResolver(), new ResultSegmentResolver())
                 .build();
 
         webMvc = MockMvcBuilders
@@ -711,6 +709,101 @@ public class OrdersControllerTest {
 
     @Test
     public void searchPostRandomToWeb() throws Exception {
+
+        final String SEARCH_STRING = UUID.randomUUID().toString();
+        final String SEARCH_BY = "everything";
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 0);
+    }
+
+    @Test
+    public void searchPostWithPaging() throws Exception {
+
+        final String SEARCH_STRING = UUID.randomUUID().toString();
+        final String SEARCH_BY = "Order_number";
+
+        Mockito.when(mockOrdersDao.search(ArgumentMatchers.any(OrderSearchRequest.class),
+                ArgumentMatchers.any(ResultSegment.class)))
+                .thenReturn(orderList.subList(0, 10));
+
+        MvcResult mvcResult = mockMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+                .param("page", "2")
+                .param("results", "8")
+                .param("sort_by", "date")
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 10);
+
+        for (Order order : orders) {
+            assertEquals(order, orderList.get(orders.indexOf(order)));
+        }
+
+        ArgumentCaptor<OrderSearchRequest> orderSearchRequestArgumentCaptor = ArgumentCaptor.forClass(OrderSearchRequest.class);
+        ArgumentCaptor<ResultSegment> resultSegmentArgumentCaptor = ArgumentCaptor.forClass(ResultSegment.class);
+        Mockito.verify(mockOrdersDao, times(1)).search(orderSearchRequestArgumentCaptor.capture(), resultSegmentArgumentCaptor.capture());
+
+        ResultSegment<OrderSortByEnum> resultSegment = resultSegmentArgumentCaptor.getValue();
+
+        OrderSearchRequest orderSearchRequest = orderSearchRequestArgumentCaptor.getValue();
+        assertEquals(orderSearchRequest.getSearchBy().ordinal(), OrderSearchByOptionEnum.ORDER_NUMBER.ordinal());
+        assertEquals(orderSearchRequest.getSearchText(), SEARCH_STRING);
+    }
+
+    @Test
+    @Ignore
+    public void searchPostByIdToWeb1() throws Exception {
+
+        final String SEARCH_STRING = "1";
+        final String SEARCH_BY = "Order_number";
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 1);
+    }
+
+    @Test
+    @Ignore
+    public void searchPostRandomToWeb1() throws Exception {
 
         final String SEARCH_STRING = UUID.randomUUID().toString();
         final String SEARCH_BY = "everything";

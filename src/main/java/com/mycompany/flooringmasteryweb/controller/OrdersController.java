@@ -22,6 +22,7 @@ import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestAnotation;
+import com.mycompany.flooringmasteryweb.modelBinding.ResultSegmentProcessor;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 
@@ -86,46 +87,22 @@ public class OrdersController {
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public List<Order> index(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @ResultSegmentProcessor OrderResultSegment resultSegment,
             UriComponentsBuilder uriComponentsBuilder,
             HttpServletResponse response,
             HttpServletRequest request
     ) {
-
-        ResultSegment<OrderSortByEnum> resultSegment = processResultPropertiesWithAllAsDefault(
-                sortBy,
-                response,
-                sortCookie,
-                page,
-                resultsPerPage,
-                resultsPerPageCookie);
 
         return orderDao.list(resultSegment);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id_reverse") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
+            @ResultSegmentProcessor OrderResultSegment resultSegment,
             UriComponentsBuilder uriComponentsBuilder,
             HttpServletResponse response,
             HttpServletRequest request,
             Map model) {
-
-        ResultSegment<OrderSortByEnum> resultSegment = processResultPropertiesWithContextDefaults(
-                resultsPerPage,
-                resultsPerPageCookie,
-                page,
-                sortBy,
-                response,
-                sortCookie);
 
         ControllerUtilities.generatePagingLinks(ctx, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
 
@@ -295,40 +272,26 @@ public class OrdersController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
-            @ResultSegmentProcessor
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @ResultSegmentProcessor OrderResultSegment resultSegment,
             @OrderSearchRequestAnotation OrderSearchRequest addressSearchRequest,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response,
             Map model) {
 
-        ResultSegment<OrderSortByEnum> resultProperties = processResultPropertiesWithAllAsDefault(sortBy, response, sortCookie, page, resultsPerPage, resultsPerPageCookie);
-
-        List<Order> orders = searchDatabase(addressSearchRequest, resultProperties);
+        List<Order> orders = searchDatabase(addressSearchRequest, resultSegment);
 
         model.put("orders", orders);
 
         return "order\\search";
-
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Order> search(
-            @CookieValue(value = SORT_COOKIE_NAME, defaultValue = "id") String sortCookie,
-            @CookieValue(value = RESULTS_COOKIE_NAME, required = false) Integer resultsPerPageCookie,
-            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @ResultSegmentProcessor OrderResultSegment resultSegment,
             @OrderSearchRequestAnotation OrderSearchRequest addressSearchRequest,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "results", required = false) Integer resultsPerPage,
             HttpServletResponse response
     ) {
-        ResultSegment<OrderSortByEnum> resultProperties = processResultPropertiesWithAllAsDefault(sortBy, response, sortCookie, page, resultsPerPage, resultsPerPageCookie);
-
-        List<Order> orders = searchDatabase(addressSearchRequest, resultProperties);
+        List<Order> orders = searchDatabase(addressSearchRequest, resultSegment);
 
         return orders;
     }
@@ -345,7 +308,7 @@ public class OrdersController {
         }
     }
 
-    private void loadOrdersToMap(Map model, ResultSegment<OrderSortByEnum> resultSegment) {
+    private void loadOrdersToMap(Map model, OrderResultSegment resultSegment) {
         List<Order> orders = orderDao.list(resultSegment);
         model.put("orders", orders);
     }
@@ -382,7 +345,7 @@ public class OrdersController {
         model.put("address", address);
     }
 
-    private List<Order> searchDatabase(OrderSearchRequest searchRequest, ResultSegment<OrderSortByEnum> resultProperties) {
+    private List<Order> searchDatabase(OrderSearchRequest searchRequest, OrderResultSegment resultProperties) {
         return orderDao.search(searchRequest,
                 resultProperties);
     }

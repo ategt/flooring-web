@@ -28,7 +28,7 @@ public class ResultSegmentResolver implements HandlerMethodArgumentResolver, App
 
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
-        return methodParameter.getParameterType().equals(ResultSegment.class);
+        return methodParameter.getParameterType().equals(OrderResultSegment.class);
     }
 
     @Override
@@ -38,24 +38,43 @@ public class ResultSegmentResolver implements HandlerMethodArgumentResolver, App
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
         String acceptHeader = nativeWebRequest.getHeader("Accept");
 
-        nativeWebRequest.
+        Object nativeRequest = nativeWebRequest.getNativeRequest();
+
+        String pageString=nativeWebRequest.getParameter("page");
+        String resultsPerPageCookieString = nativeWebRequest.getParameter("resultsPerPageCookieString");
+        String resultsPerPageString = nativeWebRequest.getParameter("results");
 
         Integer defaultResultsPerPageCount=null;
-        if (acceptHeader.equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)){
+
+        Integer page = null;
+        try {
+            page = Integer.parseInt(pageString);
+        }catch(NumberFormatException ex){
+        }
+
+        Integer resultsPerPageCookie = null;
+        try {
+            resultsPerPageCookie = Integer.parseInt(resultsPerPageCookieString);
+        }catch(NumberFormatException ex){
+        }
+
+        Integer resultsPerPage = null;
+        try {
+            resultsPerPage = Integer.parseInt(resultsPerPageString);
+        }catch(NumberFormatException ex){
+        }
+
+        if (Objects.nonNull(acceptHeader) && acceptHeader.equalsIgnoreCase(MediaType.APPLICATION_JSON_VALUE)){
             defaultResultsPerPageCount = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
-            page = ControllerUtilities.loadAllPageNumber(ctx, page);
+            page = ControllerUtilities.loadAllPageNumber(applicationContext, page);
+        } else {
+            defaultResultsPerPageCount = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+            page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
         }
-        Map<String, String[]> params;
 
-        if (methodParameter.getParameterType().equals(OrderSearchRequest.class)) {
-
-            params = nativeWebRequest.getParameterMap();
-
-            if (params.containsKey("searchText")) {
-                String searchText = params.get("searchText")[0];
-                orderSearchRequest.setSearchText(searchText);
-            }
-        }
+        String sortByString = nativeWebRequest.getParameter("sort_by");
+        OrderSortByEnum orderSortByEnum = OrderSortByEnum.parse(sortByString);
+        return new OrderResultSegment(orderSortByEnum, page, resultsPerPage);
     }
 
         private ResultSegment<OrderSortByEnum> processResultPropertiesWithContextDefaults(
@@ -67,8 +86,8 @@ public class ResultSegmentResolver implements HandlerMethodArgumentResolver, App
                 String sortCookie
     ) throws BeansException {
 
-            resultsPerPage = ControllerUtilities.loadDefaultResults(ctx, resultsPerPage, resultsPerPageCookie);
-            page = ControllerUtilities.loadDefaultPageNumber(ctx, page);
+            resultsPerPage = ControllerUtilities.loadDefaultResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+            page = ControllerUtilities.loadDefaultPageNumber(applicationContext, page);
             ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
             return resultProperties;
         }
@@ -81,8 +100,8 @@ public class ResultSegmentResolver implements HandlerMethodArgumentResolver, App
                 Integer resultsPerPage,
                 Integer resultsPerPageCookie) {
 
-            resultsPerPage = ControllerUtilities.loadAllResults(ctx, resultsPerPage, resultsPerPageCookie);
-            page = ControllerUtilities.loadAllPageNumber(ctx, page);
+            resultsPerPage = ControllerUtilities.loadAllResults(applicationContext, resultsPerPage, resultsPerPageCookie);
+            page = ControllerUtilities.loadAllPageNumber(applicationContext, page);
             ResultSegment<OrderSortByEnum> resultProperties = processResultProperties(sortBy, response, sortCookie, page, resultsPerPage);
             return resultProperties;
         }
