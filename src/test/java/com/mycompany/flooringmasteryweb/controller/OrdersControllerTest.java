@@ -91,6 +91,18 @@ public class OrdersControllerTest {
             orderList.add(OrderTest.orderGenerator());
         }
 
+        Calendar calendar = Calendar.getInstance();
+
+        for (Order order : orderList) {
+            Date orderDate = order.getDate();
+
+            calendar.setTime(orderDate);
+            TimeZone timeZone = calendar.getTimeZone();
+
+            calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+            order.setDate(calendar.getTime());
+        }
+
         lastOrderResultSegmentUsed = new OrderResultSegment[1];
 
         Mockito.when(mockOrdersDao.list(getOrderResultSegment(lastOrderResultSegmentUsed))).thenReturn(orderList);
@@ -653,7 +665,7 @@ public class OrdersControllerTest {
         final String SEARCH_BY = "Order_number";
 
         Mockito.when(mockOrdersDao.search(ArgumentMatchers.any(OrderSearchRequest.class),
-                                    ArgumentMatchers.any(ResultSegment.class)))
+                ArgumentMatchers.any(ResultSegment.class)))
                 .thenReturn(orderList.subList(0, 10));
 
         MvcResult mvcResult = mockMvc.perform(post("/orders/search")
@@ -940,10 +952,11 @@ public class OrdersControllerTest {
 
         MvcResult mvcResult = webMvc.perform(post("/orders/search")
                 .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(orderSearchJson)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();
@@ -973,10 +986,11 @@ public class OrdersControllerTest {
                 .param("results", "8")
                 .param("sort_by", "date")
                 .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(orderSearchJson)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();
@@ -987,7 +1001,7 @@ public class OrdersControllerTest {
         assertEquals(orders.size(), 10);
 
         for (Order order : orders) {
-            assertEquals(order, orderList.get(orders.indexOf(order)));
+            assertTrue(OrderTest.verifyOrder(order, orderList.get(orders.indexOf(order))));
         }
 
         ArgumentCaptor<OrderSearchRequest> orderSearchRequestArgumentCaptor = ArgumentCaptor.forClass(OrderSearchRequest.class);
@@ -1016,10 +1030,11 @@ public class OrdersControllerTest {
                 .param("results", "8")
                 .param("sort_by", "date")
                 .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(orderSearchJson)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();
@@ -1045,10 +1060,11 @@ public class OrdersControllerTest {
                 .param("results", "8")
                 .param("sort_by", "date")
                 .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(orderSearchJson)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();
@@ -1073,10 +1089,11 @@ public class OrdersControllerTest {
                 .param("results", "8")
                 .param("sort_by", "date")
                 .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(orderSearchJson)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();

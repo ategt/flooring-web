@@ -265,6 +265,16 @@ public class OrdersController implements ApplicationContextAware{
     ) {
         List<Order> orders = searchDatabase(addressSearchRequest, resultSegment);
 
+        System.out.println("");
+        System.out.println("Dates list: ");
+        System.out.println();
+
+        for (Order order : orders){
+            System.out.println(order.getDate().toString());
+        }
+
+        System.out.println();
+
         return orders;
     }
 

@@ -24,7 +24,7 @@ public class Order {
     private double tax;         // Tax
     private double total;       // Total
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "EST")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "UTC")
     private Date date;          // file name
     private double laborCost;   // LaborCost
     private double area;        // Area

@@ -33,7 +33,7 @@ public class OrderCommand {
     @Size(min = 2, max = 45, message = "{validation.orderCommand.product.size}")
     private String product;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "EST")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "UTC")
     @NotNull(message = "{validation.orderCommand.date.null}")
     private Date date;
 

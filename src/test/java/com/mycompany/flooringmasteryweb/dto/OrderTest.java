@@ -134,8 +134,7 @@ public class OrderTest {
         instance.setTotal(random.nextDouble());
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(random.nextLong()));
-        calendar.set(Calendar.YEAR, random.nextInt(9000));
+        calendar.set(random.nextInt(9000), random.nextInt(11), random.nextInt(31), 0, 0, 0);
 
         instance.setDate(calendar.getTime());
 
