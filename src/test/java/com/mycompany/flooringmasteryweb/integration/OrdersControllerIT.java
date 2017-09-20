@@ -5,25 +5,19 @@
  */
 package com.mycompany.flooringmasteryweb.integration;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.google.common.base.Strings;
 import com.google.gson.*;
-import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dto.*;
-import com.mycompany.flooringmasteryweb.dto.Order;
+import com.mycompany.flooringmasteryweb.validation.ValidationError;
+import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
+import okhttp3.HttpUrl;
+import org.junit.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -34,27 +28,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
-import javax.activation.CommandObject;
-import javax.activation.DataHandler;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import com.mycompany.flooringmasteryweb.modelBinding.GsonUTCDateAdapter;
-import com.mycompany.flooringmasteryweb.validation.ValidationError;
-import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
-import okhttp3.HttpUrl;
-import org.junit.*;
 
 import static org.junit.Assert.*;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.w3c.dom.Node;
 
 /**
  * @author ATeg
@@ -340,7 +315,7 @@ public class OrdersControllerIT {
     @Test
     public void loadIndexJson() throws IOException {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                .setDateFormat("MM/dd/yyyy")
                 .create();
 
         HttpUrl httpUrl = getOrdersUrlBuilder()
@@ -406,7 +381,7 @@ public class OrdersControllerIT {
         if (jsonResponse.getContentType().equals("application/json")) {
             String json = jsonResponse.getContentAsString();
             Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                    .setDateFormat("MM/dd/yyyy")
                     .create();
             orders = gson.fromJson(json, Order[].class);
 
@@ -442,7 +417,7 @@ public class OrdersControllerIT {
         System.out.println("Get Test");
 
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                .setDateFormat("MM/dd/yyyy")
                 .create();
 
         HttpUrl httpUrl = getOrdersUrlBuilder()
@@ -738,9 +713,8 @@ public class OrdersControllerIT {
         Order order = orderGenerator();
         OrderCommand orderCommand = OrderCommand.build(order);
 
-        //Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+         Gson gson = new GsonBuilder()
+                .setDateFormat("MM/dd/yyyy")
                 .create();
 
         // Get Size of Database before creation.
@@ -794,12 +768,12 @@ public class OrdersControllerIT {
             throw ex;
         }
 
-        String returnedOrderJson = createPage.getWebResponse().getContentAsString();
+        String returnedOrderFromFirstCreationJson = createPage.getWebResponse().getContentAsString();
 
-        Order orderReturned = gson.fromJson(returnedOrderJson, Order.class);
+        Order returnedOrderFromFirstCreation = gson.fromJson(returnedOrderFromFirstCreationJson, Order.class);
 
-        assertNotNull(orderReturned.getId());
-        assertTrue(orderReturned.getId() > 0);
+        assertNotNull(returnedOrderFromFirstCreation.getId());
+        assertTrue(returnedOrderFromFirstCreation.getId() > 0);
 
         // Get Database Size After Creation
         WebClient sizeWebClient2 = new WebClient();
@@ -824,14 +798,14 @@ public class OrdersControllerIT {
         assertNotNull(afterCreation);
         assertEquals(beforeCreation + 1, afterCreation.intValue());
 
-        assertNotNull(orderReturned);
-        assertNotNull(orderReturned.getId());
+        assertNotNull(returnedOrderFromFirstCreation);
+        assertNotNull(returnedOrderFromFirstCreation.getId());
 
-        assertTrue(orderReturned.getId() > 0);
+        assertTrue(returnedOrderFromFirstCreation.getId() > 0);
 
         // Check that created order is in the Database.
         HttpUrl showUrl = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(orderReturned.getId()))
+                .addPathSegment(Integer.toString(returnedOrderFromFirstCreation.getId()))
                 .build();
 
         WebClient showOrderWebClient = new WebClient();
@@ -842,43 +816,43 @@ public class OrdersControllerIT {
         assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
         assertTrue(jsonSingleOrderResponse.getContentLength() > 50);
 
-        Order specificOrder = null;
+        Order showOrderFromCreationId = null;
 
         if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
             String json = jsonSingleOrderResponse.getContentAsString();
-            specificOrder = gson.fromJson(json, Order.class);
+            showOrderFromCreationId = gson.fromJson(json, Order.class);
 
-            Assert.assertNotNull(specificOrder);
+            Assert.assertNotNull(showOrderFromCreationId);
 
         } else {
             fail("Should have been JSON.");
         }
 
-        Assert.assertNotNull(specificOrder);
+        Assert.assertNotNull(showOrderFromCreationId);
 
-        assertEquals(orderReturned.getId(), specificOrder.getId());
+        assertEquals(returnedOrderFromFirstCreation.getId(), showOrderFromCreationId.getId());
 
-        assertTrue(OrderTest.verifyOrder(orderReturned, specificOrder));
+        assertTrue(OrderTest.verifyOrder(returnedOrderFromFirstCreation, showOrderFromCreationId));
 
-        OrderCommand specificOrderCommand = OrderCommand.build(specificOrder);
+        OrderCommand specificOrderCommand = OrderCommand.build(showOrderFromCreationId);
 
-        assertEquals(specificOrderCommand.getArea(), orderReturned.getArea(), 0.001);
-        orderReturned.setArea(specificOrder.getArea());
+        assertEquals(specificOrderCommand.getArea(), returnedOrderFromFirstCreation.getArea(), 0.001);
+        returnedOrderFromFirstCreation.setArea(showOrderFromCreationId.getArea());
 
-        assertEquals(orderReturned.getId(), specificOrder.getId());
-        assertEquals(orderReturned.getName(), specificOrder.getName());
-        assertEquals(orderReturned.getArea(), specificOrder.getArea(), 0.001);
-        assertEquals(orderReturned.getDate(), specificOrder.getDate());
+        assertEquals(returnedOrderFromFirstCreation.getId(), showOrderFromCreationId.getId());
+        assertEquals(returnedOrderFromFirstCreation.getName(), showOrderFromCreationId.getName());
+        assertEquals(returnedOrderFromFirstCreation.getArea(), showOrderFromCreationId.getArea(), 0.001);
+        assertEquals(returnedOrderFromFirstCreation.getDate(), showOrderFromCreationId.getDate());
 
-        assertEquals(specificOrder.getProduct(), orderReturned.getProduct());
-        assertEquals(specificOrder.getState(), orderReturned.getState());
+        assertEquals(showOrderFromCreationId.getProduct(), returnedOrderFromFirstCreation.getProduct());
+        assertEquals(showOrderFromCreationId.getState(), returnedOrderFromFirstCreation.getState());
 
 //        assertEquals(Objects.isNull(specificOrder.getProduct()) ? null : specificOrder.getProduct().getProductName(), orderReturned.getProduct());
 //        assertEquals(Objects.isNull(specificOrder.getState()) ? null : specificOrder.getState().getStateName(), orderReturned.getState());
 
         Order newOrder = orderGenerator();
 
-        Integer id = orderReturned.getId();
+        Integer id = returnedOrderFromFirstCreation.getId();
         newOrder.setId(id);
 
         OrderCommand newOrderCommand = OrderCommand.build(newOrder);
@@ -908,12 +882,12 @@ public class OrdersControllerIT {
         assertNotNull(returnedUpdatedOrderJson);
         assertTrue("This is the JSON that failed: '" + returnedUpdatedOrderJson + "'", returnedUpdatedOrderJson.length() > 2);
 
-        Order returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, Order.class);
+        Order returnedOrderAfterFirstUpdate = gson.fromJson(returnedUpdatedOrderJson, Order.class);
 
         //returnedUpdatedOrder.set
 
         //assertEquals(newOrder, returnedUpdatedOrder);
-        assertTrue(OrderCommandTest.verify(OrderCommand.build(returnedUpdatedOrder), newOrderCommand));
+        assertTrue(OrderCommandTest.verify(OrderCommand.build(returnedOrderAfterFirstUpdate), newOrderCommand));
 
         // Get Order By Company
         HttpUrl searchUrl = getOrdersUrlBuilder()
@@ -943,22 +917,7 @@ public class OrdersControllerIT {
 
         String citySearchOrderJson = citySearchPage.getWebResponse().getContentAsString();
 
-        GsonBuilder deserializeOrdersBuilder = new GsonBuilder();
-        deserializeOrdersBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            @Override
-            public Date deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-                try {
-                    return dateFormat.parse(jsonElement.getAsString());
-                } catch (ParseException e) {
-                    return null;
-                }
-            }
-        });
-        Gson deserializeOrders = deserializeOrdersBuilder.create();
-
-        Order[] returnedCitySearchOrders = deserializeOrders.fromJson(citySearchOrderJson, Order[].class);
+        Order[] returnedCitySearchOrders = gson.fromJson(citySearchOrderJson, Order[].class);
 
         //assertEquals(returnedCitySearchOrders.length, 1);
         assertTrue(returnedCitySearchOrders.length >= 1);
@@ -967,23 +926,32 @@ public class OrdersControllerIT {
 
         //assertEquals(returnedUpdatedOrder, returnedCitySearchOrder);
 
-        assertEquals(returnedUpdatedOrder.getId(), returnedCitySearchOrder.getId());
-        assertEquals(returnedUpdatedOrder.getName(), returnedCitySearchOrder.getName());
-        assertEquals(returnedUpdatedOrder.getArea(), returnedCitySearchOrder.getArea(), 0.001);
-        assertEquals(returnedUpdatedOrder.getDate(), returnedCitySearchOrder.getDate());
-        assertEquals(Objects.isNull(returnedCitySearchOrder.getProduct()) ? null : returnedCitySearchOrder.getProduct().getProductName(), returnedUpdatedOrder.getProduct());
-        assertEquals(Objects.isNull(returnedCitySearchOrder.getState()) ? null : returnedCitySearchOrder.getState().getStateName(), returnedUpdatedOrder.getState());
+        assertEquals(returnedOrderAfterFirstUpdate.getId(), returnedCitySearchOrder.getId());
+        assertEquals(returnedOrderAfterFirstUpdate.getName(), returnedCitySearchOrder.getName());
+        assertEquals(returnedOrderAfterFirstUpdate.getArea(), returnedCitySearchOrder.getArea(), 0.001);
+        assertEquals(returnedOrderAfterFirstUpdate.getDate(), returnedCitySearchOrder.getDate());
 
-        assertEquals(returnedUpdatedOrder, OrderCommand.build(returnedCitySearchOrder));
+        assertTrue(OrderTest.verifyOrder(returnedOrderAfterFirstUpdate, returnedCitySearchOrder));
+        //assertEquals(Objects.isNull(returnedCitySearchOrder.getProduct()) ? null : returnedCitySearchOrder.getProduct().getProductName(), returnedUpdatedOrder.getProduct());
+        //assertEquals(Objects.isNull(returnedCitySearchOrder.getState()) ? null : returnedCitySearchOrder.getState().getStateName(), returnedUpdatedOrder.getState());
 
-        assertEquals(orderReturned, returnedCitySearchOrder);
-        assertNotEquals(specificOrder, returnedCitySearchOrder);
+        assertTrue(OrderCommandTest.verify(OrderCommand.build(returnedOrderAfterFirstUpdate),
+                        OrderCommand.build(returnedCitySearchOrder)));
 
-        // Check search using json object built with my purspective api.
+        assertTrue(OrderTest.verifyOrder(returnedOrderAfterFirstUpdate, returnedCitySearchOrder));
+
+        //assertNotEquals(specificOrder, returnedCitySearchOrder);
+
+        try{
+            OrderTest.verifyOrder(showOrderFromCreationId, returnedCitySearchOrder);
+            fail("These are supposed to be two seperate orders.");
+        }catch (java.lang.AssertionError ex){}
+
+        // Check search using json object built with my perspective api.
         WebClient jsonSearchWebClient2 = new WebClient();
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(newOrder.getDate());
+        calendar.setTime(returnedOrderAfterFirstUpdate.getDate());
 
         String searchText = (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + calendar.get(Calendar.YEAR);
 
@@ -1007,13 +975,18 @@ public class OrdersControllerIT {
 
         assertEquals(returnedCitySearchOrders2.length, 1);
 
-        Order returnedCitySearchOrder2 = returnedCitySearchOrders2[0];
+        Order firstOrderFromSearchByDate = returnedCitySearchOrders2[0];
 
-        assertEquals(returnedUpdatedOrder, returnedCitySearchOrder2);
-        assertEquals(orderReturned, returnedCitySearchOrder2);
-        assertNotEquals(specificOrder, returnedCitySearchOrder2);
+        assertTrue(OrderTest.verifyOrder(returnedOrderAfterFirstUpdate, firstOrderFromSearchByDate));
+        //assertTrue(OrderTest.verifyOrder(returnedOrderFromFirstCreation, returnedCitySearchOrder2));
+        // Not sure what this was supposed to check for. The created order has been overwritten.
 
-        assertEquals(returnedCitySearchOrder, returnedCitySearchOrder2);
+        try{
+            OrderTest.verifyOrder(showOrderFromCreationId, firstOrderFromSearchByDate);
+            fail("These are supposed to be two seperate orders.");
+        }catch (java.lang.AssertionError ex){}
+
+        assertTrue(OrderTest.verifyOrder(returnedCitySearchOrder, firstOrderFromSearchByDate));
 
         // Verify Update Did Not Increase the Size of the Database
         WebClient sizeWebClient3 = new WebClient();
@@ -1039,7 +1012,7 @@ public class OrdersControllerIT {
         assertEquals(afterUpdate.intValue(), afterCreation.intValue());
 
         // Delete the Created Order
-        String orderIdString = Integer.toString(orderReturned.getId());
+        String orderIdString = Integer.toString(returnedOrderFromFirstCreation.getId());
 
         HttpUrl deleteUrl = getOrdersUrlBuilder()
                 .addPathSegment(orderIdString)
@@ -1055,7 +1028,7 @@ public class OrdersControllerIT {
 
         Order returnedDeleteOrder = gson.fromJson(returnedDeleteOrderJson, Order.class);
 
-        assertEquals(returnedDeleteOrder, returnedUpdatedOrder);
+        assertEquals(returnedDeleteOrder, returnedOrderAfterFirstUpdate);
 
         // Delete The Created Order A Second Time
         deleteOrderWebClient = new WebClient();
@@ -1099,7 +1072,7 @@ public class OrdersControllerIT {
 
         // Try to Get Deleted Order
         HttpUrl showUrl2 = getOrdersUrlBuilder()
-                .addPathSegment(Integer.toString(orderReturned.getId()))
+                .addPathSegment(Integer.toString(returnedOrderFromFirstCreation.getId()))
                 .build();
 
         WebClient showOrderWebClient2 = new WebClient();
@@ -2636,7 +2609,7 @@ public class OrdersControllerIT {
 
     private Order getRandomOrder() throws IOException {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                .setDateFormat("MM/dd/yyyy")
                 .create();
 
         // Get The List Of Orders

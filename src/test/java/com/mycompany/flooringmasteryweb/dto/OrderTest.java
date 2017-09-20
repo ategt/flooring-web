@@ -5,9 +5,15 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.*;
 
+import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
@@ -21,7 +27,6 @@ import org.springframework.context.ApplicationContext;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author ATeg
  */
 public class OrderTest {
@@ -328,28 +333,74 @@ public class OrderTest {
             return false;
         }
 
-        assertEquals(unresolvedOrder.getId(), builtOrder.getId());
-        assertNotNull(unresolvedOrder);
-        assertNotNull(builtOrder);
+        try {
+            assertEquals(unresolvedOrder.getId(), builtOrder.getId());
+            assertNotNull(unresolvedOrder);
+            assertNotNull(builtOrder);
 
-        assertEquals(builtOrder.getArea(), unresolvedOrder.getArea(), 0.0001);
-        assertEquals(builtOrder.getClass(), unresolvedOrder.getClass());
-        assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.001);
+            assertEquals(builtOrder.getArea(), unresolvedOrder.getArea(), 0.0001);
+            assertEquals(builtOrder.getClass(), unresolvedOrder.getClass());
+            assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.001);
 
-        assertTrue("\nBuildOrder: \t"+ builtOrder.getDate().toString() + "\n"+
-                "UnresolvedOrder: \t" + unresolvedOrder.getDate().toString(),
-                isSameDay(builtOrder.getDate(), unresolvedOrder.getDate()));
+            assertTrue("\nBuildOrder: \t" + builtOrder.getDate().toString() + "\n" +
+                            "UnresolvedOrder: \t" + unresolvedOrder.getDate().toString(),
+                    isSameDay(builtOrder.getDate(), unresolvedOrder.getDate()));
 
-        assertEquals(builtOrder.getId(), unresolvedOrder.getId());
-        assertEquals(builtOrder.getLaborCost(), unresolvedOrder.getLaborCost(), 0.01);
-        assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.001);
-        assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.01);
-        assertEquals(builtOrder.getName(), unresolvedOrder.getName());
-        assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
-        assertEquals(builtOrder.getState(), unresolvedOrder.getState());
-        assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.01);
-        assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0001);
-        assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.01);
+            assertEquals(builtOrder.getId(), unresolvedOrder.getId());
+            assertEquals(builtOrder.getLaborCost(), unresolvedOrder.getLaborCost(), 0.01);
+            assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.001);
+            assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.01);
+            assertEquals(builtOrder.getName(), unresolvedOrder.getName());
+            assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
+            assertEquals(builtOrder.getState(), unresolvedOrder.getState());
+            assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.01);
+            assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0001);
+            assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.01);
+
+        } catch (java.lang.AssertionError ex) {
+
+            Gson gson = new GsonBuilder().create();
+
+            String builtOrderStr = gson.toJson(builtOrder);
+            String unresolvedOrderStr = gson.toJson(unresolvedOrder);
+
+            System.out.println(Strings.repeat("-", 45));
+            System.out.println();
+            System.out.println("Built: \t\t" + builtOrderStr);
+            System.out.println("Unresolved:\t" + unresolvedOrderStr);
+            throw ex;
+        }
+
+//            Method[] methods = unresolvedOrder.getClass().getMethods();
+//            Field[] fields = unresolvedOrder.getClass().getFields();
+//
+//            Field field = fields[0];
+//
+//            //for (Field field : fields){
+//                //field.
+//            //}
+//
+//            try {
+//            for ( Method method : methods){
+//                if (method.getName().startsWith("get") && ( Objects.equals(method.getReturnType(), String.class)
+//                        || Objects.equals(method.getReturnType(), double.class)
+//                        || Objects.equals(method.getReturnType(), Integer.class)
+//                        || Objects.equals(method.getReturnType(), Date.class))){
+//
+//                        Object object = method.invoke(builtOrder);
+//                    Object object = method.invoke(unresolvedOrder);
+//                }
+//
+//            }
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            } catch (InvocationTargetException e) {
+//                e.printStackTrace();
+//            }
+//
+//            String orderComparison = System.lineSeparator() +
+//                    unresolvedOrder.getId()
+//
 
         return (true);
     }
