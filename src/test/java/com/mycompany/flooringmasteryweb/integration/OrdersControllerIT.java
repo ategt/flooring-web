@@ -511,13 +511,17 @@ public class OrdersControllerIT {
     @Test
     public void createTest() throws IOException {
         for (int i = 0; i < 50; i++) {
+            System.out.println();
             System.out.println("Create Test");
 
             Order order = orderGenerator();
+            System.out.println();
+            System.out.println("Order date: " + order.getDate().toString());
             Assert.assertNotNull(order);
             Assert.assertNull(order.getId());
 
             OrderCommand orderCommandToBeCreated = OrderCommand.build(order);
+            System.out.println("OrderCommandToBeCreated: " + orderCommandToBeCreated.getDate().toString());
 
             HttpUrl createUrl = getOrdersUrlBuilder()
                     .addPathSegment("")
@@ -532,6 +536,13 @@ public class OrdersControllerIT {
 
             String orderJson = gson.toJson(orderCommandToBeCreated);
 
+            String orderJsonDate = orderJson; //.substring(orderJson.indexOf("date"),
+
+            int r = orderJson.length() - orderJson.indexOf("date\":") > 25 ? 25 :
+                    orderJson.length() - orderJson.indexOf("date\":") - 1;
+
+            System.out.println("Order Json Excerp: " + orderJsonDate + ", " + orderJson.indexOf("date") + ", R: " + r);
+
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
             createRequest.setRequestBody(orderJson);
             createRequest.setAdditionalHeader("Content-type", "application/json");
@@ -541,7 +552,7 @@ public class OrdersControllerIT {
 
             try {
                 createPage = createOrderWebClient.getPage(createRequest);
-            }catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex){
+            } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
                 WebResponse webResponse = ex.getResponse();
                 String requestBody = webResponse.getWebRequest().getRequestBody();
                 System.out.println("RequestBody: " + requestBody);
@@ -550,10 +561,14 @@ public class OrdersControllerIT {
 
             String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
+            System.out.println("Returned Order Json Excerpt: " + returnedOrderJson ); //.substring(returnedOrderJson.indexOf("date\":"), 35));
+
             Order orderReturnedFromCreation = gson.fromJson(returnedOrderJson, Order.class);
 
             Assert.assertNotNull(orderReturnedFromCreation);
             Integer orderReturnedFromCreationId = orderReturnedFromCreation.getId();
+
+            System.out.println("Order Returned From Creation: " + orderReturnedFromCreation.getDate().toString());
 
             Assert.assertTrue(orderReturnedFromCreationId > 0);
 
