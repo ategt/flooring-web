@@ -517,7 +517,7 @@ public class OrdersControllerIT {
             Assert.assertNotNull(order);
             Assert.assertNull(order.getId());
 
-            OrderCommand orderCommand = OrderCommand.build(order);
+            OrderCommand orderCommandToBeCreated = OrderCommand.build(order);
 
             HttpUrl createUrl = getOrdersUrlBuilder()
                     .addPathSegment("")
@@ -530,7 +530,7 @@ public class OrdersControllerIT {
                     .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
                     .create();
 
-            String orderJson = gson.toJson(orderCommand);
+            String orderJson = gson.toJson(orderCommandToBeCreated);
 
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
             createRequest.setRequestBody(orderJson);
@@ -550,39 +550,39 @@ public class OrdersControllerIT {
 
             String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
-            Order orderReturned = gson.fromJson(returnedOrderJson, Order.class);
+            Order orderReturnedFromCreation = gson.fromJson(returnedOrderJson, Order.class);
 
-            Assert.assertNotNull(orderReturned);
-            Integer returnedOrderId = orderReturned.getId();
+            Assert.assertNotNull(orderReturnedFromCreation);
+            Integer orderReturnedFromCreationId = orderReturnedFromCreation.getId();
 
-            Assert.assertTrue(returnedOrderId > 0);
+            Assert.assertTrue(orderReturnedFromCreationId > 0);
 
-            orderCommand.setId(returnedOrderId);
+            orderCommandToBeCreated.setId(orderReturnedFromCreationId);
 
-            assertEquals(orderReturned.getArea(), orderCommand.getArea(), 0.0001);
+            assertEquals(orderReturnedFromCreation.getArea(), orderCommandToBeCreated.getArea(), 0.0001);
 
-            orderReturned.setArea(orderCommand.getArea());
+            orderReturnedFromCreation.setArea(orderCommandToBeCreated.getArea());
 
-            order.setId(returnedOrderId);
+            order.setId(orderReturnedFromCreationId);
 
             //assertTrue(OrderTest.verifyOrder(orderReturned, order));
 
             Gson gsonVerbose = new GsonBuilder().create();
 
-            assertEquals("First Date: " + orderReturned.getDate() +
-                            ", Second Date: " + orderCommand.getDate(),
-                    orderReturned.getDate(),
-                    orderCommand.getDate());
+            assertEquals("First Date: " + orderReturnedFromCreation.getDate() +
+                            ", Second Date: " + orderCommandToBeCreated.getDate(),
+                    orderReturnedFromCreation.getDate(),
+                    orderCommandToBeCreated.getDate());
 
-            OrderCommand orderCommandReturned = OrderCommand.build(orderReturned);
+            OrderCommand orderReturnedFromCreationCommand = OrderCommand.build(orderReturnedFromCreation);
 
             Assert.assertEquals(
-                    "\n\tOrderReturned: \t" + gsonVerbose.toJson(orderCommandReturned) +
-                            ", \n\tOrderCommand: \t" + gsonVerbose.toJson(orderCommand),
-                    orderCommandReturned,
-                    orderCommand);
+                    "\n\tOrderReturned: \t" + gsonVerbose.toJson(orderReturnedFromCreationCommand) +
+                            ", \n\tOrderCommand: \t" + gsonVerbose.toJson(orderCommandToBeCreated),
+                    orderReturnedFromCreationCommand,
+                    orderCommandToBeCreated);
 
-            int orderId = orderReturned.getId();
+            int orderId = orderReturnedFromCreation.getId();
 
             HttpUrl showUrl = getOrdersUrlBuilder()
                     .addPathSegment(Integer.toString(orderId))
@@ -596,30 +596,32 @@ public class OrdersControllerIT {
             assertEquals(jsonSingleOrderResponse.getStatusCode(), 200);
             assertTrue(jsonSingleOrderResponse.getContentLength() > 50);
 
-            Order specificOrder = null;
+            Order showOrderThatWasCreated = null;
 
             if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
                 String json = jsonSingleOrderResponse.getContentAsString();
-                specificOrder = gson.fromJson(json, Order.class);
+                showOrderThatWasCreated = gson.fromJson(json, Order.class);
 
-                Assert.assertNotNull(specificOrder);
+                Assert.assertNotNull(showOrderThatWasCreated);
             } else {
                 fail("Should have been JSON.");
             }
 
-            Assert.assertNotNull(specificOrder);
+            Assert.assertNotNull(showOrderThatWasCreated);
 
-            OrderCommand specificCommandOrder = OrderCommand.build(specificOrder);
+            OrderCommand showOrderThatWasCreatedCommand = OrderCommand.build(showOrderThatWasCreated);
 
-            assertEquals(specificCommandOrder.getArea(), orderReturned.getArea(), 0.0001);
+            assertEquals(showOrderThatWasCreatedCommand.getArea(), orderReturnedFromCreation.getArea(), 0.0001);
 
-            orderReturned.setArea(specificCommandOrder.getArea());
+            orderReturnedFromCreation.setArea(showOrderThatWasCreatedCommand.getArea());
+
+            assertTrue(OrderTest.verifyOrder(showOrderThatWasCreated, orderReturnedFromCreation));
 
             Assert.assertEquals(
-                    "\nSpecificCommandOrder: \t" + gsonVerbose.toJson(specificCommandOrder) +
-                            ", \nOrderCommand: \t\t\t" + gsonVerbose.toJson(orderCommandReturned),
-                    specificCommandOrder,
-                    orderCommandReturned);
+                    "\nSpecificCommandOrder: \t" + gsonVerbose.toJson(showOrderThatWasCreatedCommand) +
+                            ", \nOrderCommand: \t\t\t" + gsonVerbose.toJson(orderReturnedFromCreationCommand),
+                    showOrderThatWasCreatedCommand,
+                    orderReturnedFromCreationCommand);
 
             Order storedOrder = null;
 
@@ -645,7 +647,7 @@ public class OrdersControllerIT {
             }
 
             assertNotNull(storedOrder);
-            Assert.assertEquals(OrderCommand.build(storedOrder), orderReturned);
+            Assert.assertEquals(OrderCommand.build(storedOrder), orderReturnedFromCreation);
         }
     }
 

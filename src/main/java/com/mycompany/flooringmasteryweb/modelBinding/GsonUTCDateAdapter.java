@@ -12,19 +12,21 @@ import java.util.TimeZone;
 public class GsonUTCDateAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
 
     private final DateFormat dateFormat;
+    private final DateFormat utcDateFormat;
     private final DateFormat deserializeDate;
 
     public GsonUTCDateAdapter(){
-        dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        utcDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        utcDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         deserializeDate = new SimpleDateFormat("yyyy-MM-dd");
         deserializeDate.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     }
 
     @Override
     public synchronized Date deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         try {
-            return dateFormat.parse(jsonElement.getAsString());
+            return utcDateFormat.parse(jsonElement.getAsString());
         } catch (ParseException ex){}
 
         try {
@@ -36,6 +38,7 @@ public class GsonUTCDateAdapter implements JsonSerializer<Date>, JsonDeserialize
 
     @Override
     public JsonElement serialize(Date date, Type type, JsonSerializationContext jsonSerializationContext) {
-        return new JsonPrimitive(dateFormat.format(date));
+        String dateString = dateFormat.format(date);
+        return new JsonPrimitive(dateString);
     }
 }
