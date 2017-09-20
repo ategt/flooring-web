@@ -339,6 +339,10 @@ public class OrdersControllerIT {
 
     @Test
     public void loadIndexJson() throws IOException {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                .create();
+
         HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
@@ -353,7 +357,7 @@ public class OrdersControllerIT {
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
+
             Order[] orders = gson.fromJson(json, Order[].class);
 
             assertTrue(orders.length > 20);
@@ -437,6 +441,10 @@ public class OrdersControllerIT {
     public void getTest() throws IOException {
         System.out.println("Get Test");
 
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                .create();
+
         HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
@@ -453,7 +461,7 @@ public class OrdersControllerIT {
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
+
             orders = gson.fromJson(json, Order[].class);
 
             assertTrue(orders.length > 20);
@@ -486,7 +494,7 @@ public class OrdersControllerIT {
 
         if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
             String json = jsonSingleOrderResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
+
             specificOrder = gson.fromJson(json, Order.class);
 
             Assert.assertNotNull(specificOrder);
@@ -517,7 +525,11 @@ public class OrdersControllerIT {
 
             WebClient createOrderWebClient = new WebClient();
 
-            Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+            Gson gson = new GsonBuilder()
+                    //.setDateFormat("MM/dd/yyyy")
+                    .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                    .create();
+
             String orderJson = gson.toJson(orderCommand);
 
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
@@ -538,7 +550,7 @@ public class OrdersControllerIT {
 
             String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
-            OrderCommand orderReturned = gson.fromJson(returnedOrderJson, OrderCommand.class);
+            Order orderReturned = gson.fromJson(returnedOrderJson, Order.class);
 
             Assert.assertNotNull(orderReturned);
             Integer returnedOrderId = orderReturned.getId();
@@ -551,6 +563,10 @@ public class OrdersControllerIT {
 
             orderReturned.setArea(orderCommand.getArea());
 
+            order.setId(returnedOrderId);
+
+            //assertTrue(OrderTest.verifyOrder(orderReturned, order));
+
             Gson gsonVerbose = new GsonBuilder().create();
 
             assertEquals("First Date: " + orderReturned.getDate() +
@@ -558,9 +574,12 @@ public class OrdersControllerIT {
                     orderReturned.getDate(),
                     orderCommand.getDate());
 
-            Assert.assertEquals("OrderReturned: " + gsonVerbose.toJson(orderReturned) +
-                            ", \nOrderCommand: " + gsonVerbose.toJson(orderCommand),
-                    orderReturned,
+            OrderCommand orderCommandReturned = OrderCommand.build(orderReturned);
+
+            Assert.assertEquals(
+                    "\n\tOrderReturned: \t" + gsonVerbose.toJson(orderCommandReturned) +
+                            ", \n\tOrderCommand: \t" + gsonVerbose.toJson(orderCommand),
+                    orderCommandReturned,
                     orderCommand);
 
             int orderId = orderReturned.getId();
@@ -596,10 +615,11 @@ public class OrdersControllerIT {
 
             orderReturned.setArea(specificCommandOrder.getArea());
 
-            Assert.assertEquals("SpecificCommandOrder: " + gsonVerbose.toJson(specificCommandOrder) +
-                            ", \nOrderCommand: " + gsonVerbose.toJson(orderReturned),
+            Assert.assertEquals(
+                    "\nSpecificCommandOrder: \t" + gsonVerbose.toJson(specificCommandOrder) +
+                            ", \nOrderCommand: \t\t\t" + gsonVerbose.toJson(orderCommandReturned),
                     specificCommandOrder,
-                    orderReturned);
+                    orderCommandReturned);
 
             Order storedOrder = null;
 
@@ -1226,11 +1246,11 @@ public class OrdersControllerIT {
         assertEquals(createOrderWebResponse.getStatusCode(), 200);
         assertTrue(createOrderWebResponse.getContentLength() > 100);
 
-        OrderCommand createdOrder = null;
+        Order createdOrder = null;
 
         if (createOrderWebResponse.getContentType().equals("application/json")) {
             String json = createOrderWebResponse.getContentAsString();
-            createdOrder = gson.fromJson(json, OrderCommand.class);
+            createdOrder = gson.fromJson(json, Order.class);
 
             assertNotNull(createdOrder);
         } else {
@@ -2576,7 +2596,9 @@ public class OrdersControllerIT {
     }
 
     private Order getRandomOrder() throws IOException {
-        Gson gson = new GsonBuilder().create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                .create();
 
         // Get The List Of Orders
         HttpUrl getListUrl = getOrdersUrlBuilder()
