@@ -5,8 +5,11 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import com.google.common.base.Strings;
+
+import java.util.Objects;
+
 /**
- *
  * @author ATeg
  */
 public enum AddressSortByEnum {
@@ -20,9 +23,7 @@ public enum AddressSortByEnum {
     SORT_BY_ID_INVERSE;
 
     public static AddressSortByEnum parse(String input) {
-        if (input == null) {
-            return null;
-        }
+        input = Strings.nullToEmpty(input);
 
         AddressSortByEnum currentEnum = null;
 
@@ -41,6 +42,7 @@ public enum AddressSortByEnum {
         if (input.toLowerCase().contains("inv") || input.toLowerCase().contains("rev")) {
             currentEnum = reverse(currentEnum);
         }
+
         return currentEnum;
     }
 

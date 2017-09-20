@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.flooringmasteryweb.controller;
+package com.mycompany.flooringmasteryweb.integration;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -2128,7 +2128,7 @@ public class AddressSeleneseIT {
 
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
-                .addQueryParameter("sort_by", "id")
+                .addQueryParameter("sort_by", "id_reverse")
                 .build();
 
         WebClient webClient = new WebClient();
