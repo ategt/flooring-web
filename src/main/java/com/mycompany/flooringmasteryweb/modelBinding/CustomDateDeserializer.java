@@ -3,7 +3,7 @@ package com.mycompany.flooringmasteryweb.modelBinding;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import org.codehaus.jackson.map.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -18,12 +18,12 @@ public class CustomDateDeserializer extends StdDeserializer<Date> {
         this(null);
     }
 
-    public CustomDateDeserializer(Class<?> vc){
+    public CustomDateDeserializer(Class<Date> vc){
         super(vc);
     }
 
     @Override
-    public Date deserialize(org.codehaus.jackson.JsonParser jsonParser, org.codehaus.jackson.map.DeserializationContext deserializationContext) throws IOException, org.codehaus.jackson.JsonProcessingException {
+    public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         String date = jsonParser.getText();
         try{
             return simpleDateFormat.parse(date);

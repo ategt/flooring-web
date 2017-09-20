@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
@@ -260,6 +261,23 @@ public class OrderTest {
         assertEquals(ordera, orderb);
     }
 
+    @Test
+    public void testThisTest(){
+        double first = 0.04212020188656364d;
+        double second = 0.04d;
+
+        Double third = second;
+
+        String binaryFirst = Long.toBinaryString(Double.doubleToRawLongBits(first));
+        String binarySecond = Long.toBinaryString(Double.doubleToRawLongBits(second));
+
+        System.out.println("First Binary: " + binaryFirst);
+        System.out.println("Second Binary: " + binarySecond);
+        System.out.println(third.toString());
+
+        assertEquals(first, second, 0.01);
+    }
+
     public static Order orderFactory(ApplicationContext ctx) {
 
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
@@ -331,24 +349,24 @@ public class OrderTest {
         assertNotNull(unresolvedOrder);
         assertNotNull(builtOrder);
 
-        assertEquals(builtOrder.getArea(), unresolvedOrder.getArea(), 0.0005);
+        assertEquals(builtOrder.getArea(), unresolvedOrder.getArea(), 0.0001);
         assertEquals(builtOrder.getClass(), unresolvedOrder.getClass());
-        assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.0005);
+        assertEquals(builtOrder.getCostPerSquareFoot(), unresolvedOrder.getCostPerSquareFoot(), 0.001);
 
         assertTrue("\nBuildOrder: \t"+ builtOrder.getDate().toString() + "\n"+
                 "UnresolvedOrder: \t" + unresolvedOrder.getDate().toString(),
                 isSameDay(builtOrder.getDate(), unresolvedOrder.getDate()));
 
         assertEquals(builtOrder.getId(), unresolvedOrder.getId());
-        assertEquals(builtOrder.getLaborCost(), unresolvedOrder.getLaborCost(), 0.0005);
-        assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.0005);
-        assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.0005);
+        assertEquals(builtOrder.getLaborCost(), unresolvedOrder.getLaborCost(), 0.01);
+        assertEquals(builtOrder.getLaborCostPerSquareFoot(), unresolvedOrder.getLaborCostPerSquareFoot(), 0.001);
+        assertEquals(builtOrder.getMaterialCost(), unresolvedOrder.getMaterialCost(), 0.01);
         assertEquals(builtOrder.getName(), unresolvedOrder.getName());
         assertEquals(builtOrder.getProduct(), unresolvedOrder.getProduct());
         assertEquals(builtOrder.getState(), unresolvedOrder.getState());
-        assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.0005);
-        assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0005);
-        assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.0005);
+        assertEquals(builtOrder.getTax(), unresolvedOrder.getTax(), 0.01);
+        assertEquals(builtOrder.getTaxRate(), unresolvedOrder.getTaxRate(), 0.0001);
+        assertEquals(builtOrder.getTotal(), unresolvedOrder.getTotal(), 0.01);
 
         return (true);
     }

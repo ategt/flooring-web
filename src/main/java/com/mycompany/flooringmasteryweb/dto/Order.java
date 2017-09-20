@@ -6,8 +6,11 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mycompany.flooringmasteryweb.modelBinding.CustomDateDeserializer;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import com.mycompany.flooringmasteryweb.modelBinding.CustomDateSerializer;
+
 
 import java.util.Date;
 import java.util.Objects;
@@ -28,6 +31,8 @@ public class Order {
     private double total;       // Total
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "UTC")
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    @JsonSerialize(using= CustomDateSerializer.class)
     private Date date;          // file name
     private double laborCost;   // LaborCost
     private double area;        // Area

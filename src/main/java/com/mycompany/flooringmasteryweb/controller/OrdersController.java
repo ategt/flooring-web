@@ -146,6 +146,8 @@ public class OrdersController implements ApplicationContextAware{
     @ResponseBody
     public Order create(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) throws MethodArgumentNotValidException {
 
+        System.out.println("\n - Date of Order Command: " + orderCommand.getDate().toString() + " - \n");
+
         validateInputs(orderCommand, bindingResult);
 
         if (bindingResult.hasErrors()) {

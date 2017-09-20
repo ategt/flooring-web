@@ -6,8 +6,12 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mycompany.flooringmasteryweb.modelBinding.CustomDateDeserializer;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import com.mycompany.flooringmasteryweb.modelBinding.CustomDateSerializer;
+
 
 import java.util.Date;
 import java.util.Objects;
@@ -35,12 +39,17 @@ public class OrderCommand {
     @Size(min = 2, max = 45, message = "{validation.orderCommand.product.size}")
     private String product;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "UTC")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "UTC")
     @NotNull(message = "{validation.orderCommand.date.null}")
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    @JsonSerialize(using= CustomDateSerializer.class)
     private Date date;
 
     @Min(0)
     private double area;
+
+    @JsonRawValue
+    private String json;
 
     @Override
     public boolean equals(Object object) {
@@ -185,5 +194,13 @@ public class OrderCommand {
         orderCommand.setProduct(productName);
 
         return orderCommand;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
     }
 }
