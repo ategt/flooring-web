@@ -8,15 +8,16 @@ package com.mycompany.flooringmasteryweb.dto;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
- *
  * @author ATeg
  */
 public class OrderCommandTest {
@@ -192,5 +193,19 @@ public class OrderCommandTest {
         orderb.setState(ordera.getState());
 
         assertEquals(ordera, orderb);
+    }
+
+    public static boolean verify(OrderCommand command1, OrderCommand command2) {
+        assertEquals(command1.getId(), command2.getId());
+        assertEquals(command1.getName(), command2.getName());
+        assertEquals(command1.getProduct(), command2.getProduct());
+        assertEquals(command1.getState(), command2.getState());
+        assertEquals("\nBinary Order Command Area1: " + Long.toBinaryString(Double.doubleToRawLongBits(command1.getArea())) +
+                        "\nBinary Order Command Area2: " + Long.toBinaryString(Double.doubleToRawLongBits(command2.getArea())),
+                command1.getArea(), command2.getArea(), 0.0001);
+
+        assertEquals(command1.getDate(), command2.getDate());
+
+        return true;
     }
 }

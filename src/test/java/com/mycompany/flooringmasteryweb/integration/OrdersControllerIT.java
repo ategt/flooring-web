@@ -869,8 +869,12 @@ public class OrdersControllerIT {
         assertEquals(orderReturned.getName(), specificOrder.getName());
         assertEquals(orderReturned.getArea(), specificOrder.getArea(), 0.001);
         assertEquals(orderReturned.getDate(), specificOrder.getDate());
-        assertEquals(Objects.isNull(specificOrder.getProduct()) ? null : specificOrder.getProduct().getProductName(), orderReturned.getProduct());
-        assertEquals(Objects.isNull(specificOrder.getState()) ? null : specificOrder.getState().getStateName(), orderReturned.getState());
+
+        assertEquals(specificOrder.getProduct(), orderReturned.getProduct());
+        assertEquals(specificOrder.getState(), orderReturned.getState());
+
+//        assertEquals(Objects.isNull(specificOrder.getProduct()) ? null : specificOrder.getProduct().getProductName(), orderReturned.getProduct());
+//        assertEquals(Objects.isNull(specificOrder.getState()) ? null : specificOrder.getState().getStateName(), orderReturned.getState());
 
         Order newOrder = orderGenerator();
 
@@ -904,10 +908,12 @@ public class OrdersControllerIT {
         assertNotNull(returnedUpdatedOrderJson);
         assertTrue("This is the JSON that failed: '" + returnedUpdatedOrderJson + "'", returnedUpdatedOrderJson.length() > 2);
 
-        OrderCommand returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, OrderCommand.class);
+        Order returnedUpdatedOrder = gson.fromJson(returnedUpdatedOrderJson, Order.class);
+
+        //returnedUpdatedOrder.set
 
         //assertEquals(newOrder, returnedUpdatedOrder);
-        assertEquals(returnedUpdatedOrder, newOrderCommand);
+        assertTrue(OrderCommandTest.verify(OrderCommand.build(returnedUpdatedOrder), newOrderCommand));
 
         // Get Order By Company
         HttpUrl searchUrl = getOrdersUrlBuilder()

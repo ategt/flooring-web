@@ -261,23 +261,6 @@ public class OrderTest {
         assertEquals(ordera, orderb);
     }
 
-    @Test
-    public void testThisTest(){
-        double first = 0.04212020188656364d;
-        double second = 0.04d;
-
-        Double third = second;
-
-        String binaryFirst = Long.toBinaryString(Double.doubleToRawLongBits(first));
-        String binarySecond = Long.toBinaryString(Double.doubleToRawLongBits(second));
-
-        System.out.println("First Binary: " + binaryFirst);
-        System.out.println("Second Binary: " + binarySecond);
-        System.out.println(third.toString());
-
-        assertEquals(first, second, 0.01);
-    }
-
     public static Order orderFactory(ApplicationContext ctx) {
 
         ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
