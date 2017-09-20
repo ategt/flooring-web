@@ -530,8 +530,8 @@ public class OrdersControllerIT {
             WebClient createOrderWebClient = new WebClient();
 
             Gson gson = new GsonBuilder()
-                    //.setDateFormat("MM/dd/yyyy")
-                    .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                    .setDateFormat("MM/dd/yyyy")
+                    //.registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
                     .create();
 
             String orderJson = gson.toJson(orderCommandToBeCreated);
@@ -584,8 +584,8 @@ public class OrdersControllerIT {
 
             Gson gsonVerbose = new GsonBuilder().create();
 
-            assertEquals("First Date: " + orderReturnedFromCreation.getDate() +
-                            ", Second Date: " + orderCommandToBeCreated.getDate(),
+            assertEquals("\nFirst Date: \t" + orderReturnedFromCreation.getDate() +
+                            ", \nSecond Date: \t" + orderCommandToBeCreated.getDate(),
                     orderReturnedFromCreation.getDate(),
                     orderCommandToBeCreated.getDate());
 
@@ -596,6 +596,8 @@ public class OrdersControllerIT {
                             ", \n\tOrderCommand: \t" + gsonVerbose.toJson(orderCommandToBeCreated),
                     orderReturnedFromCreationCommand,
                     orderCommandToBeCreated);
+
+            System.out.println("-- Order sent to creation and order returned have same date. --");
 
             int orderId = orderReturnedFromCreation.getId();
 
@@ -615,6 +617,7 @@ public class OrdersControllerIT {
 
             if (jsonSingleOrderResponse.getContentType().equals("application/json")) {
                 String json = jsonSingleOrderResponse.getContentAsString();
+                System.out.println("Show Created Order Json: " + json);
                 showOrderThatWasCreated = gson.fromJson(json, Order.class);
 
                 Assert.assertNotNull(showOrderThatWasCreated);
@@ -624,7 +627,11 @@ public class OrdersControllerIT {
 
             Assert.assertNotNull(showOrderThatWasCreated);
 
+            System.out.println("Show Order Date: \t\t" + showOrderThatWasCreated.getDate().toString());
+
             OrderCommand showOrderThatWasCreatedCommand = OrderCommand.build(showOrderThatWasCreated);
+
+            System.out.println("Show Order Command Date: \t" + showOrderThatWasCreatedCommand.getDate().toString());
 
             assertEquals(showOrderThatWasCreatedCommand.getArea(), orderReturnedFromCreation.getArea(), 0.0001);
 
@@ -2569,8 +2576,17 @@ public class OrdersControllerIT {
         postgresSupportedCalendar.set(year, month, date, 0, 0, 0);
 
         postgresSupportedCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
-        Date postgresSupportedDate = postgresSupportedCalendar.getTime();
+        String dateString = simpleDateFormat.format(postgresSupportedCalendar.getTime());
+
+        //Date postgresSupportedDate = postgresSupportedCalendar.getTime();
+        Date postgresSupportedDate = null;
+        try {
+            postgresSupportedDate = simpleDateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         Order order = orderBuilder(UUID.randomUUID().toString(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), postgresSupportedDate, product, state);
         return order;

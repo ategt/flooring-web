@@ -6,6 +6,9 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mycompany.flooringmasteryweb.modelBinding.CustomDateDeserializer;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -191,6 +194,7 @@ PerSquareFoot,MaterialCost,LaborCost,Tax,Total
     /**
      * @param date the date to set
      */
+    @JsonDeserialize(using = CustomDateDeserializer.class)
     public void setDate(Date date) {
         this.date = date;
     }
