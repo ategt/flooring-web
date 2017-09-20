@@ -24,13 +24,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import okhttp3.HttpUrl;
 import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -139,7 +138,15 @@ public class AddressReveseableSortingSeleneseIT {
 
         HtmlPage htmlPage = webClient.getPage(webRequest);
 
-        HtmlAnchor idSortingLink = htmlPage.getAnchorByText("ID");
+        HtmlAnchor lastNameAnchor = htmlPage.getAnchorByText("Last Name");
+
+        Page lastNameSortedPage = lastNameAnchor.click();
+
+        assertTrue(lastNameSortedPage.isHtmlPage());
+
+        HtmlPage lastNameSortedHtmlPage = (HtmlPage) lastNameSortedPage;
+
+        HtmlAnchor idSortingLink = lastNameSortedHtmlPage.getAnchorByText("ID");
 
         assertNotNull(idSortingLink);
 
@@ -150,6 +157,17 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.getUrl().getQuery().contains("sort_by=id"));
 
         htmlPage = (HtmlPage) idSortedPage;
+
+
+        idSortingLink = htmlPage.getAnchorByText("ID");
+        assertNotNull(idSortingLink);
+        idSortedPage = idSortingLink.click();
+
+        assertTrue(idSortedPage.isHtmlPage());
+        assertTrue(idSortedPage.getUrl().getQuery().contains("sort_by=id"));
+
+        htmlPage = (HtmlPage) idSortedPage;
+
 
         HtmlElement htmlElement = htmlPage.getHtmlElementById("address-table");
         DomNodeList<HtmlElement> tableRows = htmlElement.getElementsByTagName("tr");
@@ -194,6 +212,64 @@ public class AddressReveseableSortingSeleneseIT {
                 StringBuilder::append).toString();
 
         assertTrue(!sortedIdString.equals(rawIdString));
+
+
+
+
+
+        idSortingLink = htmlPage.getAnchorByText("ID");
+        assertNotNull(idSortingLink);
+        idSortedPage = idSortingLink.click();
+
+        assertTrue(idSortedPage.isHtmlPage());
+        assertTrue(idSortedPage.getUrl().getQuery().contains("sort_by=id"));
+
+        htmlPage = (HtmlPage) idSortedPage;
+
+
+        htmlElement = htmlPage.getHtmlElementById("address-table");
+        tableRows = htmlElement.getElementsByTagName("tr");
+
+        assertTrue(tableRows.size() > 5);
+
+        ids = tableRows.stream().map((tableRow) -> {
+            try {
+                DomElement domElement = tableRow.getFirstElementChild();
+                String idString = domElement.asText();
+                Integer id = Integer.parseInt(idString);
+                return id;
+            } catch (NumberFormatException ex) {
+            }
+            return null;
+        })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        clonedIds = new ArrayList<>(ids);
+
+        clonedIds.sort(sortByIdAscending());
+
+        for (int i = 0; i < ids.size(); i++) {
+            assertEquals(ids.get(i), clonedIds.get(i));
+        }
+
+        String rawIdString2 = ids.stream().collect(StringBuilder::new,
+                StringBuilder::append,
+                StringBuilder::append).toString();
+
+        String sortedIdString2 = clonedIds.stream().collect(StringBuilder::new,
+                StringBuilder::append,
+                StringBuilder::append).toString();
+
+        assertEquals(sortedIdString2, rawIdString2);
+
+        clonedIds.sort(sortByIdDesc());
+
+        sortedIdString = clonedIds.stream().collect(StringBuilder::new,
+                StringBuilder::append,
+                StringBuilder::append).toString();
+
+        assertTrue(!sortedIdString.equals(rawIdString));
     }
 
     private static Comparator<Integer> sortByIdAscending() {
@@ -213,23 +289,33 @@ public class AddressReveseableSortingSeleneseIT {
 
         HtmlPage htmlPage = webClient.getPage(webRequest);
 
-        HtmlAnchor idSortingLink = htmlPage.getAnchorByText("ID");
+        HtmlAnchor lastNameAnchor = htmlPage.getAnchorByText("Last Name");
+
+        Page lastNameSortedPage = lastNameAnchor.click();
+
+        assertTrue(lastNameSortedPage.isHtmlPage());
+
+        HtmlPage lastNameSortedHtmlPage = (HtmlPage) lastNameSortedPage;
+
+        HtmlAnchor homeLink = lastNameSortedHtmlPage.getAnchorByText("Home");
+        HtmlPage homePage = homeLink.click();
+        HtmlAnchor addressLink = homePage.getAnchorByText("Address Panel");
+
+        assertTrue(addressLink.getHrefAttribute().contains("/address/"));
+        assertFalse(addressLink.getHrefAttribute().contains("sort_by"));
+
+        lastNameSortedHtmlPage = addressLink.click();
+
+        HtmlAnchor idSortingLink = lastNameSortedHtmlPage.getAnchorByText("ID");
+
+        assertNotNull(idSortingLink);
+
+
+        //HtmlAnchor idSortingLink = htmlPage.getAnchorByText("ID");
 
         assertNotNull(idSortingLink);
 
         Page idSortedPage = idSortingLink.click();
-
-        assertTrue(idSortedPage.isHtmlPage());
-
-        assertTrue(idSortedPage.getUrl().getQuery().contains("sort_by=id"));
-
-        htmlPage = (HtmlPage) idSortedPage;
-
-        idSortingLink = htmlPage.getAnchorByText("ID");
-
-        assertNotNull(idSortingLink);
-
-        idSortedPage = idSortingLink.click();
 
         assertTrue(idSortedPage.isHtmlPage());
 

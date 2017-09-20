@@ -33,19 +33,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.activation.CommandObject;
 import javax.activation.DataHandler;
@@ -53,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.mycompany.flooringmasteryweb.modelBinding.GsonUTCDateAdapter;
 import com.mycompany.flooringmasteryweb.validation.ValidationError;
 import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
 import okhttp3.HttpUrl;
@@ -412,7 +401,9 @@ public class OrdersControllerIT {
 
         if (jsonResponse.getContentType().equals("application/json")) {
             String json = jsonResponse.getContentAsString();
-            Gson gson = new GsonBuilder().create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                    .create();
             orders = gson.fromJson(json, Order[].class);
 
             assertTrue(orders.length > 20);
@@ -703,8 +694,10 @@ public class OrdersControllerIT {
         Order order = orderGenerator();
         OrderCommand orderCommand = OrderCommand.build(order);
 
-        //Gson gson = new GsonBuilder().create();
-        Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+        //Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                .create();
 
         // Get Size of Database before creation.
         HttpUrl sizeUrl = getOrdersUrlBuilder()
@@ -759,7 +752,7 @@ public class OrdersControllerIT {
 
         String returnedOrderJson = createPage.getWebResponse().getContentAsString();
 
-        OrderCommand orderReturned = gson.fromJson(returnedOrderJson, OrderCommand.class);
+        Order orderReturned = gson.fromJson(returnedOrderJson, Order.class);
 
         assertNotNull(orderReturned.getId());
         assertTrue(orderReturned.getId() > 0);
@@ -821,12 +814,12 @@ public class OrdersControllerIT {
 
         assertEquals(orderReturned.getId(), specificOrder.getId());
 
+        assertTrue(OrderTest.verifyOrder(orderReturned, specificOrder));
+
         OrderCommand specificOrderCommand = OrderCommand.build(specificOrder);
 
         assertEquals(specificOrderCommand.getArea(), orderReturned.getArea(), 0.001);
         orderReturned.setArea(specificOrder.getArea());
-
-        assertEquals(specificOrderCommand, orderReturned);
 
         assertEquals(orderReturned.getId(), specificOrder.getId());
         assertEquals(orderReturned.getName(), specificOrder.getName());
@@ -2537,6 +2530,8 @@ public class OrdersControllerIT {
         int date = random.nextInt(32);
 
         postgresSupportedCalendar.set(year, month, date, 0, 0, 0);
+
+        postgresSupportedCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Date postgresSupportedDate = postgresSupportedCalendar.getTime();
 

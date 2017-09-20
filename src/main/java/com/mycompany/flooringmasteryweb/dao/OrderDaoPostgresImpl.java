@@ -17,6 +17,8 @@ import com.mycompany.flooringmasteryweb.dto.State;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.inject.Inject;
 
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class OrderDaoPostgresImpl implements OrderDao {
 
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
     private JdbcTemplate jdbcTemplate;
     private ProductDao productDao;
     private StateDao stateDao;
@@ -221,7 +224,20 @@ public class OrderDaoPostgresImpl implements OrderDao {
             order.setTaxRate(rs.getDouble("tax_rate"));
             order.setTax(rs.getDouble("total_tax"));
             order.setTotal(rs.getDouble("grand_total"));
-            order.setDate(rs.getDate("date"));
+
+            try {
+                Date date = rs.getDate("date");
+
+                if (Objects.nonNull(date)) {
+                    String dateString = simpleDateFormat.format(date);
+                    date = simpleDateFormat.parse(dateString);
+                }
+
+                order.setDate(date);
+
+            } catch (ParseException ex) {
+            }
+
             order.setLaborCost(rs.getDouble("labor_cost"));
             order.setArea(rs.getDouble("area"));
 
