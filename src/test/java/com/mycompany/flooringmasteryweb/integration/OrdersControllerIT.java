@@ -132,8 +132,46 @@ public class OrdersControllerIT {
     }
 
     @Test
-    public void clickingASortLinkThenAPaginationLinkWillNotReverseTheSortingTest() {
-        fail("This is not implemented yet.");
+    public void clickingASortLinkThenAPaginationLinkWillNotReverseTheSortingTest() throws IOException {
+        System.out.println("Test That Clicking A Sort Link Then A Pagination Link Will Not Reverse The Sorting.");
+
+        WebClient webClient = new WebClient();
+
+        HttpUrl indexUrl = getOrdersUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        HtmlPage orderIndexPage = webClient.getPage(indexUrl.url());
+        HtmlAnchor sortByNameLink = orderIndexPage.getAnchorByText("Order Name");
+        HtmlPage sortedByNamePage = sortByNameLink.click();
+        HtmlAnchor sortByIdLink = sortedByNamePage.getAnchorByText("Order Number");
+        HtmlPage sortedByIdPage = sortByIdLink.click();
+
+        Cookie idSortedCookie = null;
+
+        Set<Cookie> idSortedCookies = webClient.getCookies(sortedByIdPage.getUrl());
+        for (Cookie cookie : idSortedCookies){
+            if (cookie.getName().toLowerCase().contains("sort_cookie")){
+                idSortedCookie = cookie;
+                break;
+            }
+        }
+
+        assertNotNull(idSortedCookie);
+
+        HtmlAnchor lastPageAnchor = sortedByIdPage.getAnchorByText("Last Page");
+
+        HtmlPage lastPage = lastPageAnchor.click();
+
+        Set<Cookie> afterNavigationCookies = webClient.getCookies(lastPage.getUrl());
+
+        Cookie afterNavigationCookie = afterNavigationCookies.stream()
+                                                                .filter(cookie -> cookie.getName().toLowerCase().contains("sort_cookie"))
+                                                                .findAny()
+                                                                .orElseGet(null);
+
+        assertNotNull(afterNavigationCookie);
+        assertEquals(afterNavigationCookie.getValue(), idSortedCookie.getValue());
     }
 
     @Test
