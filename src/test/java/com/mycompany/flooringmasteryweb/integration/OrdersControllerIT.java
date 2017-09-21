@@ -21,11 +21,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.w3c.dom.Node;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -110,8 +108,27 @@ public class OrdersControllerIT {
     }
 
     @Test
-    public void orderFormContainsPopulatedStateAndProductDropdownsTest() {
-        fail("This is not implemented yet.");
+    public void orderFormContainsPopulatedStateAndProductDropdownsTest() throws IOException {
+        System.out.println("Test That Create Page Contains Populated State and Product Dropdowns.");
+
+        WebClient webClient = new WebClient();
+
+        HttpUrl createUrl = getOrdersUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        HtmlPage orderCreatePage = webClient.getPage(createUrl.url());
+        HtmlForm orderCreateForm = orderCreatePage.getForms().get(0);
+
+        HtmlSelect htmlStateSelect = orderCreateForm.getSelectByName("state");
+        List<HtmlOption> htmlStateOptionsList = htmlStateSelect.getOptions();
+
+        assertTrue(htmlStateOptionsList.size() > 0);
+
+        HtmlSelect productSelect = orderCreateForm.getSelectByName("product");
+        List<HtmlOption> productOptionsList = productSelect.getOptions();
+
+        assertTrue(productOptionsList.size() > 0);
     }
 
     @Test
