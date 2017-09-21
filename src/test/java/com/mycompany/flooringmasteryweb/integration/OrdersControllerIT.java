@@ -9,6 +9,7 @@ import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
+import com.google.common.base.Strings;
 import com.google.gson.*;
 import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.validation.ValidationError;
@@ -39,12 +40,15 @@ public class OrdersControllerIT {
     ApplicationContext ctx;
     URI uriToTest;
     Random random;
-
+    Gson gson;
     Integer orderCountFromIndex = null;
 
     public OrdersControllerIT() {
         ctx = new ClassPathXmlApplicationContext("integrationTest-Context.xml");
         random = new Random();
+        gson = new GsonBuilder()
+                .setDateFormat("MM/dd/yyyy")
+                .create();
     }
 
     @Before
@@ -314,10 +318,6 @@ public class OrdersControllerIT {
 
     @Test
     public void loadIndexJson() throws IOException {
-        Gson gson = new GsonBuilder()
-                .setDateFormat("MM/dd/yyyy")
-                .create();
-
         HttpUrl httpUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .build();
@@ -383,8 +383,18 @@ public class OrdersControllerIT {
             Gson gson = new GsonBuilder()
                     .setDateFormat("MM/dd/yyyy")
                     .create();
-            orders = gson.fromJson(json, Order[].class);
+            try {
+                orders = gson.fromJson(json, Order[].class);
+            }catch (com.google.gson.JsonParseException ex){
+                System.out.println();
+                System.out.println(Strings.repeat("-+", 100));
+                System.out.println();
+                System.out.println(Strings.repeat(" ", 35) + "Some JSON could not be parsed.");
+                System.out.println();
+                System.out.println(json);
 
+                throw ex;
+            }
             assertTrue(orders.length > 20);
         } else {
             fail("Should have been JSON.");
@@ -1226,7 +1236,6 @@ public class OrdersControllerIT {
 
         WebClient createOrderWebClient = new WebClient();
 
-        Gson gson = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
         String orderJson = gson.toJson(orderCommand);
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
@@ -1276,67 +1285,10 @@ public class OrdersControllerIT {
 
         List<Order> list = null;
 
-
-        //Gson isoDateGson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            @Override
-            public Date deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-                try {
-                    return dateFormat.parse(jsonElement.getAsString());
-                } catch (ParseException e) {
-                    return null;
-                }
-            }
-        });
-
-        gsonBuilder.registerTypeAdapter(Date.class, new JsonSerializer<Date>() {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            @Override
-            public JsonElement serialize(Date date, Type type, JsonSerializationContext jsonSerializationContext) {
-
-                String element = dateFormat.format(date);
-
-                return null;
-            }
-        });
-
-        Gson isoDateGson = gsonBuilder.create();
-
-//        ApplicationContext ctxb = new ClassPathXmlApplicationContext("test-OrdersSQLStateSQLProductSQL-applicationContext.xml");
-//
-//        OrderDao orderDao = ctxb.getBean("orderDao", OrderDao.class);
-//
-//        List<Order> orderz = orderDao.list(new ResultSegment<OrderSortByEnum>() {
-//            @Override
-//            public Integer getPageNumber() {
-//                return 0;
-//            }
-//
-//            @Override
-//            public Integer getResultsPerPage() {
-//                return Integer.MAX_VALUE;
-//            }
-//
-//            @Override
-//            public OrderSortByEnum getSortByEnum() {
-//                return OrderSortByEnum.SORT_BY_ID_INVERSE;
-//            }
-//        });
-//
-//        Order[] orderarr = new Order[orderz.size()];
-//        orderarr = orderz.toArray(orderarr);
-//
-//        String orderzString = isoDateGson.toJson(orderarr);
-
         if (getListWebResponse.getContentType().equals("application/json")) {
             String json = getListWebResponse.getContentAsString();
 
-            Order[] orders = isoDateGson.fromJson(json, Order[].class);
+            Order[] orders = gson.fromJson(json, Order[].class);
 
             assertTrue(orders.length > 20);
 
@@ -1379,11 +1331,13 @@ public class OrdersControllerIT {
         Order orderMatchCanidate = list.get(sizee - 1);
 
         assertEquals(orderMatchCanidate.getId(), createdOrder.getId());
-        assertEquals(orderMatchCanidate.getName(), createdOrder.getName());
-        assertEquals(orderMatchCanidate.getArea(), createdOrder.getArea(), 0.001);
-        assertEquals(orderMatchCanidate.getDate(), createdOrder.getDate());
-        assertEquals(Objects.isNull(orderMatchCanidate.getProduct()) ? null : orderMatchCanidate.getProduct().getProductName(), createdOrder.getProduct());
-        assertEquals(Objects.isNull(orderMatchCanidate.getState()) ? null : orderMatchCanidate.getState().getStateName(), createdOrder.getState());
+
+        assertTrue(OrderTest.verifyOrder(orderMatchCanidate, createdOrder));
+//        assertEquals(orderMatchCanidate.getName(), createdOrder.getName());
+//        assertEquals(orderMatchCanidate.getArea(), createdOrder.getArea(), 0.001);
+//        assertEquals(orderMatchCanidate.getDate(), createdOrder.getDate());
+//        assertEquals(Objects.isNull(orderMatchCanidate.getProduct()) ? null : orderMatchCanidate.getProduct().getProductName(), createdOrder.getProduct());
+//        assertEquals(Objects.isNull(orderMatchCanidate.getState()) ? null : orderMatchCanidate.getState().getStateName(), createdOrder.getState());
 
 
         //Order orderMatchCanidate = list.stream()
@@ -1401,32 +1355,39 @@ public class OrdersControllerIT {
 
         assertEquals(orderMatchCanidate.getId(), createdOrder.getId());
         assertEquals(orderMatchCanidate.getName(), createdOrder.getName());
-        assertEquals(orderMatchCanidate.getArea(), createdOrder.getArea(), 0.001);
-        assertEquals(orderMatchCanidate.getDate(), createdOrder.getDate());
-        assertEquals(Objects.isNull(orderMatchCanidate.getProduct()) ? null : orderMatchCanidate.getProduct().getProductName(), createdOrder.getProduct());
-        assertEquals(Objects.isNull(orderMatchCanidate.getState()) ? null : orderMatchCanidate.getState().getStateName(), createdOrder.getState());
 
-        assertNotEquals(order, createdOrder);
+        assertTrue(OrderTest.verifyOrder(orderMatchCanidate, createdOrder));
+//        assertEquals(orderMatchCanidate.getArea(), createdOrder.getArea(), 0.001);
+//        assertEquals(orderMatchCanidate.getDate(), createdOrder.getDate());
+//        assertEquals(Objects.isNull(orderMatchCanidate.getProduct()) ? null : orderMatchCanidate.getProduct().getProductName(), createdOrder.getProduct());
+//        assertEquals(Objects.isNull(orderMatchCanidate.getState()) ? null : orderMatchCanidate.getState().getStateName(), createdOrder.getState());
+
+        try {
+            OrderTest.verifyOrder(order, createdOrder);
+            fail("These are supposed to be two seperate orders.");
+        }catch (java.lang.AssertionError ex){}
+
 
         assertNotNull(createdOrder);
         //Integer createdOrderId = createdOrder.getId();
         orderCommand.setId(createdOrderId);
 
         assertNotNull(createdOrderId);
-        assertEquals(orderCommand, createdOrder);
+        //assertTrue(OrderTest.verifyOrder(orderCommand, createdOrder));
     }
 
     /**
      * Test of searchByLastName method, of class OrderDaoPostgresImpl.
      */
     @Test
-    @Ignore
     public void testSearchByName() throws IOException {
-        System.out.println("searchByLastName");
+        System.out.println("searchByName");
         String lastName = UUID.randomUUID().toString();
 
         Order order = orderGenerator();
         order.setName(lastName);
+
+        OrderCommand orderCommandForCreation = OrderCommand.build(order);
 
         // Create a Order Using the POST endpoint
         HttpUrl createUrl = getOrdersUrlBuilder()
@@ -1435,8 +1396,7 @@ public class OrdersControllerIT {
 
         WebClient createOrderWebClient = new WebClient();
 
-        Gson gson = new GsonBuilder().create();
-        String orderJson = gson.toJson(order);
+        String orderJson = gson.toJson(orderCommandForCreation);
 
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
         createRequest.setRequestBody(orderJson);
@@ -1468,7 +1428,7 @@ public class OrdersControllerIT {
         List<NameValuePair> paramsList = new ArrayList();
 
         paramsList.add(new NameValuePair("searchText", lastName));
-        paramsList.add(new NameValuePair("searchBy", "searchByLastName"));
+        paramsList.add(new NameValuePair("searchBy", "Name"));
 
         HttpUrl searchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
@@ -1494,7 +1454,7 @@ public class OrdersControllerIT {
         assertTrue(result.contains(createdOrder));
         assertEquals(result.size(), 1);
 
-        List<Order> resultb = searchForOrderByLastNameUsingXForm(lastName, gson, searchUrl.url(), "searchByLastName");
+        List<Order> resultb = searchForOrderByLastNameUsingXForm(lastName, gson, searchUrl.url(), "Name");
 
         assertNotNull(resultb);
         assertTrue(resultb.contains(createdOrder));
