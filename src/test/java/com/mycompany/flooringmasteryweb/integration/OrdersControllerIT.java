@@ -1377,7 +1377,7 @@ public class OrdersControllerIT {
     }
 
     /**
-     * Test of searchByLastName method, of class OrderDaoPostgresImpl.
+     * Test of searchByName method, of class OrderDaoPostgresImpl.
      */
     @Test
     public void testSearchByName() throws IOException {
@@ -1425,20 +1425,61 @@ public class OrdersControllerIT {
         // Search for created Order.
         WebClient searchWebClient = new WebClient();
 
-        List<NameValuePair> paramsList = new ArrayList();
-
-        paramsList.add(new NameValuePair("searchText", lastName));
-        paramsList.add(new NameValuePair("searchBy", "Name"));
-
         HttpUrl searchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .build();
 
-        WebRequest searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByLastNameRequest.setRequestParameters(paramsList);
-        searchByLastNameRequest.setAdditionalHeader("Accept", "application/json");
+        HtmlPage searchOrderPage = searchWebClient.getPage(searchUrl.url());
+        HtmlForm orderSearchForm = searchOrderPage.getForms().get(0);
+        HtmlInput searchTextInput = orderSearchForm.getInputByName("searchText");
 
-        Page lastNameSearchPage = searchWebClient.getPage(searchByLastNameRequest);
+        searchTextInput.setValueAttribute(lastName);
+
+        HtmlSelect htmlSelect = orderSearchForm.getSelectByName("searchBy");
+        List<HtmlOption> htmlOptionList = htmlSelect.getOptions();
+
+        Page selectionPage = null;
+        for (HtmlOption htmlOption : htmlOptionList){
+            String optionValue = htmlOption.getValueAttribute();
+            if (optionValue.contains("name")){
+                selectionPage = htmlOption.setSelected(true);
+                break;
+            }
+        }
+
+
+
+//        HtmlInput searchByInput = orderSearchForm.getInputByName("searchBy");
+//        searchByInput.setValueAttribute("searchByName");
+
+        DomNodeList<DomElement> domElementList = searchOrderPage.getElementsByTagName("input");
+
+        HtmlPage searchResultsFromHtmlPage = null;
+
+        for (DomElement domElement: domElementList){
+            if (Objects.equals(domElement.getAttribute("type"), "submit")){
+                searchResultsFromHtmlPage = domElement.click();
+                break;
+            }
+        }
+
+        DomElement resultsTable = searchResultsFromHtmlPage.getElementById("order-table");
+
+        DomNodeList<HtmlElement> rowsOfResultsTable = resultsTable.getElementsByTagName("tr");
+
+        List<>
+
+        for (HtmlElement htmlElement : rowsOfResultsTable){
+            htmlElement.
+        }
+
+         //DomNodeList<DomeNodeElement> submitInputListsearchOrderPage.getElementsByTagName("input");
+
+        WebRequest searchByNameRequest = new WebRequest(searchUrl.url(), HttpMethod.GET);
+        searchByNameRequest.setRequestParameters(mparamsList);
+        searchByNameRequest.setAdditionalHeader("Accept", "application/json");
+
+        Page lastNameSearchPage = searchWebClient.getPage(searchByNameRequest);
 
         assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
 
@@ -1454,7 +1495,7 @@ public class OrdersControllerIT {
         assertTrue(result.contains(createdOrder));
         assertEquals(result.size(), 1);
 
-        List<Order> resultb = searchForOrderByLastNameUsingXForm(lastName, gson, searchUrl.url(), "Name");
+        List<Order> resultb = searchForOrderByNameUsingXForm(lastName, gson, searchUrl.url(), "Name");
 
         assertNotNull(resultb);
         assertTrue(resultb.contains(createdOrder));
@@ -1469,45 +1510,45 @@ public class OrdersControllerIT {
         result = searchForOrderByUsingJson(lastName.toLowerCase(), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByLastNameUsingXForm(lastName.toLowerCase(), gson, searchUrl.url(), "searchByLastName");
+        result = searchForOrderByNameUsingXForm(lastName.toLowerCase(), gson, searchUrl.url(), "searchByName");
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByUsingJson(lastName.toUpperCase(), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByLastNameUsingXForm(lastName.toUpperCase(), gson, searchUrl.url(), "searchByLastName");
+        result = searchForOrderByNameUsingXForm(lastName.toUpperCase(), gson, searchUrl.url(), "searchByName");
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByUsingJson(lastName.substring(5), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByLastNameUsingXForm(lastName.substring(5), gson, searchUrl.url(), "searchByLastName");
+        result = searchForOrderByNameUsingXForm(lastName.substring(5), gson, searchUrl.url(), "searchByName");
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByUsingJson(lastName.substring(5, 20), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20), gson, searchUrl.url(), "searchByLastName");
+        result = searchForOrderByNameUsingXForm(lastName.substring(5, 20), gson, searchUrl.url(), "searchByName");
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByUsingJson(lastName.substring(5, 20).toLowerCase(), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20).toLowerCase(), gson, searchUrl.url(), "searchByLastName");
+        result = searchForOrderByNameUsingXForm(lastName.substring(5, 20).toLowerCase(), gson, searchUrl.url(), "searchByName");
         assertTrue(result.contains(createdOrder));
 
         result = searchForOrderByUsingJson(lastName.substring(5, 20).toUpperCase(), gson, OrderSearchByOptionEnum.NAME, searchUrl.url());
         assertTrue(result.contains(createdOrder));
 
-        result = searchForOrderByLastNameUsingXForm(lastName.substring(5, 20).toUpperCase(), gson, searchUrl.url(), "searchByLastName");
+        result = searchForOrderByNameUsingXForm(lastName.substring(5, 20).toUpperCase(), gson, searchUrl.url(), "searchByName");
         assertTrue(result.contains(createdOrder));
 
         searchWebClient = new WebClient();
 
-        searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-        searchByLastNameRequest.setRequestParameters(paramsList);
+        searchByNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+        searchByNameRequest.setRequestParameters(paramsList);
 
-        HtmlPage lastNameSearchHtmlPage = searchWebClient.getPage(searchByLastNameRequest);
+        HtmlPage lastNameSearchHtmlPage = searchWebClient.getPage(searchByNameRequest);
 
         assertEquals(lastNameSearchHtmlPage.getWebResponse().getStatusCode(), 200);
 
@@ -1545,16 +1586,16 @@ public class OrdersControllerIT {
 
     }
 
-    private List<Order> searchForOrderByLastNameUsingXForm(String lastName, Gson gson, URL searchUrl, String searchBy) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
+    private List<Order> searchForOrderByNameUsingXForm(String lastName, Gson gson, URL searchUrl, String searchBy) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
         WebClient searchWebClient = new WebClient();
         List<NameValuePair> paramsList = new ArrayList();
         paramsList.add(new NameValuePair("searchText", lastName));
         paramsList.add(new NameValuePair("searchBy", searchBy));
 
-        WebRequest searchByLastNameRequest = new WebRequest(searchUrl, HttpMethod.POST);
-        searchByLastNameRequest.setRequestParameters(paramsList);
-        searchByLastNameRequest.setAdditionalHeader("Accept", "application/json");
-        Page lastNameSearchPage = searchWebClient.getPage(searchByLastNameRequest);
+        WebRequest searchByNameRequest = new WebRequest(searchUrl, HttpMethod.POST);
+        searchByNameRequest.setRequestParameters(paramsList);
+        searchByNameRequest.setAdditionalHeader("Accept", "application/json");
+        Page lastNameSearchPage = searchWebClient.getPage(searchByNameRequest);
         assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
         String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
         Order[] returnedOrderList = gson.fromJson(lastNameSearchJson, Order[].class);
@@ -1570,11 +1611,11 @@ public class OrdersControllerIT {
 
         String searchRequestJson = gson.toJson(searchRequest);
 
-        WebRequest searchByLastNameRequest = new WebRequest(searchUrl, HttpMethod.POST);
-        searchByLastNameRequest.setRequestBody(searchRequestJson);
-        searchByLastNameRequest.setAdditionalHeader("Content-type", "application/json");
+        WebRequest searchByNameRequest = new WebRequest(searchUrl, HttpMethod.POST);
+        searchByNameRequest.setRequestBody(searchRequestJson);
+        searchByNameRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page lastNameSearchPage = searchWebClient.getPage(searchByLastNameRequest);
+        Page lastNameSearchPage = searchWebClient.getPage(searchByNameRequest);
 
         String lastNameSearchJson = lastNameSearchPage.getWebResponse().getContentAsString();
         Order[] returnedOrderList = gson.fromJson(lastNameSearchJson, Order[].class);
@@ -1584,7 +1625,7 @@ public class OrdersControllerIT {
     }
 //
 //    /**
-//     * Test of searchByLastName method, of class OrderDaoPostgresImpl.
+//     * Test of searchByName method, of class OrderDaoPostgresImpl.
 //     */
 //    @Test
 //    public void testSearchByEverything() throws IOException {
@@ -1778,7 +1819,7 @@ public class OrdersControllerIT {
 //
 //            switch (searchByEnum) {
 //                case DATE:
-//                    order.setLastName(randomString);
+//                    order.setName(randomString);
 //                    break;
 //                case "searchByFirstName":
 //                    order.setFirstName(randomString);
@@ -1833,7 +1874,7 @@ public class OrdersControllerIT {
 //                            order.setFirstName(randomString);
 //                            break;
 //                        case 4:
-//                            order.setLastName(randomString);
+//                            order.setName(randomString);
 //                            break;
 //                        case 5:
 //                            order.setState(randomString);
@@ -1898,11 +1939,11 @@ public class OrdersControllerIT {
 //                    .addPathSegment("search")
 //                    .build();
 //
-//            WebRequest searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-//            searchByLastNameRequest.setRequestParameters(paramsList);
-//            searchByLastNameRequest.setAdditionalHeader("Accept", "application/json");
+//            WebRequest searchByNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+//            searchByNameRequest.setRequestParameters(paramsList);
+//            searchByNameRequest.setAdditionalHeader("Accept", "application/json");
 //
-//            Page lastNameSearchPage = searchWebClient.getPage(searchByLastNameRequest);
+//            Page lastNameSearchPage = searchWebClient.getPage(searchByNameRequest);
 //
 //            assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
 //
@@ -1919,7 +1960,7 @@ public class OrdersControllerIT {
 //            assertTrue(result.contains(createdOrder));
 //            assertEquals(result.size(), 1);
 //
-//            List<Order> resultb = searchForOrderByLastNameUsingXForm(randomString, gson, searchUrl.url(), searchingBy);
+//            List<Order> resultb = searchForOrderByNameUsingXForm(randomString, gson, searchUrl.url(), searchingBy);
 //
 //            assertNotNull(resultb);
 //            assertTrue(resultb.contains(createdOrder));
@@ -1934,45 +1975,45 @@ public class OrdersControllerIT {
 //            result = searchForOrderByUsingJson(randomString.toLowerCase(), gson, searchOptions[i], searchUrl.url());
 //            assertTrue(result.contains(createdOrder));
 //
-//            result = searchForOrderByLastNameUsingXForm(randomString.toLowerCase(), gson, searchUrl.url(), searchingBy);
+//            result = searchForOrderByNameUsingXForm(randomString.toLowerCase(), gson, searchUrl.url(), searchingBy);
 //            assertTrue(result.contains(createdOrder));
 //
 //            result = searchForOrderByUsingJson(randomString.toUpperCase(), gson, searchOptions[i], searchUrl.url());
 //            assertTrue(result.contains(createdOrder));
 //
-//            result = searchForOrderByLastNameUsingXForm(randomString.toUpperCase(), gson, searchUrl.url(), searchingBy);
+//            result = searchForOrderByNameUsingXForm(randomString.toUpperCase(), gson, searchUrl.url(), searchingBy);
 //            assertTrue(result.contains(createdOrder));
 //
 //            result = searchForOrderByUsingJson(randomString.substring(5), gson, searchOptions[i], searchUrl.url());
 //            assertTrue(result.contains(createdOrder));
 //
-//            result = searchForOrderByLastNameUsingXForm(randomString.substring(5), gson, searchUrl.url(), searchingBy);
+//            result = searchForOrderByNameUsingXForm(randomString.substring(5), gson, searchUrl.url(), searchingBy);
 //            assertTrue(result.contains(createdOrder));
 //
 //            result = searchForOrderByUsingJson(randomString.substring(5, 20), gson, searchOptions[i], searchUrl.url());
 //            assertTrue(result.contains(createdOrder));
 //
-//            result = searchForOrderByLastNameUsingXForm(randomString.substring(5, 20), gson, searchUrl.url(), searchingBy);
+//            result = searchForOrderByNameUsingXForm(randomString.substring(5, 20), gson, searchUrl.url(), searchingBy);
 //            assertTrue(result.contains(createdOrder));
 //
 //            result = searchForOrderByUsingJson(randomString.substring(5, 20).toLowerCase(), gson, searchOptions[i], searchUrl.url());
 //            assertTrue(result.contains(createdOrder));
 //
-//            result = searchForOrderByLastNameUsingXForm(randomString.substring(5, 20).toLowerCase(), gson, searchUrl.url(), searchingBy);
+//            result = searchForOrderByNameUsingXForm(randomString.substring(5, 20).toLowerCase(), gson, searchUrl.url(), searchingBy);
 //            assertTrue(result.contains(createdOrder));
 //
 //            result = searchForOrderByUsingJson(randomString.substring(5, 20).toUpperCase(), gson, searchOptions[i], searchUrl.url());
 //            assertTrue(result.contains(createdOrder));
 //
-//            result = searchForOrderByLastNameUsingXForm(randomString.substring(5, 20).toUpperCase(), gson, searchUrl.url(), searchingBy);
+//            result = searchForOrderByNameUsingXForm(randomString.substring(5, 20).toUpperCase(), gson, searchUrl.url(), searchingBy);
 //            assertTrue(result.contains(createdOrder));
 //
 //            searchWebClient = new WebClient();
 //
-//            searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-//            searchByLastNameRequest.setRequestParameters(paramsList);
+//            searchByNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+//            searchByNameRequest.setRequestParameters(paramsList);
 //
-//            HtmlPage randomStringSearchHtmlPage = searchWebClient.getPage(searchByLastNameRequest);
+//            HtmlPage randomStringSearchHtmlPage = searchWebClient.getPage(searchByNameRequest);
 //
 //            assertEquals(randomStringSearchHtmlPage.getWebResponse().getStatusCode(), 200);
 //
@@ -2003,7 +2044,7 @@ public class OrdersControllerIT {
 //            String xml = specificRow.asXml();
 //
 //            assertTrue(xml.contains(createdOrder.getFirstName()));
-//            assertTrue(xml.contains(createdOrder.getLastName()));
+//            assertTrue(xml.contains(createdOrder.getName()));
 //            assertTrue(xml.contains(Integer.toString(createdOrder.getId())));
 //            assertTrue(xml.contains("Edit"));
 //            assertTrue(xml.contains("Delete"));
@@ -2132,7 +2173,7 @@ public class OrdersControllerIT {
     }
 //
 //    @Test
-//    public void getSortedByLastName() throws IOException {
+//    public void getSortedByName() throws IOException {
 //        HttpUrl httpUrl = getOrdersUrlBuilder()
 //                .addPathSegment("")
 //                .addQueryParameter("sort_by", "last_name")
@@ -2164,7 +2205,7 @@ public class OrdersControllerIT {
 //        List<Order> ordersSortedByComparator = Arrays.asList(ordersReturned);
 //        List<Order> ordersSortedByDatabase = Arrays.asList(ordersReturned2);
 //
-//        ordersSortedByComparator.sort(sortByLastName());
+//        ordersSortedByComparator.sort(sortByName());
 //
 //        for (int i = 0; i < ordersSortedByComparator.size(); i++) {
 //            assertEquals("IDs: " + ordersSortedByComparator.get(i).getId() + ", " + ordersSortedByDatabase.get(i).getId(), ordersSortedByComparator.get(i), ordersSortedByDatabase.get(i));
@@ -2400,52 +2441,52 @@ public class OrdersControllerIT {
 //
 //        WebClient webClient = new WebClient();
 //
-//        OrderSearchRequest orderSearchRequest = new OrderSearchRequest(order.getLastName(), OrderSearchByOptionEnum.LAST_NAME);
+//        OrderSearchRequest orderSearchRequest = new OrderSearchRequest(order.getName(), OrderSearchByOptionEnum.LAST_NAME);
 //
 //        String orderSearchRequestJson2 = gson.toJson(orderSearchRequest);
 //
-//        WebRequest searchByLastNameWebRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
-//        searchByLastNameWebRequest.setRequestBody(orderSearchRequestJson2);
+//        WebRequest searchByNameWebRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
+//        searchByNameWebRequest.setRequestBody(orderSearchRequestJson2);
 //
-//        searchByLastNameWebRequest.setAdditionalHeader("Accept", "application/json");
-//        searchByLastNameWebRequest.setAdditionalHeader("Content-type", "application/json");
+//        searchByNameWebRequest.setAdditionalHeader("Accept", "application/json");
+//        searchByNameWebRequest.setAdditionalHeader("Content-type", "application/json");
 //
-//        Page lastNameSearchPage = webClient.getPage(searchByLastNameWebRequest);
+//        Page lastNameSearchPage = webClient.getPage(searchByNameWebRequest);
 //
 //        assertEquals(lastNameSearchPage.getWebResponse().getStatusCode(), 200);
 //
 //        String searchOrderJson = lastNameSearchPage.getWebResponse().getContentAsString();
 //
-//        Order[] returnedLastNameSearchOrders = gson.fromJson(searchOrderJson, Order[].class);
+//        Order[] returnedNameSearchOrders = gson.fromJson(searchOrderJson, Order[].class);
 //
-//        assertEquals(returnedLastNameSearchOrders.length, 5);
+//        assertEquals(returnedNameSearchOrders.length, 5);
 //
-//        Order firstReturnedLastNameSearchOrder = returnedLastNameSearchOrders[0];
+//        Order firstReturnedNameSearchOrder = returnedNameSearchOrders[0];
 //
-//        assertEquals(daveOrder, firstReturnedLastNameSearchOrder);
+//        assertEquals(daveOrder, firstReturnedNameSearchOrder);
 //
 //        webClient = new WebClient();
 //
-//        URL searchUrl2 = HttpUrl.get(searchByLastNameWebRequest.getUrl()).newBuilder()
+//        URL searchUrl2 = HttpUrl.get(searchByNameWebRequest.getUrl()).newBuilder()
 //                .removeAllQueryParameters("page")
 //                .addQueryParameter("page", Integer.toString(1))
 //                .build()
 //                .url();
 //
-//        searchByLastNameWebRequest.setUrl(searchUrl2);
-//        Page lastNameSearchPage2 = webClient.getPage(searchByLastNameWebRequest);
+//        searchByNameWebRequest.setUrl(searchUrl2);
+//        Page lastNameSearchPage2 = webClient.getPage(searchByNameWebRequest);
 //
 //        assertEquals(lastNameSearchPage2.getWebResponse().getStatusCode(), 200);
 //
-//        Order[] returnedLastNameSearchOrders2
+//        Order[] returnedNameSearchOrders2
 //                = gson.fromJson(lastNameSearchPage2.getWebResponse().getContentAsString(), Order[].class);
 //
-//        assertEquals(returnedLastNameSearchOrders2.length, 5);
+//        assertEquals(returnedNameSearchOrders2.length, 5);
 //
 //        Set<Order> orderSet = new HashSet();
 //
-//        orderSet.addAll(Arrays.asList(returnedLastNameSearchOrders));
-//        orderSet.addAll(Arrays.asList(returnedLastNameSearchOrders2));
+//        orderSet.addAll(Arrays.asList(returnedNameSearchOrders));
+//        orderSet.addAll(Arrays.asList(returnedNameSearchOrders2));
 //
 //        assertEquals(orderSet.size(), 10);
 //

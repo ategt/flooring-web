@@ -224,20 +224,7 @@ public class OrderDaoPostgresImpl implements OrderDao {
             order.setTaxRate(rs.getDouble("tax_rate"));
             order.setTax(rs.getDouble("total_tax"));
             order.setTotal(rs.getDouble("grand_total"));
-
-            try {
-                Date date = rs.getDate("date");
-
-                if (Objects.nonNull(date)) {
-                    String dateString = simpleDateFormat.format(date);
-                    date = simpleDateFormat.parse(dateString);
-                }
-
-                order.setDate(date);
-
-            } catch (ParseException ex) {
-            }
-
+            order.setDate(rs.getDate("date"));
             order.setLaborCost(rs.getDouble("labor_cost"));
             order.setArea(rs.getDouble("area"));
 
