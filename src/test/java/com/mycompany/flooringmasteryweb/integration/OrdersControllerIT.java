@@ -2237,6 +2237,172 @@ public class OrdersControllerIT {
         String json = webResponse.getContentAsString();
         assertEquals(json, "");
     }
+
+    @Test
+    public void paginagtionNavigationDoesNotAppearOnSinglePageIndexTest() throws IOException {
+        System.out.println("Page links should not appear on results with only one page test");
+
+        URL indexUrl = getOrdersUrlBuilder()
+                .addPathSegment("")
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
+                .build()
+                .url();
+
+        WebClient webClient = new WebClient();
+
+        HtmlPage resultPage = webClient.getPage(indexUrl);
+
+        List<HtmlAnchor> links = resultPage.getAnchors();
+
+        for (HtmlAnchor link : links){
+            String href = link.getHrefAttribute();
+            if (href.contains("page")){
+                String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
+                        .filter(query -> query.contains("page="))
+                        .findAny()
+                        .orElse("")
+                        .replace("page=", "");
+
+                assertFalse(Strings.isNullOrEmpty(pageStr));
+            }
+        }
+    }
+
+    @Test
+    public void paginagtionNavigationAppearsOnMultiPageIndexTest() throws IOException {
+        System.out.println("Page links should appear on results with multiple pages test");
+
+        Integer size = getDatabaseSize();
+        assertTrue("This test requires at least three orders to pass.", size > 3);
+
+        URL indexUrl = getOrdersUrlBuilder()
+                .addPathSegment("")
+                .addQueryParameter("results", Integer.toString(1))
+                .addQueryParameter("page", Integer.toString(1))
+                .build()
+                .url();
+
+        WebClient webClient = new WebClient();
+
+        HtmlPage resultPage = webClient.getPage(indexUrl);
+
+        List<HtmlAnchor> links = resultPage.getAnchors();
+
+        int paginationLinks = 0;
+
+        for (HtmlAnchor link : links){
+            String href = link.getHrefAttribute();
+            if (href.contains("page")){
+                String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
+                        .filter(query -> query.contains("page="))
+                        .findAny()
+                        .orElse("")
+                        .replace("page=", "");
+
+                if (Strings.isNullOrEmpty(pageStr)) {
+                    paginationLinks++;
+                }
+            }
+        }
+
+        assertEquals(paginationLinks, 4);
+    }
+
+    @Test
+    public void paginagtionNavigationDoesNotAppearOnSinglePageSearchTest() throws IOException {
+        System.out.println("Page links should not appear on results with only one page test");
+
+        URL searchUrl = getOrdersUrlBuilder()
+                .addPathSegment("search")
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
+                .build()
+                .url();
+
+        WebClient webClient = new WebClient();
+
+        String oneLetter = UUID.randomUUID().toString().substring(0, 1);
+
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new NameValuePair("searchBy", "name"));
+        params.add(new NameValuePair("searchText", oneLetter));
+
+        List<Order> orders = searchForOrderByUsingJson(oneLetter, gson, OrderSearchByOptionEnum.NAME, searchUrl);
+
+        assertTrue("Order search returned less than 3 results. Atleast 3 required for this test to pass.", orders.size() >= 3);
+
+        WebRequest webRequest = new WebRequest(searchUrl);
+        webRequest.setRequestParameters(params);
+        webRequest.setHttpMethod(HttpMethod.POST);
+
+        HtmlPage resultPage = webClient.getPage(webRequest);
+
+        List<HtmlAnchor> links = resultPage.getAnchors();
+
+        for (HtmlAnchor link : links){
+            String href = link.getHrefAttribute();
+            if (href.contains("page")){
+                String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
+                        .filter(query -> query.contains("page="))
+                        .findAny()
+                        .orElse("")
+                        .replace("page=", "");
+
+                assertFalse(Strings.isNullOrEmpty(pageStr));
+            }
+        }
+    }
+
+    @Test
+    public void paginagtionNavigationAppearsOnMultiPageSearchTest() throws IOException {
+        System.out.println("Page links should appear on results with multiple page test");
+
+        URL searchUrl = getOrdersUrlBuilder()
+                .addPathSegment("search")
+                .addQueryParameter("results", Integer.toString(1))
+                .addQueryParameter("page", Integer.toString(1))
+                .build()
+                .url();
+
+        WebClient webClient = new WebClient();
+
+        String oneLetter = UUID.randomUUID().toString().substring(0, 1);
+
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new NameValuePair("searchBy", "name"));
+        params.add(new NameValuePair("searchText", oneLetter));
+
+        List<Order> orders = searchForOrderByUsingJson(oneLetter, gson, OrderSearchByOptionEnum.NAME, searchUrl);
+
+        assertTrue("Order search returned less than 3 results. Atleast 3 required for this test to pass.", orders.size() >= 3);
+
+        WebRequest webRequest = new WebRequest(searchUrl);
+        webRequest.setRequestParameters(params);
+        webRequest.setHttpMethod(HttpMethod.POST);
+
+        HtmlPage resultPage = webClient.getPage(webRequest);
+
+        List<HtmlAnchor> links = resultPage.getAnchors();
+
+        int paginationLinks = 0;
+
+        for (HtmlAnchor link : links){
+            String href = link.getHrefAttribute();
+            if (href.contains("page")){
+                String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
+                        .filter(query -> query.contains("page="))
+                        .findAny()
+                        .orElse("")
+                        .replace("page=", "");
+
+                if (Strings.isNullOrEmpty(pageStr)) {
+                    paginationLinks++;
+                }
+            }
+        }
+
+        assertEquals(paginationLinks, 4);
+    }
+
 //
 //    @Test
 //    public void getSortedByName() throws IOException {

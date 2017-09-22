@@ -65,9 +65,9 @@ public class ControllerUtilities {
             } else {
                 if (Objects.nonNull(resultsPerPageCookie))
                     try {
-                    resultsPerPage = Integer.parseInt(resultsPerPageCookie.getValue());
-                    } catch (NumberFormatException ex){
-                    resultsPerPage = null;
+                        resultsPerPage = Integer.parseInt(resultsPerPageCookie.getValue());
+                    } catch (NumberFormatException ex) {
+                        resultsPerPage = null;
                     }
             }
         }
@@ -133,44 +133,31 @@ public class ControllerUtilities {
                     .replaceQueryParam("searchText", searchQuery);
         }
 
-        boolean displayFirstPage = page > 0;
-        if (displayFirstPage) {
-            String firstQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", 0)
-                    .build()
-                    .getQuery();
-            model.put("first_link", firstQuery);
-        }
+        uriComponentsBuilder.replaceQueryParam("sort_by", "");
 
-        boolean displayPreviousPage = page > 0;
-        if (displayPreviousPage) {
-            String prevQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", page - 1)
-                    .build()
-                    .getQuery();
-            model.put("prev_link", prevQuery);
-        }
-
-        boolean displayNextPage = page < totalPages;
-        if (displayNextPage) {
-            String nextQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", page + 1)
-                    .build()
-                    .getQuery();
-            model.put("next_link", nextQuery);
-        }
-
-        boolean displayLastPage = page < totalPages;
-        if (displayLastPage) {
-            String lastQuery = uri + "?" + uriComponentsBuilder
-                    .replaceQueryParam("page", totalPages)
-                    .build()
-                    .getQuery();
-            model.put("last_link", lastQuery);
-        }
+                                        loadPagingLinkToMap("first_link", page > 0, 0, uriComponentsBuilder, model, uri);
+        boolean displayPreviousPage =   loadPagingLinkToMap("prev_link", page > 0, page - 1, uriComponentsBuilder, model, uri);
+        boolean displayNextPage     =   loadPagingLinkToMap("next_link", page < totalPages, page + 1, uriComponentsBuilder, model, uri);
+                                        loadPagingLinkToMap("last_link", page < totalPages, page, uriComponentsBuilder, model, uri);
 
         if (displayNextPage && displayPreviousPage) {
             model.put("current_page", page);
         }
+    }
+
+    public static boolean loadPagingLinkToMap(String modelKey,
+                                              boolean viewCondition,
+                                              int destinationPageNumber,
+                                              UriComponentsBuilder uriComponentsBuilder,
+                                              Map model,
+                                              String uri) {
+        if (viewCondition) {
+            String linkQuery = uri + "?" + uriComponentsBuilder
+                    .replaceQueryParam("page", destinationPageNumber)
+                    .build()
+                    .getQuery();
+            model.put(modelKey, linkQuery);
+        }
+        return viewCondition;
     }
 }
