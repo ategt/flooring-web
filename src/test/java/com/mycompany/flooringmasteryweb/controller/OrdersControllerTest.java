@@ -820,6 +820,93 @@ public class OrdersControllerTest {
     }
 
     @Test
+    public void searchPostByIdToWebWithPaginationLoadsPagingLinksToModel() throws Exception {
+
+        final String SEARCH_STRING = "1";
+        final String SEARCH_BY = "Everything";
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+                .param("page", "0")
+                .param("results", "1")
+                .param("sort_by", "date")
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        assertTrue(model.containsKey("last_link"));
+        assertTrue(model.containsKey("next_link"));
+
+        List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 1);
+    }
+
+    @Test
+    public void searchPostByIdToWebWithPaginationLoadsPagingLinksToModelOnPage1() throws Exception {
+
+        final String SEARCH_STRING = "1";
+        final String SEARCH_BY = "Everything";
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/search")
+                .param("searchBy", SEARCH_BY)
+                .param("searchText", SEARCH_STRING)
+                .param("page", "1")
+                .param("results", "1")
+                .param("sort_by", "date")
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        assertTrue(model.containsKey("last_link"));
+        assertTrue(model.containsKey("next_link"));
+        assertTrue(model.containsKey("first_link"));
+        assertTrue(model.containsKey("prev_link"));
+
+        List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 1);
+    }
+
+    @Test
+    public void searchWebLoadsPagingLinksToModelOnPage1() throws Exception {
+
+        MvcResult mvcResult = webMvc.perform(get("/orders/search")
+                .param("page", "0")
+                .param("results", "1")
+                .param("sort_by", "date")
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("order\\search"))
+                .andReturn();
+
+        ModelAndView modelAndView = mvcResult.getModelAndView();
+        Map<String, Object> model = modelAndView.getModel();
+
+        assertTrue(model.containsKey("orders"));
+
+        assertTrue(model.containsKey("last_link"));
+        assertTrue(model.containsKey("next_link"));
+
+        List<Order> orders = (List<Order>) model.get("orders");
+
+        assertEquals(orders.size(), 1);
+    }
+
+    @Test
     public void searchPostByIdToWebWithPaginationOnWrongPage() throws Exception {
 
         final String SEARCH_STRING = "1";

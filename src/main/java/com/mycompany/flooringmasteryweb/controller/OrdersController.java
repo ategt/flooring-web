@@ -203,20 +203,22 @@ public class OrdersController implements ApplicationContextAware{
         }
     }
 
-    private void loadTheOrdersList(Map model) {
+    private void loadTheOrdersList(Map model, ResultSegment<OrderSortByEnum> resultSegment) {
 
-        List<Order> orders = orderDao.getList();
+        List<Order> orders = orderDao.list(resultSegment);
         model.put("orders", orders);
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Integer orderId, Map model) {
+    public String edit(@PathVariable("id") Integer orderId,
+                       @CustomModelBinder OrderResultSegment resultSegment,
+                       Map model) {
 
         Order order = orderDao.get(orderId);
 
         OrderCommand orderCommand = orderDao.resolveOrderCommand(order);
         model.put("orderCommand", orderCommand);
-        loadTheOrdersList(model);
+        loadTheOrdersList(model, resultSegment);
 
         return "order\\index";
     }
@@ -237,9 +239,14 @@ public class OrdersController implements ApplicationContextAware{
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String search(Map model) {
+    public String search(@CustomModelBinder OrderResultSegment resultSegment,
+                         HttpServletRequest request,
+                         UriComponentsBuilder uriComponentsBuilder,
+                         Map model) {
 
-        loadTheOrdersList(model);
+        loadTheOrdersList(model, resultSegment);
+
+        ControllerUtilities.generatePagingLinks(applicationContext, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
 
         return "order\\search";
     }
@@ -249,11 +256,15 @@ public class OrdersController implements ApplicationContextAware{
             @CustomModelBinder OrderResultSegment resultSegment,
             @CustomModelBinder OrderSearchRequest addressSearchRequest,
             HttpServletResponse response,
+            HttpServletRequest request,
+            UriComponentsBuilder uriComponentsBuilder,
             Map model) {
 
         List<Order> orders = searchDatabase(addressSearchRequest, resultSegment);
 
         model.put("orders", orders);
+
+        ControllerUtilities.generatePagingLinks(applicationContext, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
 
         return "order\\search";
     }

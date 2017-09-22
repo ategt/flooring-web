@@ -150,8 +150,8 @@ public class OrdersControllerIT {
         Cookie idSortedCookie = null;
 
         Set<Cookie> idSortedCookies = webClient.getCookies(sortedByIdPage.getUrl());
-        for (Cookie cookie : idSortedCookies){
-            if (cookie.getName().toLowerCase().contains("sort_cookie")){
+        for (Cookie cookie : idSortedCookies) {
+            if (cookie.getName().toLowerCase().contains("sort_cookie")) {
                 idSortedCookie = cookie;
                 break;
             }
@@ -166,9 +166,9 @@ public class OrdersControllerIT {
         Set<Cookie> afterNavigationCookies = webClient.getCookies(lastPage.getUrl());
 
         Cookie afterNavigationCookie = afterNavigationCookies.stream()
-                                                                .filter(cookie -> cookie.getName().toLowerCase().contains("sort_cookie"))
-                                                                .findAny()
-                                                                .orElseGet(null);
+                .filter(cookie -> cookie.getName().toLowerCase().contains("sort_cookie"))
+                .findAny()
+                .orElseGet(null);
 
         assertNotNull(afterNavigationCookie);
         assertEquals(afterNavigationCookie.getValue(), idSortedCookie.getValue());
@@ -1330,6 +1330,7 @@ public class OrdersControllerIT {
         HttpUrl getListUrl = getOrdersUrlBuilder()
                 .addPathSegment("")
                 .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
+                .addQueryParameter("sort_by", "id")
                 .build();
 
         WebClient getListWebClient = new WebClient();
@@ -2254,9 +2255,9 @@ public class OrdersControllerIT {
 
         List<HtmlAnchor> links = resultPage.getAnchors();
 
-        for (HtmlAnchor link : links){
+        for (HtmlAnchor link : links) {
             String href = link.getHrefAttribute();
-            if (href.contains("page")){
+            if (href.contains("page")) {
                 String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
                         .filter(query -> query.contains("page="))
                         .findAny()
@@ -2290,16 +2291,16 @@ public class OrdersControllerIT {
 
         int paginationLinks = 0;
 
-        for (HtmlAnchor link : links){
+        for (HtmlAnchor link : links) {
             String href = link.getHrefAttribute();
-            if (href.contains("page")){
+            if (href.contains("page")) {
                 String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
                         .filter(query -> query.contains("page="))
                         .findAny()
                         .orElse("")
                         .replace("page=", "");
 
-                if (Strings.isNullOrEmpty(pageStr)) {
+                if (!Strings.isNullOrEmpty(pageStr)) {
                     paginationLinks++;
                 }
             }
@@ -2338,9 +2339,9 @@ public class OrdersControllerIT {
 
         List<HtmlAnchor> links = resultPage.getAnchors();
 
-        for (HtmlAnchor link : links){
+        for (HtmlAnchor link : links) {
             String href = link.getHrefAttribute();
-            if (href.contains("page")){
+            if (href.contains("page")) {
                 String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
                         .filter(query -> query.contains("page="))
                         .findAny()
@@ -2356,10 +2357,87 @@ public class OrdersControllerIT {
     public void paginagtionNavigationAppearsOnMultiPageSearchTest() throws IOException {
         System.out.println("Page links should appear on results with multiple page test");
 
-        URL searchUrl = getOrdersUrlBuilder()
+        URL singlePageSearchUrl = getOrdersUrlBuilder()
                 .addPathSegment("search")
                 .addQueryParameter("results", Integer.toString(1))
                 .addQueryParameter("page", Integer.toString(1))
+                .build()
+                .url();
+
+        URL fullSearchUrl = getOrdersUrlBuilder()
+                .addPathSegment("search")
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
+                .addQueryParameter("page", Integer.toString(0))
+                .build()
+                .url();
+
+        WebClient webClient = new WebClient();
+
+        String oneLetter = UUID.randomUUID().toString().substring(0, 1);
+
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new NameValuePair("searchBy", "name"));
+        params.add(new NameValuePair("searchText", oneLetter));
+        params.add(new NameValuePair("results", Integer.toString(1)));
+        params.add(new NameValuePair("page", Integer.toString(1)));
+
+        List<Order> orders = searchForOrderByUsingJson(oneLetter, gson, OrderSearchByOptionEnum.NAME, fullSearchUrl);
+
+        if (orders.size() < 3)
+            for (int i = 0; i < 4; i++) {
+
+                Order order = orderGenerator();
+                OrderCommand orderCommand = OrderCommand.build(order);
+                orderCommand.setName(oneLetter + UUID.randomUUID().toString());
+                submitOrder(orderCommand);
+            }
+
+        orders = searchForOrderByUsingJson(oneLetter, gson, OrderSearchByOptionEnum.NAME, fullSearchUrl);
+        assertTrue("This test requires 3 results to pass and generating orders failed.", orders.size() >= 3);
+
+        WebRequest webRequest = new WebRequest(singlePageSearchUrl);
+        webRequest.setRequestParameters(params);
+        webRequest.setHttpMethod(HttpMethod.POST);
+
+        HtmlPage resultPage = webClient.getPage(webRequest);
+
+        List<HtmlAnchor> links = resultPage.getAnchors();
+
+        int paginationLinks = 0;
+
+        for (HtmlAnchor link : links) {
+            String href = link.getHrefAttribute();
+            if (href.contains("page")) {
+                String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
+                        .filter(query -> query.contains("page="))
+                        .findAny()
+                        .orElse("")
+                        .replace("page=", "");
+
+                if (!Strings.isNullOrEmpty(pageStr)) {
+                    paginationLinks++;
+                }
+            }
+        }
+
+        assertEquals(paginationLinks, 4);
+    }
+
+    @Test
+    public void paginagtionNavigationAppearsOnMultiPageSearchFromCookiesTest() throws IOException {
+        System.out.println("Page links should appear on results with multiple page test");
+
+        URL singlePageSearchUrl = getOrdersUrlBuilder()
+                .addPathSegment("search")
+                .addQueryParameter("results", Integer.toString(1))
+                .addQueryParameter("page", Integer.toString(1))
+                .build()
+                .url();
+
+        URL fullSearchUrl = getOrdersUrlBuilder()
+                .addPathSegment("search")
+                .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
+                .addQueryParameter("page", Integer.toString(0))
                 .build()
                 .url();
 
@@ -2371,13 +2449,25 @@ public class OrdersControllerIT {
         params.add(new NameValuePair("searchBy", "name"));
         params.add(new NameValuePair("searchText", oneLetter));
 
-        List<Order> orders = searchForOrderByUsingJson(oneLetter, gson, OrderSearchByOptionEnum.NAME, searchUrl);
+        List<Order> orders = searchForOrderByUsingJson(oneLetter, gson, OrderSearchByOptionEnum.NAME, fullSearchUrl);
 
-        assertTrue("Order search returned less than 3 results. Atleast 3 required for this test to pass.", orders.size() >= 3);
+        if (orders.size() < 3)
+            for (int i = 0; i < 4; i++) {
 
-        WebRequest webRequest = new WebRequest(searchUrl);
+                Order order = orderGenerator();
+                OrderCommand orderCommand = OrderCommand.build(order);
+                orderCommand.setName(oneLetter + UUID.randomUUID().toString());
+                submitOrder(orderCommand);
+            }
+
+        orders = searchForOrderByUsingJson(oneLetter, gson, OrderSearchByOptionEnum.NAME, fullSearchUrl);
+        assertTrue("This test requires 3 results to pass and generating orders failed.", orders.size() >= 3);
+
+        WebRequest webRequest = new WebRequest(singlePageSearchUrl);
         webRequest.setRequestParameters(params);
         webRequest.setHttpMethod(HttpMethod.POST);
+
+        HtmlPage loadSinglePageSearchingCookiesIntoTheClient = webClient.getPage(singlePageSearchUrl);
 
         HtmlPage resultPage = webClient.getPage(webRequest);
 
@@ -2385,16 +2475,16 @@ public class OrdersControllerIT {
 
         int paginationLinks = 0;
 
-        for (HtmlAnchor link : links){
+        for (HtmlAnchor link : links) {
             String href = link.getHrefAttribute();
-            if (href.contains("page")){
+            if (href.contains("page")) {
                 String pageStr = Arrays.stream(href.replace("?", "&").split("&"))
                         .filter(query -> query.contains("page="))
                         .findAny()
                         .orElse("")
                         .replace("page=", "");
 
-                if (Strings.isNullOrEmpty(pageStr)) {
+                if (!Strings.isNullOrEmpty(pageStr)) {
                     paginationLinks++;
                 }
             }
@@ -2403,6 +2493,49 @@ public class OrdersControllerIT {
         assertEquals(paginationLinks, 4);
     }
 
+    public Order submitOrder(OrderCommand orderCommand) throws IOException {
+
+        // Create Generated Order
+        HttpUrl createUrl = getOrdersUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient createOrderWebClient = new WebClient();
+
+        String orderJson = gson.toJson(orderCommand);
+
+        WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
+        createRequest.setRequestBody(orderJson);
+        createRequest.setAdditionalHeader("Accept", "application/json");
+        createRequest.setAdditionalHeader("Content-type", "application/json");
+
+        Page createdOrderPage;
+        try {
+            createdOrderPage = createOrderWebClient.getPage(createRequest);
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
+            WebResponse webResponse = ex.getResponse();
+            WebRequest webRequest = webResponse.getWebRequest();
+            String requestBody = webRequest.getRequestBody();
+            System.out.println("RequestBody: " + requestBody);
+            throw ex;
+        }
+
+        WebResponse createOrderWebResponse = createdOrderPage.getWebResponse();
+        assertEquals(createOrderWebResponse.getStatusCode(), 200);
+        assertTrue(createOrderWebResponse.getContentLength() > 100);
+
+        Order createdOrder = null;
+
+        if (createOrderWebResponse.getContentType().equals("application/json")) {
+            String json = createOrderWebResponse.getContentAsString();
+            createdOrder = gson.fromJson(json, Order.class);
+
+            assertNotNull(createdOrder);
+        } else {
+            fail("Should have been JSON.");
+        }
+        return createdOrder;
+    }
 //
 //    @Test
 //    public void getSortedByName() throws IOException {

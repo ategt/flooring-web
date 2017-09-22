@@ -1,5 +1,6 @@
 package com.mycompany.flooringmasteryweb.modelBinding;
 
+import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
 import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.ResultSegment;
@@ -17,6 +18,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Objects;
 
 public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver, ApplicationContextAware {
@@ -59,6 +61,28 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
         String resultsPerPageString = nativeWebRequest.getParameter("results");
         String sortByString = nativeWebRequest.getParameter("sort_by");
 
+        Map<String, String[]> params;
+
+        params = nativeWebRequest.getParameterMap();
+
+        if (Strings.isNullOrEmpty(pageString) &&
+                Objects.nonNull(params) &&
+                params.containsKey("page")) {
+            pageString = params.get("page")[0];
+        }
+
+        if (Strings.isNullOrEmpty(resultsPerPageString) &&
+                Objects.nonNull(params) &&
+                params.containsKey("results")) {
+            resultsPerPageString = params.get("results")[0];
+        }
+
+        if (Strings.isNullOrEmpty(sortByString) &&
+                Objects.nonNull(params) &&
+                params.containsKey("sort_by")) {
+            sortByString = params.get("sort_by")[0];
+        }
+
         Integer page = null;
         try {
             page = Integer.parseInt(pageString);
@@ -97,7 +121,7 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
     private OrderSortByEnum updateSortEnum(String sortBy, HttpServletResponse response, Cookie sortCookie) {
         sortBy = checkForReverseRequest(sortBy, sortCookie);
 
-        if (sortBy != null) {
+        if (!Strings.isNullOrEmpty(sortBy)) {
             response.addCookie(new Cookie(ControllerUtilities.SORT_COOKIE_NAME, sortBy));
         } else if (sortCookie != null && sortCookie.getValue() != null) {
             sortBy = sortCookie.getValue();
@@ -111,9 +135,10 @@ public class OrderResultSegmentResolver implements HandlerMethodArgumentResolver
             OrderSortByEnum sortOld = OrderSortByEnum.parse(sortCookie.getValue());
             OrderSortByEnum sortNew = OrderSortByEnum.parse(sortBy);
 
-            if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
-                sortBy = sortOld.reverse().toString();
-            }
+            if (Objects.nonNull(sortOld) && Objects.nonNull(sortNew))
+                if (sortOld.equals(sortNew) || sortOld.reverse().equals(sortNew)) {
+                    sortBy = sortOld.reverse().toString();
+                }
         }
         return sortBy;
     }

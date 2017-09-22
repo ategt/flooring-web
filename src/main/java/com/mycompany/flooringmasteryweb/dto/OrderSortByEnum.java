@@ -24,7 +24,8 @@ public enum OrderSortByEnum {
     SORT_BY_DATE_INVERSE;
 
     public static OrderSortByEnum parse(String input) {
-        input = Strings.nullToEmpty(input);
+        if (Strings.isNullOrEmpty(input))
+            return null;
 
         OrderSortByEnum currentEnum = null;
 
