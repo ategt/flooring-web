@@ -138,7 +138,7 @@ public class ControllerUtilities {
                                         loadPagingLinkToMap("first_link", page > 0, 0, uriComponentsBuilder, model, uri);
         boolean displayPreviousPage =   loadPagingLinkToMap("prev_link", page > 0, page - 1, uriComponentsBuilder, model, uri);
         boolean displayNextPage     =   loadPagingLinkToMap("next_link", page < totalPages, page + 1, uriComponentsBuilder, model, uri);
-                                        loadPagingLinkToMap("last_link", page < totalPages, page, uriComponentsBuilder, model, uri);
+                                        loadPagingLinkToMap("last_link", page < totalPages, totalPages, uriComponentsBuilder, model, uri);
 
         if (displayNextPage && displayPreviousPage) {
             model.put("current_page", page);

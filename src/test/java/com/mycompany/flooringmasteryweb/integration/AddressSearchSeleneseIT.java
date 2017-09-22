@@ -115,6 +115,7 @@ public class AddressSearchSeleneseIT {
 
         URL url = getAddressUrlBuilder()
                 .addPathSegment("search")
+                .addQueryParameter("results", "1")
                 .build()
                 .url();
 
