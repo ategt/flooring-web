@@ -6,6 +6,8 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
+import com.mycompany.flooringmasteryweb.validation.ValidStateConstraint;
+
 import java.util.Objects;
 
 /**
@@ -13,7 +15,11 @@ import java.util.Objects;
  * @author apprentice
  */
 public class StateCommand {
+
+    @ValidStateConstraint
     private String stateName;
+
+    @ValidStateConstraint
     private String stateAbbreviation;
     private double stateTax;
 

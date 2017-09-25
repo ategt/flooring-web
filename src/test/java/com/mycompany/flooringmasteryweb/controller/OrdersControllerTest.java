@@ -8,6 +8,8 @@ import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver;
+import com.mycompany.flooringmasteryweb.validation.ValidationError;
+import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -15,6 +17,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
@@ -1190,4 +1193,115 @@ public class OrdersControllerTest {
 
         assertEquals(orders.size(), 0);
     }
+
+    @Test
+    public void testStateValidation() throws Exception {
+
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
+
+        commandOrder.setState("MN");
+        commandOrder.setProduct("Product");
+
+        Order reconstructedOrder = OrderTest.orderGenerator();
+        Order outputOrder = OrderTest.orderGenerator();
+
+        Mockito.when(mockProductDao.validProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn(true);
+        Mockito.when(mockProductDao.bestGuessProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn("Product Name");
+        Mockito.when(mockProductDao.get(ArgumentMatchers.eq("Product Name"))).thenReturn(new Product());
+        Mockito.when(mockStateDao.get(ArgumentMatchers.anyString())).thenReturn(new State());
+
+        Mockito.when(mockOrdersDao.orderBuilder(ArgumentMatchers.any(OrderCommand.class))).thenReturn(reconstructedOrder);
+        Mockito.when(mockOrdersDao.create(ArgumentMatchers.eq(reconstructedOrder))).thenReturn(outputOrder);
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        MvcResult mvcResult = mockMvc.perform(post("/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderJson)
+        )
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseContent = mvcResult.getResponse().getContentAsString();
+        Order orderReturned = gsonDeserializer.fromJson(responseContent, Order.class);
+
+        assertNotNull(orderReturned);
+        assertTrue(OrderTest.verifyOrder(outputOrder, orderReturned));
+    }
+
+    @Test
+    public void testStateInvalidationValidation() throws Exception {
+
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
+
+        commandOrder.setState("HQ");
+        commandOrder.setProduct("Product");
+
+        Order reconstructedOrder = OrderTest.orderGenerator();
+        Order outputOrder = OrderTest.orderGenerator();
+
+        Mockito.when(mockProductDao.validProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn(true);
+        Mockito.when(mockProductDao.bestGuessProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn("Product Name");
+        Mockito.when(mockProductDao.get(ArgumentMatchers.eq("Product Name"))).thenReturn(new Product());
+        Mockito.when(mockStateDao.get(ArgumentMatchers.anyString())).thenReturn(new State());
+
+        Mockito.when(mockOrdersDao.orderBuilder(ArgumentMatchers.any(OrderCommand.class))).thenReturn(reconstructedOrder);
+        Mockito.when(mockOrdersDao.create(ArgumentMatchers.eq(reconstructedOrder))).thenReturn(outputOrder);
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        mockMvc.perform(post("/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(orderJson)
+        )
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testStateInvalidationValidationFromWebContext() throws Exception {
+
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
+
+        commandOrder.setState("HQ");
+        commandOrder.setProduct("Product");
+
+        Order reconstructedOrder = OrderTest.orderGenerator();
+        Order outputOrder = OrderTest.orderGenerator();
+
+        Mockito.when(mockProductDao.validProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn(true);
+        Mockito.when(mockProductDao.bestGuessProductName(ArgumentMatchers.eq(commandOrder.getProduct()))).thenReturn("Product Name");
+        Mockito.when(mockProductDao.get(ArgumentMatchers.eq("Product Name"))).thenReturn(new Product());
+        Mockito.when(mockStateDao.get(ArgumentMatchers.anyString())).thenReturn(new State());
+
+        Mockito.when(mockOrdersDao.orderBuilder(ArgumentMatchers.any(OrderCommand.class))).thenReturn(reconstructedOrder);
+        Mockito.when(mockOrdersDao.create(ArgumentMatchers.eq(reconstructedOrder))).thenReturn(outputOrder);
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderJson)
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        ValidationErrorContainer validationErrorContainer =
+                gsonDeserializer.fromJson(content, ValidationErrorContainer.class);
+
+        List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
+
+        assertTrue(validationErrorList.stream().anyMatch(
+                validationError -> validationError.getFieldName().equalsIgnoreCase("state"))
+        );
+
+    }
+
 }
