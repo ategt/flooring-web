@@ -139,7 +139,7 @@ public class OrdersController implements ApplicationContextAware{
 
     private void validateInputs(OrderCommand orderCommand, BindingResult bindingResult) {
         //validateState(orderCommand, bindingResult);
-        validateProduct(orderCommand, bindingResult);
+       //validateProduct(orderCommand, bindingResult);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)

@@ -8,6 +8,8 @@ import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver;
+import com.mycompany.flooringmasteryweb.validation.BeanValidatorTestUtils;
+import com.mycompany.flooringmasteryweb.validation.ValidProductValidator;
 import com.mycompany.flooringmasteryweb.validation.ValidationError;
 import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
 import org.junit.*;
@@ -28,9 +30,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.SpringConstraintValidatorFactory;
+import org.springframework.web.bind.support.SpringWebConstraintValidatorFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.PostConstruct;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -115,9 +124,14 @@ public class OrdersControllerTest {
         OrderResultSegmentResolver orderResultSegmentResolver = new OrderResultSegmentResolver();
         orderResultSegmentResolver.setApplicationContext(webApplicationContext);
 
+        SpringWebConstraintValidatorFactory springWebConstraintValidatorFactory = new SpringWebConstraintValidatorFactory();
+        ValidProductValidator validProductValidator1 = springWebConstraintValidatorFactory.getInstance(ValidProductValidator.class);
+
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
                 .setCustomArgumentResolvers(new OrderSearchRequestResolver(), orderResultSegmentResolver)
+                //.addValidator(validProductValidator1)
+
                 .build();
 
         webMvc = MockMvcBuilders
@@ -125,6 +139,26 @@ public class OrdersControllerTest {
                 .build();
 
         ordersController.setApplicationContext(webApplicationContext);
+
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        Validator validator = validatorFactory.getValidator();
+
+        ValidProductValidator validProductValidator = new ValidProductValidator();
+        validProductValidator.initialize(null);
+
+        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+        //localValidatorFactoryBean.=
+
+        //new SpringConstraintValidatorFactory();
+        //new SpringConstraintValidatorFactory()
+
+
+
+
+        //myValidator.initialize(null);
+        //BeanValidatorTestUtils.replaceValidatorInContext(validator, validProductValidator, e);
+
+
     }
 
     @After
@@ -317,6 +351,14 @@ public class OrdersControllerTest {
 
     @Test
     public void create() throws Exception {
+
+        OrderResultSegmentResolver orderResultSegmentResolver = new OrderResultSegmentResolver();
+        orderResultSegmentResolver.setApplicationContext(webApplicationContext);
+
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(ordersController)
+                .setCustomArgumentResolvers(new OrderSearchRequestResolver(), orderResultSegmentResolver)
+                .build();
 
         OrderCommand commandOrder =
                 OrderCommand.build(OrderTest.orderGenerator());
@@ -1297,6 +1339,10 @@ public class OrdersControllerTest {
 
     @Test
     public void testProductInvalidationValidationFromWebContext() throws Exception {
+
+        webMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .build();
 
         OrderCommand commandOrder =
                 OrderCommand.build(OrderTest.orderGenerator());

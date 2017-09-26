@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mycompany.flooringmasteryweb.modelBinding.CustomDateDeserializer;
 import com.mycompany.flooringmasteryweb.modelBinding.CustomDateSerializer;
+import com.mycompany.flooringmasteryweb.validation.ValidProductConstraint;
 import com.mycompany.flooringmasteryweb.validation.ValidStateConstraint;
 
 
@@ -39,6 +40,7 @@ public class OrderCommand {
 
     @NotNull(message = "{validation.orderCommand.product.null}")
     @Size(min = 2, max = 45, message = "{validation.orderCommand.product.size}")
+    @ValidProductConstraint
     private String product;
 
     @NotNull(message = "{validation.orderCommand.date.null}")
