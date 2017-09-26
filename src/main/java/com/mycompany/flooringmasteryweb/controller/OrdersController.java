@@ -138,7 +138,7 @@ public class OrdersController implements ApplicationContextAware{
     }
 
     private void validateInputs(OrderCommand orderCommand, BindingResult bindingResult) {
-        validateState(orderCommand, bindingResult);
+        //validateState(orderCommand, bindingResult);
         validateProduct(orderCommand, bindingResult);
     }
 
