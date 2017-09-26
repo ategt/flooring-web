@@ -1294,4 +1294,37 @@ public class OrdersControllerTest {
                 validationError -> validationError.getFieldName().equalsIgnoreCase("state"))
         );
     }
+
+    @Test
+    public void testProductInvalidationValidationFromWebContext() throws Exception {
+
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
+
+        commandOrder.setState("MN");
+        commandOrder.setProduct(UUID.randomUUID().toString());
+        commandOrder.setId(0);
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        MvcResult mvcResult = webMvc.perform(post("/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderJson)
+        )
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = mvcResult.getResponse().getContentAsString();
+
+        ValidationErrorContainer validationErrorContainer =
+                gsonDeserializer.fromJson(content, ValidationErrorContainer.class);
+
+        List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
+
+        assertTrue(validationErrorList.stream().anyMatch(
+                validationError -> validationError.getFieldName().equalsIgnoreCase("product"))
+        );
+    }
 }
