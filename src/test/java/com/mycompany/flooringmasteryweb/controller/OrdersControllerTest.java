@@ -323,6 +323,7 @@ public class OrdersControllerTest {
 
         commandOrder.setState("MN");
         commandOrder.setProduct("Product");
+        commandOrder.setId(0);
 
         Order reconstructedOrder = OrderTest.orderGenerator();
         Order outputOrder = OrderTest.orderGenerator();
@@ -1202,6 +1203,8 @@ public class OrdersControllerTest {
 
         commandOrder.setState("MN");
         commandOrder.setProduct("Product");
+
+        commandOrder.setId(0);
 
         Order reconstructedOrder = OrderTest.orderGenerator();
         Order outputOrder = OrderTest.orderGenerator();

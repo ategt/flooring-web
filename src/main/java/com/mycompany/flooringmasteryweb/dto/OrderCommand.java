@@ -30,7 +30,6 @@ public class OrderCommand {
 
     @NotNull(message = "{validation.orderCommand.name.null}")
     @Size(min = 2, max = 45, message = "{validation.orderCommand.name.size}")
-    @ValidStateConstraint
     private String name;
 
     @NotNull(message = "{validation.orderCommand.state.null}")
@@ -42,7 +41,6 @@ public class OrderCommand {
     @Size(min = 2, max = 45, message = "{validation.orderCommand.product.size}")
     private String product;
 
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "UTC")
     @NotNull(message = "{validation.orderCommand.date.null}")
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonSerialize(using= CustomDateSerializer.class)
@@ -50,9 +48,6 @@ public class OrderCommand {
 
     @Min(0)
     private double area;
-
-    @JsonRawValue
-    private String json;
 
     @Override
     public boolean equals(Object object) {
@@ -197,13 +192,5 @@ public class OrderCommand {
         orderCommand.setProduct(productName);
 
         return orderCommand;
-    }
-
-    public String getJson() {
-        return json;
-    }
-
-    public void setJson(String json) {
-        this.json = json;
     }
 }
