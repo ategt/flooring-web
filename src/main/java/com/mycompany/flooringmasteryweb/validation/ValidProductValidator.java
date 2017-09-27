@@ -21,9 +21,6 @@ public class ValidProductValidator implements ApplicationContextAware, Constrain
     @Override
     public boolean isValid(String productInput,
                            ConstraintValidatorContext constraintValidatorContext) {
-        if (Objects.isNull(applicationContext)){
-            applicationContext = ApplicationContextProvider.getApplicationContext();
-        }
 
         ProductDao productDao = applicationContext.getBean("productDao", ProductDao.class);
         return productDao.validProductName(productInput);

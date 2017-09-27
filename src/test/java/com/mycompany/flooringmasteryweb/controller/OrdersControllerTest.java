@@ -10,6 +10,8 @@ import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver;
 import com.mycompany.flooringmasteryweb.validation.*;
+import mockit.Expectations;
+import mockit.Mocked;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -42,6 +44,7 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.PostConstruct;
+import javax.validation.ConstraintValidatorContext;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -73,6 +76,9 @@ public class OrdersControllerTest {
 
     @Mock
     private StateDao mockStateDao;
+
+    @Mocked
+    ValidProductValidator validProductValidator;
 
     @Mock
     private ProductDao mockProductDao;
@@ -134,31 +140,9 @@ public class OrdersControllerTest {
         OrderResultSegmentResolver orderResultSegmentResolver = new OrderResultSegmentResolver();
         orderResultSegmentResolver.setApplicationContext(webApplicationContext);
 
-        //SpringWebConstraintValidatorFactory springWebConstraintValidatorFactory = new SpringWebConstraintValidatorFactory();
-        //ValidProductValidator validProductValidator1 = springWebConstraintValidatorFactory.getInstance(ValidProductValidator.class);
-
-        //StubValidator validator = new StubValidator();
-
-        final GenericWebApplicationContext context = new GenericWebApplicationContext(servletContext);
-
-
-        final ConfigurableListableBeanFactory beanFactory = ((ConfigurableApplicationContext) context).getBeanFactory();
-        beanFactory.registerSingleton(ValidProductValidator.class.getCanonicalName(), new ValidProductValidator());
-        context.refresh();
-
-        LocalValidatorFactoryBean validatorFactoryBean = new LocalValidatorFactoryBean();
-        validatorFactoryBean.setApplicationContext(context);
-
-        TestConstrainValidationFactory constraintFactory = new TestConstrainValidationFactory(context);
-        validatorFactoryBean.setConstraintValidatorFactory(constraintFactory);
-        validatorFactoryBean.setProviderClass(HibernateValidator.class);
-        validatorFactoryBean.afterPropertiesSet();
-
-
         mockMvc = MockMvcBuilders
                 .standaloneSetup(ordersController)
                 .setCustomArgumentResolvers(new OrderSearchRequestResolver(), orderResultSegmentResolver)
-                .setValidator(validatorFactoryBean)
                 .build();
 
         webMvc = MockMvcBuilders
@@ -166,23 +150,6 @@ public class OrdersControllerTest {
                 .build();
 
         ordersController.setApplicationContext(webApplicationContext);
-
-//        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-//        Validator validator = validatorFactory.getValidator();
-//
-//        ValidProductValidator validProductValidator = new ValidProductValidator();
-//        validProductValidator.initialize(null);
-//
-//        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
-        //localValidatorFactoryBean.=
-
-        //new SpringConstraintValidatorFactory();
-        //new SpringConstraintValidatorFactory()
-
-
-        //myValidator.initialize(null);
-        //BeanValidatorTestUtils.replaceValidatorInContext(validator, validProductValidator, e);
-
 
     }
 
@@ -404,7 +371,16 @@ public class OrdersControllerTest {
 
         String orderJson = gsonDeserializer.toJson(commandOrder);
 
-        switchToMockContext();
+        new Expectations() {{
+
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            result = true;
+        }};
+
+        //switchToMockContext();
+
+        //when()
+        when(mockProductDao.validProductName(ArgumentMatchers.anyString())).thenReturn(true);
 
         MvcResult mvcResult = mockMvc.perform(post("/orders/")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -431,7 +407,7 @@ public class OrdersControllerTest {
         previousApplicationContext = ApplicationContextProvider.getApplicationContext();
         ApplicationContext applicationContext = Mockito.mock(ApplicationContext.class);
         new ApplicationContextProvider().setApplicationContext(applicationContext);
-        when(applicationContext.getBean("productDao", ProductDao.class)).thenReturn(mockProductDao);
+        when(applicationContext.getBean(ArgumentMatchers.contains("productDao"), ArgumentMatchers.any(ProductDao.class))).thenReturn(mockProductDao);
     }
 
     @Test
