@@ -3,6 +3,7 @@ package com.mycompany.flooringmasteryweb.interceptors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.util.concurrent.AsyncFunction;
 import com.mycompany.flooringmasteryweb.dao.TimingDao;
 import com.mycompany.flooringmasteryweb.dto.Timing;
 import org.springframework.beans.BeansException;
@@ -16,7 +17,6 @@ import java.util.Objects;
 public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
-    private Timing timing;
 
     //before the actual handler will be executed
     public boolean preHandle(HttpServletRequest request,
@@ -41,13 +41,12 @@ public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements
 
         long executeTime = endTime - startTime;
 
-        if (Objects.nonNull(modelAndView))
-            //modified the exisitng modelAndView
-            modelAndView.getModel().put("executeTime", executeTime);
-
-
         Timing timing = buildTiming(handler, request, startTime, endTime, executeTime);
-        this.timing = timing;
+
+        TimingDao timingDao = applicationContext.getBean("timingDao", TimingDao.class);
+
+        if (!timing.getInvokingClassName().toLowerCase().contains("timing"))
+            timingDao.create(timing);
 
     }
 
@@ -63,10 +62,6 @@ public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        TimingDao timingDao = applicationContext.getBean("timingDao", TimingDao.class);
-
-        if (!timing.getInvokingClassName().toLowerCase().contains("timing"))
-            timingDao.create(this.timing);
     }
 
     @Override
