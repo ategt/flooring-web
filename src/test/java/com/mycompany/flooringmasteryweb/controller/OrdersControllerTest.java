@@ -12,6 +12,7 @@ import com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver;
 import com.mycompany.flooringmasteryweb.validation.*;
 import mockit.Expectations;
 import mockit.Mocked;
+import mockit.Verifications;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -372,14 +373,10 @@ public class OrdersControllerTest {
         String orderJson = gsonDeserializer.toJson(commandOrder);
 
         new Expectations() {{
-
             validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
             result = true;
         }};
 
-        //switchToMockContext();
-
-        //when()
         when(mockProductDao.validProductName(ArgumentMatchers.anyString())).thenReturn(true);
 
         MvcResult mvcResult = mockMvc.perform(post("/orders/")
@@ -412,6 +409,11 @@ public class OrdersControllerTest {
 
     @Test
     public void update() throws Exception {
+
+        new Expectations() {{
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            result = true;
+        }};
 
         OrderCommand commandOrder =
                 OrderCommand.build(OrderTest.orderGenerator());
@@ -452,6 +454,11 @@ public class OrdersControllerTest {
 
     @Test
     public void updateWithoutId() throws Exception {
+
+        new Expectations() {{
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            result = true;
+        }};
 
         OrderCommand commandOrder =
                 OrderCommand.build(OrderTest.orderGenerator());
@@ -495,6 +502,11 @@ public class OrdersControllerTest {
 
     @Test
     public void updateWithIdZero() throws Exception {
+
+        new Expectations() {{
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            result = true;
+        }};
 
         OrderCommand commandOrder =
                 OrderCommand.build(OrderTest.orderGenerator());
@@ -1261,6 +1273,11 @@ public class OrdersControllerTest {
     @Test
     public void testStateValidation() throws Exception {
 
+        new Expectations() {{
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            result = true;
+        }};
+
         OrderCommand commandOrder =
                 OrderCommand.build(OrderTest.orderGenerator());
 
@@ -1360,6 +1377,68 @@ public class OrdersControllerTest {
         assertTrue(validationErrorList.stream().anyMatch(
                 validationError -> validationError.getFieldName().equalsIgnoreCase("state"))
         );
+    }
+
+    @Test
+    public void testProductValidatorMockingSucessfulPositiveTest() throws Exception {
+
+        new Expectations() {{
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            result = true;
+        }};
+
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
+
+        commandOrder.setState("MN");
+        commandOrder.setProduct(UUID.randomUUID().toString());
+        commandOrder.setId(0);
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        MvcResult mvcResult = mockMvc.perform(post("/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderJson)
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        new Verifications(){{
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            minTimes = 1;
+        }};
+    }
+
+    @Test
+    public void testProductValidatorMockingSucessfulNegativeTest() throws Exception {
+
+        new Expectations() {{
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            result = false;
+        }};
+
+        OrderCommand commandOrder =
+                OrderCommand.build(OrderTest.orderGenerator());
+
+        commandOrder.setState("MN");
+        commandOrder.setProduct(UUID.randomUUID().toString());
+        commandOrder.setId(0);
+
+        String orderJson = gsonDeserializer.toJson(commandOrder);
+
+        MvcResult mvcResult = mockMvc.perform(post("/orders/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(orderJson)
+        )
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        new Verifications(){{
+            validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
+            minTimes = 1;
+        }};
     }
 
     @Test
