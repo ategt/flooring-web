@@ -120,8 +120,6 @@ public class OrdersController implements ApplicationContextAware{
     public Order update(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult)
             throws  MethodArgumentNotValidException {
 
-        validateInputs(orderCommand, bindingResult);
-
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(null, bindingResult);
         } else {
@@ -137,15 +135,9 @@ public class OrdersController implements ApplicationContextAware{
         }
     }
 
-    private void validateInputs(OrderCommand orderCommand, BindingResult bindingResult) {
-        //validateState(orderCommand, bindingResult);
-       //validateProduct(orderCommand, bindingResult);
-    }
-
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
     public Order create(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult) throws MethodArgumentNotValidException {
-        validateInputs(orderCommand, bindingResult);
 
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(null, bindingResult);

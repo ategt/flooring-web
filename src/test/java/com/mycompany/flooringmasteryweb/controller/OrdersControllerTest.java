@@ -7,24 +7,24 @@ import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
-import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver;
-import com.mycompany.flooringmasteryweb.validation.*;
+import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
+import com.mycompany.flooringmasteryweb.validation.ValidProductValidator;
+import com.mycompany.flooringmasteryweb.validation.ValidationError;
+import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
-import org.hibernate.validator.HibernateValidator;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,19 +36,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.Errors;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.validation.beanvalidation.SpringConstraintValidatorFactory;
-import org.springframework.web.bind.support.SpringWebConstraintValidatorFactory;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.PostConstruct;
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -69,20 +60,17 @@ public class OrdersControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private MockServletContext servletContext;
-
     @Mock
     private OrderDao mockOrdersDao;
 
     @Mock
     private StateDao mockStateDao;
 
-    @Mocked
-    ValidProductValidator validProductValidator;
-
     @Mock
     private ProductDao mockProductDao;
+
+    @Mocked
+    private ValidProductValidator validProductValidator;
 
     @InjectMocks
     private OrdersController ordersController;
@@ -434,8 +422,6 @@ public class OrdersControllerTest {
         Mockito.when(mockOrdersDao.create(ArgumentMatchers.any())).thenThrow(new AssertionError("This was not the create endpoint."));
 
         String orderJson = gsonDeserializer.toJson(commandOrder);
-
-        switchToMockContext();
 
         MvcResult mvcResult = mockMvc.perform(put("/orders/")
                 .contentType(MediaType.APPLICATION_JSON)
