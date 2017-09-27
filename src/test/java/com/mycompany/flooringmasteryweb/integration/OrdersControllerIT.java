@@ -179,7 +179,6 @@ public class OrdersControllerIT {
         System.out.println("Load Index Page");
 
         int minimumOrders = 200;
-        Gson gson = new GsonBuilder().create();
 
         // Get Size of Database before creation.
         HttpUrl sizeUrl = getOrdersUrlBuilder()
@@ -207,9 +206,13 @@ public class OrdersControllerIT {
 
         // Generate some orders if the database does not have enough.
         for (int i = currentSize; i < minimumOrders; i++) {
-            Order order = orderGenerator();
-            Assert.assertNotNull(order);
-            Assert.assertNull(order.getId());
+            Order tempOrder = orderGenerator();
+            OrderCommand orderCommand = OrderCommand.build(tempOrder);
+
+            orderCommand.setId(null);
+
+            Assert.assertNotNull(orderCommand);
+            Assert.assertNull(orderCommand.getId());
 
             HttpUrl createUrl = getOrdersUrlBuilder()
                     .addPathSegment("")
@@ -217,14 +220,18 @@ public class OrdersControllerIT {
 
             WebClient createOrderWebClient = new WebClient();
 
-            String orderJson = gson.toJson(order);
+            String orderJson = gson.toJson(orderCommand);
 
             WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
             createRequest.setRequestBody(orderJson);
             createRequest.setAdditionalHeader("Content-type", "application/json");
             createRequest.setAdditionalHeader("Accept", "application/json");
 
-            Page createPage = createOrderWebClient.getPage(createRequest);
+            try {
+                Page createPage = createOrderWebClient.getPage(createRequest);
+            } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex){
+                ex.getResponse();
+            }
 
         }
 
@@ -1486,7 +1493,7 @@ public class OrdersControllerIT {
         for (HtmlElement htmlElement : rowsOfResultsTable) {
             String rowId = htmlElement.getId();
 
-            if (!Strings.isNullOrEmpty(rowId)) {
+            if (!Strings.isNullOrEmpty(rowId) && !rowId.equalsIgnoreCase("order-header")) {
 
                 try {
                     String idString = rowId.split("-")[2];

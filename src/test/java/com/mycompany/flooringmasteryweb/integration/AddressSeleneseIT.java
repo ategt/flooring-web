@@ -151,7 +151,9 @@ public class AddressSeleneseIT {
         Page page = webClient.getPage(webRequest);
         WebResponse webResponse = page.getWebResponse();
         assertEquals(webResponse.getStatusCode(), 200);
-        assertTrue("Web Response Length: " + webResponse.getContentLength() + (webResponse.getContentLength() < 200 ? " - " + webResponse.getContentAsString() : ""), webResponse.getContentLength() > 100);
+        assertTrue("Web Response Length: " + webResponse.getContentLength() +
+                        (webResponse.getContentLength() < 200 ? " - " + webResponse.getContentAsString() : ""),
+                webResponse.getContentLength() > 100);
 
         if (webResponse.getContentType().equals("application/json")) {
             String json = webResponse.getContentAsString();

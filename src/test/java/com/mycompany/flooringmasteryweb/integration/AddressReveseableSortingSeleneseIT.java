@@ -17,11 +17,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import com.gargoylesoftware.htmlunit.util.Cookie;
 import okhttp3.HttpUrl;
 import org.junit.After;
 import org.junit.Before;
@@ -154,7 +153,13 @@ public class AddressReveseableSortingSeleneseIT {
 
         assertTrue(idSortedPage.isHtmlPage());
 
-        assertTrue(idSortedPage.getUrl().getQuery().contains("sort_by=id"));
+        String queryString = idSortedPage.getUrl().getQuery();
+        assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+
+        Set<Cookie> cookieSet = webClient.getCookies(idSortedPage.getUrl());
+        assertTrue(cookieSet.stream().anyMatch(
+                cookie -> cookie.getValue().equalsIgnoreCase("id")
+        ));
 
         htmlPage = (HtmlPage) idSortedPage;
 
@@ -164,10 +169,16 @@ public class AddressReveseableSortingSeleneseIT {
         idSortedPage = idSortingLink.click();
 
         assertTrue(idSortedPage.isHtmlPage());
-        assertTrue(idSortedPage.getUrl().getQuery().contains("sort_by=id"));
+
+        queryString = idSortedPage.getUrl().getQuery();
+        assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+
+        cookieSet = webClient.getCookies(idSortedPage.getUrl());
+        assertTrue(cookieSet.stream().anyMatch(
+                cookie -> cookie.getValue().equalsIgnoreCase("SORT_BY_ID_INVERSE")
+        ));
 
         htmlPage = (HtmlPage) idSortedPage;
-
 
         HtmlElement htmlElement = htmlPage.getHtmlElementById("address-table");
         DomNodeList<HtmlElement> tableRows = htmlElement.getElementsByTagName("tr");
@@ -213,19 +224,21 @@ public class AddressReveseableSortingSeleneseIT {
 
         assertTrue(!sortedIdString.equals(rawIdString));
 
-
-
-
-
         idSortingLink = htmlPage.getAnchorByText("ID");
         assertNotNull(idSortingLink);
         idSortedPage = idSortingLink.click();
 
         assertTrue(idSortedPage.isHtmlPage());
-        assertTrue(idSortedPage.getUrl().getQuery().contains("sort_by=id"));
+
+        queryString = idSortedPage.getUrl().getQuery();
+        assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+
+        cookieSet = webClient.getCookies(idSortedPage.getUrl());
+        assertTrue(cookieSet.stream().anyMatch(
+                cookie -> cookie.getValue().equalsIgnoreCase("SORT_BY_ID")
+        ));
 
         htmlPage = (HtmlPage) idSortedPage;
-
 
         htmlElement = htmlPage.getHtmlElementById("address-table");
         tableRows = htmlElement.getElementsByTagName("tr");
@@ -310,16 +323,19 @@ public class AddressReveseableSortingSeleneseIT {
 
         assertNotNull(idSortingLink);
 
-
-        //HtmlAnchor idSortingLink = htmlPage.getAnchorByText("ID");
-
         assertNotNull(idSortingLink);
 
         Page idSortedPage = idSortingLink.click();
 
         assertTrue(idSortedPage.isHtmlPage());
 
-        assertTrue(idSortedPage.getUrl().getQuery().contains("sort_by=id"));
+        String queryString = idSortedPage.getUrl().getQuery();
+        assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+
+        Set<Cookie> cookieSet = webClient.getCookies(idSortedPage.getUrl());
+        assertTrue(cookieSet.stream().anyMatch(
+                cookie -> cookie.getValue().equalsIgnoreCase("id")
+        ));
 
         htmlPage = (HtmlPage) idSortedPage;
 
