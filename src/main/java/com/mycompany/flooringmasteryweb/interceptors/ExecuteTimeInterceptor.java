@@ -16,6 +16,7 @@ import java.util.Objects;
 public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
+    private Timing timing;
 
     //before the actual handler will be executed
     public boolean preHandle(HttpServletRequest request,
@@ -44,15 +45,27 @@ public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements
             //modified the exisitng modelAndView
             modelAndView.addObject("executeTime", executeTime);
 
+
+        Timing timing = buildTiming(handler, request, startTime, endTime, executeTime);
+        this.timing = timing;
+
+    }
+
+    public Timing buildTiming(Object handler, HttpServletRequest request, long startTime, long endTime, long executeTime) {
         Timing timing = new Timing();
         timing.setStartTime(startTime);
         timing.setStopTime(endTime);
         timing.setDifferenceTime(executeTime);
         timing.setInvokingClassName(handler.toString());
+        timing.setInvokingMethodName(request.getMethod());
+        return timing;
+    }
 
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         TimingDao timingDao = applicationContext.getBean("timingDao", TimingDao.class);
 
-        timingDao.create(timing);
+        timingDao.create(this.timing);
     }
 
     @Override

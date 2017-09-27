@@ -151,47 +151,6 @@ public class OrdersController implements ApplicationContextAware{
         }
     }
 
-    private void validateProduct(OrderCommand orderCommand, BindingResult bindingResult) {
-        String productInput = orderCommand.getProduct();
-
-        boolean productValid = productDao.validProductName(productInput);
-
-        if (!productValid) {
-            bindingResult.rejectValue("product", "product.invalid", "-We Do not Carry This Item.");
-        } else {
-
-            String productGuess = productDao.bestGuessProductName(productInput);
-
-            if (productDao.get(productGuess) == null) {
-                bindingResult.rejectValue("product", "product.notFound", "-We Do not Carry That Item.");
-            } else {
-                orderCommand.setProduct(productGuess);
-            }
-        }
-
-    }
-
-    private void validateState(OrderCommand orderCommand, BindingResult bindingResult) {
-        String stateInput = orderCommand.getState();
-
-        boolean stateValid = StateUtilities.validStateInput(stateInput);
-
-        if (!stateValid) {
-            bindingResult.rejectValue("state", "validation.orderCommand.state.invalid");
-        } else {
-
-            String stateGuess = StateUtilities.bestGuessStateName(stateInput);
-            String stateAbbreviation = StateUtilities.abbrFromState(stateGuess);
-
-            if (stateDao.get(stateAbbreviation) == null) {
-                bindingResult.rejectValue("state", "state.doNotDoBusinessThere", "-The System Can Not Currently Handle Orders In That State. Please Call The Office To Place This Order.");
-            } else {
-                orderCommand.setState(stateAbbreviation);
-            }
-
-        }
-    }
-
     private void loadTheOrdersList(Map model, ResultSegment<OrderSortByEnum> resultSegment) {
 
         List<Order> orders = orderDao.list(resultSegment);

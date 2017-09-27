@@ -408,6 +408,7 @@ public class OrdersControllerTest {
 
         commandOrder.setState("MN");
         commandOrder.setProduct("Product");
+        commandOrder.setId(0);
 
         Order reconstructedOrder = OrderTest.orderGenerator();
         Order outputOrder = OrderTest.orderGenerator();
@@ -1390,7 +1391,7 @@ public class OrdersControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        new Verifications(){{
+        new Verifications() {{
             validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
             minTimes = 1;
         }};
@@ -1421,7 +1422,7 @@ public class OrdersControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        new Verifications(){{
+        new Verifications() {{
             validProductValidator.isValid((String) any, (ConstraintValidatorContext) any);
             minTimes = 1;
         }};

@@ -1,5 +1,7 @@
 package com.mycompany.flooringmasteryweb.interceptors;
 
+import com.mycompany.flooringmasteryweb.dao.TimingDao;
+import com.mycompany.flooringmasteryweb.dto.Timing;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +21,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,6 +41,9 @@ public class ExecuteTimeInterceptorTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private TimingDao timingDao;
+
     @Before
     public void setUp() throws Exception {
     }
@@ -47,6 +54,8 @@ public class ExecuteTimeInterceptorTest {
 
     @Test
     public void checkForTimingInfoInModelMapTest() throws Exception {
+        Timing beforeTiming = timingDao.getLast();
+
         MockMvc mvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .build();
@@ -60,5 +69,17 @@ public class ExecuteTimeInterceptorTest {
 
         assertTrue(model.containsKey("executeTime"));
         assertTrue(handlerInterceptors.length > 0);
+
+        Timing afterTiming = timingDao.getLast();
+
+        List<Timing> timingList = new ArrayList<>();
+
+        for (int i = beforeTiming.getId(); i <afterTiming.getId(); i++) {
+            timingList.add(timingDao.get(i));
+        }
+
+        for (Timing timing : timingList) {
+            System.out.println(timing.toString());
+        }
     }
 }
