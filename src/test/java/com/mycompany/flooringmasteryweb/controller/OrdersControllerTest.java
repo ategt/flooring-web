@@ -918,7 +918,7 @@ public class OrdersControllerTest {
     @Test
     public void searchPostByIdToWebWithPaginationLoadsPagingLinksToModelOnPage1() throws Exception {
 
-        final String SEARCH_STRING = "1";
+        final String SEARCH_STRING = " ";
         final String SEARCH_BY = "Everything";
 
         MvcResult mvcResult = webMvc.perform(post("/orders/search")

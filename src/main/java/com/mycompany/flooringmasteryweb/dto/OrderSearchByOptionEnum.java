@@ -12,7 +12,7 @@ import java.util.Optional;
  **
  * @author ATeg
  */
-public enum OrderSearchByOptionEnum {
+public enum OrderSearchByOptionEnum implements ValueEnum {
     DATE,
     NAME,
     PRODUCT,
@@ -41,5 +41,10 @@ public enum OrderSearchByOptionEnum {
         }
         
         return result.orElse(EVERYTHING);
+    }
+
+    @Override
+    public String value() {
+        return this.name();
     }
 }

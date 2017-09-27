@@ -155,6 +155,16 @@ public class OrderDaoTimingDummy implements OrderDao {
     }
 
     @Override
+    public int size(OrderSearchRequest searchRequest) {
+        try {
+            Thread.sleep(timeToSleep);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    @Override
     public Order update(Order order) {
         try {
             Thread.sleep(timeToSleep);

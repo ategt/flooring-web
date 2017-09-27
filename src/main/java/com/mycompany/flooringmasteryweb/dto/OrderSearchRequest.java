@@ -9,7 +9,7 @@ package com.mycompany.flooringmasteryweb.dto;
  *
  * @author ATeg
  */
-public class OrderSearchRequest {
+public class OrderSearchRequest implements SearchRequest{
 
     private OrderSearchByOptionEnum searchBy;
     private String searchText;
@@ -43,6 +43,11 @@ public class OrderSearchRequest {
      */
     public String getSearchText() {
         return searchText;
+    }
+
+    @Override
+    public ValueEnum searchBy() {
+        return searchBy;
     }
 
     /**

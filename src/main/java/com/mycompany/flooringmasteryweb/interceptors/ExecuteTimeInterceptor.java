@@ -43,7 +43,7 @@ public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements
 
         if (Objects.nonNull(modelAndView))
             //modified the exisitng modelAndView
-            modelAndView.addObject("executeTime", executeTime);
+            modelAndView.getModel().put("executeTime", executeTime);
 
 
         Timing timing = buildTiming(handler, request, startTime, endTime, executeTime);
@@ -65,7 +65,8 @@ public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         TimingDao timingDao = applicationContext.getBean("timingDao", TimingDao.class);
 
-        timingDao.create(this.timing);
+        if (!timing.getInvokingClassName().toLowerCase().contains("timing"))
+            timingDao.create(this.timing);
     }
 
     @Override

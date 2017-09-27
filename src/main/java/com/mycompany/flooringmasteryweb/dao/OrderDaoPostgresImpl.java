@@ -263,6 +263,22 @@ public class OrderDaoPostgresImpl implements OrderDao {
     }
 
     @Override
+    public int size(OrderSearchRequest searchRequest) {
+        if (searchRequest == null) {
+            return size();
+        }
+
+        String sqlQuery = determineSqlSearchQuery(searchRequest.getSearchBy());
+
+        final String SQL_ORDER_SEARCH_COUNT = new StringBuffer().append("SELECT COUNT(*) FROM (")
+                .append(sqlQuery)
+                .append(") AS countingQuery")
+                .toString();
+
+        return jdbcTemplate.queryForObject(SQL_ORDER_SEARCH_COUNT, Integer.class, searchRequest.getSearchText());
+    }
+
+    @Override
     public java.util.List<Order> searchByDate(java.util.Date date) {
         if (Objects.isNull(date)) {
             return null;

@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
+import com.mycompany.flooringmasteryweb.dto.OrderTest;
 import com.mycompany.flooringmasteryweb.dto.Product;
 import com.mycompany.flooringmasteryweb.dto.ProductTest;
 import org.junit.After;
@@ -14,7 +15,9 @@ import static org.junit.Assert.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
  /**
  *
@@ -64,6 +67,15 @@ public class ProductDaoDbImplTest {
         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         RemoveFakeProducts(instance);
     }
+
+     public void establishFixtures() {
+         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
+         if (Objects.nonNull(instance) && instance.size() < 200) {
+             for (int i = 0; i < 200; i++) {
+                 instance.create(ProductTest.productGenerator());
+             }
+         }
+     }
 
     private void RemoveFakeProducts(ProductDao instance) {
         for (String fakeProduct : fakeProducts) {
@@ -438,6 +450,18 @@ public class ProductDaoDbImplTest {
 
         Product product = productDao.create(ProductTest.productFactory());
 
+        List<Product> productList = new ArrayList<>();
+
+        int minimumProducts = 250;
+        if (productDao.size() < minimumProducts ){
+            for (int i = 0; i < minimumProducts; i++){
+                Product otherProduct = ProductTest.productGenerator();
+                //otherProduct.setProductName(productName);
+                otherProduct.setCost(-50);
+                productList.add(productDao.create(otherProduct));
+            }
+        }
+
         String productName = product.getProductName();
 
         List<String> productGuesses = productDao.guessProductName(productName);
@@ -464,5 +488,9 @@ public class ProductDaoDbImplTest {
         assertTrue(!productGuesses.isEmpty());
         assertTrue(productGuesses.size() > 1);
         assertTrue(productGuesses.contains(productName));
+
+        for (Product junkProduct : productList){
+            productDao.delete(junkProduct);
+        }
     }
 }

@@ -5,6 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.controller;
 
+import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
  */
 @Controller
 @RequestMapping(value = "/orders")
-public class OrdersController implements ApplicationContextAware{
+public class OrdersController implements ApplicationContextAware {
 
     private final ProductDao productDao;
     private final StateDao stateDao;
@@ -118,7 +119,7 @@ public class OrdersController implements ApplicationContextAware{
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     @ResponseBody
     public Order update(@Valid @RequestBody OrderCommand orderCommand, BindingResult bindingResult)
-            throws  MethodArgumentNotValidException {
+            throws MethodArgumentNotValidException {
 
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(null, bindingResult);
@@ -188,31 +189,37 @@ public class OrdersController implements ApplicationContextAware{
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(@CustomModelBinder OrderResultSegment resultSegment,
+                         @CustomModelBinder OrderSearchRequest searchRequest,
                          HttpServletRequest request,
                          UriComponentsBuilder uriComponentsBuilder,
                          Map model) {
 
-        loadTheOrdersList(model, resultSegment);
-
-        ControllerUtilities.generatePagingLinks(applicationContext, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
+        if (searchRequest == null || Strings.isNullOrEmpty(searchRequest.getSearchText()) || Objects.isNull(searchRequest.getSearchBy())) {
+            loadTheOrdersList(model, resultSegment);
+            ControllerUtilities.generatePagingLinks(applicationContext, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
+        } else {
+            searchDatabase(resultSegment, searchRequest, request, uriComponentsBuilder, model);
+        }
 
         return "order\\search";
+    }
+
+    private void searchDatabase(@CustomModelBinder OrderResultSegment resultSegment, @CustomModelBinder OrderSearchRequest searchRequest, HttpServletRequest request, UriComponentsBuilder uriComponentsBuilder, Map model) {
+        List<Order> orders = searchDatabase(searchRequest, resultSegment);
+        model.put("orders", orders);
+        ControllerUtilities.generatePagingLinks(applicationContext, orderDao.size(searchRequest), resultSegment, request, uriComponentsBuilder, model, searchRequest);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public String search(
             @CustomModelBinder OrderResultSegment resultSegment,
-            @CustomModelBinder OrderSearchRequest addressSearchRequest,
+            @CustomModelBinder OrderSearchRequest searchRequest,
             HttpServletResponse response,
             HttpServletRequest request,
             UriComponentsBuilder uriComponentsBuilder,
             Map model) {
 
-        List<Order> orders = searchDatabase(addressSearchRequest, resultSegment);
-
-        model.put("orders", orders);
-
-        ControllerUtilities.generatePagingLinks(applicationContext, orderDao.size(), resultSegment, request, uriComponentsBuilder, model);
+        searchDatabase(resultSegment, searchRequest, request, uriComponentsBuilder, model);
 
         return "order\\search";
     }
@@ -259,7 +266,6 @@ public class OrdersController implements ApplicationContextAware{
                 .map(state -> StateCommand.buildCommandState(state))
                 .collect(Collectors.toList());
     }
-
 
     private void loadProductCommandsToMap(Map model) {
         List<ProductCommand> productCommands = productDao.buildCommandProductList();

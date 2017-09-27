@@ -12,12 +12,7 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -41,6 +36,7 @@ public class AddressDaoPostgresImplMigratedTest {
 
     public AddressDaoPostgresImplMigratedTest() {
         ctx = new ClassPathXmlApplicationContext("testAddressPostgres-ApplicationContext.xml");
+        establishFixtures();
     }
 
     @BeforeClass
@@ -58,6 +54,14 @@ public class AddressDaoPostgresImplMigratedTest {
 
     @After
     public void tearDown() {
+    }
+
+    public void establishFixtures() {
+        if (Objects.nonNull(addressDao) && addressDao.size() < 200) {
+            for (int i = 0; i < 200; i++) {
+                addressDao.create(AddressTest.addressGenerator());
+            }
+        }
     }
 
     /**
@@ -630,8 +634,9 @@ public class AddressDaoPostgresImplMigratedTest {
         int resultsPerPage = 50;
 
         List<Address> cumulativeAddress = new ArrayList<>();
+        int totalPages = (size / resultsPerPage) + 1;
 
-        for (int page = 0; page < (size / resultsPerPage) + 1; page++) {
+        for (int page = 0; page < totalPages; page++) {
             AddressResultSegment resultSegment = new AddressResultSegment(page, resultsPerPage, AddressSortByEnum.SORT_BY_LAST_NAME);
             List<Address> addresses = addressDao.list(resultSegment);
 

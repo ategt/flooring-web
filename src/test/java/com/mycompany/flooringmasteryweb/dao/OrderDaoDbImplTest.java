@@ -42,6 +42,7 @@ public class OrderDaoDbImplTest {
     public OrderDaoDbImplTest() {
         ctx = new ClassPathXmlApplicationContext("test-OrdersSQLStateSQLProductSQL-applicationContext.xml");
         idOfAPatOrder = ctx.getBean("idOfAPatOrder", Integer.class);
+        establishFixtures();
     }
 
     @Before
@@ -50,6 +51,15 @@ public class OrderDaoDbImplTest {
 
     @After
     public void tearDown() {
+    }
+
+    public void establishFixtures() {
+        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        if (Objects.nonNull(instance) && instance.size() < 200) {
+            for (int i = 0; i < 200; i++) {
+                instance.create(OrderTest.orderGenerator());
+            }
+        }
     }
 
     @Test

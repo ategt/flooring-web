@@ -23,7 +23,7 @@
     <import resource="testOrdersDb-ApplicationContext.xml" />
 
     <bean id="idOfAPatOrder" class="java.lang.Integer" >
-        <constructor-arg value="1483"/>
+        <constructor-arg value="59"/>
     </bean>
 
 </beans>

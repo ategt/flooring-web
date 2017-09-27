@@ -33,7 +33,9 @@ $(document).ready(function () {
             success: function (data, status) {
 
                 var tableRow = buildOrderRow(data);
-                $('#order-table').append($(tableRow));
+                $('#order-table').prepend($(tableRow));
+                var orderHeader = $('#order-header');
+                $('#order-table').prepend($(orderHeader));
                 createdOrderId = data.id;
                 $('#showDetailModal').modal('show');
             },
@@ -47,21 +49,15 @@ $(document).ready(function () {
     });
     function buildOrderRow(data) {
 
-        var strRowTable = "<tr id=\"order-row-" + data.id + "\" >\n\
+        var strRowTable = "<tr id=\"order-row-" + data.id + "\" class=\"added-or-updated\" >\n\
                                 \n\
         <td><a data-order-id=\"" + data.id + "\" data-toggle=\"modal\" data-target=\"#showDetailModal\">" + data.id + "</a></td>\n\
-        <td><a href=\"contact/show/" + data.id + "\">" + data.name + "</a></td>\n\
+        <td><a href=\"" + data.id + "\">" + data.name + "</a></td>\n\
         <td><a data-order-id=\"" + data.id + "\" data-toggle=\"modal\" data-target=\"#editDetailModal\">Edit</a></td>\n\
         <td><a data-order-id=\"" + data.id + "\" class=\"delete-link\">Delete</a></td>\n\
                                                                                         \n\
         </tr>";
-        var strTableRow = "  <tr>\n\
-                                <td><a href=\"/FlooringMaster/show/" + data.id + "\">" + data.id + "</a></td>\n\
-                                <td><a href=\"/FlooringMaster/show/" + data.id + "\">" + data.name + "</a></td>\n\
-                                <td><a href=\"/FlooringMaster/edit/" + data.id + "\">Edit</a></td>\n\
-                                <td><a href=\"/FlooringMaster/delete/" + data.id + "\">Delete</a></td>\n\
-\n\
-                            </tr>";
+
         return strRowTable;
     }
 
