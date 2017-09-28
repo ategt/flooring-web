@@ -1,11 +1,11 @@
 <div class="navbar">
     <ul class="nav nav-tabs">
-        <li role="presentation"><a href="${pageContext.request.contextPath}/">Home</a></li>
-        <li role="presentation"><a href="${pageContext.request.contextPath}/orders/search">Search</a></li>
-        <li role="presentation"><a href="${pageContext.request.contextPath}/address/">Address Panel</a></li>
-        <li role="presentation"><a href="${pageContext.request.contextPath}/admin/">Administration Home</a></li>
-        <li role="presentation"><a href="${pageContext.request.contextPath}/state/">Sales Tax Panel</a></li>
-        <li role="presentation"><a href="${pageContext.request.contextPath}/product/">Product Panel</a></li>
-        <li role="presentation"><a href="${pageContext.request.contextPath}/audits/">Audit Panel</a></li>
+        <li role="presentation"><a th:href="@{~/}">Home</a></li>
+        <li role="presentation"><a th:href="@{~/orders/search}">Search</a></li>
+        <li role="presentation"><a th:href="@{~/address/}">Address Panel</a></li>
+        <li role="presentation"><a th:href="@{~/admin/}">Administration Home</a></li>
+        <li role="presentation"><a th:href="@{~/state/}">Sales Tax Panel</a></li>
+        <li role="presentation"><a th:href="@{~/product/}">Product Panel</a></li>
+        <li role="presentation"><a th:href="@{~/audits/}">Audit Panel</a></li>
     </ul>
 </div>

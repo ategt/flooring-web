@@ -1,11 +1,11 @@
-<script>
-    var contextRoot = "${pageContext.request.contextPath}";
+<script th:with="requestRoot=@{~/}">
+    var contextRoot = "[[${requestRoot}]]";
     var flooringPath = contextRoot + "/orders/";
     var addressPath = contextRoot + "/address/";
     var auditPath = contextRoot + "/audits/";
     var timingPath = contextRoot + "/timing/";
 </script>
 
-<script src="${pageContext.request.contextPath}/js/jquery-3.2.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/timingapp.js"></script>
+<script th:src="@{~/js/jquery-3.2.1.min.js}"></script>
+<script th:src="@{~/js/bootstrap.min.js}"></script>
+<script th:src="@{~/js/timingapp.js}"></script>
