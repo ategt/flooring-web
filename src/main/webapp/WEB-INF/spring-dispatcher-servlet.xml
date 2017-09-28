@@ -57,6 +57,8 @@
         <property name="formatters">
             <set>
                 <bean class="com.mycompany.flooringmasteryweb.conversion.DateFormatter"/>
+                <bean class="com.mycompany.flooringmasteryweb.conversion.ProductFormatter"/>
+                <bean class="com.mycompany.flooringmasteryweb.conversion.StateFormatter"/>
             </set>
         </property>
     </bean>

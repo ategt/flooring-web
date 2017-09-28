@@ -30,7 +30,6 @@ public class Order {
     private double tax;         // Tax
     private double total;       // Total
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy", timezone = "UTC")
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonSerialize(using= CustomDateSerializer.class)
     private Date date;          // file name

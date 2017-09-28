@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head th:include="partials/commonHead :: headerFragment">
-        <title>Flooring Master</title>
+        <title th:text="#{application.title.default}">Flooring Master</title>
     </head>
     <body>
         <div class="container">
-            <h1>Flooring Master</h1>
+            <h1 th:text="#{application.title.default}">Flooring Master</h1>
             <hr/>
             <div th:replace="partials/banner" />
 
@@ -14,43 +14,43 @@
 
                     <div class="row">
                         <div class="col-md-6 text-right">
-                            Order Name:
+                            <span th:text="#{order.name}">Order Name</span>:
                         </div>
-                        <div class="col-md-6 text-left" th:text="${orderCommand.name}">
-                            
-                        </div>
-                    </div>
-                    <div class="row">
-
-                        <div class="col-md-6 text-right">
-                            Order Date:
-                        </div>
-                        <div class="col-md-6 text-left" th:text="${{orderCommand.date}}">
-                            
+                        <div class="col-md-6 text-left" th:text="${order.name}">
+                            Patrick Toner
                         </div>
                     </div>
                     <div class="row">
 
                         <div class="col-md-6 text-right">
-                            Area:
+                            <span th:text="#{order.date}">Order Date</span>:
+                        </div>
+                        <div class="col-md-6 text-left" th:text="${{order.date}}">
+                            6/17/1982
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-6 text-right">
+                            <span th:text="#{order.area}">Area</span>:
                         </div>
                         <div class="col-md-6 text-left" th:text="${order.area}">
+                            300
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-6 text-right">
+                            <span th:text="#{order.productName}">Product</span>:
+                        </div>
+                        <div class="col-md-6 text-left" th:text="${order.product}">
                             
                         </div>
                     </div>
                     <div class="row">
 
                         <div class="col-md-6 text-right">
-                            Product:
-                        </div>
-                        <div class="col-md-6 text-left" th:text="${orderCommand.product}">
-                            
-                        </div>
-                    </div>
-                    <div class="row">
-
-                        <div class="col-md-6 text-right">
-                            Material Unit Cost:
+                            <span th:text="#{order.product.unitCost}">Material Unit Cost</span>:
                         </div>
                         <div class="col-md-6 text-left">
 
@@ -60,7 +60,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-right">
-                            Material Total Cost:
+                            <span th:text="#{order.product.totalCost}">Material Total Cost</span>:
                         </div>
                         <div class="col-md-6 text-left">
                             $ <span th:text="${#numbers.formatDecimal(order.materialCost, 0, 'COMMA', 2, 'POINT')}"/>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-right">
-                            Installation Unit Cost:
+                            <span th:text="#{order.product.laborUnitCost}">Installation Unit Cost</span>:
                         </div>
                         <div class="col-md-6 text-left">
                             $ <span th:text="${#numbers.formatDecimal(order.laborCostPerSquareFoot, 0, 'COMMA', 2, 'POINT')}"/>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-right">
-                            Installation Total Cost:
+                            <span th:text="#{order.product.laborTotalCost}">Installation Total Cost</span>:
                         </div>
                         <div class="col-md-6 text-left">
                             $ <span th:text="${#numbers.formatDecimal(order.laborCost, 0, 'COMMA', 2, 'POINT')}"/>
@@ -84,36 +84,36 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-right">
-                            Total Before Tax:
+                            <span th:text="#{order.subtotal}">Total Before Tax</span>:
                         </div>
                         <div class="col-md-6 text-left">
-					<span th:with="subtotal=${order.total - order.tax}">
-                            $ <span th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 2, 'POINT')}"/>
-					</span>
+                            <span th:with="subtotal=${order.total - order.tax}">
+                                    $ <span th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 2, 'POINT')}"/>
+                            </span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-right">
-                            Sales Tax Rate:
+                            <span th:text="#{order.state.taxrate}">Sales Tax Rate</span>:
                         </div>
                         <div class="col-md-6 text-left">
-                            <span th:text="${order.taxRate}"/>%
+                            <span th:text="${order.taxRate}">20</span>%
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-right">
-                            Total Sales Tax:
+                            <span th:text="#{order.state.taxtotal}">Total Sales Tax</span>:
                         </div>
                         <div class="col-md-6 text-left">
-                            $ <span th:text="${#numbers.formatDecimal(order.tax, 0, 'COMMA', 2, 'POINT')}"/>
+                            $ <span th:text="${#numbers.formatDecimal(order.tax, 0, 'COMMA', 2, 'POINT')}">2.87</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-right">
-                            Total Invoice:
+                            <span th:text="#{order.total}">Total Invoice</span>:
                         </div>
                         <div class="col-md-6 text-left">
-                            $ <span th:text="${#numbers.formatDecimal(order.total, 0, 'COMMA', 2, 'POINT')}"/>
+                            $ <span th:text="${#numbers.formatDecimal(order.total, 0, 'COMMA', 2, 'POINT')}">30.75</span>
                         </div>
                     </div>
                 </div>
