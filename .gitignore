@@ -1,6 +1,7 @@
 /.idea/
 /nbproject/
 /target/
+/jsp-version/
 *.class
 .class
 *.log
