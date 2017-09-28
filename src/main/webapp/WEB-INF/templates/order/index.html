@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:include="../partials/commonHead :: headerFragment">
+        <title>Flooring Master</title>
+        <link href="${pageContext.request.contextPath}/css/jquery-ui.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/jquery-ui.structure.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/css/jquery-ui.theme.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Flooring Master</h1>
+            <hr/>
+
+            <div th:replace="../partials/banner :: banner"/>
+
+            <div class="row">
+                <div class="col-md-6 col-md-push-6">
+                    <div th:replace="_createOrderForm :: _createOrderForm"/>
+                </div>
+                <div class="col-md-6 col-md-pull-6">
+                    <div th:replace="_listOrders :: _listOrders" />
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="_showOrderModal" />
+        <div th:replace="_editOrderModal" />
+
+        <!-- Placed at the end of the document so the pages load faster -->
+        <div th:replace="../partials/commonScript" />
+
+        <script src="${pageContext.request.contextPath}/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/flooringapp.js"></script>
+        <script>
+            $(function () {
+                $("#jQueryDatePicker").datepicker();
+                $("#jQueryDatePicker").datepicker('setDate', new Date());
+            });
+        </script>
+    </body>
+</html>

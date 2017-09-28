@@ -1,0 +1,30 @@
+<div th:fragment="pagingFragment" class="row text-center paging-footer-parent">
+
+    <div th:if="${not empty first_link}">
+        <a th:href="@{${first_link}}">
+            <div class="btn btn-default col-2 paging-footer">First Page</div>
+        </a>
+    </div>
+
+    <div th:if="${not empty prev_link}">
+        <a href="@{${prev_link}}">
+            <div class="btn btn-default col-2 paging-footer">&lt; Prev Page</div>
+        </a>
+    </div>
+
+    <div th:if="${not empty current_page}">
+        <div id="current-page-number" class="current-page-number col-2">${current_page}</div>            
+    </div>
+
+    <div th:if="${not empty next_link}">
+        <a href="@{${next_link}}">
+            <div class="btn btn-default col-2 paging-footer">Next Page &gt;</div>
+        </a>
+    </div>
+
+    <div th:if="${not empty last_link}">
+        <a href="@{${last_link}}">
+            <div class="btn btn-default col-2 paging-footer">Last Page</div>
+        </a>
+    </div>
+</div>
