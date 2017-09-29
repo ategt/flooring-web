@@ -10,32 +10,15 @@
                             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <!-- Uncomment this to move to annotation driven configuration -->
 
-    <mvc:annotation-driven validator="beansValidator" conversion-service="conversionService">
-        <mvc:argument-resolvers>
-            <bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver"/>
-            <bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver"/>
-            <bean class="com.mycompany.flooringmasteryweb.modelBinding.AddressResultSegmentResolver"/>
-        </mvc:argument-resolvers>
-    </mvc:annotation-driven>
+    <mvc:annotation-driven/>
 
     <context:component-scan base-package="com.mycompany.flooringmasteryweb"/>
-
-    <bean id="conversionService"
-          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
-        <property name="formatters">
-            <set>
-                <bean class="com.mycompany.flooringmasteryweb.conversion.DateFormatter"/>
-                <bean class="com.mycompany.flooringmasteryweb.conversion.ProductFormatter"/>
-                <bean class="com.mycompany.flooringmasteryweb.conversion.StateFormatter"/>
-            </set>
-        </property>
-    </bean>
 
     <bean id="templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/"/>
         <property name="suffix" value=".html"/>
         <property name="templateMode" value="HTML5"/>
-        <property name="cacheable" value="false"/>
+		<property name="cacheable" value="false" />
     </bean>
 
     <bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
@@ -60,6 +43,14 @@
             <value>1</value>
         </property>
     </bean>
+
+    <mvc:annotation-driven validator="beansValidator">
+        <mvc:argument-resolvers>
+            <bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver"/>
+            <bean class="com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver"/>
+            <bean class="com.mycompany.flooringmasteryweb.modelBinding.AddressResultSegmentResolver"/>
+        </mvc:argument-resolvers>
+    </mvc:annotation-driven>
 
     <bean id="beansValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
