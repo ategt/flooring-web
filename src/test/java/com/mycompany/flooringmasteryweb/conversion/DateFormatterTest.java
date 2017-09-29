@@ -39,22 +39,16 @@ import static org.junit.Assert.*;
 public class DateFormatterTest {
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    @Autowired
     private FormattingConversionService formattingConversionService;
 
     @Autowired
     private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
-    //
-//    @Autowired
-//    private AcceptHeaderLocaleResolver acceptHeaderLocaleResolver;
 
-//    @Autowired
-//    private  SessionLocaleResolver sessionLocaleResolver;
-
-    @Autowired
-    private LocaleResolver localeResolver;
+    @Before
+    public void setup(){
+        LocaleContextHolder.setLocale(new Locale("test", "TEST", "FORMAT"));
+        reloadableResourceBundleMessageSource.setBasename("classpath:messages");
+    }
 
     @Test
     public void parse() throws Exception {
@@ -67,83 +61,10 @@ public class DateFormatterTest {
 
     @Test
     public void print() throws Exception {
-
-
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-
-        Locale frenchLocale = Locale.CANADA_FRENCH;
-//
-        mockRequest.addPreferredLocale(frenchLocale);
-//
-//        webApplicationContext.getServletContext().
-//
-//        LocaleResolver resolver = RequestContextUtils.getLocaleResolver(mockRequest);
-//        System.out.println(mockRequest.getLocale().toString());
-//        System.out.println(resolver.resolveLocale(mockRequest).toString());
-//        //assertTrue(!mockRequest.getLocale().equals(resolver.resolveLocale(mockRequest)));
-
-        //new org.springframework.web.servlet.i18n.LocaleChangeInterceptor().
-
-        Locale locale = localeResolver.resolveLocale(mockRequest); //.setLocale();
-        //setDefaultLocale(Locale.CHINESE);
-//        new SessionLocaleResolver().
-//        webApplicationContext.
-
-        LocaleContextHolder.setLocale(new Locale("test", "TEST", "FORMAT"));
-
-        reloadableResourceBundleMessageSource.setBasenames("classpath:messages",
-                "WEB-INF/classes/messages",
-                "messages");
-        //reloadableResourceBundleMessageSource.addBasenames();
-        //reloadableResourceBundleMessageSource.addBasenames();
-        //reloadableResourceBundleMessageSource.getBasenameSet();
-
-        //reloadableResourceBundleMessageSource.s`
-
         Date date = formattingConversionService.convert("06-08-1984", Date.class);
         String dateString = date.toString();
         long dateLong = date.getTime();
         assertEquals(455515200000l, dateLong);
         assertTrue(dateString.matches(".*Fri.*Jun.*8.*1984.*"));
-
-
-
-//        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-//
-//
-//
-//
-//
-//        mockRequest.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, localeResolver);
-//
-//        String language = "zh_CN";
-//
-//        LoginPostController loginPostControllerTest = new LoginPostController();
-//
-//        loginPostControllerTest.localize(mockRequest, mockResponse, language);
-//        System.out.println(mockRequest.getLocale().toString());
-//    }
-//
-//
-//
-//        new org.springframework.web.servlet.i18n.CookieLocaleResolver().setLocale();
-//
-//        formattingConversionService.
-//
-//        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-//        localeResolver.setLocale(request, response, StringUtils.parseLocaleString("fr"));
-//
-//
-//        org.springframework.web.servlet.i18n.LocaleChangeInterceptor localeChangeInterceptor
-//                = new org.springframework.web.servlet.i18n.LocaleChangeInterceptor();
-//
-//        localeChangeInterceptor.
-//
-//        org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping
-//
-//
-//        acceptHeaderLocaleResolver.
-
     }
 }
