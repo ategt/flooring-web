@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.format.support.FormattingConversionServiceFactoryBean;
@@ -41,12 +43,18 @@ public class DateFormatterTest {
 
     @Autowired
     private FormattingConversionService formattingConversionService;
-//
+
+    @Autowired
+    private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
+    //
 //    @Autowired
 //    private AcceptHeaderLocaleResolver acceptHeaderLocaleResolver;
 
+//    @Autowired
+//    private  SessionLocaleResolver sessionLocaleResolver;
+
     @Autowired
-    private  SessionLocaleResolver sessionLocaleResolver;
+    private LocaleResolver localeResolver;
 
     @Test
     public void parse() throws Exception {
@@ -54,19 +62,19 @@ public class DateFormatterTest {
         calendar.set(1984, 5, 8);
 
         String formattedDateString = formattingConversionService.convert(calendar.getTime(), String.class);
-        assertEquals("06/08/1984", formattedDateString);
+        assertEquals("06-08-1984", formattedDateString);
     }
 
     @Test
     public void print() throws Exception {
 
 
-//        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-//        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+
+        Locale frenchLocale = Locale.CANADA_FRENCH;
 //
-//        Locale frenchLocale = Locale.CANADA_FRENCH;
-//
-//        mockRequest.addPreferredLocale(frenchLocale);
+        mockRequest.addPreferredLocale(frenchLocale);
 //
 //        webApplicationContext.getServletContext().
 //
@@ -75,13 +83,25 @@ public class DateFormatterTest {
 //        System.out.println(resolver.resolveLocale(mockRequest).toString());
 //        //assertTrue(!mockRequest.getLocale().equals(resolver.resolveLocale(mockRequest)));
 
-        new org.springframework.web.servlet.i18n.LocaleChangeInterceptor().
+        //new org.springframework.web.servlet.i18n.LocaleChangeInterceptor().
 
-        sessionLocaleResolver.setDefaultLocale(Locale.CHINESE);
+        Locale locale = localeResolver.resolveLocale(mockRequest); //.setLocale();
+        //setDefaultLocale(Locale.CHINESE);
 //        new SessionLocaleResolver().
 //        webApplicationContext.
 
-        Date date = formattingConversionService.convert("06/08/1984", Date.class);
+        LocaleContextHolder.setLocale(new Locale("test", "TEST", "FORMAT"));
+
+        reloadableResourceBundleMessageSource.setBasenames("classpath:messages",
+                "WEB-INF/classes/messages",
+                "messages");
+        //reloadableResourceBundleMessageSource.addBasenames();
+        //reloadableResourceBundleMessageSource.addBasenames();
+        //reloadableResourceBundleMessageSource.getBasenameSet();
+
+        //reloadableResourceBundleMessageSource.s`
+
+        Date date = formattingConversionService.convert("06-08-1984", Date.class);
         String dateString = date.toString();
         long dateLong = date.getTime();
         assertEquals(455515200000l, dateLong);
