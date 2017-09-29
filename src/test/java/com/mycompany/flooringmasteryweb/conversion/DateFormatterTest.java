@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
@@ -29,42 +30,23 @@ import static org.junit.Assert.*;
 public class DateFormatterTest {
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    @Autowired
-    private FormatterRegistry registry;
-
-    @Autowired
     private FormattingConversionService formattingConversionService;
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void parse() throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(1984, 5, 8);
 
-//        FormattingConversionServiceFactoryBean factoryBean = new FormattingConversionServiceFactoryBean();
-//        factoryBean.setFormatters(Collections.emptySet());
-//
-//
-//        FormattingConversionServiceFactoryBean formattingConversionServiceFactoryBean
-//                = webApplicationContext.getBean("conversionService", FormattingConversionServiceFactoryBean.class);
-
-//        FormattingConversionService formattingConversionService
-//                = formattingConversionServiceFactoryBean.getObject();
-
-        String jhgf = formattingConversionService.convert(new Date(), String.class);
-        System.out.println(jhgf);
-
+        String formattedDateString = formattingConversionService.convert(calendar.getTime(), String.class);
+        assertEquals("06/08/1984", formattedDateString);
     }
 
     @Test
     public void print() throws Exception {
+        Date date = formattingConversionService.convert("06/08/1984", Date.class);
+        String dateString = date.toString();
+        long dateLong = date.getTime();
+        assertEquals(455515200000l, dateLong);
+        assertTrue(dateString.matches(".*Fri.*Jun.*8.*1984.*"));
     }
-
 }
