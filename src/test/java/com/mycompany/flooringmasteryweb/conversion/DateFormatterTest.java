@@ -34,6 +34,9 @@ public class DateFormatterTest {
     @Autowired
     private FormatterRegistry registry;
 
+    @Autowired
+    private FormattingConversionService formattingConversionService;
+
     @Before
     public void setUp() throws Exception {
     }
@@ -45,15 +48,15 @@ public class DateFormatterTest {
     @Test
     public void parse() throws Exception {
 
-        FormattingConversionServiceFactoryBean factoryBean = new FormattingConversionServiceFactoryBean();
-        factoryBean.setFormatters(Collections.emptySet());
+//        FormattingConversionServiceFactoryBean factoryBean = new FormattingConversionServiceFactoryBean();
+//        factoryBean.setFormatters(Collections.emptySet());
+//
+//
+//        FormattingConversionServiceFactoryBean formattingConversionServiceFactoryBean
+//                = webApplicationContext.getBean("conversionService", FormattingConversionServiceFactoryBean.class);
 
-
-        FormattingConversionServiceFactoryBean formattingConversionServiceFactoryBean
-                = webApplicationContext.getBean("conversionService", FormattingConversionServiceFactoryBean.class);
-
-        FormattingConversionService formattingConversionService
-                = formattingConversionServiceFactoryBean.getObject();
+//        FormattingConversionService formattingConversionService
+//                = formattingConversionServiceFactoryBean.getObject();
 
         String jhgf = formattingConversionService.convert(new Date(), String.class);
         System.out.println(jhgf);
