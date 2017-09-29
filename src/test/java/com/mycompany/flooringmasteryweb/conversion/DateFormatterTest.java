@@ -1,33 +1,23 @@
 package com.mycompany.flooringmasteryweb.conversion;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.format.support.FormattingConversionService;
-import org.springframework.format.support.FormattingConversionServiceFactoryBean;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration()
