@@ -1,5 +1,5 @@
-<script th:with="requestRoot=@{~/}">
-    var contextRoot = "[[${requestRoot}]]";
+<script th:inline="javascript" th:with="requestRoot=${#httpServletRequest.getContextPath()}">
+    var contextRoot = /*[[${requestRoot}]]*/ "";
     var flooringPath = contextRoot + "/orders/";
     var addressPath = contextRoot + "/address/";
     var auditPath = contextRoot + "/audits/";

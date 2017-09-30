@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:include="partials/commonHead :: headerFragment">
+<head>
     <title th:text="#{application.title.default}">Flooring Master</title>
+    <link th:replace="partials/commonHead"/>
 </head>
 <body>
 <div class="container">
@@ -26,15 +27,6 @@
                     <span th:text="#{order.date}">Order Date</span>:
                 </div>
                 <div class="col-md-6 text-left" th:text="${{order.date}}">
-                    6/17/1982
-                </div>
-            </div>
-            <div class="row">
-
-                <div class="col-md-6 text-right">
-                    <span th:text="#{order.date}">Order Date</span>:
-                </div>
-                <div class="col-md-6 text-left" th:text="${#dates.format(order.date, 'dd-MMM-yyyy')}">
                     6/17/1982
                 </div>
             </div>
@@ -124,9 +116,6 @@
                 <div class="col-md-6 text-left">
                     $ <span th:text="${#numbers.formatDecimal(order.total, 0, 'COMMA', 2, 'POINT')}">30.75</span>
                 </div>
-
-                Staete: <span name="ug-state" th:text="${order.state}">State Name</span>
-                <span name="pretty-state" th:text="${{order.state}}">Converted State Name</span>
             </div>
         </div>
     </div>

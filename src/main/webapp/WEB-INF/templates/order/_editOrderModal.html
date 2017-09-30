@@ -1,62 +1,66 @@
-<%@ page pageEncoding="windows-1252" %>
 <div id="editDetailModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Edit Order Details</h4>
+                <h4 class="modal-title" th:text="#{order.editModal.details}">Edit Order Details</h4>
             </div>
             <div class="modal-body">
                 <table class="table table-bordered">
                     <input type="hidden" id="edit-id" class="form-control" />
                     <tr>
-                        <th>ID:</th>
+                        <th><span th:text="#{order.editModal.id}">ID</span>:</th>
                         <td id="edit-display-id">
                         </td>
                     </tr>
                     <tr>
-                        <th>Order Name:</th>
+                        <th><span th:text="#{order.editModal.name}">Order Name</span>:</th>
                         <td>
                             <input type="text" id="edit-order-name" class="form-control" />
                         </td>
                     </tr>
                     <tr>
-                        <th>State:</th>
+                        <th><span th:text="#{order.editModal.state}">State</span>:</th>
                         <td>
                             <select id="edit-order-state" class="form-control" name="state" >
-                                <c:forEach items="${stateCommands}" var="stateCommand">
-                                    <option value="${stateCommand.stateAbbreviation}"  >${stateCommand.stateName} - ${stateCommand.stateTax}%</option>
-                                </c:forEach>
+                                <option th:each="stateCommand : ${stateCommands}"
+                                        th:with="correctedStateName=${#strings.isEmpty(stateCommand.stateName)}? (${#strings.isEmpty(stateCommand.stateAbbreviation)}? #{state.null} : ${stateCommand.stateAbbreviation}) : ${stateCommand.stateName}"
+                                        th:value="${#strings.isEmpty(stateCommand.stateAbbreviation)}? 'error' : ${stateCommand.stateAbbreviation}"
+                                        value="MN"
+                                        th:text="${correctedStateName + ' - ' + stateCommand.stateTax + ' %'}"
+                                >State Name - 100 %</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
-                        <th>Product:</th>
+                        <th><span th:text="#{order.editModal.product}">Product</span>:</th>
                         <td>
                             <select name="product" id="edit-order-product" class="form-control" >
-                                <c:forEach items="${productCommands}" var="productCommand">
-                                    <option value="${productCommand.productName}" >${productCommand.productName}</option>
-                                </c:forEach>
+                                <option th:each="productCommand : ${productCommands}"
+                                        th:with="correctedName=${productCommand.productName != null}? ${productCommand.productName} : #{product.null}"
+                                        th:value="${correctedName}"
+                                        value="Sand Flooring"
+                                        th:text="${correctedName}"
+                                >Sand Flooring</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
-                        <th>Date:</th>
+                        <th><span th:text="#{order.editModal.date}">Date</span>:</th>
                         <td>
                             <input pattern="MM/dd/yyyy" type="text" class="form-control" id="edit-order-date"  />
                         </td>
                     </tr>
                     <tr>
-                        <th>Area:</th>
+                        <th><span th:text="#{order.editModal.area}">Area</span>:</th>
                         <td><input type="text" id="edit-order-area" class="form-control" /></td>
                     </tr>
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="edit-order-button">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{modals.close}">Close</button>
+                <button type="button" class="btn btn-danger" id="edit-order-button" th:text="#{modals.save}">Save</button>
             </div>
         </div>
     </div>
