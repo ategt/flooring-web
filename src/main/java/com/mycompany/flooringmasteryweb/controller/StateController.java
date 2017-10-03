@@ -13,11 +13,14 @@ import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- *
  * @author apprentice
  */
 @Controller
@@ -76,9 +78,10 @@ public class StateController {
 
     @RequestMapping(value = "/edit/{stateName}", method = RequestMethod.GET)
     public String edit(@PathVariable("stateName") String stateName, Map model) {
+        State state = stateDao.get(stateName);
 
         model.put("states", stateList());
-        model.put("stateCommand", StateCommand.buildCommandState(stateDao.get(stateName)));
+        model.put("stateCommand", StateCommand.buildCommandState(Objects.nonNull(state) ? state : new State()));
 
         return "state\\edit";
     }
