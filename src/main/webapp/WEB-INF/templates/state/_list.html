@@ -1,0 +1,15 @@
+<table id="state-table" class="table table-hover">
+    <th>State Name</th>
+    <th>Sales Tax</th>
+    <th><i class="glyphicon glyphicon-edit"></i> <span th:text="#{state.list.edit}">Edit</span></th>
+    <th><i class="glyphicon glyphicon-remove"></i> <span th:text="#{state.list.delete}">Delete</span></th>
+    <tr th:each="state : ${states}"
+        th:with="correctedStateName=${#strings.isEmpty(state.stateAbbreviation)}? #{state.null} : ${state.stateAbbreviation}, correctedStateUrl=${#strings.isEmpty(state.stateAbbreviation)}? #{state.url.error} : ${state.stateAbbreviation}">
+        <td><a th:href="@{~/state/edit/{stateab}(stateab=${correctedStateUrl})}" th:text="${#strings.isEmpty(state.stateName)}? ${correctedStateName} : ${state.stateName}">Alabama</a>
+        </td>
+        <td><a th:href="@{~/state/edit/{stateab}(stateab=${correctedStateUrl})}" th:text="${state.stateTax}">20</a>
+        </td>
+        <td><a th:href="@{~/state/edit/{stateab}(stateab=${correctedStateUrl})}" th:text="#{state.list.edit}">Edit</a></td>
+        <td><a th:href="@{~/state/delete/{stateab}(stateab=${correctedStateUrl})}" th:text="#{state.list.delete}">Delete</a></td>
+    </tr>
+</table>
