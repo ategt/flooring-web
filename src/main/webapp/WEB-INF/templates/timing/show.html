@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{application.title.default}">Flooring Master</title>
+    <link th:replace="partials/commonHead"/>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="#{application.title.default}">Flooring Master</h1>
+    <hr/>
+    <div th:replace="partials/banner"/>
+
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-2 text-center">
+
+            <div class="row timing-row">
+                <div class="col-md-6 timing-label">
+                    <span th:text="#{timing.show.timingid}">Timing ID</span>:
+                </div>
+                <div id="timing-id" class="col-md-6 timing-value" th:text="${timing.id}">
+                    2
+                </div>
+            </div>
+            <div class="row timing-row">
+                <div class="col-md-6 timing-label">
+                    <span th:text="#{timing.show.starttime}">Start Time</span>:
+                </div>
+                <div class="col-md-6 timing-value">
+                    <span th:text="${timing.startTime}">31</span> ms
+                </div>
+            </div>
+            <div class="row timing-row">
+                <div class="col-md-6 timing-label">
+                    <span th:text="#{timing.show.stoptime}">Stop Time</span>:
+                </div>
+                <div class="col-md-6 timing-value">
+                    <span th:text="${timing.stopTime}">32</span> ms
+                </div>
+            </div>
+            <div class="row timing-row">
+                <div class="col-md-6 timing-label">
+                    <span th:text="#{timing.show.difference}">Difference Of Time</span>:
+                </div>
+                <div id="timing-difference" class="col-md-6 timing-value">
+                    <span th:text="${timing.differenceTime}">2</span> ms
+                </div>
+            </div>
+            <div class="row timing-row">
+                <div class="col-md-6 timing-label">
+                    <span th:text="#{timing.show.modifiers}">Modifiers</span>:
+                </div>
+                <div class="col-md-6 timing-value">
+                    <span th:text="${timing.modifiers}"></span>
+                </div>
+            </div>
+            <div class="row timing-row">
+                <div class="col-md-6 timing-label">
+                    <span th:text="#{timing.show.invokingclass}">Invoking Class Name</span>:
+                </div>
+                <div class="col-md-6 timing-value" th:text="${timing.invokingClassName}">
+                    TestClass.class
+                </div>
+            </div>
+            <div class="row timing-row">
+                <div class="col-md-6 timing-label">
+                    <span th:text="#{timing.show.invokingmethod}">Invoking Method Name</span>:
+                </div>
+                <div class="col-md-6 timing-value" th:text="${timing.invokingMethodName}">
+                   show
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="partials/commonScript"/>
+</body>
+</html>
