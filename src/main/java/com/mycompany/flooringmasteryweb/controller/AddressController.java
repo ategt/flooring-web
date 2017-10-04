@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -78,7 +80,12 @@ public class AddressController implements ApplicationContextAware {
         return addresses.toArray(new Address[addresses.size()]);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/",
+            method = RequestMethod.POST,
+            headers = {"Content-Type=application/json", "Accept=application/json"},
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.ALL_VALUE, "application/x-www-form-urlencoded"},
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     @ResponseBody
     public Address create(@Valid @RequestBody Address address) {
         return addressDao.create(address);

@@ -115,56 +115,7 @@ public class AddressTest {
     public void listTest() throws MalformedURLException, IOException {
         System.out.println("List Test");
 
-        MockServletContext mockServletContext =
-                ((MockServletContext) webApplicationContext.getServletContext());
-
-        Enumeration<String> servlets = mockServletContext.getServletNames();
-        Enumeration<Servlet> asdf = mockServletContext.getServlets();
-        //mockServletContext.addS
-
-        mockServletContext.addInitParameter("url-pattern", "*.js");
-        RequestDispatcher requestDispatcher = mockServletContext.getRequestDispatcher("/js/**");
-
-
-
-
-        //webApplicationContext
-
-        //webApplicationContext.re
-
-        //ContextLoaderListener contextLoaderListener = new ContextLoaderListener();
-        //contextLoaderListener.
-
-
-        //mockServletContext.addListener(new ContextLoaderListener());
-
-
-
-        //dynamicDispatcher
-
-        //dynamicDispatcher.
-
-        //resourceHandlerRegistry.addResourceHandler("/js/**").addResourceLocations("/js/");
-
-        //requestDispatcher.
-
-        //webApplicationContext
-
-        //mockServletContext.name
-
-        Enumeration<String> attr = mockServletContext.getAttributeNames();
-
-        Enumeration<String> initParams = mockServletContext.getInitParameterNames();
-
-        String contextPath = mockServletContext.getContextPath();
-        String info = mockServletContext.getServerInfo();
-        //mockServletContext.
-
-
-        WebClient webClient = MockMvcWebClientBuilder
-                .webAppContextSetup(webApplicationContext)
-                .alwaysUseMockMvc()
-                .build();
+        WebClient webClient = getClientUsingMockMvc();
 
         URL httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
@@ -177,11 +128,18 @@ public class AddressTest {
         assertEquals(title, "Address Book");
     }
 
+    private WebClient getClientUsingMockMvc() {
+        return MockMvcWebClientBuilder
+                .webAppContextSetup(webApplicationContext)
+                .alwaysUseMockMvc()
+                .build();
+    }
+
     @Test
     public void searchListTest() throws MalformedURLException, IOException {
         System.out.println("Search List Test");
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
 
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("search")
@@ -197,7 +155,7 @@ public class AddressTest {
     public void listWithZeroTest() throws MalformedURLException, IOException {
         System.out.println("List Test");
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
 
         HttpUrl httpUrl = getAddressUrlBuilder()
                 .addPathSegment("")
@@ -218,7 +176,7 @@ public class AddressTest {
                 .addPathSegment("search")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.addRequestHeader("Accept", "application/json");
 
         List<NameValuePair> paramsList = new ArrayList();
@@ -263,7 +221,7 @@ public class AddressTest {
                 .addPathSegment("size")
                 .build();
 
-        WebClient sizeWebClient = new WebClient();
+        WebClient sizeWebClient = getClientUsingMockMvc();
         sizeWebClient.addRequestHeader("Accept", "application/json");
 
         Page sizePage = sizeWebClient.getPage(sizeUrl.url());
@@ -291,7 +249,7 @@ public class AddressTest {
                     .addPathSegment("")
                     .build();
 
-            WebClient createAddressWebClient = new WebClient();
+            WebClient createAddressWebClient = getClientUsingMockMvc();
 
             //Gson gson = new GsonBuilder().create();
             String addressJson = gson.toJson(address);
@@ -310,7 +268,7 @@ public class AddressTest {
                 .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.getOptions().setJavaScriptEnabled(false);
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
@@ -391,7 +349,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.getOptions().setJavaScriptEnabled(false);
 
         HtmlPage htmlPage = webClient.getPage(httpUrl.url());
@@ -452,7 +410,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.addRequestHeader("Accept", "application/json");
 
         Page page = webClient.getPage(httpUrl.url());
@@ -494,8 +452,8 @@ public class AddressTest {
 
         WebRequest htmlRequest = new WebRequest(httpUrl.url());
 
-        WebClient webClient = new WebClient();
-        WebClient jsonClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
+        WebClient jsonClient = getClientUsingMockMvc();
         webClient.getOptions().setJavaScriptEnabled(false);
 
         Page jsonPage = jsonClient.getPage(jsonRequest);
@@ -552,7 +510,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.addRequestHeader("Accept", "application/json");
 
         Page page = webClient.getPage(httpUrl.url());
@@ -585,7 +543,7 @@ public class AddressTest {
                 .addPathSegment(Integer.toString(randomAddressId))
                 .build();
 
-        WebClient showAddressWebClient = new WebClient();
+        WebClient showAddressWebClient = getClientUsingMockMvc();
         showAddressWebClient.addRequestHeader("Accept", "application/json");
 
         Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
@@ -628,7 +586,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createAddressWebClient = getClientUsingMockMvc();
 
         Gson gson = new GsonBuilder().create();
         String addressJson = gson.toJson(address);
@@ -658,7 +616,7 @@ public class AddressTest {
                 .addPathSegment(Integer.toString(addressId))
                 .build();
 
-        WebClient showAddressWebClient = new WebClient();
+        WebClient showAddressWebClient = getClientUsingMockMvc();
         showAddressWebClient.addRequestHeader("Accept", "application/json");
 
         Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
@@ -686,7 +644,7 @@ public class AddressTest {
                 .addPathSegment(Integer.toString(addressId))
                 .build();
 
-        WebClient showAddressWebClient2 = new WebClient();
+        WebClient showAddressWebClient2 = getClientUsingMockMvc();
         showAddressWebClient2.addRequestHeader("Accept", "application/json");
 
         Page singleAddressPage2 = showAddressWebClient2.getPage(showUrl2.url());
@@ -732,7 +690,7 @@ public class AddressTest {
                 .addPathSegment("size")
                 .build();
 
-        WebClient sizeWebClient = new WebClient();
+        WebClient sizeWebClient = getClientUsingMockMvc();
         sizeWebClient.addRequestHeader("Accept", "application/json");
 
         Page sizePage = sizeWebClient.getPage(sizeUrl.url());
@@ -756,7 +714,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createAddressWebClient = getClientUsingMockMvc();
 
         String addressJson = gson.toJson(address);
 
@@ -776,7 +734,7 @@ public class AddressTest {
         assertTrue(addressReturned.getId() > 0);
 
         // Get Database Size After Creation
-        WebClient sizeWebClient2 = new WebClient();
+        WebClient sizeWebClient2 = getClientUsingMockMvc();
         sizeWebClient2.addRequestHeader("Accept", "application/json");
 
         Page sizePage2 = sizeWebClient2.getPage(sizeUrl.url());
@@ -808,7 +766,7 @@ public class AddressTest {
                 .addPathSegment(Integer.toString(addressReturned.getId()))
                 .build();
 
-        WebClient showAddressWebClient = new WebClient();
+        WebClient showAddressWebClient = getClientUsingMockMvc();
         showAddressWebClient.addRequestHeader("Accept", "application/json");
 
         Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
@@ -840,7 +798,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient updateAddressWebClient = new WebClient();
+        WebClient updateAddressWebClient = getClientUsingMockMvc();
 
         String updatedAddressJson = gson.toJson(addressReturned);
 
@@ -863,7 +821,7 @@ public class AddressTest {
                 .addPathSegment("search")
                 .build();
 
-        WebClient searchWebClient = new WebClient();
+        WebClient searchWebClient = getClientUsingMockMvc();
 
         List<NameValuePair> paramsList = new ArrayList();
 
@@ -892,7 +850,7 @@ public class AddressTest {
         assertNotEquals(specificAddress, returnedCompanySearchAddress);
 
         // Check search using json object.
-        WebClient jsonSearchWebClient = new WebClient();
+        WebClient jsonSearchWebClient = getClientUsingMockMvc();
 
         String addressSearchRequestJson = "{\"searchBy\":\"searchByCity\",\"searchText\":\"" + updatedCity + "\"}";
 
@@ -919,7 +877,7 @@ public class AddressTest {
         assertNotEquals(specificAddress, returnedCitySearchAddress);
 
         // Check search using json object built with my purspective api.
-        WebClient jsonSearchWebClient2 = new WebClient();
+        WebClient jsonSearchWebClient2 = getClientUsingMockMvc();
 
         AddressSearchRequest addressSearchRequest = new AddressSearchRequest(updatedCity, AddressSearchByOptionEnum.CITY);
 
@@ -950,7 +908,7 @@ public class AddressTest {
         assertEquals(returnedCitySearchAddress, returnedCitySearchAddress2);
 
         // Verify Update Did Not Increase the Size of the Database
-        WebClient sizeWebClient3 = new WebClient();
+        WebClient sizeWebClient3 = getClientUsingMockMvc();
         sizeWebClient3.addRequestHeader("Accept", "application/json");
 
         Page sizePage3 = sizeWebClient3.getPage(sizeUrl.url());
@@ -979,7 +937,7 @@ public class AddressTest {
                 .addPathSegment(addressIdString)
                 .build();
 
-        WebClient deleteAddressWebClient = new WebClient();
+        WebClient deleteAddressWebClient = getClientUsingMockMvc();
 
         WebRequest deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
 
@@ -992,7 +950,7 @@ public class AddressTest {
         assertEquals(returnedDeleteAddress, returnedUpdatedAddress);
 
         // Delete The Created Address A Second Time
-        deleteAddressWebClient = new WebClient();
+        deleteAddressWebClient = getClientUsingMockMvc();
 
         deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
 
@@ -1007,7 +965,7 @@ public class AddressTest {
         assertNotEquals(returnedDeleteAddress, returnedDeleteAddress2);
 
         // Verify Address Database Size Has Shrunk By One After Deletion
-        WebClient sizeWebClient4 = new WebClient();
+        WebClient sizeWebClient4 = getClientUsingMockMvc();
         sizeWebClient4.addRequestHeader("Accept", "application/json");
 
         Page sizePage4 = sizeWebClient4.getPage(sizeUrl.url());
@@ -1036,7 +994,7 @@ public class AddressTest {
                 .addPathSegment(Integer.toString(addressReturned.getId()))
                 .build();
 
-        WebClient showAddressWebClient2 = new WebClient();
+        WebClient showAddressWebClient2 = getClientUsingMockMvc();
         showAddressWebClient2.addRequestHeader("Accept", "application/json");
 
         Page singleAddressPage2 = showAddressWebClient2.getPage(showUrl.url());
@@ -1052,7 +1010,7 @@ public class AddressTest {
         assertEquals(contentString, "");
 
         // Get Deleted Address By Company
-        WebClient searchWebClient2 = new WebClient();
+        WebClient searchWebClient2 = getClientUsingMockMvc();
 
         List<NameValuePair> paramsList2 = new ArrayList();
 
@@ -1080,7 +1038,7 @@ public class AddressTest {
                 .addPathSegment("search")
                 .build();
 
-        WebClient showAddressWebClient3 = new WebClient();
+        WebClient showAddressWebClient3 = getClientUsingMockMvc();
         showAddressWebClient3.addRequestHeader("Accept", "application/json");
 
         Page singleAddressPage3 = showAddressWebClient3.getPage(showUrl.url());
@@ -1126,7 +1084,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createAddressWebClient = getClientUsingMockMvc();
 
         Gson gson = new GsonBuilder().create();
         String addressJson = gson.toJson(address);
@@ -1159,7 +1117,7 @@ public class AddressTest {
                 .addQueryParameter("results", Integer.toString(Integer.MAX_VALUE))
                 .build();
 
-        WebClient getListWebClient = new WebClient();
+        WebClient getListWebClient = getClientUsingMockMvc();
         getListWebClient.addRequestHeader("Accept", "application/json");
 
         Page getListPage = getListWebClient.getPage(getListUrl.url());
@@ -1185,7 +1143,7 @@ public class AddressTest {
                 .addPathSegment("size")
                 .build();
 
-        WebClient sizeWebClient = new WebClient();
+        WebClient sizeWebClient = getClientUsingMockMvc();
         sizeWebClient.addRequestHeader("Accept", "application/json");
 
         Page sizePage = sizeWebClient.getPage(sizeUrl.url());
@@ -1235,7 +1193,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createAddressWebClient = getClientUsingMockMvc();
 
         Gson gson = new GsonBuilder().create();
         String addressJson = gson.toJson(address);
@@ -1245,7 +1203,24 @@ public class AddressTest {
         createRequest.setAdditionalHeader("Accept", "application/json");
         createRequest.setAdditionalHeader("Content-type", "application/json");
 
-        Page createdAddressPage = createAddressWebClient.getPage(createRequest);
+        Page createdAddressPage;
+
+        try {
+            createdAddressPage = createAddressWebClient.getPage(createRequest);
+        } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
+            int status = ex.getStatusCode();
+            WebResponse webResponse = ex.getResponse();
+            List<NameValuePair> pairs = webResponse.getResponseHeaders();
+            for (NameValuePair pair : pairs) {
+                System.out.println("Name: " + pair.getName() + ", Value:" + pair.getValue());
+            }
+            String message = ex.getStatusMessage();
+            String type = ex.getResponse().getContentType();
+
+            FormEncodingType formEncodingType = webResponse.getWebRequest().getEncodingType();
+            String typeName = formEncodingType.getName();
+            throw ex;
+        }
 
         WebResponse createAddressWebResponse = createdAddressPage.getWebResponse();
         assertEquals(createAddressWebResponse.getStatusCode(), 200);
@@ -1265,7 +1240,7 @@ public class AddressTest {
         assertNotNull(createdAddress);
 
         // Search for created Address.
-        WebClient searchWebClient = new WebClient();
+        WebClient searchWebClient = getClientUsingMockMvc();
 
         List<NameValuePair> paramsList = new ArrayList();
 
@@ -1344,7 +1319,7 @@ public class AddressTest {
         result = searchForAddressByLastNameUsingXForm(lastName.substring(5, 20).toUpperCase(), gson, searchUrl.url(), "searchByLastName");
         assertTrue(result.contains(createdAddress));
 
-        searchWebClient = new WebClient();
+        searchWebClient = getClientUsingMockMvc();
 
         searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
         searchByLastNameRequest.setRequestParameters(paramsList);
@@ -1388,7 +1363,7 @@ public class AddressTest {
     }
 
     private List<Address> searchForAddressByLastNameUsingXForm(String lastName, Gson gson, URL searchUrl, String searchBy) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
-        WebClient searchWebClient = new WebClient();
+        WebClient searchWebClient = getClientUsingMockMvc();
         List<NameValuePair> paramsList = new ArrayList();
         paramsList.add(new NameValuePair("searchText", lastName));
         paramsList.add(new NameValuePair("searchBy", searchBy));
@@ -1406,7 +1381,7 @@ public class AddressTest {
     }
 
     private List<Address> searchForAddressByUsingJson(String lastName, Gson gson, AddressSearchByOptionEnum searchOptionEnum, URL searchUrl) throws JsonSyntaxException, IOException, FailingHttpStatusCodeException, RuntimeException {
-        WebClient searchWebClient = new WebClient();
+        WebClient searchWebClient = getClientUsingMockMvc();
 
         AddressSearchRequest searchRequest = new AddressSearchRequest(lastName, searchOptionEnum);
 
@@ -1526,7 +1501,7 @@ public class AddressTest {
                     .addPathSegment("")
                     .build();
 
-            WebClient createAddressWebClient = new WebClient();
+            WebClient createAddressWebClient = getClientUsingMockMvc();
 
             Gson gson = new GsonBuilder().create();
             String addressJson = gson.toJson(address);
@@ -1556,7 +1531,7 @@ public class AddressTest {
             assertNotNull(createdAddress);
 
             // Search for created Address.
-            WebClient searchWebClient = new WebClient();
+            WebClient searchWebClient = getClientUsingMockMvc();
 
             List<NameValuePair> paramsList = new ArrayList();
 
@@ -1636,7 +1611,7 @@ public class AddressTest {
             result = searchForAddressByLastNameUsingXForm(randomString.substring(5, 20).toUpperCase(), gson, searchUrl.url(), searchingBy);
             assertTrue(result.contains(createdAddress));
 
-            searchWebClient = new WebClient();
+            searchWebClient = getClientUsingMockMvc();
 
             searchByLastNameRequest = new WebRequest(searchUrl.url(), HttpMethod.POST);
             searchByLastNameRequest.setRequestParameters(paramsList);
@@ -1688,7 +1663,7 @@ public class AddressTest {
         HttpUrl sizeUrl = getAddressUrlBuilder()
                 .addPathSegment("size")
                 .build();
-        WebClient sizeWebClient = new WebClient();
+        WebClient sizeWebClient = getClientUsingMockMvc();
         sizeWebClient.addRequestHeader("Accept", "application/json");
         Gson gson = new GsonBuilder().create();
         Page sizePage = sizeWebClient.getPage(sizeUrl.url());
@@ -1779,7 +1754,7 @@ public class AddressTest {
                     .addPathSegment("search")
                     .build();
 
-            WebClient showAddressWebClient = new WebClient();
+            WebClient showAddressWebClient = getClientUsingMockMvc();
             showAddressWebClient.addRequestHeader("Accept", "application/json");
 
             Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
@@ -1858,7 +1833,7 @@ public class AddressTest {
                     .addPathSegment("name_completion")
                     .build();
 
-            WebClient showAddressWebClient = new WebClient();
+            WebClient showAddressWebClient = getClientUsingMockMvc();
             showAddressWebClient.addRequestHeader("Accept", "application/json");
 
             Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
@@ -1953,7 +1928,7 @@ public class AddressTest {
                         .build();
             }
 
-            WebClient showAddressWebClient = new WebClient();
+            WebClient showAddressWebClient = getClientUsingMockMvc();
             showAddressWebClient.addRequestHeader("Accept", "application/json");
 
             Page singleAddressPage = showAddressWebClient.getPage(getUrl.url());
@@ -1995,7 +1970,7 @@ public class AddressTest {
                 .addPathSegment(addressIdString)
                 .build();
         Gson gson = new GsonBuilder().create();
-        WebClient deleteAddressWebClient = new WebClient();
+        WebClient deleteAddressWebClient = getClientUsingMockMvc();
         WebRequest deleteRequest = new WebRequest(deleteUrl.url(), HttpMethod.DELETE);
         Page deletePage = deleteAddressWebClient.getPage(deleteRequest);
         String returnedDeleteAddressJson = deletePage.getWebResponse().getContentAsString();
@@ -2008,7 +1983,7 @@ public class AddressTest {
         HttpUrl createUrl = getAddressUrlBuilder()
                 .addPathSegment("")
                 .build();
-        WebClient createAddressWebClient = new WebClient();
+        WebClient createAddressWebClient = getClientUsingMockMvc();
         Gson gson = new GsonBuilder().create();
         String addressJson = gson.toJson(address);
         WebRequest createRequest = new WebRequest(createUrl.url(), HttpMethod.POST);
@@ -2039,7 +2014,7 @@ public class AddressTest {
                 .addPathSegment("size")
                 .build();
 
-        WebClient sizeWebClient = new WebClient();
+        WebClient sizeWebClient = getClientUsingMockMvc();
         sizeWebClient.addRequestHeader("Accept", "application/json");
 
         Page sizePage = sizeWebClient.getPage(sizeUrl.url());
@@ -2057,7 +2032,7 @@ public class AddressTest {
         }
 
         // Now try without the Accept Json Header
-        sizeWebClient = new WebClient();
+        sizeWebClient = getClientUsingMockMvc();
 
         int statusCode = 0;
         String message;
@@ -2088,7 +2063,7 @@ public class AddressTest {
                 .addQueryParameter("sort_by", "last_name")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.addRequestHeader("Accept", "application/json");
 
         Page page = webClient.getPage(httpUrl.url());
@@ -2130,7 +2105,7 @@ public class AddressTest {
                 .addQueryParameter("sort_by", "first_name")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.addRequestHeader("Accept", "application/json");
 
         Page page = webClient.getPage(httpUrl.url());
@@ -2172,7 +2147,7 @@ public class AddressTest {
                 .addQueryParameter("sort_by", "company")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.addRequestHeader("Accept", "application/json");
 
         Page page = webClient.getPage(httpUrl.url());
@@ -2214,7 +2189,7 @@ public class AddressTest {
                 .addQueryParameter("sort_by", "id_reverse")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.addRequestHeader("Accept", "application/json");
 
         Page page = webClient.getPage(httpUrl.url());
@@ -2260,7 +2235,7 @@ public class AddressTest {
                 .addPathSegment("")
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
         webClient.addRequestHeader("Accept", "application/json");
 
         Page page = webClient.getPage(httpUrl.url());
@@ -2348,7 +2323,7 @@ public class AddressTest {
                 .addQueryParameter("results", Integer.toString(5))
                 .build();
 
-        WebClient webClient = new WebClient();
+        WebClient webClient = getClientUsingMockMvc();
 
         AddressSearchRequest addressSearchRequest = new AddressSearchRequest(address.getLastName(), AddressSearchByOptionEnum.LAST_NAME);
 
@@ -2374,7 +2349,7 @@ public class AddressTest {
 
         assertEquals(daveAddress, firstReturnedLastNameSearchAddress);
 
-        webClient = new WebClient();
+        webClient = getClientUsingMockMvc();
 
         URL searchUrl2 = HttpUrl.get(searchByLastNameWebRequest.getUrl()).newBuilder()
                 .removeAllQueryParameters("page")

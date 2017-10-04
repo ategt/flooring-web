@@ -125,7 +125,7 @@ public class OrdersControllerIT {
 
         assertTrue(htmlStateOptionsList.size() > 0);
 
-        HtmlSelect productSelect = orderCreateForm.getSelectByName("product");
+        HtmlSelect productSelect = orderCreateForm.getSelectByName("product-drop-down");
         List<HtmlOption> productOptionsList = productSelect.getOptions();
 
         assertTrue(productOptionsList.size() > 0);
