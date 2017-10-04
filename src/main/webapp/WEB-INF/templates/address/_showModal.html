@@ -1,0 +1,49 @@
+<div id="showDetailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content--><div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" th:text="#{address.modal.show.details}">Address Details</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered" id="show-address-table">
+                    <tr>
+                        <th><span th:text="#{address.modal.show.firstname}">First Name</span>:</th>
+                        <td id="address-first-name"></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.show.lastname}">Last Name</span>:</th>
+                        <td id="address-last-name"></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.show.company}">Company</span>:</th>
+                        <td id="address-company"></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.show.streetname}">Street Name</span>:</th>
+                        <td id="address-street-name"></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.show.streetnumber}">Street Number</span>:</th>
+                        <td id="address-street-number"></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.show.city}">City</span>:</th>
+                        <td id="address-city"></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.show.state}">State</span>:</th>
+                        <td id="address-state"></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.show.zip}">Zip</span>:</th>
+                        <td id="address-zipcode"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{address.modal.show.close}">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

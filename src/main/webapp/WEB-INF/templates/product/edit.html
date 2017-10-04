@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{application.title.default}">Flooring Master</title>
+    <link th:replace="partials/commonHead"/>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="#{application.title.default}">Flooring Master</h1>
+    <hr/>
+    <div th:replace="partials/banner"/>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div th:replace="product/_list"/>
+        </div>
+
+        <div class="col-md-6 text-center">
+            <form method="POST" th:object="${productCommand}" name="productCommand" action="/product/update"
+                  th:action="@{~/product/update}" class="form-horizontal">
+
+                <div th:class="${#fields.hasErrors('productName')}? ' has-error'">
+                    <div class="form-group explanation-block">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-7 text-center help-block">
+                            <strong th:if="${#fields.errors('productName')}" class="has-errors">
+                                <ul>
+                                    <li th:each="err : ${#fields.errors('productName')}" th:text="${err}"/>
+                                </ul>
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="productName" class="col-sm-3 control-label">
+                            <span th:text="#{product.edit.product}">Product</span>:
+                        </label>
+                        <div class="col-sm-7">
+                            <input name="productName" th:value="*{productName}" style="text-align: center"
+                                   class="form-control" type="text" id="productName" placeholder="Product Name"/>
+                        </div>
+                    </div>
+                </div>
+                <div th:class="${#fields.hasErrors('productName')}? ' has-error'">
+                    <div class="form-group explanation-block">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-7 text-center help-block">
+                            <strong th:if="${#fields.hasErrors('productCost')}">
+                                <ul>
+                                    <li th:each="err : ${#fields.errors('productCost')}" th:text="${err}"/>
+                                </ul>
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCost" class="col-sm-3 control-label">
+                            <span th:text="#{product.edit.cost}">Material Cost</span>:
+                        </label>
+                        <div class="col-sm-7">
+                            <input name="productCost" style="text-align: center" class="form-control"
+                                   type="text"
+                                   th:value="*{productCost}" id="productCost" placeholder="State Sales Tax"/>
+                        </div>
+                    </div>
+                </div>
+                <div th:class="${#fields.hasErrors('productName')}? ' has-error'">
+                    <div class="form-group explanation-block">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-7 text-center help-block">
+                            <strong th:if="${#fields.errors('laborCost')}">
+                                <ul>
+                                    <li th:each="err : ${#fields.errors('laborCost')}" th:text="${err}"/>
+                                </ul>
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="laborCost"
+                               class="col-sm-3 control-label">
+                            <span th:text="#{product.edit.labor.cost}">Installation Cost</span>:
+                        </label>
+                        <div class="col-sm-7">
+                            <input name="laborCost" style="text-align: center"
+                                   class="form-control"
+                                   type="text"
+                                   id="laborCost"
+                                   th:value="*{laborCost}"
+                                   placeholder="Installation Cost"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-7">
+                        <input value="Update" id="product-update-btn" type="submit" class="btn btn-default"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div th:replace="partials/commonScript"/>
+</body>
+</html>

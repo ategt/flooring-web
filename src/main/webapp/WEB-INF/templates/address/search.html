@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head>
+        <title th:text="#{application.title.address}">Address Book</title>
+        <link th:replace="partials/commonHead"/>
+    </head>
+<body>
+<div class="container">
+    <h1 th:text="#{application.title.address}">Address Book</h1>
+    <hr/>
+
+    <div th:replace="partials/banner"/>
+
+    <div class="row">
+        <div class="col-md-6 col-md-push-6 text-center">
+            <form method="POST" action="#" th:action="@{~/address/search}" class="form-horizontal">
+
+                <div class="form-group"></div>
+                <div class="form-group">
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-6">
+                            <select name="searchBy" class="form-control">
+                                <option value="searchByAll">Search By Everything</option>
+                                <option value="searchByFullName">Search By Name</option>
+                                <option value="searchByFirstName">Search By First Name</option>
+                                <option value="searchByLastName">Search By Last Name</option>
+                                <option value="searchByCompany">Search By Company</option>
+                                <option value="searchByNameOrCompany">Search By Name Or Company</option>
+                                <option value="searchByStreet">Search By Street</option>
+                                <option value="searchByCity">Search By City</option>
+                                <option value="searchByState">Search By State</option>
+                                <option value="searchByZip">Search By Zip Code</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group"></div>
+                    <div class="form-group">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-6">
+                            <input class="form-control" type="text" name="searchText" id="searchText"
+                                   placeholder="Type Search Criteria Here"/>
+                        </div>
+                    </div>
+                    <div class="form-group"></div>
+                    <div class="form-group">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-6 text-center">
+                            <input type="submit" class="btn btn-default"/>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="col-md-6 col-md-pull-6">
+            <div th:replace="address/_addressList"/>
+        </div>
+    </div>
+</div>
+<div th:replace="address/_showModal"/>
+<div th:replace="address/_editModal"/>
+
+<div th:replace="partials/commonScript"/>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script th:src="@{~/js/addressapp.js}"></script>
+<script th:src="@{~/js/addresspaging.js}"></script>
+</body>
+</html>

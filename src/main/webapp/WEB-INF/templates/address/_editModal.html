@@ -1,0 +1,66 @@
+<div id="editDetailModal" class="modal fade" role="dialog"><div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" th:text="#{address.modal.edit.detail}">Edit Address Details</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th><span  th:text="#{address.modal.edit.id}">ID</span>:</th>
+                        <td>
+                            <input class="form-control" type="text" id="edit-id" disabled="true" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.edit.firstname}">First Name</span>:</th>
+                        <td>
+                            <input class="form-control" type="text" id="edit-address-first-name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.edit.lastname}">Last Name</span>:</th>
+                        <td>
+                            <input class="form-control" type="text" id="edit-address-last-name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.edit.company}">Company</span>:</th>
+                        <td>
+                            <input class="form-control" type="text" id="edit-address-company" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.edit.streetname}">Street Name</span>:</th>
+                        <td>
+                            <input class="form-control" type="text" id="edit-address-street-name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.edit.streetnumber}">Street Number</span>:</th>
+                        <td>
+                            <input class="form-control" type="text" id="edit-address-street-number" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.edit.city}">City</span>:</th>
+                        <td><input class="form-control" type="text" id="edit-address-city" /></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.edit.state}">State</span>:</th>
+                        <td><input class="form-control" type="text" id="edit-address-state" /></td>
+                    </tr>
+                    <tr>
+                        <th><span th:text="#{address.modal.edit.zipcode}">Zipcode</span>:</th>
+                        <td><input class="form-control" type="text" id="edit-address-zipcode" /></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{address.modal.edit.close}">Close</button>
+                <button type="button" class="btn btn-danger" id="edit-address-button" th:text="#{address.modal.edit.save}">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

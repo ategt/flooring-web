@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head>
+        <title th:text="#{application.title.address}">Address Book</title>
+        <link th:replace="partials/commonHead"/>
+    </head>
+<body>
+<div class="container">
+    <h1 th:text="#{application.title.address}">Address Book</h1>
+    <hr/>
+
+    <div th:replace="partials/banner"/>
+
+    <div class="row">
+
+        <div class="col-md-6 text-center">
+            <h2>
+                <span th:text="${address.firstName + ' ' + address.lastName}"></span><br/>
+                <span th:if="${address.company}">
+                                <span th:text="${address.company}"></span><br/>
+                            </span>
+                <span th:text="${address.streetNumber + ' ' + address.streetName}"></span><br/>
+                <span th:text="${address.city + ', ' + address.state + ' ' + address.zip}"></span><br/>
+            </h2>
+            <div class="col-sm-12 text-center">
+                <a th:href="@{~/address/edit/{pathVar}(pathVar=${address.id})}" th:text="#{address.show.edit}">Edit</a>
+            </div>
+        </div>
+        <div class="col-md-6 text-center">
+            <table class="table table-hover">
+                <tr>
+                    <td>
+                        <span th:text="#{address.show.firstname}">First</span>:
+                    </td>
+                    <td th:text="${address.firstName}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span th:text="#{address.show.lastname}">Last</span>:
+                    </td>
+                    <td th:text="${address.lastName}">
+                    </td>
+                </tr>
+                <tr th:if="${address.company}">
+                    <td>
+                        <span th:text="#{address.show.company}">Company</span>:
+                    </td>
+                    <td th:text="${address.company}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <span th:text="#{address.show.address}">Address</span>:
+                    </td>
+                    <td th:text="${address.streetNumber + ' ' + address.streetName}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span th:text="#{address.show.city}">City</span>:
+                    </td>
+                    <td th:text="${address.city}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span th:text="#{address.show.state}">State</span>:
+                    </td>
+                    <td th:text="${address.state}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span th:text="#{address.show.zip}">Zip Code</span>:
+                    </td>
+                    <td th:text="${address.zip}">
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div th:replace="partials/commonScript"/>
+
+</body>
+</html>
+

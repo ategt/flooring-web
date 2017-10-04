@@ -1,0 +1,14 @@
+<table id="product-table" class="table table-hover">
+    <th>Product Name</th>
+    <th>Product Material Cost</th>
+    <th>Product Installation Cost</th>
+    <th><i class="glyphicon glyphicon-edit"></i> Edit</th>
+    <th><i class="glyphicon glyphicon-remove"></i> Delete</th>
+        <tr th:each="product : ${productCommands}">
+            <td><a th:href="@{~/product/edit/{pathVar}(pathVar=${product.productName})}" th:text="${product.productName}">Wood Floor</a></td>
+            <td><a th:href="@{~/product/edit/{pathVar}(pathVar=${product.productName})}" th:text="${product.productCost}">2.375</a></td>
+            <td><a th:href="@{~/product/edit/{pathVar}(pathVar=${product.productName})}" th:text="${product.laborCost}">1.99</a></td>
+            <td><a th:href="@{~/product/edit/{pathVar}(pathVar=${product.productName})}">Edit</a></td>
+            <td><a th:href="@{~/product/delete/{pathVar}(pathVar=${product.productName})}">Delete</a></td>
+        </tr>
+</table>

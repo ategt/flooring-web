@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{application.title.audit}">Audit Record</title>
+    <link th:replace="partials/commonHead"/>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="#{application.title.audit}">Audit Record</h1>
+    <hr/>
+    <div th:replace="partials/banner"/>
+
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div th:replace="audit/_auditList"/>
+                </div>
+            </div>
+        </div>
+
+<div th:replace="partials/commonScript"/>
+<script src="../js/auditapp.js" th:src="@{~/js/auditapp.js}"></script>
+</body>
+</html>

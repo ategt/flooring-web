@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head>
+        <title th:text="#{application.title.address}">Address Book</title>
+        <link th:replace="partials/commonHead"/>
+    </head>
+<body>
+<div class="container">
+    <h1 th:text="#{application.title.address}">Address Book</h1>
+    <hr/>
+
+    <div th:replace="partials/banner"/>
+
+            <div class="row">
+                <form method="POST" action="#" th:action="@{~/address/edit/}" class="form-horizontal">
+                    <div class="col-md-6">
+                        <div class="error-container" th:text="${errors}">
+                        </div>
+                        <div class="form-group">
+
+                            <input type="hidden" name="id" id="id" th:value="${address.id}" />
+
+                            <label for="firstName" class="col-sm-2 control-label" ><span th:text="#{address.edit.firstname}">First</span>:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" th:value="${address.firstName}" name="firstName" id="firstName" placeholder="First Name" />
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <label for="lastName" class="col-sm-2 control-label" ><span th:text="#{address.edit.lastname}">Last</span>:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="lastName" th:value="${address.lastName}" id="lastName" placeholder="Last Name" />
+                            </div>
+                        </div>          
+                        <div class="form-group">
+
+                            <label for="company" class="col-sm-2 control-label" ><span th:text="#{address.edit.company}">Company</span>:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="company" th:value="${address.company}" id="company" placeholder="Company" />
+                            </div>
+                        </div>          
+                        <div class="form-group">
+                            <label for="streetNumber" class="col-sm-2 control-label" ><span th:text="#{address.edit.streetnumber}">Street Number</span>:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="streetNumber" th:value="${address.streetNumber} " id="streetNumber" placeholder="Street Number" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="streetName" class="col-sm-2 control-label" ><span th:text="#{address.edit.streetname}">Street Name</span>:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="streetName" th:value="${address.streetName}" id="streetName" placeholder="Street Name" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="city" class="col-sm-2 control-label" ><span th:text="#{address.edit.city}">City</span>:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="city" th:value="${address.city}" id="city" placeholder="City" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="state" class="col-sm-2 control-label" ><span th:text="#{address.edit.state}">State</span>:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="state" th:value="${address.state}" id="state" placeholder="State" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="zip" class="col-sm-2 control-label" ><span th:text="#{address.edit.zip}">Zip</span>:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="zip" th:value="${address.zip}" id="zip" placeholder="Zip" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-2">
+
+                            </div>
+                            <div class="col-sm-10">
+                                <input type="submit" value="Update" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div th:replace="partials/commonScript"/>
+
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="../js/addressapp.js" th:src="@{~/js/addressapp.js}"></script>
+    </body>
+</html>
+

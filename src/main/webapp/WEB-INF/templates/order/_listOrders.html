@@ -22,5 +22,8 @@
     </tr>
 </table>
 
+<div class="text-center" th:if="${#lists.isEmpty(orders)}" th:utext="#{order.list.noResults}">
+    No Results
+</div>
 
 <div th:replace="partials/pagingFooter" />
