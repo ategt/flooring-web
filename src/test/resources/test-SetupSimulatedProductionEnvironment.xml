@@ -41,4 +41,6 @@
     <bean id="dbStr" class="java.lang.String">
         <constructor-arg ref="dbPropFromSystem" />
     </bean>
+
+    <mvc:resources mapping="/js/**" location="/js/"/>
 </beans>
