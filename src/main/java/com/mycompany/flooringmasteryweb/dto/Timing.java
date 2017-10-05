@@ -43,6 +43,11 @@ public class Timing implements Identifiable {
         return getId();
     }
 
+    @Override
+    public String toString() {
+    return "ID:" + getId() + ", Start:" + getStartTime() + ", Stop:" + getStopTime() + ", Difference:" + getDifferenceTime();
+    }
+
     /**
      * @return the startTime
      */

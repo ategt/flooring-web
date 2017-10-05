@@ -117,7 +117,12 @@ public class RestValidationHandlerTest {
 
         List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
 
-        assertTrue(validationErrorList.stream()
+        assertTrue("No error messages are supposed to contain dashes(-):\n" +
+                validationErrorList.stream().map(
+                        validationError -> validationError.getFieldName() + ":" + validationError.getMessage() + "\n")
+                        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                        .toString() + "\n\n",
+                validationErrorList.stream()
                 .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
         );
     }
@@ -155,8 +160,13 @@ public class RestValidationHandlerTest {
 
         List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
 
-        assertTrue(validationErrorList.stream()
-                .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
+        assertTrue("No error messages are supposed to contain dashes(-):\n" +
+                        validationErrorList.stream().map(
+                                validationError -> validationError.getFieldName() + ":" + validationError.getMessage() + "\n")
+                                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                                .toString() + "\n\n",
+                validationErrorList.stream()
+                        .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
         );
     }
 

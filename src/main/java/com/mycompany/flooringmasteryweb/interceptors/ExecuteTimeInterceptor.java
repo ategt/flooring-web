@@ -43,6 +43,9 @@ public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements
 
         Timing timing = buildTiming(handler, request, startTime, endTime, executeTime);
 
+        if (Objects.nonNull(modelAndView))
+            modelAndView.addObject("timing", timing);
+
         TimingDao timingDao = applicationContext.getBean("timingDao", TimingDao.class);
 
         if (!timing.getInvokingClassName().toLowerCase().contains("timing"))

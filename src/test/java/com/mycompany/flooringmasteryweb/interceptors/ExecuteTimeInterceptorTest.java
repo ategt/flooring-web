@@ -53,7 +53,6 @@ public class ExecuteTimeInterceptorTest {
     public void tearDown() throws Exception {
     }
 
-    @Ignore
     @Test
     public void checkForTimingInfoInModelMapTest() throws Exception {
         Timing beforeTiming = timingDao.getLast();
@@ -69,19 +68,23 @@ public class ExecuteTimeInterceptorTest {
         Map<String, Object> model = mvcResult.getModelAndView().getModel();
         HandlerInterceptor[] handlerInterceptors = mvcResult.getInterceptors();
 
-        assertTrue(model.containsKey("executeTime"));
+        assertTrue(model.containsKey("timing"));
+
+        Timing modelTiming = (Timing) model.get("timing");
         assertTrue(handlerInterceptors.length > 0);
 
         Timing afterTiming = timingDao.getLast();
 
         List<Timing> timingList = new ArrayList<>();
 
-        for (int i = beforeTiming.getId(); i <afterTiming.getId(); i++) {
+        for (int i = beforeTiming.getId(); i <= afterTiming.getId(); i++) {
             timingList.add(timingDao.get(i));
         }
 
         for (Timing timing : timingList) {
             System.out.println(timing.toString());
         }
+
+        assertTrue(timingList.contains(modelTiming));
     }
 }

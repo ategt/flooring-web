@@ -41,10 +41,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -52,8 +49,10 @@ import static org.junit.Assert.*;
 @WebAppConfiguration()
 @ContextHierarchy({
         @ContextConfiguration(locations = {"/test-SetupSimulatedProductionEnvironment.xml"}),
-        @ContextConfiguration(locations = {"/spring-persistence.xml"}),
-        @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml"})
+        //@ContextConfiguration(locations = {"/spring-persistence.xml"}),
+        //@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml"})
+        @ContextConfiguration(locations = {"classpath:spring-persistence.xml"}),
+        @ContextConfiguration(locations = {"/WEB-INF/spring-dispatcher-servlet.xml"})
 })
 public class MessageBundleHandlerTest {
 
@@ -133,6 +132,15 @@ public class MessageBundleHandlerTest {
         System.out.println("");
 
         System.setProperty("DATABASE_URL", piecedTogetherUri);
+
+        org.springframework.context.support.ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource
+                = webApplicationContext.getBean("messageSource", org.springframework.context.support.ReloadableResourceBundleMessageSource.class);
+
+        Set<String> basenameSet = reloadableResourceBundleMessageSource.getBasenameSet();
+        System.out.println("\n" + basenameSet.stream()
+                .map(basename -> basename + "\n")
+                .collect(StringBuffer::new, StringBuffer::append, StringBuffer::append)
+                .toString() + "\n");
 
         String message = webApplicationContext.getMessage("validation.orderCommand.state.null", null, Locale.US);
 
