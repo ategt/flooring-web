@@ -40,7 +40,7 @@ public class OrderCommand {
 
     @NotNull(message = "{validation.orderCommand.product.null}")
     @Size(min = 2, max = 45, message = "{validation.orderCommand.product.size}")
-    @ValidProductConstraint(message = "{product.notFound}")
+    @ValidProductConstraint(message = "product.notFound")
     private String product;
 
     @NotNull(message = "{validation.orderCommand.date.null}")

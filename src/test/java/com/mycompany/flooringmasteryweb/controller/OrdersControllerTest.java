@@ -12,6 +12,7 @@ import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
 import com.mycompany.flooringmasteryweb.validation.ValidProductValidator;
 import com.mycompany.flooringmasteryweb.validation.ValidationError;
 import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
@@ -1336,6 +1337,7 @@ public class OrdersControllerTest {
 
     @Test
     public void testStateInvalidationValidationFromWebContext() throws Exception {
+        System.out.println("Test State Invalidation Validation From Web Context");
 
         OrderCommand commandOrder =
                 OrderCommand.build(OrderTest.orderGenerator());
@@ -1351,10 +1353,20 @@ public class OrdersControllerTest {
                 .content(orderJson)
         )
                 .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();
+        System.out.println("Content: " + content);
+
+        int status = mvcResult.getResponse().getStatus();
+        System.out.println("Status: " + status);
+
+        String contentType = mvcResult.getResponse().getContentType();
+        assertTrue(contentType.contains("json"));
+
+
+
 
         ValidationErrorContainer validationErrorContainer =
                 gsonDeserializer.fromJson(content, ValidationErrorContainer.class);
