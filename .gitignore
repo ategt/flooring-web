@@ -13,3 +13,4 @@ Test Results - com_mycompany_flooringmasteryweb_controller_in_FlooringMasteryWeb
 Test Results - OrdersControllerIT.xml
 Test Results - *.xml
 
+/target*/
