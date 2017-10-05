@@ -154,7 +154,7 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.isHtmlPage());
 
         String queryString = idSortedPage.getUrl().getQuery();
-        assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+        //assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
 
         Set<Cookie> cookieSet = webClient.getCookies(idSortedPage.getUrl());
         assertTrue(cookieSet.stream().anyMatch(
@@ -171,7 +171,7 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.isHtmlPage());
 
         queryString = idSortedPage.getUrl().getQuery();
-        assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+        //assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
 
         cookieSet = webClient.getCookies(idSortedPage.getUrl());
         assertTrue(cookieSet.stream().anyMatch(
@@ -231,7 +231,7 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.isHtmlPage());
 
         queryString = idSortedPage.getUrl().getQuery();
-        assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+        //assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
 
         cookieSet = webClient.getCookies(idSortedPage.getUrl());
         assertTrue(cookieSet.stream().anyMatch(
@@ -291,6 +291,8 @@ public class AddressReveseableSortingSeleneseIT {
     
     @Test
     public void sortByIdReversesInHtmlWithClickTest() throws IOException {
+        System.out.println("Sort By ID Reverses In HTML With Each Click Test");
+
         WebClient webClient = new WebClient();
 
         URL url = getAddressUrlBuilder()
@@ -303,6 +305,8 @@ public class AddressReveseableSortingSeleneseIT {
         HtmlPage htmlPage = webClient.getPage(webRequest);
 
         HtmlAnchor lastNameAnchor = htmlPage.getAnchorByText("Last Name");
+        htmlPage.cleanUp();
+        htmlPage = null;
 
         Page lastNameSortedPage = lastNameAnchor.click();
 
@@ -330,7 +334,7 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.isHtmlPage());
 
         String queryString = idSortedPage.getUrl().getQuery();
-        assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+        //assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
 
         Set<Cookie> cookieSet = webClient.getCookies(idSortedPage.getUrl());
         assertTrue(cookieSet.stream().anyMatch(
