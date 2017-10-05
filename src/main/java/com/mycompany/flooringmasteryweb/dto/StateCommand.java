@@ -16,10 +16,10 @@ import java.util.Objects;
  */
 public class StateCommand {
 
-    @ValidStateConstraint
+    @ValidStateConstraint(message = "{state.doesNotExist}")
     private String stateName;
 
-    @ValidStateConstraint
+    @ValidStateConstraint(message = "{state.doesNotExist}")
     private String stateAbbreviation;
     private double stateTax;
 
