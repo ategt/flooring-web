@@ -49,10 +49,8 @@ import static org.junit.Assert.*;
 @WebAppConfiguration()
 @ContextHierarchy({
         @ContextConfiguration(locations = {"/test-SetupSimulatedProductionEnvironment.xml"}),
-        //@ContextConfiguration(locations = {"/spring-persistence.xml"}),
-        //@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml"})
-        @ContextConfiguration(locations = {"classpath:spring-persistence.xml"}),
-        @ContextConfiguration(locations = {"/WEB-INF/spring-dispatcher-servlet.xml"})
+        @ContextConfiguration(locations = {"/spring-persistence.xml"}),
+        @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml"})
 })
 public class MessageBundleHandlerTest {
 

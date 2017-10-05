@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author apprentice
  */
 @ControllerAdvice
-public class RestValidationHandler implements ApplicationContextAware{
+public class RestValidationHandler implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
@@ -104,6 +104,7 @@ public class RestValidationHandler implements ApplicationContextAware{
             String defaultMessage = error.getDefaultMessage();
 
             if (Objects.nonNull(defaultMessage)) {
+                System.out.println("Line 107: " + defaultMessage);
                 MessageFormat form = new MessageFormat(defaultMessage);
                 resultMessage = form.format(args);
             } else {

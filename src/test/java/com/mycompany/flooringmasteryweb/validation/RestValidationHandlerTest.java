@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -74,6 +75,17 @@ public class RestValidationHandlerTest {
 
         bindingResult.rejectValue("product", "product.custom", "-We Do not Carry This Item.");
         bindingResult.rejectValue("product", "product.notFound", "-We Do not Carry That Item.");
+
+        org.springframework.context.support.ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource
+                = ctx.getBean("messageSource", org.springframework.context.support.ReloadableResourceBundleMessageSource.class);
+
+        reloadableResourceBundleMessageSource.setCacheSeconds(7);
+
+        Set<String> basenameSet = reloadableResourceBundleMessageSource.getBasenameSet();
+        System.out.println("\n" + basenameSet.stream()
+                .map(basename -> basename + "\n")
+                .collect(StringBuffer::new, StringBuffer::append, StringBuffer::append)
+                .toString() + "\n");
 
         ValidationErrorContainer validationErrorContainer =
                 restValidationHandler.processValidationErrors(new MethodArgumentNotValidException(null, bindingResult));
