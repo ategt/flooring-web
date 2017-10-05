@@ -7,7 +7,7 @@
     <th>Order Name</th>
     <th>Order Total</th>
 
-        <tr th:each="audit : ${audits}" id="audit-row-${audit.id}" >
+        <tr th:each="audit : ${audits}" th:id="${'audit-row-' + audit.id}" >
             <td th:text="${audit.id}"></td>
             <td th:text="${audit.orderid}"></td>
             <td th:text="${audit.actionPerformed}"></td>
@@ -20,7 +20,7 @@
 
 <div id="loading-animation">
     <div colspan="7" class="loading-division">
-        <img src="@{~/img/ui-anim_basic_16x16.gif}" class="loading-spinner" />
+        <img th:src="@{~/img/ui-anim_basic_16x16.gif}" class="loading-spinner" />
         <span class="loading-text" th:text="#{audit.loading}">
             Loading Audits, Please Wait...
         </span>
