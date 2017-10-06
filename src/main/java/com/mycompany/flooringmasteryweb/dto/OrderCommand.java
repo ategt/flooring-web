@@ -35,7 +35,7 @@ public class OrderCommand {
 
     @NotNull(message = "{validation.orderCommand.state.null}")
     @Size(min = 2, max = 45, message = "{validation.orderCommand.state.size}")
-    @ValidStateConstraint(message = "{validation.orderCommand.state.invalid}")
+    @ValidStateConstraint(message = "validation.orderCommand.state.invalid")
     private String state;
 
     @NotNull(message = "{validation.orderCommand.product.null}")

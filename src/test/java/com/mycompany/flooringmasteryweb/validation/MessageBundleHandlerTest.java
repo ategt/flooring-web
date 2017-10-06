@@ -2,48 +2,35 @@ package com.mycompany.flooringmasteryweb.validation;
 
 import com.google.common.base.Strings;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Before;
+
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.SpringServletContainerInitializer;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.context.support.XmlWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.ServletContext;
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Locale;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
+//import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration()
@@ -57,11 +44,11 @@ public class MessageBundleHandlerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Before
+    @org.junit.Before
     public void setUp() throws Exception {
     }
 
-    @After
+    @org.junit.After
     public void tearDown() throws Exception {
     }
 
@@ -139,6 +126,9 @@ public class MessageBundleHandlerTest {
                 .map(basename -> basename + "\n")
                 .collect(StringBuffer::new, StringBuffer::append, StringBuffer::append)
                 .toString() + "\n");
+
+        String launchDir = System.getProperty("user.dir");
+        System.out.println("Launch Dir: " + launchDir);
 
         String message = webApplicationContext.getMessage("validation.orderCommand.state.null", null, Locale.US);
 

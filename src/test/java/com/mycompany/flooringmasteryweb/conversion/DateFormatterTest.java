@@ -1,5 +1,6 @@
 package com.mycompany.flooringmasteryweb.conversion;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +13,7 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -34,10 +33,23 @@ public class DateFormatterTest {
     @Autowired
     private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
 
+    private Locale locale;
+    private Set<String> basenames;
+
     @Before
-    public void setup(){
+    public void setup() {
+        locale = LocaleContextHolder.getLocale();
+        Set<String> basenames = reloadableResourceBundleMessageSource.getBasenameSet();
+        this.basenames = new LinkedHashSet<>(basenames);
+
         LocaleContextHolder.setLocale(new Locale("test", "TEST", "FORMAT"));
         reloadableResourceBundleMessageSource.setBasename("classpath:messages");
+    }
+
+    @After
+    public void tearDown() {
+        LocaleContextHolder.setLocale(locale);
+        reloadableResourceBundleMessageSource.setBasenames(basenames.toArray(new String[basenames.size()]));
     }
 
     @Test
