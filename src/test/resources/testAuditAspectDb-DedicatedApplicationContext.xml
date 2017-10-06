@@ -40,7 +40,4 @@
         </aop:aspect>
         
     </aop:config>
-    
-    <!--This is the main project context file.-->
-            
 </beans>
