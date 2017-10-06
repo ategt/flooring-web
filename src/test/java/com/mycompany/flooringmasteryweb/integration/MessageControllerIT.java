@@ -1,4 +1,4 @@
-package com.mycompany.flooringmasteryweb.controller;
+package com.mycompany.flooringmasteryweb.integration;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
