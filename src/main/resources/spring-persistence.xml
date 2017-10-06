@@ -1,22 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://www.springframework.org/schema/mvc
-                           http://www.springframework.org/schema/mvc/spring-mvc.xsd
-                           http://www.springframework.org/schema/tx 
-                           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-                           http://www.springframework.org/schema/context
-                           http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
-
-    <!-- Bean definitions go here -->
-
-
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="SQLBase-applicationContext.xml"/>
     <import resource="stateDao-context.xml"/>
@@ -39,39 +25,4 @@
     <bean id="restValidationHandler"
           class="com.mycompany.flooringmasteryweb.validation.RestValidationHandler" />
 
-
-
-    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
-        <!--<property name="messageConverters">-->
-            <!--<list>-->
-                <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
-                    <!--<property name="supportedMediaTypes">-->
-                        <!--<list>-->
-                            <!--<value>text/html;charset=UTF-8</value>-->
-                            <!--<value>text/plain;charset=UTF-8</value>-->
-                            <!--<value>application/json;charset=UTF-8</value>-->
-                        <!--</list>-->
-                    <!--</property>-->
-                <!--</bean>-->
-            <!--</list>-->
-        <!--</property>-->
-        <!--<property name="customArgumentResolvers">-->
-            <!--<list>-->
-                <!--<bean id="orderSearchRequestResolver" class="com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver" />-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
-
-    <!--&lt;!&ndash; Register the messages.properties &ndash;&gt;-->
-    <!--<bean id="messageSource"-->
-          <!--class="org.springframework.context.support.ReloadableResourceBundleMessageSource">-->
-
-        <!--<property name="basenames">-->
-            <!--<list>-->
-                <!--<value>ValidationMessages</value>-->
-                <!--<value>ApplicationResources</value>-->
-                <!--<value>messages</value>-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
 </beans>
