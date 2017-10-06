@@ -11,11 +11,11 @@ package com.mycompany.flooringmasteryweb.utilities;
  */
 public class TextUtilities {
 
-    
+
     /** Many thanks to whomever came up with this on stackoverflow.com.
-     * 
+     *
      * @param givenString
-     * @return 
+     * @return
      */
     public static String toTitleCase(String givenString) {
         if (givenString == null)
@@ -23,7 +23,7 @@ public class TextUtilities {
 
         if (givenString.trim().length() < 1)
             return givenString;
-        
+
         String[] arr = givenString.toLowerCase().split(" ");
         StringBuffer sb = new StringBuffer();
 
@@ -32,5 +32,14 @@ public class TextUtilities {
                     .append(arr[i].substring(1)).append(" ");
         }
         return sb.toString().trim();
+    }
+
+    public static String sanitizeParenthesis(String message){
+        message = message.trim();
+        if (message.startsWith("{") && message.endsWith("}")) {
+            message = message.startsWith("{") && message.endsWith("}") ? message.substring(1) : message;
+            message = message.endsWith("}") ? message.substring(0, message.length() - 1) : message;
+        }
+        return message;
     }
 }

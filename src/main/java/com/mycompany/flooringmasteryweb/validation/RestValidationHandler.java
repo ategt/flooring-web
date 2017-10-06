@@ -12,9 +12,11 @@ import java.util.Objects;
 
 import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
+import com.mycompany.flooringmasteryweb.utilities.TextUtilities;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -86,7 +88,8 @@ public class RestValidationHandler implements ApplicationContextAware {
     private String produceMessage(ObjectError error) {
         String resultMessage = null;
 
-        Locale locale = Locale.getDefault();
+        Locale locale = LocaleContextHolder.getLocale();
+        locale = Objects.isNull(locale) ? Locale.getDefault() : locale;
         String choosenCode = error.getCode();
         String[] codes = error.getCodes();
         Object[] args = error.getArguments();
@@ -105,11 +108,17 @@ public class RestValidationHandler implements ApplicationContextAware {
 
             if (Objects.nonNull(defaultMessage)) {
                 System.out.println("Line 107: " + defaultMessage);
+
+                if (defaultMessage.startsWith("{") && defaultMessage.endsWith("}")) {
+                    defaultMessage = TextUtilities.sanitizeParenthesis(defaultMessage);
+                    defaultMessage = applicationContext.getMessage(defaultMessage, error.getArguments(), locale);
+                }
+
                 MessageFormat form = new MessageFormat(defaultMessage);
                 resultMessage = form.format(args);
             } else {
                 String defaultMessageCode = applicationContext.getBean("defaultMessageCode", String.class);
-                resultMessage = applicationContext.getMessage(defaultMessageCode, error.getArguments(), Locale.getDefault());
+                resultMessage = applicationContext.getMessage(defaultMessageCode, error.getArguments(), locale);
             }
         }
         return resultMessage;

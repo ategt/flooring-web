@@ -50,6 +50,7 @@ public class DateFormatterTest {
     public void tearDown() {
         LocaleContextHolder.setLocale(locale);
         reloadableResourceBundleMessageSource.setBasenames(basenames.toArray(new String[basenames.size()]));
+        reloadableResourceBundleMessageSource.clearCacheIncludingAncestors();
     }
 
     @Test

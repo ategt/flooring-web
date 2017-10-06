@@ -3,6 +3,7 @@ package com.mycompany.flooringmasteryweb.validation;
 import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
+import com.mycompany.flooringmasteryweb.utilities.TextUtilities;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 import org.junit.Before;
@@ -22,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -130,12 +132,12 @@ public class RestValidationHandlerTest {
         List<ValidationError> validationErrorList = validationErrorContainer.getErrors();
 
         assertTrue("No error messages are supposed to contain dashes(-):\n" +
-                validationErrorList.stream().map(
-                        validationError -> validationError.getFieldName() + ":" + validationError.getMessage() + "\n")
-                        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
-                        .toString() + "\n\n",
+                        validationErrorList.stream().map(
+                                validationError -> validationError.getFieldName() + ":" + validationError.getMessage() + "\n")
+                                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                                .toString() + "\n\n",
                 validationErrorList.stream()
-                .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
+                        .noneMatch(validationError -> Strings.nullToEmpty(validationError.getMessage()).contains("-"))
         );
     }
 
@@ -191,6 +193,17 @@ public class RestValidationHandlerTest {
 
         assertNotNull(resultMessage);
         assertFalse(Strings.isNullOrEmpty(resultMessage));
+    }
+
+    @Test
+    public void messageTest() {
+        Object[] args = null;
+        String defaultMessage = "{product.notFound}";
+        defaultMessage = TextUtilities.sanitizeParenthesis(defaultMessage);
+        MessageFormat form = new MessageFormat(defaultMessage);
+        String resultMessage = form.format(args);
+
+        assertEquals(resultMessage, "product.notFound");
     }
 
     private ApplicationContext loadTheProductionContextWithTestDatabase() {
