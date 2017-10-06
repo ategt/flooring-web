@@ -149,7 +149,7 @@ public class OrderDaoTimingDummyTest {
         OrderDao dummyOrderDao = ctx.getBean("orderDao", OrderDao.class);
 
         long startTime = new Date().getTime();
-        dummyOrderDao.getList();
+        dummyOrderDao.list(null);
         long stopTime = new Date().getTime();
 
         Timing timing = instance.getLast();

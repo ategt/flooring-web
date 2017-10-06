@@ -377,7 +377,7 @@ public class OrderDaoDbImplTest {
         instance.create(orderThree);
         instance.create(orderFour);
 
-        List<Order> testList = instance.getList();
+        List<Order> testList = instance.list(null);
 
         assertTrue(OrderTest.isOrderInList(orderOne, testList));
         assertTrue(OrderTest.isOrderInList(orderTwo, testList));
@@ -398,7 +398,7 @@ public class OrderDaoDbImplTest {
         instance.delete(orderThree);
         instance.delete(orderFour);
 
-        List<Order> orderList = instance.getList();
+        List<Order> orderList = instance.list(null);
 
         assertEquals(orderList.contains(orderOne), false);
         assertEquals(orderList.contains(orderTwo), false);
@@ -1958,9 +1958,9 @@ public class OrderDaoDbImplTest {
 
         assertTrue(Objects.equals(firstTestOrder.getArea(), secondTestOrder.getArea()));
         assertEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
-        assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
-        assertEquals(firstTestOrder.getDate().getYear(), secondTestOrder.getDate().getYear());
-        assertEquals(firstTestOrder.getDate().getMonth(), secondTestOrder.getDate().getMonth());
+
+        OrderTest.isSameDay(firstTestOrder.getDate(), secondTestOrder.getDate());
+
         assertTrue(Objects.equals(firstTestOrder.getId(), secondTestOrder.getId()));
         assertEquals(firstTestOrder.getLaborCost(), secondTestOrder.getLaborCost(), 0.01);
         assertEquals(firstTestOrder.getLaborCostPerSquareFoot(), secondTestOrder.getLaborCostPerSquareFoot(), 0.01);
@@ -1992,9 +1992,7 @@ public class OrderDaoDbImplTest {
 
         assertEquals(firstTestOrder.getArea(), secondTestOrder.getArea(), 0.01);
         assertEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
-        assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
-        assertEquals(firstTestOrder.getDate().getYear(), secondTestOrder.getDate().getYear());
-        assertEquals(firstTestOrder.getDate().getMonth(), secondTestOrder.getDate().getMonth());
+        OrderTest.isSameDay(firstTestOrder.getDate(), secondTestOrder.getDate());
         assertTrue(Objects.equals(firstTestOrder.getId(), secondTestOrder.getId()));
         assertEquals(firstTestOrder.getLaborCost(), secondTestOrder.getLaborCost(), 0.01);
         assertEquals(firstTestOrder.getLaborCostPerSquareFoot(), secondTestOrder.getLaborCostPerSquareFoot(), 0.01);
@@ -2013,9 +2011,7 @@ public class OrderDaoDbImplTest {
 
         assertTrue(!Objects.equals(firstTestOrder.getArea(), secondTestOrder.getArea()));
         assertNotEquals(firstTestOrder.getCostPerSquareFoot(), secondTestOrder.getCostPerSquareFoot(), .01);
-        assertEquals(firstTestOrder.getDate().getDate(), secondTestOrder.getDate().getDate());
-        assertEquals(firstTestOrder.getDate().getYear(), secondTestOrder.getDate().getYear());
-        assertEquals(firstTestOrder.getDate().getMonth(), secondTestOrder.getDate().getMonth());
+        OrderTest.isSameDay(firstTestOrder.getDate(), secondTestOrder.getDate());
         assertTrue(Objects.equals(firstTestOrder.getId(), secondTestOrder.getId()));
         assertNotEquals(firstTestOrder.getLaborCost(), secondTestOrder.getLaborCost(), 0.01);
         assertNotEquals(firstTestOrder.getLaborCostPerSquareFoot(), secondTestOrder.getLaborCostPerSquareFoot(), 0.01);
@@ -2094,7 +2090,7 @@ public class OrderDaoDbImplTest {
 
         OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
 
-        List<Order> allOrders = orderDao.getList();
+        List<Order> allOrders = orderDao.list(null);
         int size = allOrders.size();
 
         Order randomValidOrder = null;

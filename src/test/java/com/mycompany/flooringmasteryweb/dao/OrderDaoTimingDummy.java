@@ -70,16 +70,6 @@ public class OrderDaoTimingDummy implements OrderDao {
     }
 
     @Override
-    public List<Order> getList() {
-        try {
-            Thread.sleep(timeToSleep);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(OrderDaoTimingDummy.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-
-    @Override
     public List<Date> listOrderDates() {
         try {
             Thread.sleep(timeToSleep);

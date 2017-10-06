@@ -27,8 +27,6 @@ public interface OrderDao extends SizeableDao{
     Order delete(Order order);
     Order delete(Integer id);
 
-    @Deprecated
-    List<Order> getList();
     List<Order> list(ResultSegment<OrderSortByEnum> resultSegment);
     
     List<Date> listOrderDates();
