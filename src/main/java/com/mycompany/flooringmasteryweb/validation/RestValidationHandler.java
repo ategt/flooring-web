@@ -107,9 +107,7 @@ public class RestValidationHandler implements ApplicationContextAware {
             String defaultMessage = error.getDefaultMessage();
 
             if (Objects.nonNull(defaultMessage)) {
-                System.out.println("Line 107: " + defaultMessage);
-
-                if (defaultMessage.startsWith("{") && defaultMessage.endsWith("}")) {
+               if (defaultMessage.startsWith("{") && defaultMessage.endsWith("}")) {
                     defaultMessage = TextUtilities.sanitizeParenthesis(defaultMessage);
                     defaultMessage = applicationContext.getMessage(defaultMessage, error.getArguments(), locale);
                 }
