@@ -8,27 +8,19 @@ package com.mycompany.flooringmasteryweb.controller;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
-import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.ProductCommand;
 import com.mycompany.flooringmasteryweb.dto.State;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import javax.inject.Inject;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.validation.Valid;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author apprentice

@@ -5,26 +5,19 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
+import com.mycompany.flooringmasteryweb.dto.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
-
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author ATeg

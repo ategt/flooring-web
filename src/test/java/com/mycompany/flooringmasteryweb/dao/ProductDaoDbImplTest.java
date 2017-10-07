@@ -5,19 +5,19 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.OrderTest;
-import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.ProductTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+ import com.mycompany.flooringmasteryweb.dto.Product;
+ import com.mycompany.flooringmasteryweb.dto.ProductTest;
+ import org.junit.After;
+ import org.junit.Before;
+ import org.junit.Test;
+ import org.springframework.context.ApplicationContext;
+ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Objects;
+
+ import static org.junit.Assert.*;
 
  /**
  *

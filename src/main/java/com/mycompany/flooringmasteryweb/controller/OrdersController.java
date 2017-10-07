@@ -12,7 +12,6 @@ import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.modelBinding.CustomModelBinder;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
-import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
 import com.mycompany.flooringmasteryweb.validation.RestValidationHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

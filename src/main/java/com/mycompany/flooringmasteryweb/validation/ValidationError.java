@@ -5,9 +5,6 @@
  */
 package com.mycompany.flooringmasteryweb.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author apprentice

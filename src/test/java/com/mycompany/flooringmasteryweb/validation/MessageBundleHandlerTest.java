@@ -2,9 +2,6 @@ package com.mycompany.flooringmasteryweb.validation;
 
 import com.google.common.base.Strings;
 import org.apache.commons.dbcp.BasicDataSource;
-
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -10,18 +10,17 @@ import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.dto.SearchRequest;
 import com.mycompany.flooringmasteryweb.dto.StateCommand;
 import com.mycompany.flooringmasteryweb.dto.ValueEnum;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author ATeg

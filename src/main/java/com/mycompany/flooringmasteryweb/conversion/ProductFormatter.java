@@ -7,8 +7,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.format.Formatter;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 public class ProductFormatter implements Formatter<Product> {

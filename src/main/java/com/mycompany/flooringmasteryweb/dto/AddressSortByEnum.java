@@ -7,8 +7,6 @@ package com.mycompany.flooringmasteryweb.dto;
 
 import com.google.common.base.Strings;
 
-import java.util.Objects;
-
 /**
  * @author ATeg
  */

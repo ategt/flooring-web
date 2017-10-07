@@ -1,10 +1,8 @@
 package com.mycompany.flooringmasteryweb.validation;
 
 import com.google.common.base.Strings;
-import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
 import com.mycompany.flooringmasteryweb.dto.OrderCommand;
 import com.mycompany.flooringmasteryweb.utilities.TextUtilities;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.Date;

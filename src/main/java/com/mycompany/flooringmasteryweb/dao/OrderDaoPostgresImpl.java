@@ -5,28 +5,18 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.Order;
-import com.mycompany.flooringmasteryweb.dto.OrderCommand;
-import com.mycompany.flooringmasteryweb.dto.OrderResultSegment;
-import com.mycompany.flooringmasteryweb.dto.OrderSearchByOptionEnum;
-import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.ResultSegment;
-import com.mycompany.flooringmasteryweb.dto.State;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.inject.Inject;
-
+import com.mycompany.flooringmasteryweb.dto.*;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author apprentice

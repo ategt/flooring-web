@@ -7,22 +7,14 @@ package com.mycompany.flooringmasteryweb.dao;
 
 import com.google.common.base.Strings;
 import com.mycompany.flooringmasteryweb.dto.*;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.*;
 
 /**
  *

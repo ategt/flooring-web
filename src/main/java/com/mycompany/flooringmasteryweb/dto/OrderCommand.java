@@ -5,8 +5,6 @@
  */
 package com.mycompany.flooringmasteryweb.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mycompany.flooringmasteryweb.modelBinding.CustomDateDeserializer;
@@ -14,12 +12,11 @@ import com.mycompany.flooringmasteryweb.modelBinding.CustomDateSerializer;
 import com.mycompany.flooringmasteryweb.validation.ValidProductConstraint;
 import com.mycompany.flooringmasteryweb.validation.ValidStateConstraint;
 
-
-import java.util.Date;
-import java.util.Objects;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author apprentice

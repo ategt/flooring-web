@@ -1,15 +1,12 @@
 package com.mycompany.flooringmasteryweb.validation;
 
-import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Objects;
 
 public class ValidProductValidator implements ApplicationContextAware, ConstraintValidator<ValidProductConstraint, String> {
 

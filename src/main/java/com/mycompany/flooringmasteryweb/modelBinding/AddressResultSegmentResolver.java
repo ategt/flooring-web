@@ -1,6 +1,8 @@
 package com.mycompany.flooringmasteryweb.modelBinding;
 
-import com.mycompany.flooringmasteryweb.dto.*;
+import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
+import com.mycompany.flooringmasteryweb.dto.ResultSegment;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

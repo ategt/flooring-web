@@ -6,25 +6,14 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.google.common.base.Strings;
-import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
+import com.mycompany.flooringmasteryweb.dto.*;
+import org.junit.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import static org.junit.Assert.*;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import com.mycompany.flooringmasteryweb.dto.AddressTest;
 
 /**
  * @author ATeg

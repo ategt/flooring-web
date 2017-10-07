@@ -5,13 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.dao;
 
-import com.mycompany.flooringmasteryweb.dto.Order;
-import com.mycompany.flooringmasteryweb.dto.OrderCommand;
-import com.mycompany.flooringmasteryweb.dto.OrderSearchRequest;
-import com.mycompany.flooringmasteryweb.dto.OrderSortByEnum;
-import com.mycompany.flooringmasteryweb.dto.Product;
-import com.mycompany.flooringmasteryweb.dto.ResultSegment;
-import com.mycompany.flooringmasteryweb.dto.State;
+import com.mycompany.flooringmasteryweb.dto.*;
 
 import java.util.Date;
 import java.util.List;

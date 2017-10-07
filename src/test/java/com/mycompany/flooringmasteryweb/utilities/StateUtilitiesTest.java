@@ -5,12 +5,13 @@
  */
 package com.mycompany.flooringmasteryweb.utilities;
 
-import java.util.List;
-import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

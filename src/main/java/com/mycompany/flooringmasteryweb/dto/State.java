@@ -6,6 +6,7 @@
 package com.mycompany.flooringmasteryweb.dto;
 
 import com.mycompany.flooringmasteryweb.utilities.StateUtilities;
+
 import java.util.Objects;
 
 /**

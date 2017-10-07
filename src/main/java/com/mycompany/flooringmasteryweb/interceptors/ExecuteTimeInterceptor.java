@@ -1,9 +1,5 @@
 package com.mycompany.flooringmasteryweb.interceptors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.util.concurrent.AsyncFunction;
 import com.mycompany.flooringmasteryweb.dao.TimingDao;
 import com.mycompany.flooringmasteryweb.dto.Timing;
 import org.springframework.beans.BeansException;
@@ -12,6 +8,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 public class ExecuteTimeInterceptor extends HandlerInterceptorAdapter implements ApplicationContextAware {

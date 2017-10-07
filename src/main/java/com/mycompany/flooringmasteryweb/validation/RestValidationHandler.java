@@ -5,13 +5,7 @@
  */
 package com.mycompany.flooringmasteryweb.validation;
 
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
 import com.google.common.base.Strings;
-import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
 import com.mycompany.flooringmasteryweb.utilities.TextUtilities;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +21,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * @author apprentice

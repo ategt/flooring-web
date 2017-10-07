@@ -6,10 +6,10 @@
 package com.mycompany.flooringmasteryweb.dao;
 
 import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
+import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+
 import java.util.List;
-import java.util.Set;
 
 /**
  *

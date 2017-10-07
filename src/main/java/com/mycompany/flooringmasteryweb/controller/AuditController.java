@@ -7,15 +7,12 @@ package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AuditDao;
 import com.mycompany.flooringmasteryweb.dto.Audit;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
