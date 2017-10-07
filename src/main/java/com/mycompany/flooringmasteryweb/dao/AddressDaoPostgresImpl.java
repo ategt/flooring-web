@@ -319,25 +319,31 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
-    private static final String SQL_ADDRESS_NAME_COMPLETION_QUERY = "WITH inputQuery(n) AS (SELECT ?)" +
-            " nameOrCompany AS (" +
-            " SELECT CONCAT(' ' || first_name || ' ' || last_name || ' full') col FROM addresses" +
-            " UNION SELECT company || ' comp' FROM addresses" +
-            " ) " +
-            " SELECT col, 1 rank FROM nameOrCompany WHERE col LIKE (SELECT CONCAT('% ', n, ' %') FROM inputQuery)" +
-            " UNION ALL SELECT col, 2 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('% ', n, ' %')) FROM inputQuery)" +
-            " UNION ALL SELECT col, 3 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery)" +
-            " UNION ALL SELECT col, 4 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)" +
-            " UNION ALL SELECT col, 5 rank FROM nameOrCompany WHERE col LIKE " +
-            "             ALL(" +
-            "                 ARRAY(" +
-            "                     SELECT CONCAT('%', input_column, '%') FROM ( " +
-            "                         SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery " +
-            "                     ) AS augmented_input_table " +
-            "                 ) " +
-            "             ) " +
-            " ORDER BY rank ASC, col ASC" +
-            " LIMIT ?";
+    private static final String SQL_ADDRESS_NAME_COMPLETION_QUERY = "WITH inputQuery(n) AS (SELECT ?), " +
+            " nameOrCompany(col) AS ( " +
+            " SELECT CONCAT(' ' || first_name || ' ' || last_name || ' ') col FROM addresses  " +
+            " UNION SELECT ' ' || company || ' ' col FROM addresses ), " +
+            " " +
+            "  fullQuery AS ( " +
+            "  " +
+            " SELECT col, 1 rank FROM nameOrCompany WHERE col LIKE (SELECT CONCAT('% ', n, ' %') FROM inputQuery)  " +
+            " UNION ALL SELECT col, 2 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('% ', n, ' %')) FROM inputQuery)  " +
+            " UNION ALL SELECT col, 3 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery)  " +
+            " UNION ALL SELECT col, 4 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)  " +
+            " UNION ALL SELECT col, 5 rank FROM nameOrCompany WHERE col LIKE  " +
+            "  ALL( ARRAY( SELECT CONCAT('%', input_column, '%') FROM  " +
+            "   ( SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery ) AS augmented_input_table ) ) " +
+            "  ) " +
+            "   " +
+            "  SELECT TRIM(t1.col) col FROM fullQuery t1 " +
+            "         JOIN ( " +
+            "            SELECT col, MIN(rank) min_rank " +
+            "            FROM fullQuery " +
+            "            GROUP BY col " +
+            "         ) t2  " +
+            "   ON t1.col = t2.col AND t1.rank = t2.min_rank " +
+            "   ORDER BY t1.rank ASC, t1.col ASC" +
+            "   LIMIT ?";
 
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
@@ -416,8 +422,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
         }
 
         try {
-            String[] results = jdbcTemplate.queryForObject(SQL_ADDRESS_NAME_COMPLETION_QUERY, String[].class, input, limit);
-            return Arrays.asList(results);
+            return jdbcTemplate.queryForList(SQL_ADDRESS_NAME_COMPLETION_QUERY, String.class, input, limit);
         } catch (org.springframework.dao.EmptyResultDataAccessException ex){
             return null;
         }

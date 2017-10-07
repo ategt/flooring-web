@@ -80,11 +80,15 @@
             <aop:around method="logStartAndStopTimeForMethod"
                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.listOrderNumbers(..))"
             />
-            
+
             <aop:around method="logStartAndStopTimeForMethod"
-                       pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.listOrderDates(..))"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.listOrderDates(..))"
             />
-            
+
+            <aop:around method="logStartAndStopTimeForMethod"
+                        pointcut="execution(* com.mycompany.flooringmasteryweb.dao.OrderDao.list(..))"
+            />
+
         </aop:aspect>
         
     </aop:config>

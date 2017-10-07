@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.flooringmasteryweb.controller;
+package com.mycompany.flooringmasteryweb.integration;
 
 import com.gargoylesoftware.htmlunit.*;
 import com.google.gson.Gson;
