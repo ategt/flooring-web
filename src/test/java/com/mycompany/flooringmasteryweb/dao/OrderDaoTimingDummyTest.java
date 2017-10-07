@@ -156,14 +156,16 @@ public class OrderDaoTimingDummyTest {
 
         Integer expectedTime = ctx.getBean("orderDaoIdleTime", Integer.class);
 
-        System.out.println("start: " + Math.abs(timing.getStartTime() - startTime));
-        System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
-        System.out.println("difference: " + Math.abs(timing.getDifferenceTime() - timeTaken) + " / " + expectedTime);
+        String timingInfo = "\nStart: " + Math.abs(timing.getStartTime() - startTime)
+        + "\nStop: " + Math.abs(timing.getStopTime() - stopTime)
+        + "\nDifference: " + Math.abs(timing.getDifferenceTime() - timeTaken) + " / " + expectedTime;
 
-        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
-        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
-        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
-        assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
+        System.out.println(timingInfo);
+
+        assertTrue(timingInfo, Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue(timingInfo, Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("Difference Failed." + timingInfo, Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
+        assertTrue("Difference Failed." + timingInfo, Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
     }
 
     /**
