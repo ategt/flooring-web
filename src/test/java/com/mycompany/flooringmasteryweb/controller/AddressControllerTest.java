@@ -69,7 +69,6 @@ public class AddressControllerTest {
         lastAddressResultSegmentUsed = new AddressResultSegment[1];
 
         Mockito.when(mockAddressDao.list(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
-        Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
 
         addressController.setApplicationContext(webApplicationContext);
         AddressResultSegmentResolver addressResultSegmentResolver = new AddressResultSegmentResolver();
@@ -136,7 +135,6 @@ public class AddressControllerTest {
         AddressResultSegment[] lastAddressResultSegmentUsed = new AddressResultSegment[1];
 
         Mockito.when(mockAddressDao.list(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
-        Mockito.when(mockAddressDao.getAddressesSortedByParameter(getResultProperties(lastAddressResultSegmentUsed))).thenReturn(addressList);
 
         MvcResult mvcResult = mockMvc.perform(get("/address/")
                 .param("page", "20")
