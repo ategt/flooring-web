@@ -20,10 +20,9 @@ public interface ProductDao {
     List<ProductCommand> buildCommandProductList();
 
     Product create(Product product);
-    
     Product delete(Product product);
-
     Product get(String name);
+    Product update(Product product);
 
     List<String> getList();
 
@@ -33,8 +32,5 @@ public interface ProductDao {
 
     int size();
 
-    Product update(Product product);
-
     boolean validProductName(String inputName);
-    
 }

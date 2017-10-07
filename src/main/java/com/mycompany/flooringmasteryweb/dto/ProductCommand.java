@@ -7,7 +7,8 @@ package com.mycompany.flooringmasteryweb.dto;
 
 import java.util.Objects;
 import javax.validation.constraints.Min;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -15,7 +16,8 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class ProductCommand {
 
-    @NotEmpty(message = "{validation.productCommand.productName.empty}")
+    @NotNull(message="{validation.productCommand.productName.null}")
+    @Size(min=1, message = "{validation.productCommand.productName.empty}")
     private String productName;
 
     @Min(0)

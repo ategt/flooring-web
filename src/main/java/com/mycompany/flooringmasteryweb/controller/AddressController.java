@@ -59,7 +59,7 @@ public class AddressController implements ApplicationContextAware {
             HttpServletRequest request,
             Map model) {
 
-        List<Address> addresses = addressDao.getAddressesSortedByParameter(addressResultSegment);
+        List<Address> addresses = addressDao.list(addressResultSegment);
 
         ControllerUtilities.generatePagingLinks(applicationContext, addressDao.size(), addressResultSegment, request, uriComponentsBuilder, model);
 
@@ -73,7 +73,7 @@ public class AddressController implements ApplicationContextAware {
             @CustomModelBinder AddressResultSegment addressResultSegment,
             HttpServletResponse response) {
 
-        List<Address> addresses = addressDao.getAddressesSortedByParameter(addressResultSegment);
+        List<Address> addresses = addressDao.list(addressResultSegment);
 
         return addresses.toArray(new Address[addresses.size()]);
     }
@@ -94,7 +94,7 @@ public class AddressController implements ApplicationContextAware {
 
     @RequestMapping(value = "/{input}/name_completion", method = RequestMethod.GET)
     @ResponseBody
-    public Set<String> listNamesWithAjax(
+    public List<String> listNamesWithAjax(
             @PathVariable("input") String addressInput,
             @RequestParam(name = "limit", required = false) Integer addressLimit) {
 
@@ -102,14 +102,14 @@ public class AddressController implements ApplicationContextAware {
             addressLimit = 30;
         }
 
-        Set<String> names = addressDao.getCompletionGuesses(addressInput, addressLimit);
+        List<String> names = addressDao.getCompletionGuesses(addressInput, addressLimit);
 
         return names;
     }
 
     @RequestMapping(value = "/name_completion", method = RequestMethod.GET)
     @ResponseBody
-    public Set<String> altListNamesWithAjax(
+    public List<String> altListNamesWithAjax(
             @RequestParam(name = "query", required = false) String addressInput,
             @RequestParam(name = "term", required = false) String altAddressInput,
             @RequestParam(name = "limit", required = false) Integer addressLimit) {
@@ -123,7 +123,7 @@ public class AddressController implements ApplicationContextAware {
             input = altAddressInput;
         }
 
-        Set<String> names = addressDao.getCompletionGuesses(input, addressLimit);
+        List<String> names = addressDao.getCompletionGuesses(input, addressLimit);
 
         return names;
     }

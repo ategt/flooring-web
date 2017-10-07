@@ -9,7 +9,6 @@ import java.util.Objects;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
@@ -20,12 +19,10 @@ public class Address {
     @Min(0)
     private Integer id;
 
-    @NotEmpty
     @NotNull
     @Size(min = 1, max = 45)
     private String firstName;
 
-    @NotEmpty
     @NotNull
     @Size(min = 1, max = 45)
     private String lastName;
@@ -33,27 +30,22 @@ public class Address {
     @Size(min = 1, max = 45)
     private String company;
 
-    @NotEmpty
     @NotNull
     @Size(min = 1, max = 45)
     private String streetName;
 
-    @NotEmpty
     @NotNull
     @Size(min = 1, max = 45)
     private String streetNumber;
 
-    @NotEmpty
     @NotNull
     @Size(min = 1, max = 45)
     private String city;
 
-    @NotEmpty
     @NotNull
     @Size(min = 1, max = 45)
     private String state;
 
-    @NotEmpty
     @NotNull
     @Size(min = 1, max = 45)
     private String zip;

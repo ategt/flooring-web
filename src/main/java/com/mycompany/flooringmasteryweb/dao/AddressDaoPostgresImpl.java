@@ -10,21 +10,23 @@ import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
 import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
  * @author ATeg
  */
 public class AddressDaoPostgresImpl implements AddressDao {
@@ -32,7 +34,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
     private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_INSERT_ADDRESS = "INSERT INTO addresses (first_name, last_name, company, street_number, street_name, city, state, zip) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) RETURNING id";
-    private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=?";
+    private static final String SQL_UPDATE_ADDRESS = "UPDATE addresses SET first_name=?, last_name=?, company=?, street_number=?, street_name=?, city=?, state=?, zip=? WHERE id=? RETURNING *";
     private static final String SQL_DELETE_ADDRESS = "DELETE FROM addresses WHERE id = ? RETURNING *";
     private static final String SQL_GET_ADDRESS = "SELECT *, 1 AS rank FROM addresses WHERE id = ?";
     private static final String SQL_GET_ADDRESS_BY_COMPANY = "SELECT *, 1 AS rank FROM addresses WHERE company = ?";
@@ -324,6 +326,26 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "	) t2 "
             + "ON t1.id = t2.id AND t1.rank = t2.min_rank";
 
+    private static final String SQL_ADDRESS_NAME_COMPLETION_QUERY = "WITH inputQuery(n) AS (SELECT ?)" +
+            " nameOrCompany AS (" +
+            " SELECT CONCAT(' ' || first_name || ' ' || last_name || ' full') col FROM addresses" +
+            " UNION SELECT company || ' comp' FROM addresses" +
+            " ) " +
+            " SELECT col, 1 rank FROM nameOrCompany WHERE col LIKE (SELECT CONCAT('% ', n, ' %') FROM inputQuery)" +
+            " UNION ALL SELECT col, 2 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('% ', n, ' %')) FROM inputQuery)" +
+            " UNION ALL SELECT col, 3 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery)" +
+            " UNION ALL SELECT col, 4 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)" +
+            " UNION ALL SELECT col, 5 rank FROM nameOrCompany WHERE col LIKE " +
+            "             ALL(" +
+            "                 ARRAY(" +
+            "                     SELECT CONCAT('%', input_column, '%') FROM ( " +
+            "                         SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery " +
+            "                     ) AS augmented_input_table " +
+            "                 ) " +
+            "             ) " +
+            " ORDER BY rank ASC, col ASC" +
+            " LIMIT ?";
+
     @Inject
     public AddressDaoPostgresImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -395,53 +417,30 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public Set<String> getCompletionGuesses(String input, int limit) {
+    public List<String> getCompletionGuesses(String input, int limit) {
         if (input == null) {
             return null;
         }
 
-        Set<String> result = new HashSet();
-
-        result.addAll(searchByFullName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
-
-        result.addAll(searchByFirstName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
-
-        result.addAll(searchByLastName(input, null).stream().map(addressToFullName()).collect(Collectors.toSet()));
-
-        result.addAll(searchByCompany(input, null).stream().map(address -> address.getCompany()).collect(Collectors.toSet()));
-
-        return result.stream().limit(limit).collect(Collectors.toSet());
-    }
-
-    private static Function<Address, String> addressToFullName() {
-        return address -> new StringBuffer()
-                .append(address.getFirstName())
-                .append(" ")
-                .append(address.getLastName()).toString();
-    }
-
-    @Override
-    public Address getByCompany(String company) {
-        if (company == null) {
-            return null;
-        }
         try {
-            return jdbcTemplate.queryForObject(SQL_GET_ADDRESS_BY_COMPANY, new AddressMapper(), company);
-        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
+            String[] results = jdbcTemplate.queryForObject(SQL_ADDRESS_NAME_COMPLETION_QUERY, String[].class, input, limit);
+            return Arrays.asList(results);
+        } catch (org.springframework.dao.EmptyResultDataAccessException ex){
             return null;
         }
     }
 
     @Override
-    public void update(Address address) {
+    public Address update(Address address) {
 
         if (address == null) {
-            return;
+            return null;
         }
 
         if (address.getId() != null && address.getId() > 0) {
 
-            jdbcTemplate.update(SQL_UPDATE_ADDRESS,
+            return jdbcTemplate.queryForObject(SQL_UPDATE_ADDRESS,
+                    new AddressMapper(),
                     address.getFirstName(),
                     address.getLastName(),
                     address.getCompany(),
@@ -452,6 +451,7 @@ public class AddressDaoPostgresImpl implements AddressDao {
                     address.getZip(),
                     address.getId());
         }
+        return null;
     }
 
     @Override
@@ -483,90 +483,6 @@ public class AddressDaoPostgresImpl implements AddressDao {
 
     private List<Address> search(String stringToSearchFor, String sqlQueryToUse, AddressResultSegment addressResultSegment) {
         List<Address> result = jdbcTemplate.query(sortAndPaginateQuery(sqlQueryToUse, addressResultSegment), new AddressMapper(), stringToSearchFor);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByFirstName(String firstName, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(firstName, SQL_SEARCH_ADDRESS_BY_FIRST_NAME, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByLastName(String lastName, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(lastName, SQL_SEARCH_ADDRESS_BY_LAST_NAME, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByCity(String city, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(city, SQL_SEARCH_ADDRESS_BY_CITY, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByCompany(String company, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(company, SQL_SEARCH_ADDRESS_BY_COMPANY, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByState(String state, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(state, SQL_SEARCH_ADDRESS_BY_STATE, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByZip(String zip, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(zip, SQL_SEARCH_ADDRESS_BY_ZIP, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByStreetAddress(String streetAddress, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(streetAddress, SQL_SEARCH_ADDRESS_BY_STREET, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByStreetNumber(String streetNumber, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(streetNumber, SQL_SEARCH_ADDRESS_BY_STREET_NUMBER, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByName(String name, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(name, SQL_SEARCH_ADDRESS_BY_NAME, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByStreet(String street, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(street, SQL_SEARCH_ADDRESS_BY_STREET, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByNameOrCompany(String input, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_NAME_OR_COMPANY, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> searchByAll(String input, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(input, SQL_SEARCH_ADDRESS_BY_ALL, addressResultSegment);
 
         return result;
     }
@@ -617,30 +533,13 @@ public class AddressDaoPostgresImpl implements AddressDao {
     }
 
     @Override
-    public List<Address> searchByFullName(String fullName, AddressResultSegment addressResultSegment) {
-        return searchByName(fullName, addressResultSegment);
-    }
-
-    @Override
-    public List<Address> searchByStreetName(String streetName, AddressResultSegment addressResultSegment) {
-        List<Address> result = search(streetName, SQL_SEARCH_ADDRESS_BY_STREET_NAME, addressResultSegment);
-
-        return result;
-    }
-
-    @Override
-    public List<Address> getAddressesSortedByParameter(AddressResultSegment addressResultSegment) {
-        return list(addressResultSegment);
-    }
-
-    @Override
     public List<Address> search(AddressSearchRequest searchRequest, AddressResultSegment addressResultSegment) {
         return search(searchRequest.getSearchText(), searchRequest.searchBy(), addressResultSegment);
     }
 
     public List<Address> search(String queryString,
-            AddressSearchByOptionEnum searchOption,
-            AddressResultSegment addressResultSegment) {
+                                AddressSearchByOptionEnum searchOption,
+                                AddressResultSegment addressResultSegment) {
 
         List<Address> addresses;
         String sqlSearchQuery;

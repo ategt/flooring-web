@@ -279,18 +279,6 @@ public class AddressDaoPostgresImplMigratedTest {
     }
 
     @Test
-    public void getSortedByIdUsingSortByParam() {
-        List<Address> addresses = addressDao.list(new AddressResultSegment(AddressSortByEnum.SORT_BY_ID, 0, Integer.MAX_VALUE));
-        List<Address> addressesFromDb = addressDao.getAddressesSortedByParameter(new AddressResultSegment(AddressSortByEnum.SORT_BY_ID, 0, Integer.MAX_VALUE));
-
-        for (int i = 0; i < addresses.size(); i++) {
-
-            assertEquals(addresses.get(i), addressesFromDb.get(i));
-
-        }
-    }
-
-    @Test
     public void getSortDoesNotReturnErrors() {
 
         Address testAddress = AddressTest.addressGenerator();

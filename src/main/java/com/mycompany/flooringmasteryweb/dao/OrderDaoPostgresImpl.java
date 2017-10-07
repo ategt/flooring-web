@@ -247,15 +247,6 @@ public class OrderDaoPostgresImpl implements OrderDao {
         }
     }
 
-    public List<Order> getAllOrders() {
-        return getList();
-    }
-
-    @Override
-    public List<Order> getList() {
-        return jdbcTemplate.query(SQL_GET_ORDER_LIST, new OrderMapper());
-    }
-
     @Override
     public int size() {
         return jdbcTemplate.queryForObject(SQL_COUNT_ORDERS, Integer.class
