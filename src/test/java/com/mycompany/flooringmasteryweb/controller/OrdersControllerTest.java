@@ -54,6 +54,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -591,7 +592,7 @@ public class OrdersControllerTest {
                 MockMvcRequestBuilders.get("/orders/delete/{0}", idToDelete)
         )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/orders/"));
+                .andExpect(MockMvcResultMatchers.redirectedUrlPattern("/orders/**"));
 
         assertTrue(orderDeleted[0]);
     }
