@@ -337,8 +337,10 @@ public class OrderDaoTimingDummyTest {
         System.out.println("stop: " + Math.abs(timing.getStopTime() - stopTime));
         System.out.println("difference: " + Math.abs(timing.getDifferenceTime() - timeTaken) + " / " + expectedTime);
 
-        assertTrue(Math.abs(timing.getStartTime() - startTime) < 50);
-        assertTrue(Math.abs(timing.getStopTime() - stopTime) < 50);
+        assertTrue("This number should be less than 50: " + Math.abs(timing.getStartTime() - startTime),
+                Math.abs(timing.getStartTime() - startTime) < 50);
+        assertTrue("This number should be less than 50: " + Math.abs(timing.getStopTime() - stopTime),
+                Math.abs(timing.getStopTime() - stopTime) < 50);
         assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - timeTaken) < 50);
         assertTrue("Difference Failed.", Math.abs(timing.getDifferenceTime() - expectedTime) < 50);
     }

@@ -63,9 +63,9 @@ public class ExecuteTimeInterceptorTest {
         Map<String, Object> model = mvcResult.getModelAndView().getModel();
         HandlerInterceptor[] handlerInterceptors = mvcResult.getInterceptors();
 
-        assertTrue(model.containsKey("timing"));
+        assertTrue(model.containsKey("executionTiming"));
 
-        Timing modelTiming = (Timing) model.get("timing");
+        Timing modelTiming = (Timing) model.get("executionTiming");
         assertTrue(handlerInterceptors.length > 0);
 
         Timing afterTiming = timingDao.getLast();

@@ -63,6 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration()
 @ContextHierarchy({
         @ContextConfiguration(locations = {"/test-SetupSimulatedProductionEnvironment.xml"}),
+        @ContextConfiguration(locations = {"/specialMockMvc.xml"}),
         @ContextConfiguration(locations = {"/spring-persistence.xml"}),
         @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml"})
 })
