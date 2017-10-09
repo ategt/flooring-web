@@ -17,6 +17,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -48,12 +49,27 @@ public class OrdersController implements ApplicationContextAware {
     public OrdersController(
             ProductDao productDao,
             StateDao stateDao,
-            OrderDao orderDao,
-            RestValidationHandler restValidationHandler
+            OrderDao orderDao
     ) {
         this.productDao = productDao;
         this.stateDao = stateDao;
         this.orderDao = orderDao;
+    }
+
+    @ModelAttribute
+    public void numberSortingLink(Model model, @CustomModelBinder OrderResultSegment resultSegment) {
+        OrderSortByEnum orderSortByEnum = resultSegment.getSortByEnum();
+
+        model.addAttribute("idSortingLink",
+                "?sort_by=" + (sortByEnum(OrderSortByEnum.SORT_BY_ID, orderSortByEnum)));
+        model.addAttribute("nameSortingLink",
+                "?sort_by=" + (sortByEnum(OrderSortByEnum.SORT_BY_NAME, orderSortByEnum)));
+    }
+
+    private String sortByEnum(OrderSortByEnum defaultEnum, OrderSortByEnum inputEnum) {
+        return (defaultEnum.equals(inputEnum) ?
+                OrderSortByEnum.reverse(inputEnum) :
+                defaultEnum).toString();
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")

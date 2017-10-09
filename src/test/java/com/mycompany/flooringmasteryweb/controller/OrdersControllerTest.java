@@ -1,5 +1,8 @@
 package com.mycompany.flooringmasteryweb.controller;
 
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
@@ -9,12 +12,14 @@ import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderResultSegmentResolver;
 import com.mycompany.flooringmasteryweb.modelBinding.OrderSearchRequestResolver;
+import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import com.mycompany.flooringmasteryweb.validation.ValidProductValidator;
 import com.mycompany.flooringmasteryweb.validation.ValidationError;
 import com.mycompany.flooringmasteryweb.validation.ValidationErrorContainer;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
+import okhttp3.HttpUrl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +29,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,13 +38,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.validation.ConstraintValidatorContext;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -1364,8 +1375,6 @@ public class OrdersControllerTest {
         assertTrue(contentType.contains("json"));
 
 
-
-
         ValidationErrorContainer validationErrorContainer =
                 gsonDeserializer.fromJson(content, ValidationErrorContainer.class);
 
@@ -1474,4 +1483,85 @@ public class OrdersControllerTest {
                 validationError -> validationError.getFieldName().equalsIgnoreCase("product"))
         );
     }
+
+    @Test
+    public void sortingLinksTest() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/orders/"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(MockMvcResultMatchers.model().attributeExists("idSortingLink"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("nameSortingLink"))
+                .andReturn();
+
+        Map<String, Object> model = mvcResult.getModelAndView().getModel();
+        String idSortLink = (String) model.get("idSortingLink");
+        assertTrue(idSortLink.contains("sort_by="));
+
+        String nameSortLink = (String) model.get("nameSortingLink");
+        assertTrue(nameSortLink.contains("sort_by="));
+
+        assertEquals(OrderSortByEnum.parse(idSortLink.split("=")[1]), OrderSortByEnum.SORT_BY_ID);
+    }
+
+    @Test
+    public void sortingLinksExistingTest() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/orders/")
+                .cookie(new Cookie(ControllerUtilities.SORT_COOKIE_NAME, OrderSortByEnum.SORT_BY_ID.toString())))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(MockMvcResultMatchers.model().attributeExists("idSortingLink"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("nameSortingLink"))
+                .andReturn();
+
+        Map<String, Object> model = mvcResult.getModelAndView().getModel();
+        String idSortLink = (String) model.get("idSortingLink");
+        assertTrue(idSortLink.contains("sort_by="));
+
+        String nameSortLink = (String) model.get("nameSortingLink");
+        assertTrue(nameSortLink.contains("sort_by="));
+
+        assertEquals(OrderSortByEnum.parse(idSortLink.split("=")[1]), OrderSortByEnum.SORT_BY_ID_INVERSE);
+    }
+
+    @Test
+    public void clickingASortLinkThenAPaginationLinkWillNotReverseTheSortingTest() throws IOException {
+        System.out.println("Test That Clicking A Sort Link Then A Pagination Link Will Not Reverse The Sorting.");
+
+        WebClient webClient = MockMvcWebClientBuilder.mockMvcSetup(mockMvc).
+                contextPath("")
+                .build();
+
+        URL indexUrl = new URL("http://localhost/orders/");
+
+        HtmlPage orderIndexPage = webClient.getPage(indexUrl);
+        HtmlAnchor sortByNameLink = orderIndexPage.getAnchorByText("Order Name");
+        HtmlPage sortedByNamePage = sortByNameLink.click();
+        HtmlAnchor sortByIdLink = sortedByNamePage.getAnchorByText("Order Number");
+        HtmlPage sortedByIdPage = sortByIdLink.click();
+
+        com.gargoylesoftware.htmlunit.util.Cookie idSortedCookie = null;
+
+        Set<com.gargoylesoftware.htmlunit.util.Cookie> idSortedCookies = webClient.getCookies(sortedByIdPage.getUrl());
+        for (com.gargoylesoftware.htmlunit.util.Cookie cookie : idSortedCookies) {
+            if (cookie.getName().toLowerCase().contains("sort_cookie")) {
+                idSortedCookie = cookie;
+                break;
+            }
+        }
+
+        assertNotNull(idSortedCookie);
+
+        HtmlAnchor lastPageAnchor = sortedByIdPage.getAnchorByText("Last Page");
+
+        HtmlPage lastPage = lastPageAnchor.click();
+
+        Set<com.gargoylesoftware.htmlunit.util.Cookie> afterNavigationCookies = webClient.getCookies(lastPage.getUrl());
+
+        com.gargoylesoftware.htmlunit.util.Cookie afterNavigationCookie = afterNavigationCookies.stream()
+                .filter(cookie -> cookie.getName().toLowerCase().contains("sort_cookie"))
+                .findAny()
+                .orElseGet(null);
+
+        assertNotNull(afterNavigationCookie);
+        assertEquals(afterNavigationCookie.getValue(), idSortedCookie.getValue());
+    }
+
 }
