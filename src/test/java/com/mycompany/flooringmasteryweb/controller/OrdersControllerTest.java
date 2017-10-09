@@ -1525,11 +1525,9 @@ public class OrdersControllerTest {
     public void clickingASortLinkThenAPaginationLinkWillNotReverseTheSortingTest() throws IOException {
         System.out.println("Test That Clicking A Sort Link Then A Pagination Link Will Not Reverse The Sorting.");
 
-        WebClient webClient = MockMvcWebClientBuilder.mockMvcSetup(mockMvc).
-                contextPath("")
-                .build();
+        WebClient webClient = getClientUsingMockMvc();
 
-        URL indexUrl = new URL("http://localhost/orders/");
+        URL indexUrl = new URL("http://localhost:8080/orders/");
 
         HtmlPage orderIndexPage = webClient.getPage(indexUrl);
         HtmlAnchor sortByNameLink = orderIndexPage.getAnchorByText("Order Name");
@@ -1564,4 +1562,10 @@ public class OrdersControllerTest {
         assertEquals(afterNavigationCookie.getValue(), idSortedCookie.getValue());
     }
 
+    private WebClient getClientUsingMockMvc() {
+        return MockMvcWebClientBuilder
+                .webAppContextSetup(webApplicationContext)
+                .alwaysUseMockMvc()
+                .build();
+    }
 }
