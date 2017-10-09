@@ -234,7 +234,7 @@ public class OrdersControllerIT {
 
             try {
                 Page createPage = createOrderWebClient.getPage(createRequest);
-            } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex){
+            } catch (com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException ex) {
                 ex.getResponse();
             }
 
@@ -273,7 +273,7 @@ public class OrdersControllerIT {
             assertEquals(orderCountFromIndex.intValue(), orderRows.size());
         }
 
-        HtmlAnchor sortByName = htmlPage.getAnchorByHref("?sort_by=name");
+        HtmlAnchor sortByName = htmlPage.getAnchorByHref("?sort_by=" + OrderSortByEnum.SORT_BY_NAME);
         String linkText = sortByName.getTextContent();
         assertEquals(linkText, "Order Name");
 
@@ -315,7 +315,7 @@ public class OrdersControllerIT {
 
             assertEquals(domain, host);
             assertEquals(name, "sort_cookie");
-            assertEquals(value, "name");
+            assertEquals(value, OrderSortByEnum.SORT_BY_NAME.toString());
 
         } else {
             fail("Sort Cookie Could Not Be Found.");
@@ -374,7 +374,7 @@ public class OrdersControllerIT {
 
         assertTrue(lastHref.contains("page="));
 
-        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=name");
+        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=" + OrderSortByEnum.SORT_BY_NAME);
         String linkText = sortByFirstName.getTextContent();
         assertEquals(linkText, "Order Name");
 
