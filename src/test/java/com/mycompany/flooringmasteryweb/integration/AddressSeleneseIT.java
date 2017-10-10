@@ -16,6 +16,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mycompany.flooringmasteryweb.dto.Address;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchByOptionEnum;
 import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import okhttp3.HttpUrl;
 import org.junit.After;
 import org.junit.Assert;
@@ -232,7 +233,7 @@ public class AddressSeleneseIT {
             assertEquals(addressCountFromIndex.intValue(), addressRows.size());
         }
 
-        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=first_name");
+        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=" + AddressSortByEnum.SORT_BY_FIRST_NAME.toString());
         String linkText = sortByFirstName.getTextContent();
         assertEquals(linkText, "First Name");
 
@@ -274,7 +275,7 @@ public class AddressSeleneseIT {
 
             assertEquals(domain, host);
             assertEquals(name, "sort_cookie");
-            assertEquals(value, "first_name");
+            assertEquals(value, "SORT_BY_FIRST_NAME");
 
         } else {
             fail("Sort Cookie Could Not Be Found.");
@@ -333,7 +334,7 @@ public class AddressSeleneseIT {
 
         assertTrue(lastHref.contains("page="));
 
-        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=first_name");
+        HtmlAnchor sortByFirstName = htmlPage.getAnchorByHref("?sort_by=" + AddressSortByEnum.SORT_BY_FIRST_NAME.toString());
         String linkText = sortByFirstName.getTextContent();
         assertEquals(linkText, "First Name");
 

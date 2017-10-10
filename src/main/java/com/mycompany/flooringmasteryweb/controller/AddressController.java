@@ -6,15 +6,14 @@
 package com.mycompany.flooringmasteryweb.controller;
 
 import com.mycompany.flooringmasteryweb.dao.AddressDao;
-import com.mycompany.flooringmasteryweb.dto.Address;
-import com.mycompany.flooringmasteryweb.dto.AddressResultSegment;
-import com.mycompany.flooringmasteryweb.dto.AddressSearchRequest;
+import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.modelBinding.CustomModelBinder;
 import com.mycompany.flooringmasteryweb.utilities.ControllerUtilities;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
@@ -263,6 +262,24 @@ public class AddressController implements ApplicationContextAware {
             response.setStatus(404);
             return null;
         }
+    }
+
+    @ModelAttribute
+    public void sortingLinks(Model model, @CustomModelBinder AddressResultSegment resultSegment) {
+        AddressSortByEnum addressSortByEnum = resultSegment.getSortByEnum();
+
+        model.addAttribute("idSortingLink",
+                "?sort_by=" + (sortByEnum(AddressSortByEnum.SORT_BY_ID, addressSortByEnum)));
+        model.addAttribute("firstNameSortingLink",
+                "?sort_by=" + (sortByEnum(AddressSortByEnum.SORT_BY_FIRST_NAME, addressSortByEnum)));
+        model.addAttribute("lastNameSortingLink",
+                "?sort_by=" + (sortByEnum(AddressSortByEnum.SORT_BY_LAST_NAME, addressSortByEnum)));
+    }
+
+    private String sortByEnum(AddressSortByEnum defaultEnum, AddressSortByEnum inputEnum) {
+        return (defaultEnum.equals(inputEnum) ?
+                AddressSortByEnum.reverse(inputEnum) :
+                defaultEnum).toString();
     }
 
     private void loadAddress(Integer contactId, Map model) {

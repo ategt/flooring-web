@@ -457,7 +457,7 @@ public class AddressControllerTest {
                 .params(params)
         )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/address/25"));
+                .andExpect(MockMvcResultMatchers.redirectedUrlPattern("/address/25*"));
     }
 
     @Test

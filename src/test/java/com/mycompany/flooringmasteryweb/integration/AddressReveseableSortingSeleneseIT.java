@@ -11,6 +11,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.mycompany.flooringmasteryweb.dto.AddressSortByEnum;
 import okhttp3.HttpUrl;
 import org.junit.After;
 import org.junit.Before;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author ATeg
  */
 public class AddressReveseableSortingSeleneseIT {
@@ -121,7 +121,7 @@ public class AddressReveseableSortingSeleneseIT {
     @Test
     public void sortByIdInHtmlWithClickTest() throws IOException {
         System.out.println("Sort By Id In Html With Click Test");
-        
+
         WebClient webClient = new WebClient();
 
         URL url = getAddressUrlBuilder()
@@ -150,11 +150,11 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.isHtmlPage());
 
         String queryString = idSortedPage.getUrl().getQuery();
-        //assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+        assertTrue(queryString.contains("sort_by=" + AddressSortByEnum.SORT_BY_ID));
 
         Set<Cookie> cookieSet = webClient.getCookies(idSortedPage.getUrl());
         assertTrue(cookieSet.stream().anyMatch(
-                cookie -> cookie.getValue().equalsIgnoreCase("id")
+                cookie -> cookie.getValue().equalsIgnoreCase(AddressSortByEnum.SORT_BY_ID.toString())
         ));
 
         htmlPage = (HtmlPage) idSortedPage;
@@ -167,7 +167,7 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.isHtmlPage());
 
         queryString = idSortedPage.getUrl().getQuery();
-        //assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+        assertTrue(queryString.contains("sort_by=SORT_BY_ID"));
 
         cookieSet = webClient.getCookies(idSortedPage.getUrl());
         assertTrue(cookieSet.stream().anyMatch(
@@ -227,7 +227,7 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.isHtmlPage());
 
         queryString = idSortedPage.getUrl().getQuery();
-        //assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+        assertTrue(queryString.contains("sort_by=SORT_BY_ID"));
 
         cookieSet = webClient.getCookies(idSortedPage.getUrl());
         assertTrue(cookieSet.stream().anyMatch(
@@ -284,7 +284,7 @@ public class AddressReveseableSortingSeleneseIT {
     private static Comparator<Integer> sortByIdAscending() {
         return (Integer o1, Integer o2) -> o1.compareTo(o2);
     }
-    
+
     @Test
     public void sortByIdReversesInHtmlWithClickTest() throws IOException {
         System.out.println("Sort By ID Reverses In HTML With Each Click Test");
@@ -330,11 +330,11 @@ public class AddressReveseableSortingSeleneseIT {
         assertTrue(idSortedPage.isHtmlPage());
 
         String queryString = idSortedPage.getUrl().getQuery();
-        //assertTrue(queryString.contains("sort_by=id") || queryString.contains("nothing=id"));
+        assertTrue(queryString.contains("sort_by=" + AddressSortByEnum.SORT_BY_ID.toString()));
 
         Set<Cookie> cookieSet = webClient.getCookies(idSortedPage.getUrl());
         assertTrue(cookieSet.stream().anyMatch(
-                cookie -> cookie.getValue().equalsIgnoreCase("id")
+                cookie -> cookie.getValue().equalsIgnoreCase(AddressSortByEnum.SORT_BY_ID.toString())
         ));
 
         htmlPage = (HtmlPage) idSortedPage;

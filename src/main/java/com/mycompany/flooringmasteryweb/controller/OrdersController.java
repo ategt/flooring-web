@@ -56,22 +56,6 @@ public class OrdersController implements ApplicationContextAware {
         this.orderDao = orderDao;
     }
 
-    @ModelAttribute
-    public void numberSortingLink(Model model, @CustomModelBinder OrderResultSegment resultSegment) {
-        OrderSortByEnum orderSortByEnum = resultSegment.getSortByEnum();
-
-        model.addAttribute("idSortingLink",
-                "?sort_by=" + (sortByEnum(OrderSortByEnum.SORT_BY_ID, orderSortByEnum)));
-        model.addAttribute("nameSortingLink",
-                "?sort_by=" + (sortByEnum(OrderSortByEnum.SORT_BY_NAME, orderSortByEnum)));
-    }
-
-    private String sortByEnum(OrderSortByEnum defaultEnum, OrderSortByEnum inputEnum) {
-        return (defaultEnum.equals(inputEnum) ?
-                OrderSortByEnum.reverse(inputEnum) :
-                defaultEnum).toString();
-    }
-
     @RequestMapping(value = "/", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public List<Order> index(
@@ -261,6 +245,22 @@ public class OrdersController implements ApplicationContextAware {
             response.setStatus(404);
             return null;
         }
+    }
+
+    @ModelAttribute
+    public void sortingLinks(Model model, @CustomModelBinder OrderResultSegment resultSegment) {
+        OrderSortByEnum orderSortByEnum = resultSegment.getSortByEnum();
+
+        model.addAttribute("idSortingLink",
+                "?sort_by=" + (sortByEnum(OrderSortByEnum.SORT_BY_ID, orderSortByEnum)));
+        model.addAttribute("nameSortingLink",
+                "?sort_by=" + (sortByEnum(OrderSortByEnum.SORT_BY_NAME, orderSortByEnum)));
+    }
+
+    private String sortByEnum(OrderSortByEnum defaultEnum, OrderSortByEnum inputEnum) {
+        return (defaultEnum.equals(inputEnum) ?
+                OrderSortByEnum.reverse(inputEnum) :
+                defaultEnum).toString();
     }
 
     private void loadOrdersToMap(Map model, OrderResultSegment resultSegment) {
