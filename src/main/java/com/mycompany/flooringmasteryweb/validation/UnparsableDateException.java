@@ -1,12 +1,14 @@
 package com.mycompany.flooringmasteryweb.validation;
 
-public class UnparsableDateException extends RuntimeException {
+import org.springframework.http.converter.HttpMessageNotReadableException;
+
+public class UnparsableDateException extends HttpMessageNotReadableException {
     private final String unparsableInput;
     private final String name;
     private final String format;
 
-    public UnparsableDateException(Exception ex, String input, String name, String format){
-        super(ex);
+    public UnparsableDateException(Exception ex, String input, String name, String format) {
+        super(input);
         unparsableInput = input;
         this.name = name;
         this.format = format;
