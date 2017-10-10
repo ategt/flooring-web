@@ -268,8 +268,8 @@ public class AddressDaoPostgresImpl implements AddressDao {
             + "		LOWER(' ' || first_name || ' ' || last_name || ' ' || company || ' '  || street_number || ' ' || street_name || ' ' || city || ' ' || state || ' ' || zip || ' ') LIKE "
             + "             ALL( "
             + "                 ARRAY("
-            + "                     SELECT CONCAT('%', input_column, '%') FROM ( "
-            + "                         SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery "
+            + "                     SELECT LOWER(CONCAT('%', input_column, '%')) FROM ( "
+            + "                         SELECT LOWER(unnest(string_to_array(n, ' '))) AS input_column FROM inputQuery "
             + "                     ) AS augmented_input_table "
             + "                 ) "
             + "             ) "
@@ -326,14 +326,14 @@ public class AddressDaoPostgresImpl implements AddressDao {
             " " +
             "  fullQuery AS ( " +
             "  " +
-            " SELECT col, 1 rank FROM nameOrCompany WHERE col LIKE (SELECT CONCAT('% ', n, ' %') FROM inputQuery)  " +
-            " UNION ALL SELECT col, 2 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('% ', n, ' %')) FROM inputQuery)  " +
-            " UNION ALL SELECT col, 3 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery)  " +
-            " UNION ALL SELECT col, 4 rank FROM nameOrCompany WHERE col LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)  " +
-            " UNION ALL SELECT col, 5 rank FROM nameOrCompany WHERE col LIKE  " +
-            "  ALL( ARRAY( SELECT CONCAT('%', input_column, '%') FROM  " +
-            "   ( SELECT unnest(string_to_array(n, ' ')) AS input_column FROM inputQuery ) AS augmented_input_table ) ) " +
-            "  ) " +
+            " SELECT col, 1 rank FROM nameOrCompany WHERE col LIKE (SELECT CONCAT('% ', n, ' %') FROM inputQuery)   " +
+            "             UNION ALL SELECT col, 2 rank FROM nameOrCompany WHERE LOWER(col) LIKE (SELECT LOWER(CONCAT('% ', n, ' %')) FROM inputQuery)   " +
+            "             UNION ALL SELECT col, 3 rank FROM nameOrCompany WHERE LOWER(col) LIKE (SELECT LOWER(CONCAT('% ', n, '%')) FROM inputQuery)   " +
+            "             UNION ALL SELECT col, 4 rank FROM nameOrCompany WHERE LOWER(col) LIKE (SELECT LOWER(CONCAT('%', n, '%')) FROM inputQuery)   " +
+            "             UNION ALL SELECT col, 5 rank FROM nameOrCompany WHERE LOWER(col) LIKE   " +
+            "              ALL( ARRAY( SELECT LOWER(CONCAT('%', input_column, '%')) FROM   " +
+            "               ( SELECT LOWER(unnest(string_to_array(n, ' '))) AS input_column FROM inputQuery ) AS augmented_input_table ) ) " +
+            "              ) " +
             "   " +
             "  SELECT TRIM(t1.col) col FROM fullQuery t1 " +
             "         JOIN ( " +
