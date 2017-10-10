@@ -29,7 +29,7 @@ public class CustomDateDeserializer extends StdDeserializer<Date> {
         try{
             return simpleDateFormat.parse(date);
         } catch (ParseException ex){
-            throw new UnparsableDateException(ex, date, jsonParser.getCurrentName());
+            throw new UnparsableDateException(ex, date, jsonParser.getCurrentName(), simpleDateFormat.toPattern());
         }
     }
 }

@@ -10,18 +10,6 @@ import java.util.Objects;
 
 @ControllerAdvice
 public class RuntimeValidationHandler {
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ValidationErrorContainer processValidationErrors(RuntimeException runtimeException){
-        ValidationErrorContainer validationErrorContainer = new ValidationErrorContainer();
-
-        ValidationError validationError = new ValidationError();
-        validationError.setFieldName("Unknown");
-        validationError.setMessage("Some part of that input could not be understood.");
-        validationErrorContainer.addError(validationError);
-        return validationErrorContainer;
-    }
 
     @ExceptionHandler(ParseException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -47,7 +35,7 @@ public class RuntimeValidationHandler {
 
         ValidationError validationError = new ValidationError();
         validationError.setFieldName(Objects.nonNull(name) ? name : "Global");
-        validationError.setMessage("That input could not be understood: " + unparseableInput);
+        validationError.setMessage("Input \"" + unparseableInput + "\" should be in " + unparsableDateException.getFormat() + " format.");
         validationErrorContainer.addError(validationError);
         return validationErrorContainer;
     }
