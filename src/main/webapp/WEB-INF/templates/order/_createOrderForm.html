@@ -10,7 +10,7 @@
             <span th:text="#{order.create.name}">Order Name</span>:
         </label>
         <div class="col-sm-9">
-            <input name="name" class="form-control order-name" style="text-align: center" type="text" id="name"
+            <input name="name" class="form-control order-name order-name-input" style="text-align: center" type="text" id="name"
                    placeholder="Order Name" th:placeholder="#{order.create.name}" />
         </div>
         <div class="col-sm-offset-3 col-sm-9" id="name-address">
@@ -27,7 +27,7 @@
             <span th:text="#{order.create.state.name}">State</span>:
         </label>
         <div class="col-sm-9">
-            <select id="state-selector" style="text-align: center" class="form-control" name="state" >
+            <select id="state-selector" style="text-align: center" class="form-control order-state-input" name="state" >
                 <option th:each="stateCommand : ${stateCommands}"
                         th:with="correctedStateName=${#strings.isEmpty(stateCommand.stateName)}? (${#strings.isEmpty(stateCommand.stateAbbreviation)}? #{state.null} : ${stateCommand.stateAbbreviation}) : ${stateCommand.stateName}"
                         th:value="${stateCommand.stateAbbreviation}">
@@ -48,7 +48,7 @@
     <div class="form-group">
         <label for="product" class="col-sm-3 control-label" >Product:</label>
         <div class="col-sm-9">
-            <select name="product-drop-down" id="product-selector" class="form-control" >
+            <select name="product-drop-down" id="product-selector" class="form-control order-product-input" >
                 <option th:each="productCommand : ${productCommands}"
                         th:value="${productCommand.productName}"
                         th:text="${productCommand.productName}"
@@ -67,7 +67,7 @@
             <span  th:text="#{order.create.date}">Date</span>:
         </label>
         <div class="col-sm-9">
-            <input name="dateb" class="form-control" style="text-align: center" pattern="MM/dd/yyyy" type="text" id="jQueryDatePicker"  />
+            <input name="dateb" class="form-control order-date-input" style="text-align: center" pattern="MM/dd/yyyy" type="text" id="jQueryDatePicker"  />
         </div>
     </div>
     <div class="form-group">
@@ -81,13 +81,13 @@
             <span th:text="#{order.create.area}">Area</span>:
         </label>
         <div class="col-sm-9">
-            <input name="area" class="form-control" style="text-align: center" type="text" id="area" placeholder="Area" th:placeholder="#{order.create.area}"/>
+            <input name="area" class="form-control order-area-input" style="text-align: center" type="text" id="area" placeholder="Area" th:placeholder="#{order.create.area}"/>
         </div>
     </div>
     <div class="form-group">
         <div class="col-sm-3"></div>
         <div class="col-sm-9 text-center">
-            <div id="add-contact-validation-errors help-block"></div>
+            <div id="add-contact-validation-errors" class="help-block"></div>
             <input value="Create" id="create-submit" type="submit" class="btn btn-default" />
         </div>
     </div>

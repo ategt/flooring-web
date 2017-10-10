@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.mycompany.flooringmasteryweb.validation.UnparsableDateException;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -28,7 +29,7 @@ public class CustomDateDeserializer extends StdDeserializer<Date> {
         try{
             return simpleDateFormat.parse(date);
         } catch (ParseException ex){
-            throw new RuntimeException(ex);
+            throw new UnparsableDateException(ex, date, jsonParser.getCurrentName());
         }
     }
 }

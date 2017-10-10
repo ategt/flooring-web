@@ -31,7 +31,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Content-type", "application/json");
             },
             success: function (data, status) {
-
+		        clearErrors();
                 var tableRow = buildOrderRow(data);
                 $('#order-table').prepend($(tableRow));
                 var orderHeader = $('#order-header');
@@ -40,9 +40,14 @@ $(document).ready(function () {
                 $('#showDetailModal').modal('show');
             },
             error: function (data, status) {
+		        clearErrors();
+                var $validationErrors = $("#add-contact-validation-errors");
+
+		        $($validationErrors).closest(".form-group").addClass("has-error");
                 var errors = data.responseJSON.errors;
                 $.each(errors, function (index, error) {
-                    $("#add-contact-validation-errors").append(error.fieldName + ":" + error.message + "<br />");
+                    $("#validation-error-container").append("<li>" + error.fieldName + " : " + error.message + "</li>");
+                    $(".order-" + error.fieldName + "-input").closest(".form-group").addClass("has-error");
                 });
             }
         });
@@ -59,6 +64,13 @@ $(document).ready(function () {
         </tr>";
 
         return strRowTable;
+    }
+
+    function clearErrors() {
+    	var $validationErrors = $("#add-contact-validation-errors");
+        $($validationErrors).empty();
+        $.each(["#name", "#state-selector", "#product-selector", "#jQueryDatePicker", "#area", "#add-contact-validation-errors"], function(index, item){$(item).closest(".form-group").removeClass("has-error")});
+        $($validationErrors).append("<strong><ul id=\"validation-error-container\"></ul></strong>");
     }
 
     function buildSelectorOption() {
