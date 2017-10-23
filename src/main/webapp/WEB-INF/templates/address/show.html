@@ -14,7 +14,11 @@
 
     <div class="row">
 
-        <div class="col-md-6 text-center">
+        <div th:unless="${address}" class="col-md-6 text-center">
+            <span th:text="#{address.show.notfound}">No Address Found</span>
+        </div>
+
+        <div th:if="${address}" class="col-md-6 text-center">
             <h2>
                 <span th:text="${address.firstName + ' ' + address.lastName}"></span><br/>
                 <span th:if="${address.company}">
@@ -27,7 +31,7 @@
                 <a th:href="@{~/address/edit/{pathVar}(pathVar=${address.id})}" th:text="#{address.show.edit}">Edit</a>
             </div>
         </div>
-        <div class="col-md-6 text-center">
+        <div th:if="${address}" class="col-md-6 text-center">
             <table class="table table-hover">
                 <tr>
                     <td>
