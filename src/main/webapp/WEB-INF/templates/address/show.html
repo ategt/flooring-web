@@ -14,8 +14,8 @@
 
     <div class="row">
 
-        <div th:unless="${address}" class="col-md-6 text-center">
-            <span th:text="#{address.show.notfound}">No Address Found</span>
+        <div th:unless="${address}" class="text-center">
+            <h1 th:text="#{address.show.notfound}">No Address Found</h1>
         </div>
 
         <div th:if="${address}" class="col-md-6 text-center">

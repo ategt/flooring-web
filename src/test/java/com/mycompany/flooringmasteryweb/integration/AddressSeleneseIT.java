@@ -508,6 +508,76 @@ public class AddressSeleneseIT {
         Assert.assertEquals(specificAddress, randomAddress);
     }
 
+    @Test
+    public void getTesgByMethods() throws IOException {
+        System.out.println("Get Test");
+
+        HttpUrl httpUrl = getAddressUrlBuilder()
+                .addPathSegment("")
+                .build();
+
+        WebClient webClient = new WebClient();
+        webClient.addRequestHeader("Accept", "application/json");
+
+        Page page = webClient.getPage(httpUrl.url());
+        WebResponse webResponse = page.getWebResponse();
+        assertEquals(webResponse.getStatusCode(), 200);
+        assertTrue(webResponse.getContentLength() > 100);
+
+        Address[] addresses = null;
+
+        if (webResponse.getContentType().equals("application/json")) {
+            String json = webResponse.getContentAsString();
+            Gson gson = new GsonBuilder().create();
+            addresses = gson.fromJson(json, Address[].class);
+
+            assertTrue(addresses.length > 20);
+        } else {
+            fail("Should have been JSON.");
+        }
+
+        Random random = new Random();
+        assertNotNull(addresses);
+        int randomAddressPlace = random.nextInt(addresses.length);
+
+        Address randomAddress = addresses[randomAddressPlace];
+        Assert.assertNotNull(randomAddress);
+
+        final int randomAddressId = randomAddress.getId();
+
+        Address specificAddress = getAddress(randomAddressId);
+
+        Assert.assertNotNull(specificAddress);
+        Assert.assertEquals(specificAddress, randomAddress);
+    }
+
+    private Address getAddress(int randomAddressId) throws IOException {
+        HttpUrl showUrl = getAddressUrlBuilder()
+                .addPathSegment(Integer.toString(randomAddressId))
+                .build();
+
+        WebClient showAddressWebClient = new WebClient();
+        showAddressWebClient.addRequestHeader("Accept", "application/json");
+
+        Page singleAddressPage = showAddressWebClient.getPage(showUrl.url());
+        WebResponse jsonSingleAddressResponse = singleAddressPage.getWebResponse();
+        assertEquals(jsonSingleAddressResponse.getStatusCode(), 200);
+        assertTrue("Content Length: " + jsonSingleAddressResponse.getContentLength(), jsonSingleAddressResponse.getContentLength() > 50);
+
+        Address specificAddress = null;
+
+        if (jsonSingleAddressResponse.getContentType().equals("application/json")) {
+            String json = jsonSingleAddressResponse.getContentAsString();
+            Gson gson = new GsonBuilder().create();
+            specificAddress = gson.fromJson(json, Address.class);
+
+            Assert.assertNotNull(specificAddress);
+        } else {
+            fail("Should have been JSON.");
+        }
+        return specificAddress;
+    }
+
     private HttpUrl.Builder getAddressUrlBuilder() {
         return HttpUrl.get(uriToTest).newBuilder()
                 .addPathSegment("address");
@@ -2305,7 +2375,26 @@ public class AddressSeleneseIT {
         for (Address addressToDelete : createdAddresses) {
             deleteAddress(addressToDelete.getId());
         }
+    }
 
+    @Test
+    public void nonExistantAddressTest() throws IOException {
+
+        Integer nonexistantId = Integer.MAX_VALUE;
+
+        HttpUrl showUrl = getAddressUrlBuilder()
+                .addPathSegment(Integer.toString(nonexistantId))
+                .build();
+
+        WebClient showAddressWebClient = new WebClient();
+
+        HtmlPage singleAddressPage = showAddressWebClient.getPage(showUrl.url());
+
+        String html = singleAddressPage.getDocumentElement().asXml();
+
+        assertFalse(html.toLowerCase().contains("company"));
+
+        assertTrue(html.toLowerCase().contains("not") && html.toLowerCase().contains("found"));
     }
 
     private String caseRandomizer(final Random random, String input) {
