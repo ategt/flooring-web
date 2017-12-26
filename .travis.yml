@@ -9,7 +9,7 @@ env:
 notifications:
   webhooks:
     urls:
-      - https://stormy-plains-11755.herokuapp.com/stash_places/
+      - https://stormy-plains-11755.herokuapp.com/data/
     on_success: always # default: always
     on_failure: always # default: always
     on_start: always   # default: never
