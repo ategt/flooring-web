@@ -6,3 +6,13 @@ before_script:
   - psql -c "CREATE USER myself WITH PASSWORD 'post';" -U postgres
 env:
   - DATABASE_URL=postgres://myself:post@localhost:5432/flooring_master
+notifications:
+  webhooks:
+    urls:
+      - https://stormy-plains-11755.herokuapp.com/stash_places/
+      - https://stormy-plains-11755.herokuapp.com/stash_places
+    on_success: change # default: always
+    on_failure: always # default: always
+    on_start: change   # default: never
+    on_cancel: always # default: always
+    on_error: always # default: always
