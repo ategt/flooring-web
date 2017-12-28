@@ -22,4 +22,5 @@ notifications:
     #on_failure: change # default: always    
     on_start: change
 after_failure: 
-  - upload_reports.sh
+  - ./upload_reports.sh
+  - echo "$(pwd)"

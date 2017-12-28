@@ -1,3 +1,4 @@
+echo "$(pwd)"
 echo "\nCompressing reports."
 tar -cvf reports.tar ./target/surefire-reports/
 echo "\nUploading reports."
