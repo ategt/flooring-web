@@ -21,3 +21,5 @@ notifications:
     #on_success: never # default: change
     #on_failure: change # default: always    
     on_start: change
+after_failure: 
+  - upload_reports.sh
