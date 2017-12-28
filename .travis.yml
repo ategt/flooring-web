@@ -22,5 +22,9 @@ notifications:
     #on_failure: change # default: always    
     on_start: change
 after_failure: 
-  - ./upload_reports.sh
   - echo "$(pwd)"
+  - echo "\nCompressing reports."
+  - tar -cvf reports.tar ./target/surefire-reports/
+  - echo "\nUploading reports."
+  - curl -F item[picture]=@./reports.tar https://stormy-plains-11755.herokuapp.com/items
+  - echo "Post Failure Scripts Complete."
