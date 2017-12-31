@@ -5,7 +5,7 @@ before_script:
   - psql -c 'create database flooring_master;' -U postgres
   - psql -c "CREATE USER myself WITH PASSWORD 'post';" -U postgres
   - sudo chmod +x ./seed_db.sh
-  - ./seed_db.sh
+  - ./seed_db.sh &
 env:
   - DATABASE_URL=postgres://myself:post@localhost:5432/flooring_master
 notifications:
