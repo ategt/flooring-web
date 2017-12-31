@@ -968,6 +968,7 @@ public class AddressDaoPostgresImplTest {
         AddressDaoPostgresImplTest addressDaoPostgresImplTest
                 = new AddressDaoPostgresImplTest();
 
+        addressDaoPostgresImplTest.setUp();
         AddressDao addressDao = addressDaoPostgresImplTest.getAddressDao();
 
         if (addressDao.size() < 50) {

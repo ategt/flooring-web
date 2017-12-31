@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.Assert.*;
@@ -23,6 +24,7 @@ import static org.junit.Assert.*;
 public class StateDaoDbImplTest {
 
     ApplicationContext ctx;
+    private StateDao instance;
 
     public StateDaoDbImplTest() {
         ctx = new ClassPathXmlApplicationContext("testStateDb-DedicatedApplicationContext.xml");
@@ -31,7 +33,7 @@ public class StateDaoDbImplTest {
     @Before
     public void setUp() {
 
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
+        instance = ctx.getBean("stateDao", StateDao.class);
 
         String[] fakeStates = {"SG", "DQ", "SW", "FG", "GH", "DG", "IN", "OH", "KC" , "CA" };
 
@@ -52,7 +54,6 @@ public class StateDaoDbImplTest {
     public void testCreate() {
         System.out.println("create");
         State state = new State();
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.create(state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -62,7 +63,6 @@ public class StateDaoDbImplTest {
     public void testCreateB() {
         System.out.println("create");
         State state = null;
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.create(state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -71,7 +71,6 @@ public class StateDaoDbImplTest {
     @Test
     public void testGetA() {
         System.out.println("get - null");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.get(null);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -81,7 +80,6 @@ public class StateDaoDbImplTest {
     public void testGetC() {
         System.out.println("get - null");
         Object state = null;
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.get((String) state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -91,7 +89,6 @@ public class StateDaoDbImplTest {
     public void testGetD() {
         System.out.println("get - null");
         Object object = null;
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
 
         State state1 = new State();
@@ -124,7 +121,6 @@ public class StateDaoDbImplTest {
         System.out.println("create");
         State state = new State();
         state.setState("GH");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = state;
         State result = instance.create(state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -135,7 +131,6 @@ public class StateDaoDbImplTest {
         System.out.println("create");
         State state = new State();
         state.setState("Z");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.create(state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -147,7 +142,6 @@ public class StateDaoDbImplTest {
         State state = new State();
         state.setStateTax(0.0d);
         state.setState("SW");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = state;
         State result = instance.create(state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -160,7 +154,6 @@ public class StateDaoDbImplTest {
         state.setState("SW");
         State stateB = new State();
         stateB.setState("SW");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = state;
         instance.create(state);
         State result = instance.create(stateB);
@@ -172,7 +165,6 @@ public class StateDaoDbImplTest {
         System.out.println("create");
         State state = new State();
         state.setState("SW");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         instance.create(state);
         State result = instance.create(state);
         assertNull(result);
@@ -183,7 +175,6 @@ public class StateDaoDbImplTest {
         System.out.println("create");
         State state = new State();
         state.setState("Mexico");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.create(state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -194,7 +185,6 @@ public class StateDaoDbImplTest {
         System.out.println("create");
         State state = new State();
         state.setState("HQ");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = null;
         State result = instance.create(state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -210,7 +200,6 @@ public class StateDaoDbImplTest {
         State otherState = new State();
         otherState.setState("SG");
 
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
 
         State expResult = state;
         State result = instance.create(state);
@@ -225,7 +214,6 @@ public class StateDaoDbImplTest {
 
     @Test
     public void testDelete() {
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
 
         if (instance.get("SG") != null) {
             State state = new State();
@@ -257,7 +245,6 @@ public class StateDaoDbImplTest {
         State state = new State();
         state.setState("SG");
         state.setStateTax(0.0d);
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = state;
         State result = instance.create(state);
         assertTrue("Expected: " + expResult + ", Actual: " + result, verifyState(expResult, result));
@@ -276,7 +263,6 @@ public class StateDaoDbImplTest {
         System.out.println("create");
         State state = new State();
         state.setState("SG");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = state;
         String stateNameLowerCase = "sg";
         State result = instance.create(state);
@@ -296,7 +282,6 @@ public class StateDaoDbImplTest {
         System.out.println("create");
         State state = new State();
         state.setState("SG");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
         State expResult = state;
         String stateNameLowerCase = "sG";
         State result = instance.create(state);
@@ -316,7 +301,6 @@ public class StateDaoDbImplTest {
 
         State state = new State();
         state.setState("DQ");
-        StateDao instance = ctx.getBean("stateDao", StateDao.class);
 
         instance.create(state);
 
@@ -392,5 +376,29 @@ public class StateDaoDbImplTest {
         assertEquals(state1.getStateTax(), state2.getStateTax(), 0.005);
 
         return Objects.equals(state1, state2);
+    }
+
+    public StateDao getDao(){
+        return instance;
+    }
+    
+    private static void seedTheDb(StateDaoDbImplTest stateDaoDbImplTest){
+        stateDaoDbImplTest.testCreateC();
+    }
+
+    public static StateDao getSeededStateDao(){
+        StateDaoDbImplTest stateDaoDbImplTest = new StateDaoDbImplTest();
+        stateDaoDbImplTest.setUp();
+        stateDaoDbImplTest.seedTheDb(stateDaoDbImplTest);
+        return stateDaoDbImplTest.getDao();
+    }
+
+    public static State getAValidSeededState(){
+        StateDao stateDao = StateDaoDbImplTest.getSeededStateDao();
+        List<State> states = stateDao.getListOfStates();
+
+        assertFalse(states.isEmpty());
+
+        return states.get(0);
     }
 }

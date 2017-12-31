@@ -26,6 +26,7 @@ package com.mycompany.flooringmasteryweb.dao;
 public class ProductDaoDbImplTest {
 
     ApplicationContext ctx;
+    private ProductDao instance;
 
     private static final String[] fakeProducts = {"Better Flooring",
         "Worlds Best Floor",
@@ -58,19 +59,18 @@ public class ProductDaoDbImplTest {
 
     @Before
     public void setUp() {
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
+        instance = ctx.getBean("productDao", ProductDao.class);
         RemoveFakeProducts(instance);
     }
 
     @After
     public void tearDown() {
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
+        instance = ctx.getBean("productDao", ProductDao.class);
         RemoveFakeProducts(instance);
     }
 
      public void establishFixtures() {
-         ProductDao instance = ctx.getBean("productDao", ProductDao.class);
-         if (Objects.nonNull(instance) && instance.size() < 200) {
+          if (Objects.nonNull(instance) && instance.size() < 200) {
              for (int i = 0; i < 200; i++) {
                  instance.create(ProductTest.productGenerator());
              }
@@ -93,7 +93,6 @@ public class ProductDaoDbImplTest {
         // Create should not accept a product with no name.
         System.out.println("create");
         Product product = ProductTest.productFactory();
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = null;
         product.setProductName(null);
         Product result = instance.create(product);
@@ -106,7 +105,6 @@ public class ProductDaoDbImplTest {
         // Create should not accept a null product object.
         System.out.println("create");
         Product product = null;
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = null;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -118,7 +116,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType("Product1");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -130,7 +127,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType("Product2");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -142,7 +138,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType("Product7");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -154,7 +149,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType(fakeProducts[3].toUpperCase());
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product result = instance.create(product);
         assertEquals(fakeProducts[3], result.getType());
 
@@ -167,7 +161,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType(fakeProducts[4].toUpperCase());
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product result = instance.create(product);
         assertEquals(fakeProducts[4], result.getType());
 
@@ -188,7 +181,6 @@ public class ProductDaoDbImplTest {
         product.setType(fakeProducts[4]);
         product.setCost(05.25d);
         product.setLaborCost(09.509d);
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product result = instance.create(product);
         assertEquals(fakeProducts[4], result.getType());
 
@@ -210,7 +202,6 @@ public class ProductDaoDbImplTest {
         Product product = ProductTest.productFactory();
         String productName = null;
         product.setType("BEST Product ever");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product ignored = instance.create(product);
         Product result = instance.get(productName);
 
@@ -224,7 +215,6 @@ public class ProductDaoDbImplTest {
         Product product = ProductTest.productFactory();
         String productName = "Fake Product That I have Not Used Yet";
         product.setType(productName);
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         instance.update(product);
 
         Product result = instance.get(productName);
@@ -243,7 +233,6 @@ public class ProductDaoDbImplTest {
         product.setType(productName);
         product.setLaborCost(5.0d);
         product.setCost(7.0d);
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         instance.update(product);
 
         Product result = instance.get(productName);
@@ -256,7 +245,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType("Fancy New Product");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -275,7 +263,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType("Better Flooring");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         Product result = instance.create(product);
         assertEquals(expResult, result);
@@ -296,7 +283,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType("Worlds Best Floor");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         String productNameLowerCase = "worlds Best FLOOR";
         Product result = instance.create(product);
@@ -316,7 +302,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType("floor1");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         String productNameLowerCase = "FLOOR1";
         Product result = instance.create(product);
@@ -336,7 +321,6 @@ public class ProductDaoDbImplTest {
         System.out.println("create");
         Product product = ProductTest.productFactory();
         product.setType("FLOOR5");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
         Product expResult = product;
         String productNameLowerCase = "floor5";
         Product result = instance.create(product);
@@ -355,7 +339,6 @@ public class ProductDaoDbImplTest {
     public void testSize() {
         Product product = ProductTest.productFactory();
         product.setType("best floor");
-        ProductDao instance = ctx.getBean("productDao", ProductDao.class);
 
         Product secondProduct = ProductTest.productFactory();
 
@@ -493,4 +476,28 @@ public class ProductDaoDbImplTest {
             productDao.delete(junkProduct);
         }
     }
+
+     public ProductDao getDao(){
+         return instance;
+     }
+
+     private static void seedTheDb(ProductDaoDbImplTest productDaoDbImplTest){
+         Product product = ProductTest.productFactory();
+         productDaoDbImplTest.getDao().create(product);
+     }
+
+     public static ProductDao getSeededProductDao(){
+         ProductDaoDbImplTest productDaoDbImplTest = new ProductDaoDbImplTest();
+         productDaoDbImplTest.setUp();
+         productDaoDbImplTest.seedTheDb(productDaoDbImplTest);
+         return productDaoDbImplTest.getDao();
+     }
+
+     public static Product getAValidSeededProduct(){
+         List<Product> products = getSeededProductDao().getListOfProducts();
+
+         assertFalse(products.isEmpty());
+
+         return products.get(0);
+     }
 }

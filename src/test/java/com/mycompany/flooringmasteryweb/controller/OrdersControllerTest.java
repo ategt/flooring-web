@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mycompany.flooringmasteryweb.aop.ApplicationContextProvider;
 import com.mycompany.flooringmasteryweb.dao.OrderDao;
+import com.mycompany.flooringmasteryweb.dao.OrderDaoDbImplTest;
 import com.mycompany.flooringmasteryweb.dao.ProductDao;
 import com.mycompany.flooringmasteryweb.dao.StateDao;
 import com.mycompany.flooringmasteryweb.dto.*;
@@ -22,6 +23,7 @@ import mockit.Verifications;
 import okhttp3.HttpUrl;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -96,6 +98,11 @@ public class OrdersControllerTest {
     private List<ProductCommand> productCommandList;
     private Gson gsonDeserializer = new GsonBuilder().setDateFormat("MM/dd/yyyy").create();
     private ApplicationContext previousApplicationContext;
+
+    @BeforeClass
+    public static void setUpClass(){
+        OrderDaoDbImplTest.seedOrderDaoForTests();
+    }
 
     @Before
     public void setUp() throws Exception {

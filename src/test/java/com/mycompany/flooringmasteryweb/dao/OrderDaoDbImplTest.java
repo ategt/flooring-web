@@ -9,6 +9,7 @@ import com.mycompany.flooringmasteryweb.dto.*;
 import com.mycompany.flooringmasteryweb.utilities.ProductUtilities;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -19,22 +20,35 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author apprentice
  */
 public class OrderDaoDbImplTest {
 
-    ApplicationContext ctx;
-    Integer idOfAPatOrder;
+    private ApplicationContext ctx;
+    private Integer idOfAPatOrder;
+
+    private ProductDao productDao;
+    private StateDao stateDao;
+    private OrderDao instance;
+    private OrderDao orderDao;
 
     public OrderDaoDbImplTest() {
         ctx = new ClassPathXmlApplicationContext("test-OrdersSQLStateSQLProductSQL-applicationContext.xml");
-        idOfAPatOrder = ctx.getBean("idOfAPatOrder", Integer.class);
+        idOfAPatOrder = getCtx().getBean("idOfAPatOrder", Integer.class);
         establishFixtures();
+    }
+
+    @BeforeClass
+    public static void setupClass() {
+        seedOrderDaoForTests();
     }
 
     @Before
     public void setUp() {
+        productDao = getCtx().getBean("productDao", ProductDao.class);
+        stateDao = getCtx().getBean("stateDao", StateDao.class);
+        instance = getCtx().getBean("orderDao", OrderDao.class);
+        orderDao = instance;
     }
 
     @After
@@ -42,10 +56,20 @@ public class OrderDaoDbImplTest {
     }
 
     public void establishFixtures() {
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
+
+        State state = StateDaoDbImplTest.getAValidSeededState();
+        Product product = ProductDaoDbImplTest.getAValidSeededProduct();
+
         if (Objects.nonNull(instance) && instance.size() < 200) {
             for (int i = 0; i < 200; i++) {
-                instance.create(OrderTest.orderGenerator());
+
+                Order order = OrderTest.orderGenerator();
+
+                order.setState(state);
+                order.setProduct(product);
+
+                instance.create(order);
             }
         }
     }
@@ -54,11 +78,7 @@ public class OrderDaoDbImplTest {
     public void testCreate() {
         System.out.println("create");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
-
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
         Order expResult = order;
         Order result = instance.create(order);
         assertEquals(expResult, result);
@@ -80,11 +100,11 @@ public class OrderDaoDbImplTest {
     public void testCreateAndDeleteWithId() {
         System.out.println("create");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
         Order expResult = order;
         Order result = instance.create(order);
         assertEquals(expResult, result);
@@ -106,9 +126,9 @@ public class OrderDaoDbImplTest {
     public void testNullCreate() {
         System.out.println("create");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
         Order order = null;
         Order expResult = order;
@@ -124,11 +144,11 @@ public class OrderDaoDbImplTest {
     public void testNullCreateB() {
         System.out.println("create");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
         Order expResult = order;
         Order result = instance.create(order);
         assertEquals(expResult, result);
@@ -162,11 +182,11 @@ public class OrderDaoDbImplTest {
     public void testNullDelete() {
         System.out.println("delete");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
         Order expResult = order;
         Order result = instance.create(order);
         assertEquals(expResult, result);
@@ -178,8 +198,8 @@ public class OrderDaoDbImplTest {
         // Test get method.
         Order returnedOrder = instance.get(id);
         assertTrue(OrderTest.verifyOrder(returnedOrder, result));
-        instance.delete((Order)null);
-        instance.delete((Integer)null);
+        instance.delete((Order) null);
+        instance.delete((Integer) null);
         instance.delete(order);
         returnedOrder = instance.get(id);
         assertEquals(returnedOrder, null);
@@ -189,11 +209,11 @@ public class OrderDaoDbImplTest {
     public void testNullUpdate() {
         System.out.println("delete");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
         Order expResult = order;
         Order result = instance.create(order);
         assertEquals(expResult, result);
@@ -220,11 +240,11 @@ public class OrderDaoDbImplTest {
     public void testNullGet() {
         System.out.println("delete");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
         Order expResult = order;
         Order result = instance.create(order);
         assertEquals(expResult, result);
@@ -247,9 +267,9 @@ public class OrderDaoDbImplTest {
     public void testNullGetB() {
         System.out.println("delete");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
         Order returnedOrder = instance.get(null);
         assertNull(returnedOrder);
@@ -260,9 +280,9 @@ public class OrderDaoDbImplTest {
     public void testNullUpdateB() {
         System.out.println("update");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
         instance.update(null);
         // If it got here, it passes.
@@ -274,9 +294,9 @@ public class OrderDaoDbImplTest {
     public void testCreateB() {
         System.out.println("create - null");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
         Order order = null;
         Order expResult = null;
@@ -290,9 +310,9 @@ public class OrderDaoDbImplTest {
     public void testCreateC() {
         System.out.println("create - null");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
         OrderCommand order = null;
         Order expResult = null;
@@ -309,14 +329,14 @@ public class OrderDaoDbImplTest {
     public void testGetAllOrderes() {
         System.out.println("getAllOrderes");
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao instance = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao instance = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order orderOne = OrderTest.orderFactory(ctx);
-        Order orderTwo = OrderTest.orderFactory(ctx);
-        Order orderThree = OrderTest.orderFactory(ctx);
-        Order orderFour = OrderTest.orderFactory(ctx);
+        Order orderOne = OrderTest.orderFactory(getCtx());
+        Order orderTwo = OrderTest.orderFactory(getCtx());
+        Order orderThree = OrderTest.orderFactory(getCtx());
+        Order orderFour = OrderTest.orderFactory(getCtx());
 
         Date firstDate = new Date();
         Date secondDate = new Date();
@@ -397,11 +417,11 @@ public class OrderDaoDbImplTest {
     @Test
     public void testEncodeAndDecode() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -452,9 +472,9 @@ public class OrderDaoDbImplTest {
 
         // Load a new instance of the OrderDao.
         //OrderDao secondDao = new OrderDao(true);
-        ProductDao secondProductDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao secondStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao secondOrderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao secondProductDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao secondStateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao secondOrderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         // Pull a order  using the id number recorded earlier.
         Order thirdOrder = secondOrderDao.get(id);
@@ -479,9 +499,9 @@ public class OrderDaoDbImplTest {
 
         // Load a third instance of the Dao and verify that 
         // the order was deleted from the file.
-        ProductDao thirdProductDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao thirdOrderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao thirdProductDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao thirdStateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao thirdOrderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         //OrderDao thirdDao = new OrderDao(true);
         assertEquals(thirdOrderDao.get(id), null);
@@ -491,13 +511,13 @@ public class OrderDaoDbImplTest {
     @Test
     public void testEncodeAndDecodeWithCommas() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         // The true parameter in the Order Dao constructor signifies a test.
         //OrderDao orderDao = new OrderDao(true);
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -547,9 +567,9 @@ public class OrderDaoDbImplTest {
 
         // Load a new instance of the OrderDao.
         //OrderDao secondDao = new OrderDao(true);
-        ProductDao secondProductDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao secondStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao secondOrderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao secondProductDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao secondStateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao secondOrderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         // Pull a order  using the id number recorded earlier.
         Order thirdOrder = secondOrderDao.get(id);
@@ -574,9 +594,9 @@ public class OrderDaoDbImplTest {
 
         // Load a third instance of the Dao and verify that 
         // the order was deleted from the file.
-        ProductDao thirdProductDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao thirdOrderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao thirdProductDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao thirdStateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao thirdOrderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         assertEquals(thirdOrderDao.get(id), null);
     }
@@ -584,11 +604,11 @@ public class OrderDaoDbImplTest {
     @Test
     public void testEncodeAndDecodeWithDate() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -643,9 +663,9 @@ public class OrderDaoDbImplTest {
 
         // Load a new instance of the OrderDao.
         //OrderDao secondDao = new OrderDao(true);
-        ProductDao secondProductDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao secondStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao secondOrderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao secondProductDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao secondStateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao secondOrderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         // Pull a order  using the id number recorded earlier.
         Order thirdOrder = secondOrderDao.get(id);
@@ -670,9 +690,9 @@ public class OrderDaoDbImplTest {
 
         // Load a third instance of the Dao and verify that 
         // the order was deleted from the file.
-        ProductDao thirdProductDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao thirdStateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao thirdOrderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao thirdProductDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao thirdStateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao thirdOrderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         assertEquals(thirdOrderDao.get(id), null);
     }
@@ -680,11 +700,11 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverZ() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -700,11 +720,11 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverA() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -765,11 +785,11 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverB() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -830,11 +850,11 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverC() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -894,11 +914,11 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverD() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -958,11 +978,11 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverF() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
-        Order order = OrderTest.orderFactory(ctx);
+        Order order = OrderTest.orderFactory(getCtx());
 
         // Create the file in the Dao.
         Order returnedOrder = orderDao.create(order);
@@ -1022,9 +1042,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverEBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1092,9 +1112,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverFBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1163,9 +1183,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverGBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1231,9 +1251,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverHBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1300,9 +1320,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverIBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1369,9 +1389,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverLBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1443,9 +1463,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverJBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1517,9 +1537,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverKBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1592,9 +1612,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverNBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1666,9 +1686,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverMBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1741,9 +1761,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1816,9 +1836,9 @@ public class OrderDaoDbImplTest {
     @Test
     public void testResolverPBackandForth() {
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         com.mycompany.flooringmasteryweb.dto.State ohio = new com.mycompany.flooringmasteryweb.dto.State();
         ohio.setState("CA");
@@ -1892,9 +1912,9 @@ public class OrderDaoDbImplTest {
     public void newCrudTest() {
         Random random = new Random();
 
-        ProductDao productDao = ctx.getBean("productDao", ProductDao.class);
-        StateDao stateDao = ctx.getBean("stateDao", StateDao.class);
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        ProductDao productDao = getCtx().getBean("productDao", ProductDao.class);
+        StateDao stateDao = getCtx().getBean("stateDao", StateDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         List<Product> allProducts = productDao.getListOfProducts();
         Product randomProduct = allProducts.get(random.nextInt(allProducts.size()));
@@ -2032,7 +2052,7 @@ public class OrderDaoDbImplTest {
     public void listTest() {
         Random random = new Random();
 
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         for (OrderSortByEnum sortByEnum : OrderSortByEnum.values()) {
             OrderResultSegment resultSegment = new OrderResultSegment(sortByEnum, 0, Integer.MAX_VALUE);
@@ -2076,7 +2096,7 @@ public class OrderDaoDbImplTest {
 
         Random random = new Random();
 
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         List<Order> allOrders = orderDao.list(null);
         int size = allOrders.size();
@@ -2237,7 +2257,7 @@ public class OrderDaoDbImplTest {
 
     @Test
     public void searchForPatTest() {
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         OrderSearchRequest searchRequest = new OrderSearchRequest("pat", OrderSearchByOptionEnum.NAME);
         OrderResultSegment resultSegment = new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, 0, Integer.MAX_VALUE);
@@ -2248,14 +2268,14 @@ public class OrderDaoDbImplTest {
 
         assertTrue(orders.size() > 0);
 
-        Order aPatOrder = orderDao.get(idOfAPatOrder);
+        Order aPatOrder = orderDao.get(getIdOfAPatOrder());
 
         assertTrue(orders.contains(aPatOrder));
     }
 
     @Test
     public void searchForPatByEverythingTest() {
-        OrderDao orderDao = ctx.getBean("orderDao", OrderDao.class);
+        OrderDao orderDao = getCtx().getBean("orderDao", OrderDao.class);
 
         OrderSearchRequest searchRequest = new OrderSearchRequest("pat", OrderSearchByOptionEnum.EVERYTHING);
         OrderResultSegment resultSegment = new OrderResultSegment(OrderSortByEnum.SORT_BY_NAME, 0, Integer.MAX_VALUE);
@@ -2266,8 +2286,49 @@ public class OrderDaoDbImplTest {
 
         assertTrue(orders.size() > 0);
 
-        Order aPatOrder = orderDao.get(idOfAPatOrder);
+        Order aPatOrder = orderDao.get(getIdOfAPatOrder());
 
         assertTrue(orders.contains(aPatOrder));
+    }
+
+    public static void seedOrderDaoForTests() {
+        OrderDaoDbImplTest orderDaoDbImplTest = new OrderDaoDbImplTest();
+        orderDaoDbImplTest.setUp();
+
+        OrderDao orderDao = orderDaoDbImplTest.getOrderDao();
+
+        State state = StateDaoDbImplTest.getAValidSeededState();
+        Product product = ProductDaoDbImplTest.getAValidSeededProduct();
+
+        if (orderDao.size() < 50) {
+            while (orderDao.size() < 50) {
+                Order order = OrderTest.orderGenerator();
+                order.setState(state);
+                order.setProduct(product);
+                orderDao.create(order);
+            }
+        }
+
+
+    }
+
+    public ApplicationContext getCtx() {
+        return ctx;
+    }
+
+    public Integer getIdOfAPatOrder() {
+        return idOfAPatOrder;
+    }
+
+    public ProductDao getProductDao() {
+        return productDao;
+    }
+
+    public StateDao getStateDao() {
+        return stateDao;
+    }
+
+    public OrderDao getOrderDao() {
+        return orderDao;
     }
 }
