@@ -30,6 +30,7 @@ public class AddressDaoPostgresImplMigratedTest {
 
     @BeforeClass
     public static void setUpClass() {
+        AddressDaoPostgresImplTest.seedAddressDatabase();
     }
 
     @AfterClass
